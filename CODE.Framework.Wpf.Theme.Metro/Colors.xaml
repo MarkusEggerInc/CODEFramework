@@ -1,0 +1,94 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Standard theme colors -->
+    <Color x:Key="CODE.Framework-Application-BackgroundColor1">Black</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor2">White</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor3">DarkGreen</Color>
+
+    <Color x:Key="CODE.Framework-Application-ThemeColor1">#518BC9</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor2">Teal</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor3">LimeGreen</Color>
+
+    <Color x:Key="CODE.Framework-Application-ForegroundColor1">White</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor2">Black</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor3">Gray</Color>
+
+    <Color x:Key="CODE.Framework-Application-HighlightColor1">Blue</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor2">CornflowerBlue</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor3">Yellow</Color>
+
+    <Color x:Key="CODE.Framework-Application-ShellHeaderColor">Black</Color>
+    <Color x:Key="CODE.Framework-Application-StandardIconColor">Black</Color>
+
+    <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Orange</Color>
+
+
+    <!-- Standard theme brushes -->
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush2" Color="{DynamicResource CODE.Framework-Application-BackgroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush3" Color="{DynamicResource CODE.Framework-Application-BackgroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush1" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush2" Color="{DynamicResource CODE.Framework-Application-ThemeColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush3" Color="{DynamicResource CODE.Framework-Application-ThemeColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush1" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush2" Color="{DynamicResource CODE.Framework-Application-ForegroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush3" Color="{DynamicResource CODE.Framework-Application-ForegroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush1" Color="{DynamicResource CODE.Framework-Application-HighlightColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush2" Color="{DynamicResource CODE.Framework-Application-HighlightColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush3" Color="{DynamicResource CODE.Framework-Application-HighlightColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ShellHeaderBrush" Color="{DynamicResource CODE.Framework-Application-ShellHeaderColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardIconBrush" Color="{DynamicResource CODE.Framework-Application-StandardIconColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundColor}" />
+
+    <!-- Special colors only used in Metro -->
+    <!-- Tile selection -->
+    <Color x:Key="CODE.Framework-Metro-TileSelectionColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-TileSelectionCheckMarkColor">Orange</Color>
+
+    <!-- Application status bar -->
+    <Color x:Key="CODE.Framework-Metro-StatusReadyBackgroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusReadyForegroundColor">Black</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusProcessingBackgroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusProcessingForegroundColor">Black</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusWarningBackgroundColor">DarkOrange</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusWarningForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusErrorBackgroundColor">DarkRed</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusErrorForegroundColor">White</Color>
+
+    <!-- Notification toast colors -->
+    <Color x:Key="CODE.Framework-Metro-NotificationForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-NotificationBackgroundColor">DarkRed</Color>
+
+    <!-- Special brushes only used in Metro -->
+    <!-- Tile selection -->
+    <SolidColorBrush x:Key="CODE.Framework-Metro-TileSelectionBrush" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-TileSelectionCheckMarkBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+
+    <!-- Application status bar -->
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusReadyForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusReadyForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusReadyBackgroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusReadyBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusProcessingForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusProcessingForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusProcessingBackgroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusProcessingBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusWarningForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusWarningForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusWarningBackgroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusWarningBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusErrorForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusErrorForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-StatusErrorBackgroundBrush" Color="{DynamicResource CODE.Framework-Metro-StatusErrorBackgroundColor}" />
+    
+    <!-- Notification toast brushes -->
+    <SolidColorBrush x:Key="CODE.Framework-Metro-NotificationForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-NotificationForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Metro-NotificationBackgroundBrush" Color="{DynamicResource CODE.Framework-Metro-NotificationBackgroundColor}" />
+    
+    <!-- Icon colors -->
+    <Color x:Key="CODE.Framework-Metro-IconForegroundColor">Black</Color>
+
+    <!-- Icon brushes -->
+    <SolidColorBrush x:Key="CODE.Framework-Metro-IconForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-IconForegroundColor}" />
+</ResourceDictionary>

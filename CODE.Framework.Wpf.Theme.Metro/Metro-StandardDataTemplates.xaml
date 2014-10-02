@@ -1,0 +1,180 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm">
+
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Block">
+        <Mvvm:StandardViewPlaceholder StandardView="Block" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Image">
+        <Mvvm:StandardViewPlaceholder StandardView="Image" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeImage">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeImage" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeImageAndText01">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeImageAndText01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeImageAndText02">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeImageAndText02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeImageCollection">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeImageCollection" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-PeekImageAndText01">
+        <Mvvm:StandardViewPlaceholder StandardView="PeekImageAndText01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-PeekImageAndText02">
+        <Mvvm:StandardViewPlaceholder StandardView="PeekImageAndText02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-PeekImageAndText03">
+        <Mvvm:StandardViewPlaceholder StandardView="PeekImageAndText03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-PeekImageAndText04">
+        <Mvvm:StandardViewPlaceholder StandardView="PeekImageAndText04" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-PeekImageAndText05">
+        <Mvvm:StandardViewPlaceholder StandardView="PeekImageAndText05" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Text01">
+        <Mvvm:StandardViewPlaceholder StandardView="Text01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Text02">
+        <Mvvm:StandardViewPlaceholder StandardView="Text02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Text03">
+        <Mvvm:StandardViewPlaceholder StandardView="Text03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Text04">
+        <Mvvm:StandardViewPlaceholder StandardView="Text04" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Text05">
+        <Mvvm:StandardViewPlaceholder StandardView="Text05" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeBlockAndText01">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeBlockAndText01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeBlockAndText02">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeBlockAndText02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText01">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText02">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText03">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText04">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText04" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText05">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText05" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText06">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText06" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeSmallImageAndText07">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeSmallImageAndText07" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText01">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText02">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText03">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText04">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText04" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText05">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText05" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText06">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText06" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText07">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText07" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText08">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText08" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText09">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText09" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText10">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText10" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargeText11">
+        <Mvvm:StandardViewPlaceholder StandardView="LargeText11" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageCollection01">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageCollection01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageCollection02">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageCollection02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageCollection03">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageCollection03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageCollection04">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageCollection04" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageCollection05">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageCollection05" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageCollection06">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageCollection06" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageAndText01">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageAndText01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageAndText02">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageAndText02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageAndText03">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageAndText03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageAndText04">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageAndText04" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageAndText05">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageAndText05" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-LargePeekImageAndText06">
+        <Mvvm:StandardViewPlaceholder StandardView="LargePeekImageAndText06" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Data01">
+        <Mvvm:StandardViewPlaceholder StandardView="Data01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Data02">
+        <Mvvm:StandardViewPlaceholder StandardView="Data02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-Data03">
+        <Mvvm:StandardViewPlaceholder StandardView="Data03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataAndImage01">
+        <Mvvm:StandardViewPlaceholder StandardView="DataAndImage01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataAndImage02">
+        <Mvvm:StandardViewPlaceholder StandardView="DataAndImage02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataAndImage03">
+        <Mvvm:StandardViewPlaceholder StandardView="DataAndImage03" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataRowAndImage01">
+        <Mvvm:StandardViewPlaceholder StandardView="DataRowAndImage01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataSmall01">
+        <Mvvm:StandardViewPlaceholder StandardView="DataSmall01" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataSmall02">
+        <Mvvm:StandardViewPlaceholder StandardView="DataSmall02" />
+    </DataTemplate>
+    <DataTemplate x:Key="CODE.Framework-StandardTemplate-DataSmall03">
+        <Mvvm:StandardViewPlaceholder StandardView="DataSmall03" />
+    </DataTemplate>
+
+</ResourceDictionary>

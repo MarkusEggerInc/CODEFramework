@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:System="clr-namespace:System;assembly=mscorlib">
+
+    <System:String x:Key="ThemeStandardFeaturesType">CODE.Framework.Wpf.Theme.Workplace.Classes.WorkplaceStandardFeatures</System:String>
+    <System:String x:Key="ThemeStandardFeaturesAssembly">CODE.Framework.Wpf.Theme.Workplace</System:String>
+
+</ResourceDictionary>

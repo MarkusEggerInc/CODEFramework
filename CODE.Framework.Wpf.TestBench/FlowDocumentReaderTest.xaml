@@ -1,0 +1,34 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.FlowDocumentReaderTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" Title="FlowDocumentReaderTest" Height="300" Width="300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Background="Navy">
+        <FlowDocumentReader Margin="25" Style="{DynamicResource Metro-Control-FlowDocumentReader}">
+            <FlowDocumentReader.Document>
+                <FlowDocument>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph Foreground="Blue">
+                        <c:Ex.EventCommand>
+                            <c:EventCommand Command="{Binding TestAction}" Event="MouseDown" />
+                        </c:Ex.EventCommand>
+                        <Run Text="The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again." />
+                    </Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                    <Paragraph>The quick brown fox jumps over the lazy dog again and again. The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.The quick brown fox jumps over the lazy dog again and again.</Paragraph>
+                </FlowDocument>
+            </FlowDocumentReader.Document>
+        </FlowDocumentReader>
+    </Grid>
+</Window>

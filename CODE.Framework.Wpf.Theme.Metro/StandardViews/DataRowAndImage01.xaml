@@ -1,0 +1,41 @@
+﻿<Controls:GridEx x:Class="CODE.Framework.Wpf.Theme.Metro.StandardViews.DataRowAndImage01"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:Controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                 xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
+                 xmlns:Classes="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Classes"
+                 Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}"
+                 AdjustWidthToParentListItem="True"
+                 x:Name="root"
+                 Height="40" ColumnWidths="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*,Auto"
+                 ToolTip="{Binding ToolTipText}">
+    
+    <Controls:GridEx.Resources>
+        <BindingConverters:NullToVisibleConverter x:Key="NullToVisibleConverter" />
+        <SolidColorBrush x:Key="CODE.Framework-Metro-IconForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
+    </Controls:GridEx.Resources>
+
+    <Classes:ContextBindingDummy Source="{Binding ElementName=root}" Destination="{Binding}"/>
+
+    <Rectangle Margin="10,0,0,0" Height="28" Width="28" Fill="{Binding Logo1}" Visibility="{Binding Logo1, Converter={StaticResource NullToVisibleConverter}}" />
+    <Rectangle Margin="5,0,0,0" Height="28" Width="28" Fill="{Binding Logo2}" Visibility="{Binding Logo2, Converter={StaticResource NullToVisibleConverter}}" Grid.Column="1" />
+    <Rectangle Margin="5,0,0,0" Height="28" Width="28" Fill="{Binding Image1}" Visibility="{Binding Image1, Converter={StaticResource NullToVisibleConverter}}" Grid.Column="2" />
+    <Rectangle Margin="5,0,0,0" Height="28" Width="28" Fill="{Binding Image2}" Visibility="{Binding Image2, Converter={StaticResource NullToVisibleConverter}}" Grid.Column="3" />
+    <Rectangle Margin="5,0,0,0" Height="28" Width="28" Fill="{Binding Image3}" Visibility="{Binding Image3, Converter={StaticResource NullToVisibleConverter}}" Grid.Column="4" />
+    <Rectangle Margin="5,0,0,0" Height="28" Width="28" Fill="{Binding Image4}" Visibility="{Binding Image4, Converter={StaticResource NullToVisibleConverter}}" Grid.Column="5" />
+    <Rectangle Margin="5,0,0,0" Height="28" Width="28" Fill="{Binding Image5}" Visibility="{Binding Image5, Converter={StaticResource NullToVisibleConverter}}" Grid.Column="6" />
+
+    <TextBlock Text="{Binding Text1}" Grid.Column="7" Margin="10,0,0,0"
+               VerticalAlignment="Center" HorizontalAlignment="Left"
+               FontFamily="{DynamicResource DefaultFont}" 
+               FontSize="{DynamicResource FontSize-Large}" 
+               TextWrapping="NoWrap"
+               Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+    <TextBlock Text="{Binding Text2}" Grid.Column="8" Margin="5,0,20,0"
+               VerticalAlignment="Center" HorizontalAlignment="Right"
+               FontFamily="{DynamicResource DefaultFont}" 
+               FontSize="{DynamicResource FontSize-Normal}" 
+               TextWrapping="NoWrap"
+               Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+
+</Controls:GridEx>

@@ -1,0 +1,25 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.EventCommandTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" 
+        Title="EventCommandTest" Height="300" Width="300">
+    <Grid c:GridEx.RowHeights="*,*">
+        <Button Content="{Binding TestCaption}">
+            <c:Ex.EventCommand>
+                <c:EventCommand Command="{Binding TestCommand}" Event="MouseDoubleClick" />
+            </c:Ex.EventCommand>
+            <!--<c:Ex.EventCommands>
+                <c:EventCommandsCollection>
+                    <c:EventCommand Command="{Binding TestCommand2}" Event="MouseEnter" />
+                    <c:EventCommand Command="{Binding TestCommand3}" Event="MouseDoubleClick" />
+                </c:EventCommandsCollection>
+            </c:Ex.EventCommands>-->
+        </Button>
+        
+        <Rectangle Grid.Row="1" Fill="Red">
+            <c:Ex.EventCommand>
+                <c:EventCommand Command="{Binding TestCommand}" Event="MouseEnter" />
+            </c:Ex.EventCommand>
+        </Rectangle>
+    </Grid>
+</Window>

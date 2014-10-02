@@ -1,0 +1,41 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.ListBoxGrid"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" Title="ListBoxGrid" Height="300" Width="300">
+    <Window.Resources>
+        <SolidColorBrush Color="Navy" x:Key="TestColor" />
+    </Window.Resources>
+    <Grid>
+        <ListBox>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Controls:GridEx AdjustWidthToParentListItem="True" Margin="1" x:Name="grd"
+                                     BackgroundBrush="{DynamicResource TestColor}"
+                                     BackgroundBrushLightFactor="1.5"
+                                     UseItemIndex="true"
+                                     >
+                        <Label Margin="10">Hello World!</Label>
+                    </Controls:GridEx>
+                    <DataTemplate.Triggers>
+                        <Trigger Property="IsOddRow" Value="False" SourceName="grd">
+                            <Setter Property="BackgroundBrushLightFactor" Value="1.75" TargetName="grd" />
+                        </Trigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+            <Label />
+        </ListBox>
+    </Grid>
+</Window>

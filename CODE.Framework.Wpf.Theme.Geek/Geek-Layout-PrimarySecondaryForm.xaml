@@ -1,0 +1,91 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:layout="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf"
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Theme.Geek.Controls">
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-PrimarySecondaryFormLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <layout:GridPrimarySecondary Margin="0" UIElementSpacing="10" SecondaryUIElementAlignmentChangeSize="0" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush1}" />
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-ListPrimarySecondaryFormLayout">
+        <Style.Resources>
+            <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-SimpleFormLayout">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <layout:BidirectionalStackPanel ChildItemMargin="15,0,15,5" />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
+                <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}"/>
+                <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
+                <Setter Property="Padding" Value="0,0,0,1"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Label}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                <Grid>
+                                    <Rectangle Height="10" Width="10" Fill="{DynamicResource CODE.Framework-Icon-Next}" Margin="-13,0,0,0" HorizontalAlignment="Left" />
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <controls:GeekPrimarySecondary Margin="0" UIElementSpacing="2" SecondaryUIElementAlignmentChangeSize="0"
+                                                   SecondaryAreaBackgroundBrush="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"
+                                                   PrimaryAreaBackgroundBrush="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"
+                                                   SecondaryElementMargin="4,28,10,24"
+                                                   PrimaryElementMargin="2"
+                                                   SecondaryTitleFont="{DynamicResource DefaultFont}"
+                                                   SecondaryTitleFontSize="{DynamicResource FontSize-Smaller}"
+                                                   SecondaryAreaHeaderBackgroundBrush="{DynamicResource CODE.Framework-Application-ThemeBrush3}"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush3}" />
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-PrimarySecondaryFormLayout-NoColor">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <layout:GridPrimarySecondary Margin="10" UIElementSpacing="10" SecondaryUIElementAlignmentChangeSize="0" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="{x:Null}" />
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-ListPrimarySecondaryFormLayout-NoColor">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <layout:GridPrimarySecondary Margin="10" UIElementSpacing="10" SecondaryUIElementAlignmentChangeSize="0" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="{x:Null}" />
+    </Style>
+
+</ResourceDictionary>

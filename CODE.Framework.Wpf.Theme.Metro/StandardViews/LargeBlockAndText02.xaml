@@ -1,0 +1,44 @@
+﻿<Grid x:Class="CODE.Framework.Wpf.Theme.Metro.StandardViews.LargeBlockAndText02"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:Components="clr-namespace:CODE.Framework.Wpf.Theme.Metro.StandardViews.Components"
+      Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}"
+      Height="150" Width="310"
+      ToolTip="{Binding ToolTipText}">
+
+    <!-- Main Content -->
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="15" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel VerticalAlignment="Top" MaxHeight="95" Margin="15">
+            <TextBlock Text="{Binding Text3}" 
+                       FontFamily="{DynamicResource DefaultFont}" 
+                       FontSize="{DynamicResource FontSize-Normal}" 
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        </StackPanel>
+
+        <StackPanel VerticalAlignment="Top" MaxHeight="95" Grid.Column="2">
+            <TextBlock Text="{Binding Text1}" 
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-VeryLarge}" 
+                   FontWeight="Light"
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+            <TextBlock Text="{Binding Text2}" 
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Normal}" 
+                   FontWeight="Bold"
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        </StackPanel>
+    </Grid>
+
+    <!-- Standard Components -->
+    <Components:LogoNameAndCount />
+
+</Grid>

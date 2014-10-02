@@ -1,0 +1,17 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.ProgressAnimations"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Controls;assembly=CODE.Framework.Wpf.Theme.Metro"
+        Title="ProgressAnimations" Height="291" Width="467">
+    <Grid>
+        <Controls:ProgressRing IsActive="True" Height="48" Width="48" Margin="12,12,218,202" HorizontalAlignment="Left" VerticalAlignment="Top"></Controls:ProgressRing>
+        <Controls:ProgressRing IsActive="True" DotCount="6" DotDiameter="8" DotBrush="Blue" Height="48" Margin="87,12,143,201" Width="48" DotSpaceFactor="1.5" HorizontalAlignment="Left" VerticalAlignment="Top"></Controls:ProgressRing>
+        <Controls:ProgressRing IsActive="True" DotCount="6" Height="48" Margin="13,76,217,137" Width="48" HorizontalAlignment="Left" VerticalAlignment="Top"></Controls:ProgressRing>
+        <Controls:ProgressRing IsActive="True" DotCount="5"  Margin="87,76,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="48" Width="48" />
+        <Controls:ProgressRing IsActive="True" DotBrush="Green" DotCount="12" DotDiameter="10" DotSpaceFactor="0.8" Margin="152,12,0,0" DotAnimationSpeedFactor="1.25" HorizontalAlignment="Left" VerticalAlignment="Top" Height="112" Width="101" />
+
+        <Controls:LinearProgressAnimation VerticalAlignment="Bottom" Margin="0,0,0,10" IsActive="True" />
+        <Controls:LinearProgressAnimation VerticalAlignment="Bottom" Margin="0,0,0,30" IsActive="True" DotBrush="Teal" DotDiameter="12" />
+        <Controls:LinearProgressAnimation VerticalAlignment="Bottom" Margin="0,0,0,50" IsActive="True" DotBrush="Green" DotDiameter="10" DotCount="7" />
+    </Grid>
+</Window>

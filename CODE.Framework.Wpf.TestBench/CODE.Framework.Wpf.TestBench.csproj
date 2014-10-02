@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EA11FA36-C1D6-417F-8CFF-B248944539FA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CODE.Framework.Wpf.TestBench</RootNamespace>
+    <AssemblyName>CODE.Framework.Wpf.TestBench</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="AsyncTest.xaml.cs">
+      <DependentUpon>AsyncTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AutoCompleteTest.xaml.cs">
+      <DependentUpon>AutoCompleteTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BiStackTest.xaml.cs">
+      <DependentUpon>BiStackTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CanExecuteChangedTest.xaml.cs">
+      <DependentUpon>CanExecuteChangedTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ColumnListBox.xaml.cs">
+      <DependentUpon>ColumnListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomBehaviorWindow.xaml.cs">
+      <DependentUpon>CustomBehaviorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DockContainerTest.xaml.cs">
+      <DependentUpon>DockContainerTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EditFormTest.xaml.cs">
+      <DependentUpon>EditFormTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FlowDocumentReaderTest.xaml.cs">
+      <DependentUpon>FlowDocumentReaderTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FlowFormTest.xaml.cs">
+      <DependentUpon>FlowFormTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ListBoxGrid.xaml.cs">
+      <DependentUpon>ListBoxGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ListDependencyProperties.xaml.cs">
+      <DependentUpon>ListDependencyProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MetroControls.xaml.cs">
+      <DependentUpon>MetroControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MetroListBoxes.xaml.cs">
+      <DependentUpon>MetroListBoxes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressAnimations.xaml.cs">
+      <DependentUpon>ProgressAnimations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScaleSliderTest.xaml.cs">
+      <DependentUpon>ScaleSliderTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SizeAwareContentTest.xaml.cs">
+      <DependentUpon>SizeAwareContentTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SizeCalcEx.xaml.cs">
+      <DependentUpon>SizeCalcEx.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardIcons.xaml.cs">
+      <DependentUpon>StandardIcons.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TextBoxTest.xaml.cs">
+      <DependentUpon>TextBoxTest.xaml</DependentUpon>
+    </Compile>
+    <Page Include="AsyncTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutoCompleteTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BiStackTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CanExecuteChangedTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ColumnListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomBehaviorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Disclaimer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DockContainerTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditFormTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EventCommandTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FlowDocumentReaderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FlowFormTest.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FolderIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListBoxGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListDependencyProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Disclaimer.xaml.cs">
+      <DependentUpon>Disclaimer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EventCommandTest.xaml.cs">
+      <DependentUpon>EventCommandTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="MetroControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MetroListBoxes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProgressAnimations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScaleSliderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SizeAwareContentTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SizeCalcEx.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardIcons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TextBoxTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CODE.Framework.Core.Utilities\CODE.Framework.Core.Utilities.csproj">
+      <Project>{049507B3-C1DE-4F0A-A4C8-72ADD78FDCE9}</Project>
+      <Name>CODE.Framework.Core.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Core\CODE.Framework.Core.csproj">
+      <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
+      <Name>CODE.Framework.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Mvvm\CODE.Framework.Wpf.Mvvm.csproj">
+      <Project>{F0FBB452-A6BF-4DFB-8EAB-6DBD9BBDBEF0}</Project>
+      <Name>CODE.Framework.Wpf.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Battleship\CODE.Framework.Wpf.Theme.Battleship.csproj">
+      <Project>{F59CD359-CF85-42AC-A05E-4419C185098C}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Battleship</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Geek\CODE.Framework.Wpf.Theme.Geek.csproj">
+      <Project>{0f965cea-37f5-4e07-9639-c0415a8a8a3c}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Geek</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Metro\CODE.Framework.Wpf.Theme.Metro.csproj">
+      <Project>{52044FE1-233E-45DF-9548-468F79110AA0}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Metro</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Vapor\CODE.Framework.Wpf.Theme.Vapor.csproj">
+      <Project>{dbd7b756-0aeb-4e71-8b9a-3536c70f3bca}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Vapor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Workplace\CODE.Framework.Wpf.Theme.Workplace.csproj">
+      <Project>{9f54b124-c4cd-4d34-8308-e62a87785b69}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Workplace</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf\CODE.Framework.Wpf.csproj">
+      <Project>{21D3883D-ED9F-46DD-AA51-14B5309D6533}</Project>
+      <Name>CODE.Framework.Wpf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F0FBB452-A6BF-4DFB-8EAB-6DBD9BBDBEF0}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CODE.Framework.Wpf.Mvvm</RootNamespace>
+    <AssemblyName>CODE.Framework.Wpf.Mvvm</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CODE.Framework.Wpf.Mvvm.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CODE.Framework.Wpf.Mvvm.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\_SharedFiles\Properties\AssemblyInfoShared.cs">
+      <Link>Properties\AssemblyInfoShared.cs</Link>
+    </Compile>
+    <Compile Include="ActionGrid.cs" />
+    <Compile Include="Actions.cs" />
+    <Compile Include="ApplicationEx.cs" />
+    <Compile Include="AsyncLoader.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="IHaveViewInformation.cs" />
+    <Compile Include="IModelStatus.cs" />
+    <Compile Include="IThemeStandardFeatures.cs" />
+    <Compile Include="IViewInformation.cs" />
+    <Compile Include="ModelStatusGrid.cs" />
+    <Compile Include="ObservableCollectionHelper.cs" />
+    <Compile Include="PartialView.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Shell.cs" />
+    <Compile Include="ShellLauncher.cs" />
+    <Compile Include="StandardActions.cs" />
+    <Compile Include="StandardViewModel.cs" />
+    <Compile Include="StandardViewPlaceholder.cs" />
+    <Compile Include="Tools\ViewVisualizer.xaml.cs">
+      <DependentUpon>ViewVisualizer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View.cs" />
+    <Compile Include="ViewActionAndOpenViewSelector.cs" />
+    <Compile Include="ViewActionHelper.cs" />
+    <Compile Include="ViewActionMenu.cs" />
+    <Compile Include="ViewActionRibbon.cs" />
+    <Compile Include="ViewActionStackPanel.cs" />
+    <Compile Include="ViewActionTabPanel.cs" />
+    <Compile Include="ViewActionToolbar.cs" />
+    <Compile Include="ViewContentControl.cs" />
+    <Compile Include="ViewEngine.cs" />
+    <Compile Include="ViewHostTabControl.cs" />
+    <Compile Include="ViewModel.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Tools\ViewVisualizer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CODE.Framework.Core\CODE.Framework.Core.csproj">
+      <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
+      <Name>CODE.Framework.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf\CODE.Framework.Wpf.csproj">
+      <Project>{21D3883D-ED9F-46DD-AA51-14B5309D6533}</Project>
+      <Name>CODE.Framework.Wpf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

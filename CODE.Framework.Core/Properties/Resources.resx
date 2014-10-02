@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Collections" xml:space="preserve">
+    <value> Collections</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers). Note the leading space.</comment>
+  </data>
+  <data name="ConfigurationSourceCollectionInvalid" xml:space="preserve">
+    <value>The ConfigurationSourceSettings collection can only be instantiated when a valid instance of a ConfigurationSource is passed to it.</value>
+    <comment>Used in an assert. May not need to be translated.</comment>
+  </data>
+  <data name="ConfigurationSourceCollectionInvalidDetails" xml:space="preserve">
+    <value>The configuration source collection is a member of the configuration source object. However, it appears to be called stand-alone, which is not possible. Do not instantiate this class directly.</value>
+    <comment>Used in an assert detail. May not need to be translated.</comment>
+  </data>
+  <data name="DefinedOn" xml:space="preserve">
+    <value> [defined on </value>
+    <comment>Used by runtime helper debug UI (mostly used by developers). Note the leading and trailing space.</comment>
+  </data>
+  <data name="Empty" xml:space="preserve">
+    <value> [empty]</value>
+    <comment>Used in runtime debug helper UI. (mostly used by developers). Note the leading space.</comment>
+  </data>
+  <data name="Entity" xml:space="preserve">
+    <value>Entity</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers).</comment>
+  </data>
+  <data name="EntityHasBrokenRules" xml:space="preserve">
+    <value>Entity has broken rules!</value>
+    <comment>Used in runtime debug helper UI. (mostly used by developers).</comment>
+  </data>
+  <data name="EnumerationValueInvalid" xml:space="preserve">
+    <value>Enumeration value is invalid.</value>
+    <comment>Used in an exception. Probably does not need to be translated.</comment>
+  </data>
+  <data name="EnumSourceChanged" xml:space="preserve">
+    <value>Collection has changed during enumeration.</value>
+    <comment>Used in an exception.</comment>
+  </data>
+  <data name="ExceptionAttributes" xml:space="preserve">
+    <value>Exception Attributes:</value>
+    <comment>Used in error details</comment>
+  </data>
+  <data name="ExceptionDetail" xml:space="preserve">
+    <value>Detail</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="ExceptionInformation" xml:space="preserve">
+    <value>Information</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="Exceptions" xml:space="preserve">
+    <value>Exceptions</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers).</comment>
+  </data>
+  <data name="ExceptionSeparator" xml:space="preserve">
+    <value> - Exception: </value>
+    <comment>Used as part of an exception message. Note the leading and trailing spaces.</comment>
+  </data>
+  <data name="ExceptionStack" xml:space="preserve">
+    <value>Exception Stack:</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="ExceptionType" xml:space="preserve">
+    <value>Exception type:</value>
+    <comment>Used by the asserts window (mostly used by developers).</comment>
+  </data>
+  <data name="Fields" xml:space="preserve">
+    <value>Fields</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers).</comment>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>The specified file already exists.</value>
+    <comment>Used by an exception.</comment>
+  </data>
+  <data name="IndexNotInSources" xml:space="preserve">
+    <value>Index cannot be found in the sources collection.</value>
+    <comment>Used in an exception. Probably does not need to be translated.</comment>
+  </data>
+  <data name="IndexOutOfBounds" xml:space="preserve">
+    <value>Index out of bounds.</value>
+    <comment>Used in an exception. Probably does not need to be translated.</comment>
+  </data>
+  <data name="IsDirty" xml:space="preserve">
+    <value>Is Dirty: </value>
+    <comment>Used by runtime helper debug UI (mostly used by developers). Should probably not be translated. Note the trailing space.</comment>
+  </data>
+  <data name="IsDirtyFalse" xml:space="preserve">
+    <value>Is Dirty: false</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers).</comment>
+  </data>
+  <data name="LineNumber" xml:space="preserve">
+    <value>Line #</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="LoadImageHint" xml:space="preserve">
+    <value>Hint: Right-click on this to load a new image</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers)</comment>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message:</value>
+    <comment>Used by the asserts window (mostly used by developers).</comment>
+  </data>
+  <data name="MetaInformation" xml:space="preserve">
+    <value>Meta Information</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers).</comment>
+  </data>
+  <data name="Method" xml:space="preserve">
+    <value>Method</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="NoBrokenRules" xml:space="preserve">
+    <value>No broken rules</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers).</comment>
+  </data>
+  <data name="NoImage" xml:space="preserve">
+    <value>No image</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers)</comment>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>n.a.</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="ParameterCanNotBeNull" xml:space="preserve">
+    <value>Parameter cannot be null.</value>
+    <comment>Used in an exception.</comment>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value> Properties</value>
+    <comment>Used by runtime helper debug UI (mostly used by developers). Note the leading space.</comment>
+  </data>
+  <data name="Setting" xml:space="preserve">
+    <value>Setting </value>
+    <comment>The "setting " part of "Setting x not supported". Note the trailing space.</comment>
+  </data>
+  <data name="SettingNotSupported" xml:space="preserve">
+    <value> not supported.</value>
+    <comment>The "not supported" part of "Setting x not supported". Note the leading space.</comment>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Source:</value>
+    <comment>Used by the asserts window (mostly used by developers).</comment>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Source File</value>
+    <comment>Used in the error details dialog (Web).</comment>
+  </data>
+  <data name="StackTrace" xml:space="preserve">
+    <value>Stack Trace:</value>
+    <comment>Used in error details</comment>
+  </data>
+  <data name="ThrownByClass" xml:space="preserve">
+    <value>Thrown by code in class:</value>
+    <comment>Used by the asserts window (mostly used by developers).</comment>
+  </data>
+  <data name="ThrownByMethod" xml:space="preserve">
+    <value>Thrown by code in method:</value>
+    <comment>Used by the asserts window (mostly used by developers).</comment>
+  </data>
+  <data name="UnableToLoadImage" xml:space="preserve">
+    <value>Unable to load image: </value>
+    <comment>Used by runtime helper debug UI (mostly used by developers). Note the trailing space.</comment>
+  </data>
+</root>

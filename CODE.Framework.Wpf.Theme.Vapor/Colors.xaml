@@ -1,0 +1,67 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="CODE.Framework-Application-BackgroundColor1">#262423</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor2">#383635</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor3">#131313</Color>
+
+    <Color x:Key="CODE.Framework-Application-ThemeColor1">#FEFEFE</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor2">#8DC940</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor3">#4C6C8A</Color>
+
+    <Color x:Key="CODE.Framework-Application-ForegroundColor1">#F0F0F0</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor2">#D0CECC</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor3">#529BDD</Color>
+
+    <Color x:Key="CODE.Framework-Application-HighlightColor1">#314159</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor2">CornflowerBlue</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor3">Red</Color>
+
+    <Color x:Key="CODE.Framework-Application-MenuSelectionColor">#314159</Color>
+    <Color x:Key="CODE.Framework-Application-MenuBorderColor">#4D4B48</Color>
+    <Color x:Key="CODE.Framework-Application-MenuBackgroundColor">#3D3B3A</Color>
+
+    <Color x:Key="CODE.Framework-Application-ToolbarBackgroundColor">#222222</Color>
+    <Color x:Key="CODE.Framework-Application-ViewBackgroundColor">#222222</Color>
+    <Color x:Key="CODE.Framework-Application-ViewBorderColor">#4D4B48</Color>
+    <Color x:Key="CODE.Framework-Application-ControlBorderColor">#807C78</Color>
+    <Color x:Key="CODE.Framework-Application-HeaderBackgroundColor">#4D4B48</Color>
+    <Color x:Key="CODE.Framework-Application-SelectedNormalViewHeaderColor">White</Color>
+    <Color x:Key="CODE.Framework-Application-UnselectedNormalViewHeaderColor">#B5B4B2</Color>
+
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush2" Color="{DynamicResource CODE.Framework-Application-BackgroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush3" Color="{DynamicResource CODE.Framework-Application-BackgroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush1" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush2" Color="{DynamicResource CODE.Framework-Application-ThemeColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush3" Color="{DynamicResource CODE.Framework-Application-ThemeColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush1" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush2" Color="{DynamicResource CODE.Framework-Application-ForegroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush3" Color="{DynamicResource CODE.Framework-Application-ForegroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush1" Color="{DynamicResource CODE.Framework-Application-HighlightColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush2" Color="{DynamicResource CODE.Framework-Application-HighlightColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush3" Color="{DynamicResource CODE.Framework-Application-HighlightColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-MenuSelectionBrush" Color="{DynamicResource CODE.Framework-Application-MenuSelectionColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-MenuBorderBrush" Color="{DynamicResource CODE.Framework-Application-MenuBorderColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-MenuBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-MenuBackgroundColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ToolbarBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-ToolbarBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ViewBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-ViewBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ViewBorderBrush" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ControlBorderBrush" Color="{DynamicResource CODE.Framework-Application-ControlBorderColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HeaderBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-HeaderBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-SelectedNormalViewHeaderBrush" Color="{DynamicResource CODE.Framework-Application-SelectedNormalViewHeaderColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-UnselectedNormalViewHeaderBrush" Color="{DynamicResource CODE.Framework-Application-UnselectedNormalViewHeaderColor}" />
+
+    <!-- Application status bar -->
+    <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusReadyForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusProcessingForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusWarningForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor3}" />
+    <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusErrorForegroundBrush" Color="#B7442C" />
+
+</ResourceDictionary>

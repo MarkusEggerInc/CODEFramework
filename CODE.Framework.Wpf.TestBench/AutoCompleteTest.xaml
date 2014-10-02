@@ -1,0 +1,92 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.AutoCompleteTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:my="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="AutoCompleteTest" Height="550" Width="675" >
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="FolderIcon.xaml"/>
+                <ResourceDictionary Source="FileIcon.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <TabControl>
+        <TabItem Header="Auto Complete Test">
+            <StackPanel>
+                <TextBox Height="23" Margin="25,0" Name="textBox1" VerticalAlignment="Top" />
+
+                <TextBox Margin="25,2" Name="textBox2" Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"
+                         my:AutoComplete.AutoCompleteItemsSource="{Binding CustomersAutoComplete}" 
+                         my:AutoComplete.AutoCompleteDisplayMemberPath="FullName"
+                         my:AutoComplete.AutoCompleteSelectedItem="{Binding SelectedAutoCompleteCustomer, Mode=TwoWay}" />
+
+                <TextBox Margin="25,2"
+                         Text="{Binding File, UpdateSourceTrigger=PropertyChanged}"
+                         my:AutoComplete.AutoCompleteItemsSource="{Binding FilesAutoComplete}" 
+                         my:AutoComplete.AutoCompleteSelectedItem="{Binding SelectedAutoCompleteFile, Mode=TwoWay}" 
+                         Height="22" VerticalAlignment="Bottom">
+                    <my:AutoComplete.AutoCompleteItemTemplate>
+                        <DataTemplate>
+                            <Grid my:GridEx.ColumnWidths="Auto,Auto,Auto">
+                                <Rectangle Height="24" Width="24" Margin="1" Fill="{DynamicResource FolderIcon}" Visibility="{Binding FolderVisible, Mode=OneWay}" />
+                                <Rectangle Height="24" Width="24" Margin="1" Fill="{DynamicResource FileIcon}" Visibility="{Binding FileVisible, Mode=OneWay}" />
+                                <Rectangle Height="24" Width="24" Margin="1" Fill="{Binding PreviewImage}" Visibility="{Binding PreviewVisible, Mode=OneWay}" />
+                                <TextBlock Text="{Binding FileName}" FontSize="14" FontFamily="Adobe Gothic Std B" Grid.Column="1" Margin="3,0,0,0" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding Date}" FontSize="11" Margin="10,0,10,5" VerticalAlignment="Bottom" Grid.Column="2" Foreground="Gray" />
+                            </Grid>
+                        </DataTemplate>
+                    </my:AutoComplete.AutoCompleteItemTemplate>
+                    <my:AutoComplete.AutoCompleteStyle>
+                        <Style TargetType="my:AutoComplete">
+                            <Setter Property="MaxHeight" Value="350" />
+                        </Style>
+                    </my:AutoComplete.AutoCompleteStyle>
+                </TextBox>
+
+                <TextBox Margin="25,2"
+                         Text="{Binding File, UpdateSourceTrigger=PropertyChanged}"
+                         my:AutoComplete.AutoCompleteItemsSource="{Binding FilesAutoComplete}" 
+                         my:AutoComplete.AutoCompleteSelectedItem="{Binding SelectedAutoCompleteFile, Mode=TwoWay}" 
+                         Height="22" VerticalAlignment="Bottom">
+                    <my:AutoComplete.AutoCompleteItemTemplate>
+                        <DataTemplate>
+                            <Grid my:GridEx.RowHeights="Auto,Auto,Auto">
+                                <Rectangle Height="64" Width="64" Margin="1" Fill="{DynamicResource FolderIcon}" Visibility="{Binding FolderVisible, Mode=OneWay}" />
+                                <Rectangle Height="64" Width="64" Margin="1" Fill="{DynamicResource FileIcon}" Visibility="{Binding FileVisible, Mode=OneWay}" />
+                                <Rectangle Height="64" HorizontalAlignment="Stretch" Margin="1" Fill="{Binding PreviewImage}" Visibility="{Binding PreviewVisible, Mode=OneWay}" />
+                                <TextBlock Text="{Binding FileName}" FontSize="11" FontFamily="Adobe Gothic Std B" Grid.Row="1" Margin="2" HorizontalAlignment="Center" />
+                                <TextBlock Text="{Binding Date}" FontSize="11" Margin="2,2,2,8" Grid.Row="2" Foreground="Gray" HorizontalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </my:AutoComplete.AutoCompleteItemTemplate>
+                    <my:AutoComplete.AutoCompleteStyle>
+                        <Style TargetType="my:AutoComplete">
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Red" Opacity=".33" />
+                            </Style.Resources>
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Opacity=".5" BlurRadius="10" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="MaxHeight" Value="350" />
+                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                            <Setter Property="ItemsPanel">
+                                <Setter.Value>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                                    </ItemsPanelTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </my:AutoComplete.AutoCompleteStyle>
+                </TextBox>
+                <Rectangle Margin="25,0,25,12" Height="352" VerticalAlignment="Bottom" Fill="{Binding SelectedAutoCompleteFile.PreviewImage}" />
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Page 2">
+
+        </TabItem>
+    </TabControl>
+</Window>

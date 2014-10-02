@@ -1,0 +1,32 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.MetroListBoxes"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MetroListBoxes" Height="300" Width="300" Background="Black">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate x:Key="ExampleTemplate">
+                <Grid Height="100" Width="300" Background="Navy" Margin="4">
+                    <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Light" Margin="10" Foreground="White" />
+                </Grid>
+            </DataTemplate>
+            <SolidColorBrush x:Key="CODE.Framework-Metro-TileSelectionColor" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+            <SolidColorBrush x:Key="CODE.Framework-Metro-TileSelectionCheckMarkColor" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <ListBox Style="{DynamicResource Metro-Control-ListBox}" ItemTemplate="{DynamicResource ExampleTemplate}" x:Name="list1" Margin="5" />
+        <ListBox Style="{DynamicResource Metro-Control-ListBox-WithSelection}" ItemTemplate="{DynamicResource ExampleTemplate}" x:Name="list2" Margin="5" Grid.Column="1" />
+        <ListBox Style="{DynamicResource Metro-Control-ListBox-Tiles}" ItemTemplate="{DynamicResource ExampleTemplate}" x:Name="list3" Margin="5" Grid.Column="2"/>
+    </Grid>
+</Window>

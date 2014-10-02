@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="CODE.Framework-Application-BackgroundColor1">#EFEFEF</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor2">White</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor3">Black</Color>
+
+    <Color x:Key="CODE.Framework-Application-ThemeColor1">Silver</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor2">DarkGray</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor3">White</Color>
+
+    <Color x:Key="CODE.Framework-Application-ForegroundColor1">Black</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor2">DarkGray</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor3">Navy</Color>
+
+    <Color x:Key="CODE.Framework-Application-HighlightColor1">Blue</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor2">CornflowerBlue</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor3">Red</Color>
+
+    <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">Black</Color>
+    <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Transparent</Color>
+
+
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush2" Color="{DynamicResource CODE.Framework-Application-BackgroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush3" Color="{DynamicResource CODE.Framework-Application-BackgroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush1" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush2" Color="{DynamicResource CODE.Framework-Application-ThemeColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush3" Color="{DynamicResource CODE.Framework-Application-ThemeColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush1" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush2" Color="{DynamicResource CODE.Framework-Application-ForegroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush3" Color="{DynamicResource CODE.Framework-Application-ForegroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush1" Color="{DynamicResource CODE.Framework-Application-HighlightColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush2" Color="{DynamicResource CODE.Framework-Application-HighlightColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush3" Color="{DynamicResource CODE.Framework-Application-HighlightColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ToolbarButtonHighlightBrush1" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ToolbarButtonHighlightBrush2" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity=".5" />
+</ResourceDictionary>

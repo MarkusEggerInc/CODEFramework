@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DrawingBrush x:Key="Metro-Icon-Arrow" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Geometry="F1 M 15.6094,1.5C 23.4018,1.5 29.7188,7.81698 29.7188,15.6094C 29.7188,23.4018 23.4018,29.7187 15.6094,29.7187C 7.81698,29.7187 1.5,23.4018 1.5,15.6094C 1.5,7.81698 7.81698,1.5 15.6094,1.5 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="3" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Application-StandardIconBrush}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Application-StandardIconBrush}" Geometry="F1 M 26.5365,17.0648L 9.98902,17.0648L 18.0007,23.6538L 14.037,23.6874L 3.63866,15.4975L 14.2483,7.73199L 18.0007,7.70531L 9.98902,14.0697L 26.5365,14.0697L 26.5365,17.0648 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+</ResourceDictionary>

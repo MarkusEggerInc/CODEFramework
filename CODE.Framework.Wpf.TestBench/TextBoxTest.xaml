@@ -1,0 +1,9 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.TextBoxTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="TextBoxTest" Height="300" Width="300">
+    <StackPanel>
+        <TextBox Margin="10" controls:TextBoxEx.InputMaskRegEx="^\p{L}*$" />
+    </StackPanel>
+</Window>

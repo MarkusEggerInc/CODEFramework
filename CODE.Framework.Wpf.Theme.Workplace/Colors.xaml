@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="CODE.Framework-Application-BackgroundColor1">White</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor2">#F4F4F4</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor3">Black</Color>
+
+    <Color x:Key="CODE.Framework-Application-ThemeColor1">#2B5799</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor2">Black</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor3">White</Color>
+
+    <Color x:Key="CODE.Framework-Application-ForegroundColor1">#262626</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor2">White</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor3">#F4F4F4</Color>
+
+    <Color x:Key="CODE.Framework-Application-HighlightColor1">#D4E0F1</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor2">#E5F1F9</Color>
+    <Color x:Key="CODE.Framework-Application-HighlightColor3">#B0D5EF</Color>
+
+    <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">#262626</Color>
+    <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Transparent</Color>
+
+    <!-- Ribbon Colors -->
+    <Color x:Key="CODE.Framework-Application-RibbonSpecialColor1">#C8599B</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonSpecialColor2">#FBEFF6</Color>
+
+    <!-- Application status bar -->
+    <Color x:Key="CODE.Framework-Workplace-StatusReadyBackgroundColor">#2B5799</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusReadyForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusProcessingBackgroundColor">#217346</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusProcessingForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusWarningBackgroundColor">#D14726</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusWarningForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusErrorBackgroundColor">DarkRed</Color>
+    <Color x:Key="CODE.Framework-Workplace-StatusErrorForegroundColor">White</Color>
+
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush2" Color="{DynamicResource CODE.Framework-Application-BackgroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush3" Color="{DynamicResource CODE.Framework-Application-BackgroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush1" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush2" Color="{DynamicResource CODE.Framework-Application-ThemeColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ThemeBrush3" Color="{DynamicResource CODE.Framework-Application-ThemeColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush1" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush2" Color="{DynamicResource CODE.Framework-Application-ForegroundColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-ForegroundBrush3" Color="{DynamicResource CODE.Framework-Application-ForegroundColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush1" Color="{DynamicResource CODE.Framework-Application-HighlightColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush2" Color="{DynamicResource CODE.Framework-Application-HighlightColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-HighlightBrush3" Color="{DynamicResource CODE.Framework-Application-HighlightColor3}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundColor}" />
+
+    <!-- Application status bar -->
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusReadyForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusReadyForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusReadyBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusReadyBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusProcessingForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusProcessingForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusProcessingBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusProcessingBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusWarningForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusWarningForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusWarningBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusWarningBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusErrorForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusErrorForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusErrorBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusErrorBackgroundColor}" />
+
+    <!-- Ribbon Colors -->
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonSpecialBrush1" Color="{DynamicResource CODE.Framework-Application-RibbonSpecialColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonSpecialBrush2" Color="{DynamicResource CODE.Framework-Application-RibbonSpecialColor2}" />
+
+</ResourceDictionary>

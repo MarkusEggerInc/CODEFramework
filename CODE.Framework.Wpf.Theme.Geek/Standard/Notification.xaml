@@ -1,0 +1,22 @@
+﻿<controls:ListBoxSmartDataTemplate x:Class="CODE.Framework.Wpf.Theme.Geek.Standard.Notification"
+                                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                   xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                                   ToolTip="{Binding ToolTipText}" DefaultColumns="Text1, Text2">
+
+    <!-- Main Content -->
+    <!--<StackPanel VerticalAlignment="Top" Orientation="Horizontal" Margin="0">
+        <TextBlock Text="{Binding Text1}" 
+                   FontFamily="{DynamicResource DefaultFont}"
+                   FontWeight="Bold"
+                   FontSize="{DynamicResource FontSize-Smaller}" 
+                   TextWrapping="NoWrap" Margin="0" TextTrimming="CharacterEllipsis" Width="150"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        <TextBlock Text="{Binding Text2}" 
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Smaller}" 
+                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Margin="5,0,0,0"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+    </StackPanel>-->
+
+</controls:ListBoxSmartDataTemplate>

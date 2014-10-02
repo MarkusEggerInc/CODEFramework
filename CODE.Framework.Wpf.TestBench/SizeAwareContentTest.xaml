@@ -1,0 +1,11 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.SizeAwareContentTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Controls;assembly=CODE.Framework.Wpf.Theme.Metro"
+        Title="SizeAwareContentTest" Height="300" Width="300">
+    <Grid Background="CornflowerBlue">
+        <Controls:SizeAwareContentControl MinimumMargin="20" MaximumMargin="100" MinimumDesiredControlSize="1000,600">
+            <Rectangle Fill="Red" />
+        </Controls:SizeAwareContentControl>
+    </Grid>
+</Window>

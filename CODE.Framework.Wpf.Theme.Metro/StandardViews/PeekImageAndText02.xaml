@@ -1,0 +1,38 @@
+﻿<Grid x:Class="CODE.Framework.Wpf.Theme.Metro.StandardViews.PeekImageAndText02"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:Components="clr-namespace:CODE.Framework.Wpf.Theme.Metro.StandardViews.Components"
+      xmlns:Controls="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Controls"
+      Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}"
+      Height="150" Width="150"
+      ToolTip="{Binding ToolTipText}">
+
+    <!-- Main Content -->
+    <Controls:PeekAnimationContainer>
+        <Controls:PeekAnimationContainer.ContentTop>
+            <Rectangle Fill="{Binding Image1}" Height="150" Width="150" />
+        </Controls:PeekAnimationContainer.ContentTop>
+
+        <Controls:PeekAnimationContainer.ContentBottom>
+            <Grid Height="150" Width="150">
+                <StackPanel VerticalAlignment="Top" MaxHeight="95" Margin="15,10">
+                    <TextBlock Text="{Binding Text1}" 
+                               FontFamily="{DynamicResource DefaultFont}" 
+                               FontSize="{DynamicResource FontSize-Largest}" 
+                               FontWeight="Light"
+                               TextWrapping="NoWrap"
+                               Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+                    <TextBlock Text="{Binding Text2}" 
+                               FontFamily="{DynamicResource DefaultFont}" 
+                               FontSize="{DynamicResource FontSize-Normal}" 
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,45"
+                               Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+                </StackPanel>
+
+                <!-- Standard Components -->
+                <Components:LogoNameAndCount />
+            </Grid>
+        </Controls:PeekAnimationContainer.ContentBottom>
+    </Controls:PeekAnimationContainer>
+</Grid>

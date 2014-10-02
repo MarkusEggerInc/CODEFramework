@@ -1,0 +1,36 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.StandardIcons"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="StandardIcons" Height="300" Width="300">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Icon-Standard.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Battleship;component/Battleship-Icon-Standard.xaml"/>-->
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Geek;component/Geek-Icon-Standard.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <SolidColorBrush x:Key="CODE.Framework-Metro-IconForegroundBrush" Color="Black" />
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <ListBox x:Name="icons">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="400" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Rectangle Fill="{Binding Icon}" Height="36" Width="36" Margin="5" />
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10" Grid.Column="1" />
+                    <Button Margin="20,10,0,10" Content="Copy Icon" Click="Button_Click" Grid.Column="2" />
+                </Grid>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
+        
+</Window>

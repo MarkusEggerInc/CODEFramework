@@ -1,0 +1,33 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:bsc="clr-namespace:CODE.Framework.Wpf.Theme.Battleship.Controls"
+                    xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm">
+
+    <Style TargetType="bsc:BattleshipMenu">
+        <Setter Property="Padding" Value="5,0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+    </Style>
+
+    <Style TargetType="mvvm:TopLevelViewActionMenuItem">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="5,2" />
+        <Setter Property="Margin" Value="2,1,2,0" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+    </Style>
+
+    <Style TargetType="mvvm:ViewActionMenuItem">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="28" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+    </Style>
+
+    <Style TargetType="mvvm:ViewActionMenuIcon"/>
+    
+</ResourceDictionary>

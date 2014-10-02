@@ -1,0 +1,56 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.FlowFormTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:layout="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf"
+        xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+        Title="FlowFormTest" Height="300" Width="1000">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Control-TextBox.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Control-ScrollBar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Colors.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Fonts.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Color x:Key="CODE.Framework-Application-ThemeColor1">DarkGray</Color>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <layout:FlowForm>
+     
+        <TextBox Width="200" mvvm:View.Label="First:" />
+        <TextBlock>Last Name:</TextBlock>
+        <TextBox Width="200" />
+
+        <TextBox Width="300" mvvm:View.Label="Company" 
+                 mvvm:View.LabelFontFamily="Comic Sans MS"
+                 mvvm:View.LabelForegroundBrush="Red" 
+                 mvvm:View.LabelFontWeight="Bold" 
+                 mvvm:View.LabelFontStyle="Italic" 
+                 mvvm:View.LabelFontSize="12"/>
+
+        <TextBox mvvm:View.SpanFullWidth="True" 
+                 mvvm:View.LineBreak="True" 
+                 Height="75" />
+
+        <CheckBox mvvm:View.LineBreak="True" mvvm:View.Label="Current Status:" Content="One" />
+        <CheckBox Content="Two" />
+        <CheckBox Content="Three" />
+        <CheckBox Content="Four" />
+        <CheckBox mvvm:View.Label="Something Else:" Content="One" />
+        <CheckBox Content="Two" />
+        <CheckBox Content="Three" />
+        <TextBox Width="200" mvvm:View.Label="First:" />
+
+        <RadioButton mvvm:View.LineBreak="True" mvvm:View.Label="Current Status:" Content="One" GroupName="x" />
+        <RadioButton Content="Two" GroupName="x"/>
+        <RadioButton Content="Three" GroupName="x"/>
+        <RadioButton Content="Four" GroupName="x"/>
+        <RadioButton mvvm:View.Label="Something Else:" Content="One" GroupName="y"/>
+        <RadioButton Content="Two" GroupName="y"/>
+        <RadioButton Content="Three" GroupName="y"/>
+        <TextBox Width="200" mvvm:View.Label="First:" />
+
+    </layout:FlowForm>
+</Window>

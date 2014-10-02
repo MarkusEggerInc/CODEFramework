@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CODE.Framework.Core</RootNamespace>
+    <AssemblyName>CODE.Framework.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CODE.Framework.Core.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CODE.Framework.Core.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\_SharedFiles\Properties\AssemblyInfoShared.cs">
+      <Link>Properties\AssemblyInfoShared.cs</Link>
+    </Compile>
+    <Compile Include="ComponentModel\DataBindingInterfaces.cs" />
+    <Compile Include="ComponentModel\DataLoadController.cs" />
+    <Compile Include="ComponentModel\DataLoaderInterfaces.cs" />
+    <Compile Include="ComponentModel\EditDataLoader.cs" />
+    <Compile Include="ComponentModel\FilterableInterface.cs" />
+    <Compile Include="ComponentModel\SortableInterface.cs" />
+    <Compile Include="Configuration\ConfigurationSettings.cs" />
+    <Compile Include="Configuration\ConfigurationSettingsSourcesCollection.cs" />
+    <Compile Include="Configuration\ConfigurationSource.cs" />
+    <Compile Include="Configuration\ConfigurationSourceMemorySettings.cs" />
+    <Compile Include="Configuration\ConfigurationSourceSetting.cs" />
+    <Compile Include="Configuration\DotNetConfigurationFile.cs" />
+    <Compile Include="Configuration\IConfigurationSource.cs" />
+    <Compile Include="Configuration\MemorySettings.cs" />
+    <Compile Include="Configuration\SecureConfigurationFile.cs" />
+    <Compile Include="Configuration\SettingNotSupportedException.cs" />
+    <Compile Include="Configuration\SettingReadOnlyException.cs" />
+    <Compile Include="Configuration\Settings.cs" />
+    <Compile Include="Configuration\SourcesCollection.cs" />
+    <Compile Include="Exceptions\IndexOutOfBounds.cs" />
+    <Compile Include="Exceptions\MissingConfigurationSetting.cs" />
+    <Compile Include="Exceptions\NullReferenceException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\EnumHelper.cs" />
+    <Compile Include="Utilities\ExceptionHelper.cs" />
+    <Compile Include="Utilities\Extensions\StringExtensions.cs" />
+    <Compile Include="Utilities\If.cs" />
+    <Compile Include="Utilities\Logger.cs" />
+    <Compile Include="Utilities\LoggingMediator.cs" />
+    <Compile Include="Utilities\ObjectHelper.cs" />
+    <Compile Include="Utilities\SecurityHelper.cs" />
+    <Compile Include="Utilities\StreamHelper.cs" />
+    <Compile Include="Utilities\StringHelper.cs" />
+    <Compile Include="Utilities\Zip.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

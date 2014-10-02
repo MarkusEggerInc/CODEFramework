@@ -1,0 +1,52 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <!-- Mechanical features -->
+        <ResourceDictionary Source="Battleship-StandardTypes.xaml" />
+        <ResourceDictionary Source="Battleship-StandardDataTemplates.xaml" />
+
+        <!-- Standard settings (should always be merged in first -->
+        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Fonts.xaml"/>
+
+        <!-- Control settings (automatic and explicit) -->
+        <ResourceDictionary Source="Battleship-Control-Button.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-FlowDocumentReader.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-Label.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-ListBox.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-Menu.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-PasswordBox.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-ScrollBar.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-TabControl.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-Textbox.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-TextBlock.xaml"/>
+
+        <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Battleship-Layout-EditForm.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-OneToManyPanel.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-PrimarySecondaryForm.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-SimpleForm.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-StandardForm.xaml"/>
+
+        <!-- Icons for message boxes-->
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Asterisk.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Error.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Exclamation.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Hand.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Information.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Question.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Stop.xaml"/>
+        <ResourceDictionary Source="Battleship-MessageBox-Icon-Warning.xaml"/>
+
+        <!-- Standard Icons -->
+        <ResourceDictionary Source="Battleship-Icon-Standard.xaml"/>
+
+        <!-- Documents -->
+        <ResourceDictionary Source="Battleship-Print.xaml"/>
+
+        <!-- Shell and other low-level UI elements -->
+        <ResourceDictionary Source="Battleship-Shell.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

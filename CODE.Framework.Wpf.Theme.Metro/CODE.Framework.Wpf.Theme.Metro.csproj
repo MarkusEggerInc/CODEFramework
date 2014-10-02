@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{52044FE1-233E-45DF-9548-468F79110AA0}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CODE.Framework.Wpf.Theme.Metro</RootNamespace>
+    <AssemblyName>CODE.Framework.Wpf.Theme.Metro</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CODE.Framework.Wpf.Theme.Metro.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CODE.Framework.Wpf.Theme.Metro.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\_SharedFiles\Properties\AssemblyInfoShared.cs">
+      <Link>Properties\AssemblyInfoShared.cs</Link>
+    </Compile>
+    <Compile Include="Classes\AvailabilityToVisibilityConverter.cs" />
+    <Compile Include="Classes\ContextBindingDummy.cs" />
+    <Compile Include="Classes\HorizontalScrollEnabledToVisibilityConverter.cs" />
+    <Compile Include="Classes\MetroStandardFeatures.cs" />
+    <Compile Include="Controls\CircularProgressAnimation.cs" />
+    <Compile Include="Controls\LinearProgressAnimation.cs" />
+    <Compile Include="Controls\PeekAnimationContainer.cs" />
+    <Compile Include="Controls\ShellMetroTiles.cs" />
+    <Compile Include="Controls\ShellTabControl.cs" />
+    <Compile Include="Controls\SizeAwareContentControl.cs" />
+    <Compile Include="StandardViews\DataSmall01.xaml.cs">
+      <DependentUpon>DataSmall01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Data01.xaml.cs">
+      <DependentUpon>Data01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Data02.xaml.cs">
+      <DependentUpon>Data02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Data03.xaml.cs">
+      <DependentUpon>Data03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\DataAndImage01.xaml.cs">
+      <DependentUpon>DataAndImage01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\DataAndImage02.xaml.cs">
+      <DependentUpon>DataAndImage02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\DataAndImage03.xaml.cs">
+      <DependentUpon>DataAndImage03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\DataRowAndImage01.xaml.cs">
+      <DependentUpon>DataRowAndImage01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\DataSmall02.xaml.cs">
+      <DependentUpon>DataSmall02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\DataSmall03.xaml.cs">
+      <DependentUpon>DataSmall03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Fallback.xaml.cs">
+      <DependentUpon>Fallback.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageAndText03.xaml.cs">
+      <DependentUpon>LargePeekImageAndText03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <AppDesigner Include="Properties\" />
+    <Compile Include="StandardViews\Components\LogoNameAndCount.xaml.cs">
+      <DependentUpon>LogoNameAndCount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Block.xaml.cs">
+      <DependentUpon>Block.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Image.xaml.cs">
+      <DependentUpon>Image.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeBlockAndText02.xaml.cs">
+      <DependentUpon>LargeBlockAndText02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeBlockAndText01.xaml.cs">
+      <DependentUpon>LargeBlockAndText01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeImage.xaml.cs">
+      <DependentUpon>LargeImage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeImageAndText01.xaml.cs">
+      <DependentUpon>LargeImageAndText01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeImageAndText02.xaml.cs">
+      <DependentUpon>LargeImageAndText02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeImageCollection.xaml.cs">
+      <DependentUpon>LargeImageCollection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageAndText01.xaml.cs">
+      <DependentUpon>LargePeekImageAndText01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageAndText02.xaml.cs">
+      <DependentUpon>LargePeekImageAndText02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageAndText04.xaml.cs">
+      <DependentUpon>LargePeekImageAndText04.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageAndText05.xaml.cs">
+      <DependentUpon>LargePeekImageAndText05.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageAndText06.xaml.cs">
+      <DependentUpon>LargePeekImageAndText06.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageCollection01.xaml.cs">
+      <DependentUpon>LargePeekImageCollection01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageCollection02.xaml.cs">
+      <DependentUpon>LargePeekImageCollection02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageCollection03.xaml.cs">
+      <DependentUpon>LargePeekImageCollection03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageCollection04.xaml.cs">
+      <DependentUpon>LargePeekImageCollection04.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageCollection05.xaml.cs">
+      <DependentUpon>LargePeekImageCollection05.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargePeekImageCollection06.xaml.cs">
+      <DependentUpon>LargePeekImageCollection06.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText01.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText02.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText03.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText04.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText04.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText05.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText05.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText06.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText06.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeSmallImageAndText07.xaml.cs">
+      <DependentUpon>LargeSmallImageAndText07.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText01.xaml.cs">
+      <DependentUpon>LargeText01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText02.xaml.cs">
+      <DependentUpon>LargeText02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText03.xaml.cs">
+      <DependentUpon>LargeText03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText04.xaml.cs">
+      <DependentUpon>LargeText04.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText05.xaml.cs">
+      <DependentUpon>LargeText05.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText06.xaml.cs">
+      <DependentUpon>LargeText06.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText07.xaml.cs">
+      <DependentUpon>LargeText07.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText08.xaml.cs">
+      <DependentUpon>LargeText08.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText09.xaml.cs">
+      <DependentUpon>LargeText09.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText10.xaml.cs">
+      <DependentUpon>LargeText10.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\LargeText11.xaml.cs">
+      <DependentUpon>LargeText11.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\PeekImageAndText02.xaml.cs">
+      <DependentUpon>PeekImageAndText02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\PeekImageAndText03.xaml.cs">
+      <DependentUpon>PeekImageAndText03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\PeekImageAndText04.xaml.cs">
+      <DependentUpon>PeekImageAndText04.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\PeekImageAndText05.xaml.cs">
+      <DependentUpon>PeekImageAndText05.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Text01.xaml.cs">
+      <DependentUpon>Text01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Text02.xaml.cs">
+      <DependentUpon>Text02.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Text03.xaml.cs">
+      <DependentUpon>Text03.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Text04.xaml.cs">
+      <DependentUpon>Text04.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\PeekImageAndText01.xaml.cs">
+      <DependentUpon>PeekImageAndText01.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\Text05.xaml.cs">
+      <DependentUpon>Text05.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileNarrow.xaml.cs">
+      <DependentUpon>TileNarrow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileWide.xaml.cs">
+      <DependentUpon>TileWide.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Fonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-GroupBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-RichTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-TabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Layout-FlowForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Layout-OneToManyPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Print.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-StandardDataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-StandardTypes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataSmall01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Data01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Data02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Data03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataAndImage01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataAndImage02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataAndImage03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataRowAndImage01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataSmall02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\DataSmall03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Fallback.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageAndText03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-AppBarButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-Button.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-CheckBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-ComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-FlowDocumentReader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-Label.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-ListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-MetroTiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-PasswordBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-RadioButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-ScrollBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-Slider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-Textblock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-Textbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Icon-Arrow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Icon-Standard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Layout-EditForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Layout-PrimarySecondaryForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Layout-SimpleForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Layout-StandardForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Asterisk.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Error.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Exclamation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Hand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Information.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Question.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Stop.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-MessageBox-Icon-Warning.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Components\LogoNameAndCount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Block.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Image.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeBlockAndText02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeBlockAndText01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeImage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeImageAndText01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeImageAndText02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeImageCollection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageAndText01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageAndText02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageAndText04.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageAndText05.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageAndText06.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageCollection01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageCollection02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageCollection03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageCollection04.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageCollection05.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargePeekImageCollection06.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText04.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText05.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText06.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeSmallImageAndText07.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText04.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText05.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText06.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText07.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText08.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText09.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText10.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\LargeText11.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\PeekImageAndText02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\PeekImageAndText03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\PeekImageAndText04.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\PeekImageAndText05.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Text01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Text02.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Text03.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Text04.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\PeekImageAndText01.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\Text05.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileNarrow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileWide.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ThemeRoot.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Documents\CODE.Framework.Wpf.Documents.csproj">
+      <Project>{7214ebb7-e439-4f4b-ba04-854910a6687a}</Project>
+      <Name>CODE.Framework.Wpf.Documents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Mvvm\CODE.Framework.Wpf.Mvvm.csproj">
+      <Project>{F0FBB452-A6BF-4DFB-8EAB-6DBD9BBDBEF0}</Project>
+      <Name>CODE.Framework.Wpf.Mvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf\CODE.Framework.Wpf.csproj">
+      <Project>{21D3883D-ED9F-46DD-AA51-14B5309D6533}</Project>
+      <Name>CODE.Framework.Wpf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
