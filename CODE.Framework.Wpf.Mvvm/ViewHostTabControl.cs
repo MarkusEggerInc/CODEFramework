@@ -12,6 +12,76 @@ namespace CODE.Framework.Wpf.Mvvm
     /// <remarks>Designed for internal use only</remarks>
     public class ViewHostTabControl : TabControl
     {
+        private int _previousSelectedIndex = -1;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ViewHostTabControl"/> class.
+        /// </summary>
+        public ViewHostTabControl()
+        {
+            SelectionChanged += (s, e) =>
+            {
+                HasVisibleItems = SelectedItem != null;
+
+                if (SelectedIndex != _previousSelectedIndex && SelectedIndex > -1 && SelectedIndex > _previousSelectedIndex) RaiseNextViewSelected();
+                else if (SelectedIndex != _previousSelectedIndex && SelectedIndex > -1 && SelectedIndex < _previousSelectedIndex) RaisePreviousViewSelected();
+
+                _previousSelectedIndex = SelectedIndex;
+
+                var viewResult = SelectedItem as ViewResult;
+                if (viewResult != null)
+                {
+                    HasVisibleLocalViews = viewResult.SelectedLocalViewIndex > -1;
+                }
+            };
+        }
+
+        /// <summary>
+        /// Fires when the next view is selected (either a new view, or a view with a higher index than the previously selected one)
+        /// </summary>
+        public static readonly RoutedEvent NextViewSelectedEvent = EventManager.RegisterRoutedEvent("NextViewSelected", RoutingStrategy.Direct, typeof (RoutedEventHandler), typeof (ViewHostTabControl));
+
+        /// <summary>
+        /// Fires when the next view is selected (either a new view, or a view with a higher index than the previously selected one)
+        /// </summary>
+        public event RoutedEventHandler NextViewSelected
+        {
+            add { AddHandler(NextViewSelectedEvent, value); }
+            remove { RemoveHandler(NextViewSelectedEvent, value); }
+        }
+
+        /// <summary>
+        /// Raises the next view selected event.
+        /// </summary>
+        private void RaiseNextViewSelected()
+        {
+            var newEventArgs = new RoutedEventArgs(NextViewSelectedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        /// <summary>
+        /// Fires when the previous view is selected (a view with a lower index than the previously selected one)
+        /// </summary>
+        public static readonly RoutedEvent PreviousViewSelectedEvent = EventManager.RegisterRoutedEvent("PreviousViewSelected", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(ViewHostTabControl));
+
+        /// <summary>
+        /// Fires when the previous view is selected (a view with a lower index than the previously selected one)
+        /// </summary>
+        public event RoutedEventHandler PreviousViewSelected
+        {
+            add { AddHandler(PreviousViewSelectedEvent, value); }
+            remove { RemoveHandler(PreviousViewSelectedEvent, value); }
+        }
+
+        /// <summary>
+        /// Raises the previous view selected event.
+        /// </summary>
+        private void RaisePreviousViewSelected()
+        {
+            var newEventArgs = new RoutedEventArgs(PreviousViewSelectedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
         /// <summary>Defines whether tab headers shall be displayed</summary>
         /// <remarks>It is up to each theme to respect this property</remarks>
         public bool ShowHeaders
@@ -26,11 +96,50 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Main model (typically the start view model)</summary>
         public object MainModel
         {
-            get { return (object)GetValue(MainModelProperty); }
+            get { return GetValue(MainModelProperty); }
             set { SetValue(MainModelProperty, value); }
         }
         /// <summary>Main model (typically the start view model)</summary>
         public static readonly DependencyProperty MainModelProperty = DependencyProperty.Register("MainModel", typeof(object), typeof(ViewHostTabControl), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Desired zoom for the content within the tab control
+        /// </summary>
+        public double ContentZoom
+        {
+            get { return (double)GetValue(ContentZoomProperty); }
+            set { SetValue(ContentZoomProperty, value); }
+        }
+        /// <summary>
+        /// Desired zoom for the content within the tab control
+        /// </summary>
+        public static readonly DependencyProperty ContentZoomProperty = DependencyProperty.Register("ContentZoom", typeof(double), typeof(ViewHostTabControl), new PropertyMetadata(1d));
+
+        /// <summary>
+        /// Indicates whether the control has visible items
+        /// </summary>
+        public bool HasVisibleItems
+        {
+            get { return (bool)GetValue(HasVisibleItemsProperty); }
+            set { SetValue(HasVisibleItemsProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether the control has visible items
+        /// </summary>
+        public static readonly DependencyProperty HasVisibleItemsProperty = DependencyProperty.Register("HasVisibleItems", typeof(bool), typeof(ViewHostTabControl), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Indicates whether local child views are visible
+        /// </summary>
+        public bool HasVisibleLocalViews
+        {
+            get { return (bool)GetValue(HasVisibleLocalViewsProperty); }
+            set { SetValue(HasVisibleLocalViewsProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether local child views are visible
+        /// </summary>
+        public static readonly DependencyProperty HasVisibleLocalViewsProperty = DependencyProperty.Register("HasVisibleLocalViews", typeof(bool), typeof(ViewHostTabControl), new PropertyMetadata(false));
     }
 
     /// <summary>

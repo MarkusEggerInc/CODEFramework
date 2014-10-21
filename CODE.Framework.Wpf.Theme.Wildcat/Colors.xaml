@@ -26,16 +26,12 @@
     <Color x:Key="CODE.Framework-Application-ViewBorderColor2">Black</Color>
     <Color x:Key="CODE.Framework-Application-ViewBorderColor3">#2D3D4A</Color>
 
-    <!-- Application status bar -->
-    <Color x:Key="CODE.Framework-Workplace-StatusReadyBackgroundColor">#2B5799</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusReadyForegroundColor">White</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusProcessingBackgroundColor">#217346</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusProcessingForegroundColor">White</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusWarningBackgroundColor">#D14726</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusWarningForegroundColor">White</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusErrorBackgroundColor">DarkRed</Color>
-    <Color x:Key="CODE.Framework-Workplace-StatusErrorForegroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Tab-UnselectedHeaderColor">#4E4E4E</Color>
 
+    <!-- Application status bar -->
+    <Color x:Key="CODE.Framework-Wildcat-StatusBackgroundColor">Transparent</Color>
+    <Color x:Key="CODE.Framework-Wildcat-StatusForegroundColor">White</Color>
+    
 
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush2" Color="{DynamicResource CODE.Framework-Application-BackgroundColor2}" />
@@ -62,14 +58,10 @@
     <SolidColorBrush x:Key="CODE.Framework-Application-ViewBorderBrush2" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor2}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-ViewBorderBrush3" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor3}" />
 
+    <SolidColorBrush x:Key="CODE.Framework-Tab-UnselectedHeaderBrush" Color="{DynamicResource CODE.Framework-Tab-UnselectedHeaderColor}" />
+
     <!-- Application status bar -->
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusReadyForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusReadyForegroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusReadyBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusReadyBackgroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusProcessingForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusProcessingForegroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusProcessingBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusProcessingBackgroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusWarningForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusWarningForegroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusWarningBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusWarningBackgroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusErrorForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusErrorForegroundColor}" />
-    <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusErrorBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusErrorBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Wildcat-StatusForegroundBrush" Color="{DynamicResource CODE.Framework-Wildcat-StatusForegroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Wildcat-StatusBackgroundBrush" Color="{DynamicResource CODE.Framework-Wildcat-StatusBackgroundColor}" />
 
 </ResourceDictionary>

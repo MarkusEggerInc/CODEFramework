@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace CODE.Framework.Wpf.Utilities
@@ -71,7 +70,16 @@ namespace CODE.Framework.Wpf.Utilities
         {
             Thread.Sleep(delay);
             var action = new Action<UIElement, UIElement, UIElement, UIElement, int>(FocusDelayed3);
-            Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.ApplicationIdle, new object[] { focusElement1, focusElement2, focusElement3, focusElement4, delay });
+            if (Application.Current != null && Application.Current.Dispatcher != null)
+                try
+                {
+                    Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.ApplicationIdle, new object[] { focusElement1, focusElement2, focusElement3, focusElement4, delay });
+                }
+                catch
+                {
+                    // Nothing we can do
+                }
+            //Dispatcher.CurrentDispatcher.BeginInvoke(action, DispatcherPriority.ApplicationIdle, new object[] {focusElement1, focusElement2, focusElement3, focusElement4, delay});
         }
 
         private static void FocusDelayed3(UIElement focusElement1, UIElement focusElement2, UIElement focusElement3, UIElement focusElement4, int delay)

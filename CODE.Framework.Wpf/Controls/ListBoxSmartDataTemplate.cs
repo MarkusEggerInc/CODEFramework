@@ -41,6 +41,8 @@ namespace CODE.Framework.Wpf.Controls
                     Columns = columns;
                     if (!string.IsNullOrEmpty(columns.EditModeBindingPath))
                         SetBinding(IsManualEditEnabledProperty, new Binding(columns.EditModeBindingPath));
+                    else
+                        SetBinding(IsManualEditEnabledProperty, new Binding {Path = new PropertyPath("(0)", ListEx.IsEditableProperty), RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent)});
                 }
                 else if (string.IsNullOrEmpty(_defaultColumnsToSet))
                 {
@@ -64,11 +66,19 @@ namespace CODE.Framework.Wpf.Controls
                         }
                     }
                 };
+
+                RaiseEditModeChanged();
             };
         }
 
         /// <summary>Occurs when the row edit mode changes</summary>
         private event EventHandler EditModeChanged;
+
+        private void RaiseEditModeChanged()
+        {
+            if (EditModeChanged != null)
+                EditModeChanged(this, new EventArgs());
+        }
 
         /// <summary>Walks the visual tree to find the parent of a certain type</summary>
         /// <typeparam name="T">Type to search</typeparam>
@@ -168,7 +178,7 @@ namespace CODE.Framework.Wpf.Controls
         {
             var template = d as ListBoxSmartDataTemplate;
             if (template == null) return;
-            template.EditModeChanged(template, new EventArgs());
+            template.RaiseEditModeChanged();
         }
 
         private static void PopulateColumnsFromDefaults(ListBoxSmartDataTemplate item, ItemsControl listBox)
@@ -305,18 +315,16 @@ namespace CODE.Framework.Wpf.Controls
 
                 var gridColumn = new ColumnDefinition();
                 gridColumn.SetBinding(ColumnDefinition.WidthProperty, new Binding("ActualWidth") {Source = column, Mode = BindingMode.OneWay, Converter = new LengthToGridLengthConverter()});
-                ColumnDefinitions.Add(gridColumn);
+                ColumnDefinitions.Add(new ColumnPanelColumnDefinition(gridColumn));
                 if (column.Width.GridUnitType == GridUnitType.Star)
                     starColumnFound = true;
 
                 if (column.ItemTemplate != null)
                 {
                     var content = column.ItemTemplate.LoadContent() as UIElement;
-                    if (content != null)
-                    {
-                        Children.Add(content);
-                        SetColumn(content, columnCounter);
-                    }
+                    if (content == null) continue;
+                    Children.Add(content);
+                    SetColumn(content, columnCounter);
                 }
                 else if (column.ColumnControl != ListColumnControls.Auto || (!column.BindingPath.StartsWith("Number") && !column.BindingPath.StartsWith("Image") && !column.BindingPath.StartsWith("Logo")))
                 {
@@ -377,8 +385,11 @@ namespace CODE.Framework.Wpf.Controls
                                 var col2 = column;
                                 EditModeChanged += (s, e) =>
                                 {
-                                    check.IsEnabled = IsManualEditEnabled;
-                                    SetEventCommands(check, check.IsEnabled ? col2.ReadOnlyControlEventCommands : col2.WriteControlEventCommands);
+                                    if (check != null)
+                                    {
+                                        check.IsEnabled = IsManualEditEnabled;
+                                        SetEventCommands(check, check.IsEnabled ? col2.ReadOnlyControlEventCommands : col2.WriteControlEventCommands);
+                                    }
                                 };
                             }
                             break;
@@ -521,12 +532,28 @@ namespace CODE.Framework.Wpf.Controls
     /// </summary>
     public class LengthToGridLengthConverter : IValueConverter
     {
+        /// <summary>
+        /// Converts a value.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var length = (double)value;
             return new GridLength(length);
         }
 
+        /// <summary>
+        /// Converts a value.
+        /// </summary>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var length = (GridLength)value;

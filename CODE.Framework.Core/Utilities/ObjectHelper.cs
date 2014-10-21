@@ -34,7 +34,6 @@ namespace CODE.Framework.Core.Utilities
             Assembly assembly = null;
 
             if (assemblyName.ToLower(CultureInfo.InvariantCulture).EndsWith(".dll") || assemblyName.ToLower(CultureInfo.InvariantCulture).EndsWith(".exe"))
-            {
                 // We are loading based on an assembly file name.
                 try
                 {
@@ -50,18 +49,18 @@ namespace CODE.Framework.Core.Utilities
                     // as the file-open dialog is used.
 
                     // We check whether the path is fully qualified
-                    if (assemblyName.IndexOf("\\") < 0)
+                    if (assemblyName.IndexOf("\\", StringComparison.Ordinal) < 0)
                     {
                         string location;
                         try
                         {
-                            location = Assembly.GetEntryAssembly() != null ? Assembly.GetEntryAssembly().Location : Assembly.GetAssembly(typeof(ObjectHelper)).Location;
+                            location = Assembly.GetEntryAssembly() != null ? Assembly.GetEntryAssembly().Location : Assembly.GetAssembly(typeof (ObjectHelper)).Location;
                         }
                         catch
                         {
                             try
                             {
-                                location = Assembly.GetAssembly(typeof(ObjectHelper)).Location;
+                                location = Assembly.GetAssembly(typeof (ObjectHelper)).Location;
                             }
                             catch
                             {
@@ -82,11 +81,9 @@ namespace CODE.Framework.Core.Utilities
                         }
                     }
                 }
-            }
             else
-            {
                 // This assembly is identified by its name.
-                if (assemblyName.IndexOf(",") > -1)
+                if (assemblyName.IndexOf(",", StringComparison.Ordinal) > -1)
                     // There is a comma in the assembly name. Therefore, we assume that this is a fully qualified name
                     // Note: An example for a fully qualified name would be the following:
                     //       System.data, version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
@@ -111,14 +108,16 @@ namespace CODE.Framework.Core.Utilities
                     {
                         throw new ObjectInstantiationException("Unable to load assembly " + assemblyName + ". Error: " + ex.Message, ex);
                     }
-            }
 
 
             // Now that the assembly is loaded, we can get the type of the specified class
             Type objectType;
             try
             {
-                objectType = assembly.GetType(className, true);
+                if (assembly != null) 
+                    objectType = assembly.GetType(className, true);
+                else
+                    throw new ObjectInstantiationException("Unable to create instance " + className + ". Error: Unable to load assembly.");
             }
             catch (Exception ex)
             {
@@ -462,10 +461,8 @@ namespace CODE.Framework.Core.Utilities
             try
             {
                 // First of all, we check for nulls on one end
-                var v1IsNull = false;
-                if (value1 is DBNull) v1IsNull = true;
-                var v2IsNull = false;
-                if (value2 is DBNull) v2IsNull = true;
+                var v1IsNull = value1 is DBNull;
+                var v2IsNull = value2 is DBNull;
                 if (v1IsNull && !v2IsNull || !v1IsNull && v2IsNull)
                 {
                     // Note: I chose to return from here since setting
@@ -485,12 +482,10 @@ namespace CODE.Framework.Core.Utilities
             return fieldsDiffer;
         }
 
-        /// <summary>
-        /// Dynamically retrieves a property value from the specified object
-        /// </summary>
+        /// <summary>Dynamically retrieves a property value from the specified object</summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="valueObject">The value object.</param>
-        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="path">Name of the property.</param>
         /// <returns>Property value or default value</returns>
         /// <remarks>
         /// The property must be a readable instance property.
@@ -502,7 +497,27 @@ namespace CODE.Framework.Core.Utilities
         /// var customer = this.GetCustomerObject();
         /// string name = customer.GetPropertyValue&lt;string&gt;("LastName");
         /// </example>
-        public static TResult GetPropertyValue<TResult>(this object valueObject, string propertyName)
+        public static TResult GetPropertyValue<TResult>(this object valueObject, string path)
+        {
+            // If this is a simple property name, we can simply get its value
+            if (!path.Contains(".") && !path.Contains("[")) return GetSimplePropertyValue<TResult>(valueObject, path);
+
+            // The path is a complex path syntax that first needs to be parsed before we can retrieve the property value
+            try
+            {
+                object parentObject;
+                var property = GetPropertyByPath(valueObject, path, out parentObject);
+                if (property == null) return default(TResult);
+                var propertyValue = property.GetValue(parentObject, null);
+                return (TResult)propertyValue;
+            }
+            catch
+            {
+                return default(TResult);
+            }
+        }
+
+        private static TResult GetSimplePropertyValue<TResult>(object valueObject, string propertyName)
         {
             try
             {
@@ -518,11 +533,76 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>
+        /// Returns property information based on the provided path (path can be a simple property name or a more complex path)
+        /// </summary>
+        /// <param name="valueObject">The value object.</param>
+        /// <param name="path">The path.</param>
+        /// <param name="parentObject">The parent object.</param>
+        /// <returns>PropertyInfo.</returns>
+        public static PropertyInfo GetPropertyByPath(object valueObject, string path, out object parentObject)
+        {
+            var parts = path.Split('.');
+            parentObject = valueObject;
+
+            for (var propertyCounter = 0; propertyCounter < parts.Length; propertyCounter++)
+            {
+                var part = parts[propertyCounter];
+                var valueObjectType = valueObject.GetType();
+                if (!part.Contains("["))
+                {
+                    // This is a simple path expression
+                    var propertyInfo = valueObjectType.GetProperty(part, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetProperty);
+                    if (propertyInfo == null) return null;
+                    if (propertyCounter == parts.Length - 1) return propertyInfo; // This is the last one (right-most one) in the path, so that is the one we are after
+                    valueObject = propertyInfo.GetValue(valueObject, null);
+                    parentObject = valueObject;
+                }
+                else
+                {
+                    // This is an indexed property
+                    var partName = part.Substring(0, part.IndexOf("[", StringComparison.Ordinal));
+                    var indexExpression = part.Substring(part.IndexOf("[", StringComparison.Ordinal) + 1);
+                    indexExpression = indexExpression.Substring(0, indexExpression.IndexOf("]", StringComparison.Ordinal));
+                    int index;
+                    if (!int.TryParse(indexExpression, out index)) return null;
+
+                    // We first get the main object property
+                    var propertyInfo = valueObjectType.GetProperty(partName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetProperty);
+                    if (propertyInfo == null) return null;
+                    valueObject = propertyInfo.GetValue(valueObject, null);
+                    if (valueObject == null) return null;
+                    valueObjectType = valueObject.GetType();
+
+                    // Now, we get the indexed property
+                    var indexerProperties = valueObjectType.GetProperties().Where(p => p.Name == "Item").ToList();
+                    PropertyInfo indexerPropertyInfo = null;
+                    if (indexerProperties.Count < 1) return null;
+                    if (indexerProperties.Count == 1) indexerPropertyInfo = indexerProperties[0];
+                    else
+                        foreach (var indexerProperty in indexerProperties)
+                        {
+                            var indexerParameters = indexerProperty.GetIndexParameters();
+                            if (indexerParameters.Length != 1 || indexerParameters[0].ParameterType != typeof (int)) continue;
+                            indexerPropertyInfo = indexerProperty;
+                            break;
+                        }
+                    if (indexerPropertyInfo == null) return null;
+                    if (propertyCounter == parts.Length - 1) return indexerPropertyInfo; // This is the last one (right-most one) in the path, so that is the one we are after
+                    
+                    valueObject = indexerPropertyInfo.GetValue(valueObject, new object[] {index});
+                    parentObject = valueObject;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Dynamically retrieves a property value from the specified object
         /// </summary>
         /// <typeparam name="TValue">The type of the value that is to be set.</typeparam>
         /// <param name="valueObject">The value object.</param>
-        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="path">Name of the property.</param>
         /// <param name="value">The value that is to be set.</param>
         /// <returns>True if the value was set successfully</returns>
         /// <remarks>
@@ -535,18 +615,35 @@ namespace CODE.Framework.Core.Utilities
         /// var customer = this.GetCustomerObject();
         /// customer.SetPropertyValue("LastName", "Smith");
         /// </example>
-        public static bool SetPropertyValue<TValue>(this object valueObject, string propertyName, TValue value)
+        public static bool SetPropertyValue<TValue>(this object valueObject, string path, TValue value)
+        {
+            // If this is a simple property name, we can simply get its value
+            if (!path.Contains(".") && !path.Contains("[")) return SetSimplePropertyValue<TValue>(valueObject, path, value);
+
+            // The path is a complex path syntax that first needs to be parsed before we can retrieve the property value
+            try
+            {
+                object parentObject;
+                var property = GetPropertyByPath(valueObject, path, out parentObject);
+                if (property == null) return false;
+                property.SetValue(parentObject, value, null);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool SetSimplePropertyValue<TValue>(this object valueObject, string propertyName, TValue value)
         {
             try
             {
                 var type = valueObject.GetType();
                 var propertyInfo = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if (propertyInfo != null)
-                {
-                    propertyInfo.SetValue(valueObject, value, null);
-                    return true;
-                }
-                return false;
+                if (propertyInfo == null) return false;
+                propertyInfo.SetValue(valueObject, value, null);
+                return true;
             }
             catch
             {

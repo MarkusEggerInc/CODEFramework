@@ -1,0 +1,449 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Wpf.Theme.Wildcat</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup">
+            <summary>
+            This popup class automatically adjusts the horizontal offset to always be centered in relation to the 
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup.IsDisplayedProperty">
+            <summary>
+            The is displayed property
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup.IsDisplayedChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Determines whether [is displayed changed] [the specified dependency object].
+            </summary>
+            <param name="d">The dependency object.</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup.IsDisplayed">
+            <summary>
+            Gets or sets a value indicating whether this instance is displayed.
+            </summary>
+            <value><c>true</c> if this instance is displayed; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel">
+            <summary>
+            Panel specifically designed to lay out sticky notes
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.PaddingProperty">
+            <summary>
+            Overall padding/margin around the sticky notes
+            </summary>
+            <value>The padding.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteWidthProperty">
+            <summary>
+            Maximum width for each sticky note
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteHeightProperty">
+            <summary>
+            Maximum height for each sticky note
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.InvalidateAll(System.Windows.DependencyObject)">
+            <summary>
+            Triggers a re-render
+            </summary>
+            <param name="d">The object to invalidate</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.ArrangeOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
+            </summary>
+            <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+            <returns>The actual size used.</returns>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.Padding">
+            <summary>
+            Overall padding/margin around the sticky notes
+            </summary>
+            <value>The padding.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteWidth">
+            <summary>
+            Maximum width for each sticky note
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteHeight">
+            <summary>
+            Maximum height for each sticky note
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.ThemeColorConverter">
+            <summary>
+            Converts view theme colors to real background colors
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.ThemeColorConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value produced by the binding source.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.ThemeColorConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value that is produced by the binding target.</param>
+            <param name="targetType">The type to convert to.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.ViewIconVisibilityConverter">
+            <summary>
+            Converts view icon (existence/ null value) to visibility
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.ViewIconVisibilityConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value produced by the binding source.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.ViewIconVisibilityConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value that is produced by the binding target.</param>
+            <param name="targetType">The type to convert to.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.ViewIconConverter">
+            <summary>
+            Converts an icon resource name to an actual icon
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.ViewIconConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value produced by the binding source.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.ViewIconConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value that is produced by the binding target.</param>
+            <param name="targetType">The type to convert to.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionItemsControl">
+            <summary>
+            Special version of this control able to handle button positions
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionItemsControl.OnRepopulateItems(System.Collections.Generic.List{CODE.Framework.Wpf.Mvvm.IViewAction})">
+            <summary>
+            This method is designed to be overridden in subclasses
+            </summary>
+            <param name="actions">The actions.</param>
+            <returns>IEnumerable.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper">
+            <summary>
+            Special wrapper used in Wildcat action items
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.#ctor(CODE.Framework.Wpf.Mvvm.IViewAction)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="originalAction"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Execute(System.Object)">
+            <summary>
+            Defines the method to be called when the command is invoked.
+            </summary>
+            <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.CanExecute(System.Object)">
+            <summary>
+            Defines the method that determines whether the command can execute in its current state.
+            </summary>
+            <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+            <returns>true if this command can be executed; otherwise, false.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.InvalidateCanExecute">
+            <summary>
+            Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+            <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Position">
+            <summary>
+            Button position (whether it is first, middle, or last, which may result in different visual styles)
+            </summary>
+            <value>The position.</value>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.CanExecuteChanged">
+            <summary>
+            Occurs when changes occur that affect whether or not the command should execute.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Caption">
+            <summary>
+            Caption (can be used to display in the UI)
+            </summary>
+            <value>The caption.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Id">
+            <summary>
+            String identifier to identify an action independent of its caption (and independent of the locale)
+            </summary>
+            <value>The identifier.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.BeginGroup">
+            <summary>
+            Indicates whether this action starts a new group
+            </summary>
+            <value><c>true</c> if [begin group]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.GroupTitle">
+            <summary>
+            Indicates the group title for items that start a new group
+            </summary>
+            <value>The group title.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.IsDefault">
+            <summary>
+            Is this the default action?
+            </summary>
+            <value><c>true</c> if this instance is default; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.IsCancel">
+            <summary>
+            Is this the cancel action?
+            </summary>
+            <value><c>true</c> if this instance is cancel; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.IsPinned">
+            <summary>
+            Indicates whether an action is pinned (which is used for different things in different themes)
+            </summary>
+            <value><c>true</c> if this instance is pinned; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.IsChecked">
+            <summary>
+            Indicates whether the action is to be considered "checked"
+            </summary>
+            <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+            <remarks>Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+            Most themes will only respect this property when ViewActionType = Toggle</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.ViewActionType">
+            <summary>
+            Indicates the type of the view action
+            </summary>
+            <value>The type of the view action.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.IsDefaultSelection">
+            <summary>
+            Indicates that this view action is selected by default if the theme supports pre-selecting actions in some way (such as showing the page of the ribbon the action is in, or triggering the action in a special Office-style file menu).
+            </summary>
+            <value><c>true</c> if this instance is default selection; otherwise, <c>false</c>.</value>
+            <remarks>If more than one action is flagged as the default selection, then the last one (in instantiation order) 'wins'</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Availability">
+            <summary>
+            Indicates whether or not this action is at all available (often translates directly to being visible or invisible)
+            </summary>
+            <value>The availability.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Visibility">
+            <summary>
+            Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
+            </summary>
+            <value>The visibility.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Significance">
+            <summary>
+            Significance of the action
+            </summary>
+            <value>The significance.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Categories">
+            <summary>
+            Logical list of categories
+            </summary>
+            <value>The categories.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.CategoryOrder">
+            <summary>
+            Sort order for the category
+            </summary>
+            <value>The category order.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Order">
+            <summary>
+            Sort order for the action (within a group)
+            </summary>
+            <value>The order.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.FirstCategoryId">
+            <summary>
+            Returns the ID of the first category or an empty string if no categories have been added
+            </summary>
+            <value>The first category identifier.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.ActionViewModel">
+            <summary>
+            A view model dedicated to this action
+            </summary>
+            <value>The action view model.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.ActionView">
+            <summary>
+            A view specific to this action
+            </summary>
+            <value>The action view.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.UserRoles">
+            <summary>
+            List of roles with access to this action
+            </summary>
+            <value>The user roles.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.AccessKey">
+            <summary>
+            Defines the access key of the action (such as the underlined key in the menu)
+            </summary>
+            <value>The access key.</value>
+            <remarks>Not all themes will pick this setting up</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.ShortcutKey">
+            <summary>
+            Shortcut key
+            </summary>
+            <value>The shortcut key.</value>
+            <remarks>Not all themes will pick this setting up</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.ShortcutModifiers">
+            <summary>
+            Modifier for the shortcut key
+            </summary>
+            <value>The shortcut modifier keys.</value>
+            <remarks>Not all themes will pick this setting up</remarks>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButton">
+            <summary>
+            Special button class for the Wildcat theme
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButton.PositionProperty">
+            <summary>Defines the position of a button in a group</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButton.SetPosition(System.Windows.DependencyObject,CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButtonPosition)">
+            <summary>Defines the position of a button in a group</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButton.GetPosition(System.Windows.DependencyObject)">
+            <summary>Defines the position of a button in a group</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButtonPosition">
+            <summary>
+            Defines where the button is displayed
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButtonPosition.Normal">
+            <summary>
+            Normal, stand-alone button
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButtonPosition.First">
+            <summary>
+            First button in a group
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButtonPosition.Middle">
+            <summary>
+            Middle button in a group
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButtonPosition.Last">
+            <summary>
+            Last button in a group
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatStandardFeatures">
+            <summary>
+            Standard features for the wildcat theme
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatStandardFeatures.StandardViewFactory">
+            <summary>Reference to the standard view factory (if supported)</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatStandardViewFactory">
+            <summary>Factory to create standard views supported by Workplace</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatStandardViewFactory.GetStandardView(System.String)">
+            <summary>Returns a standard view based on the view name as a string</summary>
+            <param name="viewName">Standard view name</param>
+            <returns>Standard view or null</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatStandardViewFactory.GetStandardView(CODE.Framework.Wpf.Mvvm.StandardViews)">
+            <summary>
+            Returns a standard view based on the standard view enumeration
+            </summary>
+            <param name="standardView">Standard view identifier</param>
+            <returns>Standard view or null</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Wildcat.StandardViews.Notification">
+            <summary>
+            Interaction logic for Notification.xaml
+            </summary>
+            <summary>
+            Notification
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.StandardViews.Notification.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Wildcat.StandardViews.Notification"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.StandardViews.Notification.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

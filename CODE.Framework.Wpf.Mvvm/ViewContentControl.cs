@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -159,6 +160,27 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>Defines the size strategy employed by this grid</summary>
-        public static readonly DependencyProperty SizeStrategyProperty = DependencyProperty.Register("SizeStrategy", typeof(ViewSizeStrategies), typeof(SizeStrategyAwareGrid), new UIPropertyMetadata(ViewSizeStrategies.UseMinimumSizeRequired));
+        public static readonly DependencyProperty SizeStrategyProperty = DependencyProperty.Register("SizeStrategy", typeof(ViewSizeStrategies), typeof(SizeStrategyAwareGrid), new UIPropertyMetadata(ViewSizeStrategies.UseMinimumSizeRequired, OnSizeStrategyChanged));
+
+        private static void OnSizeStrategyChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            var grid = d as SizeStrategyAwareGrid;
+            if (grid == null) return;
+
+            if (grid.SizeStrategy == ViewSizeStrategies.UseMaximumSizeAvailable)
+            {
+                grid.VerticalAlignment = VerticalAlignment.Stretch;
+                grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            }
+            else 
+            {
+                grid.VerticalAlignment = VerticalAlignment.Center;
+                grid.HorizontalAlignment = HorizontalAlignment.Center;
+            }
+
+            grid.InvalidateMeasure();
+            grid.InvalidateArrange();
+            grid.InvalidateVisual();
+        }
     }
 }

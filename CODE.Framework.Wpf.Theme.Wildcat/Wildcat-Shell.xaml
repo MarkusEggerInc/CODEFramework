@@ -9,19 +9,36 @@
         <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush1}" />
         <Setter Property="NormalViewLaunchMode" Value="InPlace" />
         <Setter Property="TopLevelViewLaunchMode" Value="InPlace" />
+        <Setter Property="MaximumNotificationCount" Value="12" />
+        <Setter Property="HandleLocalViewsSpecial" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:Shell">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="ApplicationStatusChanged">
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="statusGrid">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                <DiscreteObjectKeyFrame KeyTime="0:0:11" Value="{x:Static Visibility.Visible}"/>
+                                <DiscreteObjectKeyFrame KeyTime="0:0:11.1" Value="{x:Static Visibility.Collapsed}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="statusGrid">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:10" Value="1"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:11" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
                     <Grid Background="{TemplateBinding Background}" controls:GridEx.RowHeights="50,*,Auto,Auto">
                         <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource ShellBackgroundPattern}" Grid.RowSpan="3" />
-                        <Path Grid.Row="2" HorizontalAlignment="Stretch" Height="55" Margin="0" VerticalAlignment="Bottom" Data="M0.5,0.5 C142.80363,-33.492979 283.82063,-33.558421 423.5,0.5 L423.5,29.5 0.5,29.5 z" Stretch="Fill">
-                            <Path.Fill>
-                                <RadialGradientBrush>
-                                    <GradientStop Color="#1F1F1F" Offset="0.5"/>
-                                    <GradientStop Color="Black" Offset="1"/>
-                                </RadialGradientBrush>
-                            </Path.Fill>
-                        </Path>
+                        <Path Grid.Row="2" Fill="#1E1E1E" Grid.RowSpan="2" HorizontalAlignment="Stretch" Height="55" Margin="0" VerticalAlignment="Bottom" Data="M0.5,0.5 C142.80363,-33.492979 283.82063,-33.558421 423.5,0.5 L423.5,29.5 0.5,29.5 z" Stretch="Fill"/>
+						<Ellipse Grid.Row="2" Grid.RowSpan="2" HorizontalAlignment="Stretch" Height="80" Margin="0,5,0,-30" VerticalAlignment="Bottom" Stretch="Fill">
+							<Ellipse.Fill>
+								<RadialGradientBrush>
+									<GradientStop Color="#444444" Offset="0"/>
+                                    <GradientStop Color="#00444444" Offset="1"/>
+								</RadialGradientBrush>
+							</Ellipse.Fill>
+						</Ellipse>
                         <mvvm:ViewHostTabControl x:Name="OpenViews" Grid.Row="1" Margin="15,0,15,0"
                                                  ItemsSource="{TemplateBinding NormalViews}" MainModel="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                                  SelectedIndex="{Binding SelectedNormalView, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
@@ -33,18 +50,32 @@
                                              SelectedIndex="{TemplateBinding SelectedTopLevelView}" 
                                              Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-TopLevelViewsHost}" 
                                              NormalViewHost="{Binding ElementName=OpenViews}"/>
-                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="3" x:Name="statusGrid" Background="{DynamicResource CODE.Framework-Workplace-StatusReadyBackgroundBrush}" >
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="3" x:Name="statusGrid" Background="{DynamicResource CODE.Framework-Wildcat-StatusBackgroundBrush}" >
                             <ContentControl Content="{TemplateBinding CurrentStatusView}" x:Name="statusContent"
                                             FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}"
                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                            VerticalContentAlignment="Center" Margin="8,2,8,0"
-                                            Foreground="{DynamicResource CODE.Framework-Workplace-StatusReadyForegroundBrush}"/>
+                                            VerticalContentAlignment="Center" Margin="8,2,8,4"
+                                            Foreground="{DynamicResource CODE.Framework-Wildcat-StatusForegroundBrush}"/>
                         </Grid>
+                        <ItemsControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" x:Name="notifications" Grid.RowSpan="4"
+                                      ItemsSource="{TemplateBinding CurrentNotifications}" ItemTemplate="{DynamicResource NotificationItemTemplate}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <classes:StickyNotePanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="TopLevelViewCount" Value="0">
                             <Setter Property="Visibility" TargetName="tabControl" Value="Collapsed"/>
                         </Trigger>
+                        <Trigger Property="CurrentNotificationsCount" Value="0">
+                            <Setter Property="Visibility" TargetName="notifications" Value="Collapsed"/>
+                        </Trigger>
+                        <EventTrigger RoutedEvent="mvvm:Shell.StatusChanged">
+                            <BeginStoryboard x:Name="ApplicationStatusChanged_BeginStoryboard" Storyboard="{StaticResource ApplicationStatusChanged}"/>
+                        </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -109,98 +140,295 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
-    <Style TargetType="mvvm:ViewHostTabControl" x:Key="CODE.Framework.Wpf.Mvvm.Shell-NormalViewsHost" >
-        <Setter Property="ContentTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <DataTemplate.Resources>
-                        <classes:ThemeColorConverter x:Key="ThemeColorConverter"/>
-                        <classes:ViewIconConverter x:Key="ViewIconConverter"/>
-                        <classes:ViewIconVisibilityConverter x:Key="ViewIconVisibilityConverter"/>
-                    </DataTemplate.Resources>
-                    <Grid controls:GridEx.RowHeights="Auto,*,Auto" controls:GridEx.ColumnWidths="*,30">
-                        <Border Background="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}">
-                            <Grid controls:GridEx.ColumnWidths="Auto,*">
-                                <Rectangle Height="36" Width="36" Margin="15,5,2,2" Fill="{Binding View.IconResourceKey, Converter={StaticResource ViewIconConverter}}" Visibility="{Binding View.IconResourceKey, Converter={StaticResource ViewIconVisibilityConverter}}"/>
-                                <TextBlock Text="{Binding ViewTitle}" FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Largest}" 
-                                           Margin="15,15,0,0" Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" Grid.Column="2" />
-                            </Grid>
-                        </Border>
-                        <Grid controls:GridEx.RowHeights="30,*" Grid.Column="1">
-                            <Path Data="M-0,0 L30,30 0,30 z" Fill="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}"/>
-                            <Border Background="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}" Grid.Row="1"/>
-                        </Grid>
-                        <Border BorderThickness="4" Background="{Binding View.ViewThemeColor, Converter={StaticResource ThemeColorConverter}}" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                            <Border.BorderBrush>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Offset="0" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor1}"/>
-                                    <GradientStop Offset=".5" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor2}"/>
-                                    <GradientStop Offset="1" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor3}"/>
-                                </LinearGradientBrush>
-                            </Border.BorderBrush>
-                        </Border>
-                        <AdornerDecorator Grid.Row="1" Grid.ColumnSpan="2" Margin="4">
-                            <ContentControl Content="{Binding View}" Margin="0"/>
-                        </AdornerDecorator>
-                        <mvvm:ActionGrid Model="{Binding Model}" Grid.Row="2" Grid.ColumnSpan="2" Margin="4">
-                            <classes:WildcatActionItemsControl Model="{Binding Model}" HorizontalAlignment="Right" Margin="10,5,10,10">
-                                <classes:WildcatActionItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button x:Name="ToolbarButton" classes:WildcatButton.Position="{Binding Position}" Margin="2,0,0,0"
-                                                Content="{Binding Caption}" Command="{Binding}" 
-                                                IsDefault="{Binding IsDefault, Mode=OneWay}" IsCancel="{Binding IsCancel, Mode=OneWay}" />
-                                    </DataTemplate>
-                                </classes:WildcatActionItemsControl.ItemTemplate>
-                                <mvvm:ActionItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </mvvm:ActionItemsControl.ItemsPanel>
-                            </classes:WildcatActionItemsControl>
-                        </mvvm:ActionGrid>
-                        <mvvm:ModelStatusGrid Model="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="8" Width="300" x:Name="modelStatus" Grid.RowSpan="3" Grid.ColumnSpan="2">
-                            <mvvm:ModelStatusGrid.Resources>
-                                <mvvm:ModelStatusToVisibleConverter x:Key="ModelStatusToVisibleConverter" />
-                            </mvvm:ModelStatusGrid.Resources>
-                            <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}"/> 
-                        </mvvm:ModelStatusGrid>
-                    </Grid>
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>
+
+    <Style TargetType="mvvm:ViewHostTabControl" x:Key="CODE.Framework.Wpf.Mvvm.Shell-LocalViewsHost" >
+        <Setter Property="ContentTemplate" Value="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-LocalViewDisplayTemplate}"/>
         <Setter Property="Visibility" Value="Hidden" />
         <Setter Property="ItemContainerStyle" Value="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-ViewHost}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:ViewHostTabControl">
                     <Grid ClipToBounds="False" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
-                        <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="0" SnapsToDevicePixels="True"/>
-                        <Border BorderThickness="4,4,4,0" Background="#225074" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="75" Margin="0,0,0,-75">
-                            <Border.OpacityMask>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="#7E000000" Offset="0" />
-                                    <GradientStop Offset=".8" />
-                                </LinearGradientBrush>
-                            </Border.OpacityMask>
-                            <Border.BorderBrush>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Offset="0" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor3}"/>
-                                    <GradientStop Offset="1" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor2}"/>
-                                </LinearGradientBrush>
-                            </Border.BorderBrush>
-                        </Border>
-                        <TabPanel Height="0" x:Name="HeaderPanel" IsItemsHost="True" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" Margin="0,0,0,-20" VerticalAlignment="Bottom" Visibility="Hidden"/>
+                        <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" 
+                                          Margin="0" SnapsToDevicePixels="True" />
+                        <TabPanel Height="0" x:Name="HeaderPanel" IsItemsHost="True" KeyboardNavigation.TabIndex="1" 
+                                  Panel.ZIndex="1" Margin="0,0,0,-20" VerticalAlignment="Bottom" Visibility="Hidden"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="HasItems" Value="True">
+            <Trigger Property="HasVisibleItems" Value="True">
                 <Setter Property="Visibility" Value="Visible" />
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="mvvm:ViewHostTabControl" x:Key="CODE.Framework.Wpf.Mvvm.Shell-NormalViewsHost" >
+    	<Style.Resources>
+    		<Storyboard x:Key="ShowNextView">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="{x:Null}" DecelerationRatio=".5">
+    				<EasingDoubleKeyFrame KeyTime="0" Value="350"/>
+    				<EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+    			</DoubleAnimationUsingKeyFrames>
+    		</Storyboard>
+            <Storyboard x:Key="ShowPreviousView">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="{x:Null}" DecelerationRatio=".5">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="-350"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </Style.Resources>
+        <Setter Property="ContentTemplate" Value="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-ViewDisplayTemplate}"/>
+        <Setter Property="Visibility" Value="Hidden" />
+        <Setter Property="ItemContainerStyle" Value="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-ViewHost}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="mvvm:ViewHostTabControl">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="ShrinkMainContent">
+                        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="grid">
+                        		<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.95"/>
+                        	</DoubleAnimationUsingKeyFrames>
+                        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="grid">
+                        		<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.95"/>
+                        	</DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="GrowMainContent">
+                        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="grid">
+                        		<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                        	</DoubleAnimationUsingKeyFrames>
+                        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="grid">
+                        		<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                        	</DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Grid ClipToBounds="False" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                        <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="0" SnapsToDevicePixels="True">
+                            <ContentPresenter.RenderTransform>
+                        		<TransformGroup>
+                        			<ScaleTransform/>
+                        		</TransformGroup>
+                        	</ContentPresenter.RenderTransform>
+                        </ContentPresenter>
+                        <Grid x:Name="grid" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="75" Margin="0,0,0,-75" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
+                        	<Grid.RenderTransform>
+                        		<TransformGroup>
+                        			<ScaleTransform/>
+                        		</TransformGroup>
+                        	</Grid.RenderTransform>
+                            <Rectangle VerticalAlignment="Top" HorizontalAlignment="Center"
+                                       Height="{Binding ElementName=PART_SelectedContentHost, Path=ActualHeight, Mode=OneWay}"
+                                       Width="{Binding ElementName=PART_SelectedContentHost, Path=ActualWidth, Mode=OneWay}"
+                                       RenderTransformOrigin=".5,.5">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{Binding ElementName=PART_SelectedContentHost}"/>
+                                </Rectangle.Fill>
+                                <Rectangle.LayoutTransform>
+                                    <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                                </Rectangle.LayoutTransform>
+                            </Rectangle>
+                            <Grid.OpacityMask>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#3F000000" Offset="0" />
+                                    <GradientStop Offset=".8" />
+                                </LinearGradientBrush>
+                            </Grid.OpacityMask>
+                        </Grid>
+                        <TabPanel Height="0" x:Name="HeaderPanel" IsItemsHost="True" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" Margin="0,0,0,-20" VerticalAlignment="Bottom" Visibility="Hidden"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasVisibleLocalViews" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource ShrinkMainContent}"/>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource GrowMainContent}"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="RenderTransform">
+        	<Setter.Value>
+        		<TransformGroup>
+        			<ScaleTransform/>
+        			<SkewTransform/>
+        			<RotateTransform/>
+        			<TranslateTransform/>
+        		</TransformGroup>
+        	</Setter.Value>
+        </Setter>
+        <Style.Triggers>
+    		<EventTrigger RoutedEvent="NextViewSelected">
+                <BeginStoryboard Storyboard="{StaticResource ShowNextView}"/>
+    		</EventTrigger>
+            <EventTrigger RoutedEvent="PreviousViewSelected">
+                <BeginStoryboard Storyboard="{StaticResource ShowPreviousView}"/>
+            </EventTrigger>
+            <Trigger Property="HasItems" Value="True">
+    			<Setter Property="Visibility" Value="Visible" />
+    		</Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <DataTemplate x:Key="CODE.Framework.Wpf.Mvvm.Shell-ViewDisplayTemplate">
+        <DataTemplate.Resources>
+            <classes:ThemeColorConverter x:Key="ThemeColorConverter"/>
+            <classes:ViewIconConverter x:Key="ViewIconConverter"/>
+            <classes:ViewIconVisibilityConverter x:Key="ViewIconVisibilityConverter"/>
+            <Storyboard x:Key="ShrinkMainContent">
+            	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="grid">
+            		<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.95"/>
+            	</DoubleAnimationUsingKeyFrames>
+            	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="grid">
+            		<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.95"/>
+            	</DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="GrowMainContent">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="grid">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="grid">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </DataTemplate.Resources>
+        <Grid>
+            <Grid x:Name="grid" controls:GridEx.RowHeights="Auto,*,Auto" controls:GridEx.ColumnWidths="*,30" RenderTransformOrigin="0.5,0.5">
+            	<Grid.RenderTransform>
+            		<TransformGroup>
+            			<ScaleTransform/>
+            		</TransformGroup>
+            	</Grid.RenderTransform>
+                <Border Background="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}">
+                    <Grid controls:GridEx.ColumnWidths="Auto,*">
+                        <Rectangle Height="36" Width="36" Margin="15,5,2,2" Fill="{Binding View.IconResourceKey, Converter={StaticResource ViewIconConverter}}" Visibility="{Binding View.IconResourceKey, Converter={StaticResource ViewIconVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding ViewTitle}" FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Largest}" 
+                                           Margin="15,15,0,0" Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" Grid.Column="2" />
+                    </Grid>
+                </Border>
+                <Grid controls:GridEx.RowHeights="30,*" Grid.Column="1">
+                    <Path Data="M-0,0 L30,30 0,30 z" Fill="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}"/>
+                    <Border Background="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}" Grid.Row="1"/>
+                </Grid>
+                <Border BorderThickness="4" Background="{Binding View.ViewThemeColor, Converter={StaticResource ThemeColorConverter}}" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Offset="0" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor1}"/>
+                            <GradientStop Offset=".5" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor2}"/>
+                            <GradientStop Offset="1" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor3}"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                </Border>
+                <AdornerDecorator Grid.Row="1" Grid.ColumnSpan="2" Margin="4">
+                    <ContentControl Content="{Binding View}" Margin="0" x:Name="mainContent"/>
+                </AdornerDecorator>
+                <mvvm:ActionGrid Model="{Binding Model}" Grid.Row="2" Grid.ColumnSpan="2" Margin="4" x:Name="actionGrid">
+                    <classes:WildcatActionItemsControl Model="{Binding Model}" HorizontalAlignment="Right" Margin="10,5,10,10">
+                        <classes:WildcatActionItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button x:Name="ToolbarButton" classes:WildcatButton.Position="{Binding Position}" Margin="2,0,0,0"
+                                                Content="{Binding Caption}" Command="{Binding}" 
+                                                IsDefault="{Binding IsDefault, Mode=OneWay}" IsCancel="{Binding IsCancel, Mode=OneWay}" />
+                            </DataTemplate>
+                        </classes:WildcatActionItemsControl.ItemTemplate>
+                        <mvvm:ActionItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </mvvm:ActionItemsControl.ItemsPanel>
+                    </classes:WildcatActionItemsControl>
+                </mvvm:ActionGrid>
+                <mvvm:ModelStatusGrid Model="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="8" Width="300" x:Name="modelStatus" Grid.RowSpan="3" Grid.ColumnSpan="2">
+                    <mvvm:ModelStatusGrid.Resources>
+                        <mvvm:ModelStatusToVisibleConverter x:Key="ModelStatusToVisibleConverter" />
+                    </mvvm:ModelStatusGrid.Resources>
+                    <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}"/>
+                </mvvm:ModelStatusGrid>
+                <Rectangle Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="4" Fill="#3FFFFFFF" Visibility="Collapsed" x:Name="fog" />
+            </Grid>
+            <mvvm:TopLevelViewHostTabControl Margin="0" ItemsSource="{Binding LocalViews}" x:Name="localViewsHost"
+                                             SelectedIndex="{Binding SelectedLocalViewIndex, Mode=TwoWay}" ClipToBounds="False"
+                                             Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-LocalViewsHost}">
+                <mvvm:TopLevelViewHostTabControl.Effect>
+                    <DropShadowEffect Color="White" Opacity=".5" Direction="0" BlurRadius="5" ShadowDepth="0"/>
+                </mvvm:TopLevelViewHostTabControl.Effect>
+            </mvvm:TopLevelViewHostTabControl>
+        </Grid>
+        <DataTemplate.Triggers>
+            <Trigger SourceName="localViewsHost" Property="Visibility" Value="Visible">
+            	<Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource ShrinkMainContent}"/>
+            	</Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource GrowMainContent}"/>
+                </Trigger.ExitActions>
+                <Setter TargetName="mainContent" Property="IsEnabled" Value="False"/>
+                <Setter TargetName="actionGrid" Property="IsEnabled" Value="False"/>
+                <Setter TargetName="fog" Property="Visibility" Value="Visible"/>
+            </Trigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CODE.Framework.Wpf.Mvvm.Shell-LocalViewDisplayTemplate">
+        <DataTemplate.Resources>
+            <classes:ThemeColorConverter x:Key="ThemeColorConverter"/>
+            <classes:ViewIconConverter x:Key="ViewIconConverter"/>
+            <classes:ViewIconVisibilityConverter x:Key="ViewIconVisibilityConverter"/>
+        </DataTemplate.Resources>
+        <mvvm:SizeStrategyAwareGrid controls:GridEx.ColumnWidths="*,30" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="SizeHost" controls:GridEx.EnableRenderTransformMouseMove="True">
+            <mvvm:SizeStrategyAwareGrid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" x:Name="SizeHostContentRow" />
+                <RowDefinition Height="Auto" />
+            </mvvm:SizeStrategyAwareGrid.RowDefinitions>
+            <Border Background="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}">
+                <Grid controls:GridEx.ColumnWidths="Auto,*">
+                    <Rectangle Height="36" Width="36" Margin="15,5,2,2" Fill="{Binding View.IconResourceKey, Converter={StaticResource ViewIconConverter}}" Visibility="{Binding View.IconResourceKey, Converter={StaticResource ViewIconVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding ViewTitle}" FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Largest}" 
+                                           Margin="15,15,0,0" Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" Grid.Column="2" />
+                </Grid>
+            </Border>
+            <Grid controls:GridEx.RowHeights="30,*" Grid.Column="1">
+                <Path Data="M-0,0 L30,30 0,30 z" Fill="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}"/>
+                <Border Background="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}" Grid.Row="1"/>
+            </Grid>
+            <Border BorderBrush="{DynamicResource CODE.Framework-Application-ViewBorderBrush1}"  BorderThickness="4" Background="{Binding View.ViewThemeColor, Converter={StaticResource ThemeColorConverter}}" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+            <AdornerDecorator Grid.Row="1" Grid.ColumnSpan="2" Margin="4">
+                <mvvm:ViewContentControl ViewContent="{Binding View}" SizeStrategyHost="{Binding ElementName=SizeHost}" x:Name="MainContentView" Margin="0" ClipToBounds="True"/>
+            </AdornerDecorator>
+            <mvvm:ActionGrid Model="{Binding Model}" Grid.Row="2" Grid.ColumnSpan="2" Margin="4">
+                <classes:WildcatActionItemsControl Model="{Binding Model}" HorizontalAlignment="Right" Margin="10,5,10,10">
+                    <classes:WildcatActionItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button x:Name="ToolbarButton" classes:WildcatButton.Position="{Binding Position}" Margin="2,0,0,0"
+                                                Content="{Binding Caption}" Command="{Binding}" 
+                                                IsDefault="{Binding IsDefault, Mode=OneWay}" IsCancel="{Binding IsCancel, Mode=OneWay}" />
+                        </DataTemplate>
+                    </classes:WildcatActionItemsControl.ItemTemplate>
+                    <mvvm:ActionItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </mvvm:ActionItemsControl.ItemsPanel>
+                </classes:WildcatActionItemsControl>
+            </mvvm:ActionGrid>
+            <mvvm:ModelStatusGrid Model="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="8" Width="300" x:Name="modelStatus" Grid.RowSpan="3" Grid.ColumnSpan="2">
+                <mvvm:ModelStatusGrid.Resources>
+                    <mvvm:ModelStatusToVisibleConverter x:Key="ModelStatusToVisibleConverter" />
+                </mvvm:ModelStatusGrid.Resources>
+                <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}"/>
+            </mvvm:ModelStatusGrid>
+        </mvvm:SizeStrategyAwareGrid>
+        <DataTemplate.Triggers>
+            <Trigger Property="SizeStrategy" Value="UseMaximumSizeAvailable" SourceName="SizeHost">
+                <Setter Property="Height" TargetName="SizeHostContentRow" Value="*"/>
+            </Trigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
 
     <Style TargetType="mvvm:TopLevelViewHostTabControl" x:Key="CODE.Framework.Wpf.Mvvm.Shell-TopLevelViewsHost">
         <Setter Property="BorderBrush" Value="{x:Null}"/>
@@ -215,13 +443,9 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <TabPanel Height="0" x:Name="HeaderPanel" IsItemsHost="True" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" Margin="0,-20,0,0" Visibility="Hidden"/>
-                        <ContentPresenter x:Name="PART_SelectedContentHost" Grid.Row="1"
-                                            ContentTemplate="{TemplateBinding SelectedContentTemplate}" 
-                                            Content="{TemplateBinding SelectedContent}" 
-                                            ContentStringFormat="{TemplateBinding SelectedContentStringFormat}" 
-                                            ContentSource="SelectedContent" 
-                                            Margin="{TemplateBinding Padding}" 
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        <ContentPresenter x:Name="PART_SelectedContentHost" Grid.Row="1" ContentTemplate="{TemplateBinding SelectedContentTemplate}" 
+                                          Content="{TemplateBinding SelectedContent}" ContentStringFormat="{TemplateBinding SelectedContentStringFormat}" 
+                                          ContentSource="SelectedContent" Margin="{TemplateBinding Padding}"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -230,13 +454,13 @@
             <Setter.Value>
                 <DataTemplate>
                     <mvvm:SizeStrategyAwareGrid HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="False"
-                                                Margin="20,20" x:Name="SizeHost" MinWidth="200">
+                                                Margin="20,40" x:Name="SizeHost" MinWidth="200">
                         <mvvm:SizeStrategyAwareGrid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" x:Name="SizeHostContentRow" />
                             <RowDefinition Height="Auto" />
                         </mvvm:SizeStrategyAwareGrid.RowDefinitions>
-                        <Border Grid.RowSpan="3" Background="#E5000000" Margin="-40,-15" CornerRadius="25,0,25,0" />
+                        <Border Grid.RowSpan="3" Background="#CD000000" Margin="-40,-15" CornerRadius="25,0,25,0" />
                         <mvvm:ViewResultHeaderGrid x:Name="headerGrid" ViewResult="{Binding}" Margin="0">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20,0,20,15">
                                 <StackPanel.Resources>
@@ -245,7 +469,7 @@
                                 <Rectangle Height="48" Width="48" Fill="{Binding Path=TitleIconBrush, ElementName=headerGrid}" Margin="0,0,0,-10" 
                                            Visibility="{Binding TitleIconBrush, ElementName=headerGrid, Converter={StaticResource NullToVisibleConverter}}"/>
                                 <Label Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" 
-                                       Content="{Binding Path=ViewTitle, ElementName=headerGrid}" 
+                                       Content="{Binding Path=View.Title}" 
                                        FontSize="{DynamicResource FontSize-Larger}"
                                        VerticalAlignment="Center" />
                             </StackPanel>
@@ -253,6 +477,12 @@
                         <AdornerDecorator Grid.Row="1" x:Name="MainContentArea" HorizontalAlignment="Center">
                             <mvvm:ViewContentControl ViewContent="{Binding View}" SizeStrategyHost="{Binding ElementName=SizeHost}" x:Name="MainContentView" Margin="20,10,20,0"/>
                         </AdornerDecorator>
+                        <mvvm:ModelStatusGrid Model="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="8" Width="300" x:Name="modelStatus" Grid.RowSpan="3" Grid.ColumnSpan="2">
+                            <mvvm:ModelStatusGrid.Resources>
+                                <mvvm:ModelStatusToVisibleConverter x:Key="ModelStatusToVisibleConverter" />
+                            </mvvm:ModelStatusGrid.Resources>
+                            <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}"/>
+                        </mvvm:ModelStatusGrid>
                         <mvvm:ActionGrid Grid.Row="2" Model="{Binding Model}" Margin="20,20,20,5" HorizontalAlignment="Center" MinWidth="{Binding ElementName=MainContentView, Path=ViewContent.ActualWidth}">
                             <classes:WildcatActionItemsControl Model="{Binding Model}" HorizontalAlignment="Right">
                                 <classes:WildcatActionItemsControl.ItemTemplate>
@@ -272,8 +502,6 @@
                     </mvvm:SizeStrategyAwareGrid>
                     <DataTemplate.Triggers>
                         <Trigger Property="SizeStrategy" Value="UseMaximumSizeAvailable" SourceName="SizeHost">
-                            <Setter Property="VerticalAlignment" TargetName="SizeHost" Value="Stretch"/>
-                            <Setter Property="HorizontalAlignment" TargetName="SizeHost" Value="Stretch"/>
                             <Setter Property="Height" TargetName="SizeHostContentRow" Value="*"/>
                         </Trigger>
                     </DataTemplate.Triggers>
@@ -301,105 +529,6 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="Panel.ZIndex" Value="1" />
-        <!--<Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ScrollViewer">
-                    <Grid SnapsToDevicePixels="True" controls:GridEx.ColumnWidths="Auto,*,Auto" ClipToBounds="False">
-                        <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                            <classes:ScrollLeftButton Width="40" Height="20" ScrollViewer="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                <RepeatButton.Template>
-                                    <ControlTemplate TargetType="RepeatButton">
-                                        <Grid>
-                                            <Rectangle Fill="Transparent" IsHitTestVisible="True"/>
-                                            <Path Data="M4,0 L4,7 0,3.5 z" Stroke="{x:Null}" Margin="10,0,0,0" x:Name="arrow"
-                                                  Fill="{DynamicResource CODE.Framework-Application-ThemeBrush1}"  
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-                                            <Path Data="M4,0 L4,7 0,3.5 z" Stroke="{x:Null}" Margin="10,0,0,0" x:Name="arrow2"
-                                                  Fill="White" Opacity=".4" Visibility="Collapsed"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Visibility" Value="Hidden" />
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" TargetName="arrow2" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </RepeatButton.Template>
-                            </classes:ScrollLeftButton>
-                            <classes:ScrollRightButton Width="40" Height="20" ScrollViewer="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                                <RepeatButton.Template>
-                                    <ControlTemplate TargetType="RepeatButton">
-                                        <Grid>
-                                            <Rectangle Fill="Transparent" IsHitTestVisible="True"/>
-                                            <Path Data="M0,0 L0,7 4,3.5 z" Stroke="{x:Null}" Margin="0,0,10,0" x:Name="arrow"
-                                                  Fill="{DynamicResource CODE.Framework-Application-ThemeBrush1}"  
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-                                            <Path Data="M0,0 L0,7 4,3.5 z" Stroke="{x:Null}" Margin="0,0,10,0" x:Name="arrow2"
-                                                  Fill="White" Opacity=".4" Visibility="Collapsed"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" TargetName="arrow2" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </RepeatButton.Template>
-                            </classes:ScrollRightButton>
-                            <classes:ScrollLeftButton Height="20" ScrollViewer="{Binding RelativeSource={RelativeSource TemplatedParent}}" Margin="0,0,5,0"
-                                                      Content="..." FontSize="14" FontWeight="Bold" Foreground="{DynamicResource CODE.Framework-Application-ThemeBrush1}">
-                                <RepeatButton.Template>
-                                    <ControlTemplate TargetType="RepeatButton">
-                                        <Grid>
-                                            <Rectangle Fill="Transparent" IsHitTestVisible="True"/>
-                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" TextElement.Foreground="White" Opacity=".4" Visibility="Hidden" x:Name="content2" />
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Visibility" Value="Hidden" />
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" TargetName="content2" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </RepeatButton.Template>
-                            </classes:ScrollLeftButton>
-                        </StackPanel>
-                        <ScrollContentPresenter ClipToBounds="False" Margin="0,-1.5,0,2" Grid.Column="1"
-                                                x:Name="PART_ScrollContentPresenter" SnapsToDevicePixels="True" 
-                                                Content="{TemplateBinding ScrollViewer.Content}" />
-                        <classes:ScrollRightButton Height="20" ScrollViewer="{Binding RelativeSource={RelativeSource TemplatedParent}}" Grid.Column="2" Margin="5,0"
-                                                   Content="..." FontSize="14" FontWeight="Bold" Foreground="{DynamicResource CODE.Framework-Application-ThemeBrush1}">
-                            <RepeatButton.Template>
-                                <ControlTemplate TargetType="RepeatButton">
-                                    <Grid>
-                                        <Rectangle Fill="Transparent" IsHitTestVisible="True"/>
-                                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" TextElement.Foreground="White" Opacity=".4" Visibility="Hidden" x:Name="content2" />
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" TargetName="content2" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </RepeatButton.Template>
-                        </classes:ScrollRightButton>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>-->
     </Style>
 
     <Style TargetType="TabItem" x:Key="CODE.Framework.Wpf.Mvvm.Shell-ViewHost">
@@ -417,5 +546,10 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <DataTemplate x:Key="NotificationItemTemplate">
+        <ContentControl Content="{Binding View}" Foreground="{DynamicResource Black}"
+                        Margin="5" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+    </DataTemplate>
 
 </ResourceDictionary>

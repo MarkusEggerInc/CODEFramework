@@ -1,0 +1,61 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.TreeViewTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="TreeViewTest" Height="300" Width="300">
+    <Grid controls:GridEx.RowHeights="Auto,Auto,*">
+        <Button Content="Show selection" Click="ShowSelection" />
+        <Button Content="Select last item" Click="SelectLastItem" Grid.Row="1" />
+        <controls:TreeViewEx SelectedNode="{Binding SelectedTreeItem, Mode=TwoWay}" 
+                             Grid.Row="2" 
+                             x:Name="tree" 
+                             BringItemIntoViewWhenSelected="True">
+            <TreeViewItem Header="Item #1">
+                <TreeViewItem Header="Item #1-1"/>
+                <TreeViewItem Header="Item #1-2"/>
+                <TreeViewItem Header="Item #1-3"/>
+                <TreeViewItem Header="Item #1-4"/>
+            </TreeViewItem>
+            <TreeViewItem Header="Item #2">
+                <TreeViewItem Header="Item #2-1"/>
+                <TreeViewItem Header="Item #2-2"/>
+                <TreeViewItem Header="Item #2-3"/>
+            </TreeViewItem>
+            <TreeViewItem Header="Item #3">
+                <TreeViewItem Header="Item #3-1"/>
+                <TreeViewItem Header="Item #3-2"/>
+                <TreeViewItem Header="Item #3-3"/>
+                <TreeViewItem Header="Item #3-4"/>
+                <TreeViewItem Header="Item #3-5"/>
+            </TreeViewItem>
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+            <TreeViewItem Header="Item X" />
+        </controls:TreeViewEx>
+    </Grid>
+</Window>

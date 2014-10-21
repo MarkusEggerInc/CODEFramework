@@ -50,14 +50,18 @@
                         <mvvm:ViewHostTabControl x:Name="OpenViews" Grid.Row="3" Margin="0"
                                                  ItemsSource="{TemplateBinding NormalViews}"
                                                  SelectedIndex="{Binding SelectedNormalView, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                 ContentZoom="{Binding ElementName=zoomSlider, Path=Zoom}"
                                                  Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-NormalViewsHost}"/>
                         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="4" x:Name="statusGrid"
                               Background="{DynamicResource CODE.Framework-Workplace-StatusReadyBackgroundBrush}" >
                             <ContentControl Content="{TemplateBinding CurrentStatusView}" x:Name="statusContent"
                                             FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}"
                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                            VerticalContentAlignment="Center" Margin="8,2,8,0"
+                                            VerticalContentAlignment="Center" Margin="8,2,188,0"
                                             Foreground="{DynamicResource CODE.Framework-Workplace-StatusReadyForegroundBrush}"/>
+                            <controls:ZoomSlider x:Name="zoomSlider" Minimum=".25" Maximum="3" MaximumZoom="3" MinimumZoom=".25"
+                                                 VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Margin="0,0,15,0" 
+                                                 Style="{DynamicResource CODE.Framework.Wpf.Mvvm.ZoomSlider}"/>
                         </Grid>
                         <Grid Grid.RowSpan="5" controls:GridEx.ColumnWidths="Auto,*" Visibility="Collapsed" x:Name="fileButtonOverlay">
                             <Rectangle Fill="{DynamicResource CODE.Framework-Application-BackgroundBrush1}" Margin="1,58,1,1" Grid.ColumnSpan="2" Visibility="Hidden" x:Name="fileOverlayUI" />
@@ -78,9 +82,27 @@
                                     <mvvm:SpecialFirstPageActionList Model="{Binding}" SelectedView="{Binding Path=SelectedItem, ElementName=OpenViews, Mode=OneWay}"/>
                                 </ScrollViewer>
                             </Grid>
-                            <TabControl x:Name="topLevelViews" ItemsSource="{TemplateBinding TopLevelViews}" Grid.Column="1" Visibility="Hidden"
-                                        SelectedIndex="{TemplateBinding SelectedTopLevelView}" Margin="20,50,0,0"
-                                        Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-TopLevelViewsHost}" />
+                            <Grid Grid.Column="1" controls:GridEx.RowHeights="Auto,*">
+                                <ItemsControl VerticalAlignment="Top" 
+                                          HorizontalAlignment="Stretch" 
+                                          Margin="0,26,0,0" 
+                                          ItemsSource="{TemplateBinding CurrentNotifications}" 
+                                          Background="#FBF6B5" 
+                                          BorderBrush="#32000000" BorderThickness="0,0,0,1">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <ContentControl Content="{Binding View}" Margin="1" VerticalAlignment="Top" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TabControl x:Name="topLevelViews" 
+                                            ItemsSource="{TemplateBinding TopLevelViews}" 
+                                            Grid.Row="1"
+                                            Visibility="Hidden"
+                                            SelectedIndex="{TemplateBinding SelectedTopLevelView}" 
+                                            Margin="20,20,0,0"
+                                            Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-TopLevelViewsHost}" />
+                            </Grid>
                         </Grid>
                     </Grid>
                     <ControlTemplate.Resources>
@@ -230,7 +252,12 @@
                 <DataTemplate>
                     <Grid>
                         <AdornerDecorator>
-                            <ContentControl Content="{Binding View}" Margin="1" />
+                            <ContentControl Content="{Binding View}" Margin="1">
+                                <ContentControl.LayoutTransform>
+                                    <ScaleTransform ScaleX="{Binding Path=ContentZoom, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mvvm:ViewHostTabControl}}}"
+                                                    ScaleY="{Binding Path=ContentZoom, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mvvm:ViewHostTabControl}}}"/>
+                                </ContentControl.LayoutTransform>
+                            </ContentControl>
                         </AdornerDecorator>
                         <mvvm:ModelStatusGrid Model="{Binding Model}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="8" x:Name="modelStatus">
                             <mvvm:ModelStatusGrid.Resources>
@@ -620,4 +647,115 @@
         </Setter>
     </Style>
 
+    <Style TargetType="controls:ZoomSlider" x:Key="CODE.Framework.Wpf.Mvvm.ZoomSlider">
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Workplace-StatusReadyForegroundBrush}" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ZoomSlider">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <RepeatButton Command="Slider.DecreaseSmall" Content="-" FontWeight="Bold" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" MinWidth="12">
+                                <RepeatButton.Template>
+                                    <ControlTemplate TargetType="RepeatButton">
+                                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ContentPresenter Margin="0,0,0,2" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </RepeatButton.Template>
+                            </RepeatButton>
+							<Rectangle Width="1" Height="8" Fill="White" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" />
+                            <Border x:Name="TrackBackground" BorderBrush="White" BorderThickness="1" Background="White" Height="1" Margin="5,0" VerticalAlignment="Center" Grid.Column="1">
+                                <Canvas Margin="-9,-1">
+                                    <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="1" Visibility="Hidden"/>
+                                </Canvas>
+                            </Border>
+                            <Track x:Name="PART_Track" Grid.Column="1">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseSmall">
+                                        <RepeatButton.Style>
+                                            <Style TargetType="{x:Type RepeatButton}">
+                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsTabStop" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                            <Rectangle Fill="{TemplateBinding Background}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </RepeatButton.Style>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseSmall">
+                                        <RepeatButton.Style>
+                                            <Style TargetType="{x:Type RepeatButton}">
+                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsTabStop" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                            <Rectangle Fill="{TemplateBinding Background}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </RepeatButton.Style>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb" Focusable="False" Height="12" OverridesDefaultStyle="True" VerticalAlignment="Center" Width="4">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+                                                    <Path x:Name="grip" Data="M0,0C0,0 11,0 11,0 11,0 11,18 11,18 11,18 0,18 0,18 0,18 0,0 0,0z" Fill="White" Stretch="Fill" SnapsToDevicePixels="True" UseLayoutRounding="True" VerticalAlignment="Center"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Fill" TargetName="grip" Value="#FFDCECFC"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter Property="Fill" TargetName="grip" Value="#FFDAECFC"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Fill" TargetName="grip" Value="#FFF0F0F0"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                            <RepeatButton Content="+" Foreground="{TemplateBinding Foreground}" FontWeight="Bold" VerticalAlignment="Center" MinWidth="12" Grid.Column="2" Command="Slider.IncreaseSmall">
+                                <RepeatButton.Template>
+                                    <ControlTemplate TargetType="RepeatButton">
+                                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ContentPresenter  Margin="0,0,0,2" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </RepeatButton.Template>
+                            </RepeatButton>
+                            <Label VerticalAlignment="Center" HorizontalAlignment="Stretch" Padding="0" Margin="4,0,0,0" Content="000%" Foreground="Transparent" Grid.Column="3" />
+                            <Label VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" Margin="4,0,0,0" Padding="0" Content="{TemplateBinding ZoomText}" Grid.Column="3" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

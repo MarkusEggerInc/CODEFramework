@@ -1,0 +1,19 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.TextBlockExText"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="TextBlockExTest" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <TextBox Text="{Binding SearchText,  UpdateSourceTrigger=PropertyChanged}" />
+        <controls:TextBlockEx Grid.Row="1"
+                              TextWrapping="Wrap"
+                              controls:TextBlockEx.SearchWords="{Binding SearchWords}"
+                              controls:TextBlockEx.HighlightBackground="Red"
+                              controls:TextBlockEx.HighlightableText="{Binding Text}" />
+    </Grid>
+</Window>

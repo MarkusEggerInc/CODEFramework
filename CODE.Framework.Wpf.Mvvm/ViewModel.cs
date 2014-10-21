@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Collections.ObjectModel;
 using System.Windows;
 using CODE.Framework.Core.Utilities;
 
@@ -18,7 +17,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         public ViewModel()
         {
-            Actions = new ObservableCollection<IViewAction>();
+            Actions = new ViewActionsCollection();
             Actions.CollectionChanged += (s, e) =>
                 {
                     if (ActionChangeNotificationActive && ActionsChanged != null)
@@ -81,13 +80,13 @@ namespace CODE.Framework.Wpf.Mvvm
         protected void InvalidateAllActions()
         {
             foreach (var action in Actions)
-                If.Real<ViewAction>(action, viewAction => viewAction.InvalidateCanExecute());
+                action.InvalidateCanExecute();
         }
 
         /// <summary>
         /// Collection of actions
         /// </summary>
-        public ObservableCollection<IViewAction> Actions { get; private set; }
+        public ViewActionsCollection Actions { get; private set; }
 
         /// <summary>
         /// Fires when the list of actions changed (assuming change notification is active)

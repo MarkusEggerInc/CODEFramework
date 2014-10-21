@@ -28,10 +28,18 @@ namespace CODE.Framework.Wpf.Mvvm
                     {
                         IsSpecialFirstPageActive = false;
                         if (SelectedIndex > -1)
-                            _lastRegularIndex = SelectedIndex;
+                            LastRegularIndex = SelectedIndex;
                     }
                     Visibility = SelectedIndex == 0 ? Visibility.Hidden : Visibility.Visible;
                 };
+
+            Loaded += (s, e) =>
+            {
+                if (_mustRaiseSpecialFirstPageDeactivateEventOnLoad)
+                    RaiseEvent(new RoutedEventArgs(SpecialFirstPageDeactivateEvent));
+                if (_mustRaiseSpecialFirstPageActivateEventOnLoad)
+                    RaiseEvent(new RoutedEventArgs(SpecialFirstPageActivateEvent));
+            };
 
             Initialized += (o, e) =>
                 {
@@ -46,44 +54,34 @@ namespace CODE.Framework.Wpf.Mvvm
                                 {
                                     if (SelectedIndex < 0 || SelectedIndex >= Items.Count) return;
                                     var page = Items[SelectedIndex] as RibbonPage;
-                                    if (page != null)
+                                    if (page == null) return;
+                                    var panel = page.Content as RibbonPageLayoutPanel;
+                                    if (panel == null) return;
+                                    foreach (var child in panel.Children)
                                     {
-                                        var panel = page.Content as RibbonPageLayoutPanel;
-                                        if (panel != null)
-                                            foreach (var child in panel.Children)
-                                            {
-                                                var button = child as RibbonButton;
-                                                if (button != null && !string.IsNullOrEmpty(button.AccessKey) && button.AccessKey == a.Key.ToString() && button.Command != null)
-                                                {
-                                                    var command = button.Command as ViewAction;
-                                                    if (command != null && command.CanExecute(button.CommandParameter))
-                                                    {
-                                                        command.Execute(button.CommandParameter);
-                                                        SetKeyboardShortcutsActive(window, false);
-                                                        a.Handled = true;
-                                                        return;
-                                                    }
-                                                }
-                                            }
-                                    }
-                                }
-                                if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
-                                {
-                                    if (_readyForStatusChange)
-                                    {
-                                        var state = !GetKeyboardShortcutsActive(window);
-                                        SetKeyboardShortcutsActive(window, state);
-                                        _readyForStatusChange = !state;
+                                        var button = child as RibbonButton;
+                                        if (button == null || string.IsNullOrEmpty(button.AccessKey) || button.AccessKey != a.Key.ToString() || button.Command == null) continue;
+                                        var command = button.Command as ViewAction;
+                                        if (command == null || !command.CanExecute(button.CommandParameter)) continue;
+                                        command.Execute(button.CommandParameter);
+                                        SetKeyboardShortcutsActive(window, false);
                                         a.Handled = true;
                                         return;
                                     }
                                 }
+                                if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
+                                {
+                                    if (!ReadyForStatusChange) return;
+                                    var state = !GetKeyboardShortcutsActive(window);
+                                    SetKeyboardShortcutsActive(window, state);
+                                    ReadyForStatusChange = !state;
+                                    a.Handled = true;
+                                }
                                 else if (key == Key.Escape)
                                 {
                                     SetKeyboardShortcutsActive(window, false);
-                                    _readyForStatusChange = true;
+                                    ReadyForStatusChange = true;
                                     a.Handled = true;
-                                    return;
                                 }
                             };
                         window.PreviewKeyUp += (s, a) =>
@@ -91,13 +89,16 @@ namespace CODE.Framework.Wpf.Mvvm
                                 var key = a.Key;
                                 var systemKey = a.SystemKey;
                                 if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
-                                    _readyForStatusChange = true;
+                                    ReadyForStatusChange = true;
                             };
                     }
                 };
         }
 
-        private bool _readyForStatusChange = true;
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        protected bool ReadyForStatusChange = true;
 
         /// <summary>Indicates whether the user has pressed the ALT key and thus activated display of keyboard shortcuts</summary>
         public static readonly DependencyProperty KeyboardShortcutsActiveProperty = DependencyProperty.RegisterAttached("KeyboardShortcutsActive", typeof (bool), typeof (ViewActionRibbon), new FrameworkPropertyMetadata(false) {Inherits = true});
@@ -127,7 +128,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         public static readonly DependencyProperty FirstPageIsSpecialProperty = DependencyProperty.Register("FirstPageIsSpecial", typeof(bool), typeof(ViewActionRibbon), new PropertyMetadata(true));
 
-        private int _lastRegularIndex = -1;
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        protected int LastRegularIndex = -1;
 
         /// <summary>
         /// Title for empty global category titles (default: File)
@@ -194,13 +198,25 @@ namespace CODE.Framework.Wpf.Mvvm
             var active = (bool) args.NewValue;
             if (!active)
             {
-                ribbon.SelectedIndex = ribbon._lastRegularIndex;
+                ribbon.SelectedIndex = ribbon.LastRegularIndex;
                 ribbon.Visibility = Visibility.Visible;
-                ribbon.RaiseEvent(new RoutedEventArgs(SpecialFirstPageDeactivateEvent));
+                if (ribbon.IsLoaded)
+                    ribbon.RaiseEvent(new RoutedEventArgs(SpecialFirstPageDeactivateEvent));
+                else
+                    ribbon._mustRaiseSpecialFirstPageDeactivateEventOnLoad = true;
             }
             else
-                ribbon.RaiseEvent(new RoutedEventArgs(SpecialFirstPageActivateEvent));
+            {
+                if (ribbon.IsLoaded)
+                    ribbon.RaiseEvent(new RoutedEventArgs(SpecialFirstPageActivateEvent));
+                else
+                    ribbon._mustRaiseSpecialFirstPageActivateEventOnLoad = true;
+            }
         }
+
+        private bool _mustRaiseSpecialFirstPageActivateEventOnLoad;
+
+        private bool _mustRaiseSpecialFirstPageDeactivateEventOnLoad;
 
         /// <summary>
         /// Occurs when the special first page is activated
@@ -326,8 +342,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="actions">List of primary actions</param>
         /// <param name="actions2">List of view specific actions</param>
         /// <param name="selectedViewTitle">The selected view title.</param>
-        private void PopulateRibbon(IHaveActions actions, IHaveActions actions2 = null, string selectedViewTitle = "")
+        protected virtual void PopulateRibbon(IHaveActions actions, IHaveActions actions2 = null, string selectedViewTitle = "")
         {
+            var oldSelectedPage = SelectedIndex;
+
             RemoveAllMenuKeyBindings();
             Items.Clear();
             if (actions == null) return;
@@ -344,6 +362,7 @@ namespace CODE.Framework.Wpf.Mvvm
             foreach (var category in viewActionCategories)
             {
                 RibbonPage tab;
+                var tabVisibilityBinding = new MultiBinding {Converter = new MaximumVisibilityMultiConverter()};
                 if (category.IsLocalCategory && HighlightLocalCategories)
                 {
                     var caption = category.Caption.ToUpper();
@@ -371,21 +390,21 @@ namespace CODE.Framework.Wpf.Mvvm
                 }
                 var items = new RibbonPageLayoutPanel();
                 tab.Content = items;
-                PopulateSubCategories(items, category, actionList, ribbonPage: tab);
+                PopulateSubCategories(items, category, actionList, ribbonPage: tab, visibilityBinding: tabVisibilityBinding);
                 Items.Add(tab);
-                tab.SetBinding(VisibilityProperty, new Binding("Count") {Source = items.Children, Converter = new ChildrenCollectionCountToVisibleConverter(items.Children)});
+                tab.SetBinding(VisibilityProperty, tabVisibilityBinding);
 
                 if (category.AccessKey != ' ')
                 {
                     var pageIndexToSelect = pageCounter;
-                    var pageAccessKey = (Key)Enum.Parse(typeof(Key), category.AccessKey.ToString(CultureInfo.InvariantCulture).ToUpper());
-                    _menuKeyBindings.Add(new ViewActionMenuKeyBinding(new ViewAction(execute: (a, o) =>
-                        {
-                            SelectedIndex = pageIndexToSelect;
-                            var window = ElementHelper.FindParent<Window>(this) ?? ElementHelper.FindVisualTreeParent<Window>(this);
-                            SetKeyboardShortcutsActive(window, true);
-                            _readyForStatusChange = false;
-                        })
+                    var pageAccessKey = (Key) Enum.Parse(typeof (Key), category.AccessKey.ToString(CultureInfo.InvariantCulture).ToUpper());
+                    MenuKeyBindings.Add(new ViewActionMenuKeyBinding(new ViewAction(execute: (a, o) =>
+                    {
+                        SelectedIndex = pageIndexToSelect;
+                        var window = ElementHelper.FindParent<Window>(this) ?? ElementHelper.FindVisualTreeParent<Window>(this);
+                        SetKeyboardShortcutsActive(window, true);
+                        ReadyForStatusChange = false;
+                    })
                     {
                         ShortcutKey = pageAccessKey,
                         ShortcutModifiers = ModifierKeys.Alt
@@ -393,7 +412,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
                     tab.PageAccessKey = category.AccessKey.ToString(CultureInfo.InvariantCulture).Trim().ToUpper();
                 }
-                
+
                 pageCounter++;
             }
 
@@ -412,13 +431,22 @@ namespace CODE.Framework.Wpf.Mvvm
                     pageCounter++;
                 }
 
-            if (selectedIndex == -1)
-                selectedIndex = 0;
-            
-            _lastRegularIndex = selectedIndex;
+            if (selectedIndex == -1) selectedIndex = oldSelectedPage;
+            if (selectedIndex == -1) selectedIndex = 0;
+            if (selectedIndex >= Items.Count) selectedIndex = Items.Count - 1;
+
+            LastRegularIndex = selectedIndex;
             SelectedIndex = selectedIndex;
 
             CreateAllMenuKeyBindings();
+        }
+
+        /// <summary>
+        /// Called after tabs are created. Can be overridden in subclasses.
+        /// </summary>
+        protected virtual void AfterTabCreated()
+        {
+            
         }
 
         /// <summary>
@@ -429,7 +457,8 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="actions">Actions to consider</param>
         /// <param name="indentLevel">Current hierarchical indentation level</param>
         /// <param name="ribbonPage">The ribbon page.</param>
-        private void PopulateSubCategories(Panel parentPanel, ViewActionCategory category, IEnumerable<IViewAction> actions, int indentLevel = 0, RibbonPage ribbonPage = null)
+        /// <param name="visibilityBinding">The visibility binding.</param>
+        protected virtual void PopulateSubCategories(Panel parentPanel, ViewActionCategory category, IEnumerable<IViewAction> actions, int indentLevel = 0, RibbonPage ribbonPage = null, MultiBinding visibilityBinding = null)
         {
             var populatedCategories = new List<string>();
             if (actions == null) return;
@@ -445,6 +474,7 @@ namespace CODE.Framework.Wpf.Mvvm
                     populatedCategories.Add(matchingAction.Categories[indentLevel].Id);
                     var newRibbonButton = new RibbonButtonLarge { Content = matchingAction.Categories[indentLevel].Caption };
                     CreateMenuItemBinding(matchingAction, newRibbonButton);
+                    if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = newRibbonButton});
                     PopulateSubCategories(parentPanel, matchingAction.Categories[indentLevel], viewActions, indentLevel + 1);
                     newRibbonButton.AccessKey = matchingAction.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper();
                     parentPanel.Children.Add(newRibbonButton);
@@ -472,6 +502,8 @@ namespace CODE.Framework.Wpf.Mvvm
                                 Icon = iconBrush
                             };
                     CreateMenuItemBinding(matchingAction, newRibbonButton);
+                    if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") { Source = newRibbonButton });
+                    if (matchingAction.ViewActionType == ViewActionTypes.Toggle) newRibbonButton.SetBinding(RibbonButton.IsCheckedProperty, new Binding("IsChecked") { Source = matchingAction });
                     if (matchingAction.AccessKey != ' ') newRibbonButton.AccessKey = matchingAction.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper();
                     parentPanel.Children.Add(newRibbonButton);
                     HandleRibbonShortcutKey(newRibbonButton, matchingAction, ribbonPage);
@@ -490,29 +522,32 @@ namespace CODE.Framework.Wpf.Mvvm
         protected virtual void HandleRibbonShortcutKey(RibbonButton button, IViewAction action, RibbonPage ribbonPage)
         {
             if (action.ShortcutKey == Key.None) return;
-            _menuKeyBindings.Add(new ViewActionMenuKeyBinding(action));
+            MenuKeyBindings.Add(new ViewActionMenuKeyBinding(action));
         }
 
-        private readonly List<ViewActionMenuKeyBinding> _menuKeyBindings = new List<ViewActionMenuKeyBinding>();
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        protected readonly List<ViewActionMenuKeyBinding> MenuKeyBindings = new List<ViewActionMenuKeyBinding>();
 
         /// <summary>
         /// Removes all key bindings from the current window that were associated with a view category menu
         /// </summary>
-        private void CreateAllMenuKeyBindings()
+        protected virtual void CreateAllMenuKeyBindings()
         {
             var window = ElementHelper.FindVisualTreeParent<Window>(this);
             if (window == null) return;
 
-            foreach (var binding in _menuKeyBindings)
+            foreach (var binding in MenuKeyBindings)
                 window.InputBindings.Add(binding);
         }
 
         /// <summary>
         /// Removes all key bindings from the current window that were associated with a view category menu
         /// </summary>
-        private void RemoveAllMenuKeyBindings()
+        protected virtual void RemoveAllMenuKeyBindings()
         {
-            _menuKeyBindings.Clear();
+            MenuKeyBindings.Clear();
 
             var window = ElementHelper.FindVisualTreeParent<Window>(this);
             if (window == null) return;
@@ -534,19 +569,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         /// <param name="action">The action.</param>
         /// <param name="ribbonButton">The ribbon button.</param>
-        private static void CreateMenuItemBinding(IViewAction action, FrameworkElement ribbonButton)
+        private void CreateMenuItemBinding(IViewAction action, FrameworkElement ribbonButton)
         {
-            ribbonButton.SetBinding(VisibilityProperty, new Binding("Availability") { Source = action, Converter = new AvailabilityToVisibleConverter() });
-
-            // TODO: If this is a real ViewAction, we can listen to changed events on the availability property, which can lead us to changing the visibility on the parent menu
-            //var viewAction = action as ViewAction;
-            //if (viewAction != null)
-            //    viewAction.PropertyChanged += (s, e) =>
-            //        {
-            //            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "Availability")
-            //                // We force the system to re-evaluate the Visibility property on the parent item, just in case the change in availability triggered a visibility change of the entire parent item
-            //                ribbonButton.SetBinding(VisibilityProperty, new Binding("Count") {Source = parentMenu.Items, Converter = new ChildrenCollectionCountToVisibleConverter(parentMenu.Items)});
-            //        };
+            var binding = new MultiBinding {Converter = new MaximumVisibilityMultiConverter()};
+            binding.Bindings.Add(new Binding("Availability") {Source = action, Converter = new AvailabilityToVisibleConverter()});
+            binding.Bindings.Add(new Binding("Visibility") {Source = action});
+            ribbonButton.SetBinding(VisibilityProperty, binding);
         }
     }
 
@@ -645,6 +673,15 @@ namespace CODE.Framework.Wpf.Mvvm
         }
         /// <summary>Indicates whether a page access key has been set</summary>
         public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof(bool), typeof(RibbonButton), new PropertyMetadata(false));
+
+        /// <summary>Indicates whether the button is to be rendered as "checked" (often used in Toggle-style actions)</summary>
+        public bool IsChecked
+        {
+            get { return (bool)GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
+        }
+        /// <summary>Indicates whether the button is to be rendered as "checked" (often used in Toggle-style actions)</summary>
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(RibbonButton), new PropertyMetadata(false));
     }
 
     /// <summary>
@@ -957,7 +994,8 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             base.OnClick();
 
-            if (Ribbon != null)
+            if (Ribbon == null) return;
+            if (Ribbon.Items.Count > 1)
                 Ribbon.IsSpecialFirstPageActive = false;
         }
     }
@@ -1160,6 +1198,46 @@ namespace CODE.Framework.Wpf.Mvvm
     }
 
     /// <summary>
+    /// Looks at multiple Visibility values and returns the lowest visibility level
+    /// </summary>
+    public class MaximumVisibilityMultiConverter : IMultiValueConverter
+    {
+        /// <summary>
+        /// Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
+        /// </summary>
+        /// <param name="values">The array of values that the source bindings in the <see cref="T:System.Windows.Data.MultiBinding" /> produces. The value <see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the source binding has no value to provide for conversion.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value.If the method returns null, the valid null value is used.A return value of <see cref="T:System.Windows.DependencyProperty" />.<see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the converter did not produce a value, and that the binding will use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> if it is available, or else will use the default value.A return value of <see cref="T:System.Windows.Data.Binding" />.<see cref="F:System.Windows.Data.Binding.DoNothing" /> indicates that the binding does not transfer the value or use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> or the default value.</returns>
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var result = Visibility.Visible;
+            foreach (var value in values)
+            {
+                var visibility = (Visibility)value;
+                if (visibility == Visibility.Collapsed) return Visibility.Collapsed; // No point in going further
+                if (visibility == Visibility.Hidden && result == Visibility.Visible) result = Visibility.Hidden;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Converts a binding target value to the source binding values.
+        /// </summary>
+        /// <param name="value">The value that the binding target produces.</param>
+        /// <param name="targetTypes">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>An array of values that have been converted from the target value back to the source values.</returns>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            // Not needed
+            return null;
+        }
+    }
+
+    /// <summary>
     /// For internal use only
     /// </summary>
     public class ChildrenCollectionCountToVisibleConverter : IValueConverter
@@ -1189,7 +1267,7 @@ namespace CODE.Framework.Wpf.Mvvm
             foreach (var item in _children)
             {
                 var uiElement = item as UIElement;
-                if (uiElement != null && uiElement.Visibility == Visibility.Visible)
+                if (uiElement != null && !(uiElement is RibbonSeparator) && uiElement.Visibility == Visibility.Visible)
                     return Visibility.Visible;
             }
 

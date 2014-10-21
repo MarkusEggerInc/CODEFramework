@@ -1,7 +1,7 @@
 ﻿// Update the following settings before each re-build:
 [assembly: System.Reflection.AssemblyCopyright("Copyright © Markus Egger Inc. 2010-2014")]
-[assembly: System.Reflection.AssemblyVersion("4.0.40304.0")]
-[assembly: System.Reflection.AssemblyFileVersion("4.0.40304.0")]
+[assembly: System.Reflection.AssemblyVersion("4.0.41021.0")]
+[assembly: System.Reflection.AssemblyFileVersion("4.0.41021.0")]
 
 // Note: The version number is set up as follows:
 //       Major Version: Matches the major .NET Framework version (currently 4)

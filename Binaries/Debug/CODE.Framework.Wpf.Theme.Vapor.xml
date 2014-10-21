@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Wpf.Theme.Vapor</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Wpf.Theme.Vapor.Classes.VaporStandardFeatures">
+            <summary>
+            Standard features supported by the Vapor theme
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Vapor.Classes.VaporStandardFeatures.StandardViewFactory">
+            <summary>Reference to the standard view factory (if supported)</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Vapor.Classes.VaporStandardViewFactory">
+            <summary>Factory to create standard views supported by Vapor</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Vapor.Classes.VaporStandardViewFactory.GetStandardView(System.String)">
+            <summary>Returns a standard view based on the view name as a string</summary>
+            <param name="viewName">Standard view name</param>
+            <returns>Standard view or null</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Vapor.Classes.VaporStandardViewFactory.GetStandardView(CODE.Framework.Wpf.Mvvm.StandardViews)">
+            <summary>Returns a standard view based on the standard view enumeration</summary>
+            <param name="standardView">Standard view identifier</param>
+            <returns>Standard view or null</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Vapor.Standard.LargeImage">
+            <summary>
+            Interaction logic for LargeImage.xaml
+            </summary>
+            <summary>
+            LargeImage
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Vapor.Standard.LargeImage.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Vapor.Standard.LargeImage"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Vapor.Standard.LargeImage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Vapor.Standard.Notification">
+            <summary>
+            Interaction logic for Notification.xaml
+            </summary>
+            <summary>
+            Notification
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Vapor.Standard.Notification.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Vapor.Standard.Notification"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Vapor.Standard.Notification.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -84,5 +84,43 @@ namespace CODE.Framework.Wpf.Mvvm
             }
             throw new ArgumentNullException("OnCollectionChanged method not found on observable collection!");
         }
+
+        /// <summary>
+        /// Synchronizes the items of two different observable collections of different item types
+        /// </summary>
+        /// <remarks>The types of both collections must be castable (TSource must be a TTarget)</remarks>
+        /// <typeparam name="TSource">The type of the t source.</typeparam>
+        /// <typeparam name="TTarget">The type of the t target.</typeparam>
+        /// <param name="sourceCollection">The source collection.</param>
+        /// <param name="targetCollection">The target collection.</param>
+        public static void Sync<TSource, TTarget>(this ObservableCollection<TSource> sourceCollection, ObservableCollection<TTarget> targetCollection) where TSource : TTarget 
+        {
+            if (sourceCollection.Count > 0)
+                foreach (var item in sourceCollection)
+                    targetCollection.Add(item);
+
+            sourceCollection.CollectionChanged += (s, e) =>
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach (var item in e.NewItems)
+                            if (item is TTarget)
+                                targetCollection.Add((TTarget) item);
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach (var item in e.OldItems)
+                            if (item is TTarget)
+                                targetCollection.Remove((TTarget) item);
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                        targetCollection.Clear();
+                        if (sourceCollection.Count > 0)
+                            foreach (var item in sourceCollection)
+                                targetCollection.Add(item);
+                        break;
+                }
+            };
+        }
     }
 }

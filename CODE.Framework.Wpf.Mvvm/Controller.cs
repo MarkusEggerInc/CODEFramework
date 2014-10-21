@@ -1,5 +1,8 @@
-﻿using System;
+﻿using CODE.Framework.Wpf.Interfaces;
+using CODE.Framework.Wpf.Layout;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -9,8 +12,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media;
-using CODE.Framework.Wpf.Interfaces;
-using CODE.Framework.Wpf.Layout;
 
 namespace CODE.Framework.Wpf.Mvvm
 {
@@ -737,40 +738,48 @@ namespace CODE.Framework.Wpf.Mvvm
             return foundDocument;
         }
 
-        /// <summary>Returns a model named view associated with the current action and passes a view model</summary>
+        /// <summary>
+        /// Returns a model named view associated with the current action and passes a view model
+        /// </summary>
         /// <param name="viewName">The name of the view that is to be returned</param>
         /// <param name="model">The model that is to be passed to the view</param>
         /// <param name="level">The level the view desires to be</param>
+        /// <param name="scope">The scope of the view (global or local/child).</param>
         /// <returns>A view result</returns>
         /// <example>
         /// public ActionResult ShowDetails()
         /// {
-        ///     var model = new MyModel();
-        ///     return ViewModal("SomeView", model, ViewLevel.Popup);
+        /// var model = new MyModel();
+        /// return ViewModal("SomeView", model, ViewLevel.Popup);
         /// }
-        /// </example>        
-        protected virtual ViewResult ViewModal(string viewName, object model = null, ViewLevel level = ViewLevel.Normal)
+        /// </example>
+        protected virtual ViewResult ViewModal(string viewName, object model = null, ViewLevel level = ViewLevel.Normal, ViewScope scope = ViewScope.Global)
         {
             var result = View(viewName, model, level);
             result.IsModal = true;
+            result.ViewScope = scope;
             return result;
         }
 
-        /// <summary>Returns a modal default view associated with the current action and passes a view model</summary>
+        /// <summary>
+        /// Returns a modal default view associated with the current action and passes a view model
+        /// </summary>
         /// <param name="model">The model that is to be passed to the view</param>
         /// <param name="level">The level the view desires to be</param>
+        /// <param name="scope">The scope of the view (global or local/child).</param>
         /// <returns>A view result</returns>
         /// <example>
         /// public ActionResult ShowDetails()
         /// {
-        ///     var model = new MyModel();
-        ///     return ViewModal(model, ViewLevel.Popup);
+        /// var model = new MyModel();
+        /// return ViewModal(model, ViewLevel.Popup);
         /// }
-        /// </example>        
-        protected virtual ViewResult ViewModal(object model = null, ViewLevel level = ViewLevel.Normal)
+        /// </example>
+        protected virtual ViewResult ViewModal(object model = null, ViewLevel level = ViewLevel.Normal, ViewScope scope = ViewScope.Global)
         {
             var result = View(model, level);
             result.IsModal = true;
+            result.ViewScope = scope;
             return result;
         }
 
@@ -864,12 +873,13 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="number">Numeric information (such as an item count) passed as a string</param>
         /// <param name="imageResource">Generic image resource to load a brush from (if this parameter is passed an the resource is found the image parameter is ignored)</param>
         /// <param name="image">A logo image (passed as a brush).</param>
-        /// <param name="model">Notification view model (if passed, text, number, and image parameters are ignored)</param>
-        protected NotificationMessageResult NotificationMessage(string viewName = "", string text = "", string text2 = "", string number = "", string imageResource = "", Brush image = null, NotificationViewModel model = null)
+        /// <param name="model">Notification view model (if passed, text, number, image and overrideTimeout parameters are ignored)</param>
+        /// <param name="overrideTimeout">Overrides the theme's default notification timeout. If model is passed, set this property in model.</param>
+        protected NotificationMessageResult NotificationMessage(string viewName = "", string text = "", string text2 = "", string number = "", string imageResource = "", Brush image = null, NotificationViewModel model = null, TimeSpan? overrideTimeout = null)
         {
             if (model == null)
             {
-                model = new NotificationViewModel {Text1 = text, Text2 = text2, Number1 = number};
+                model = new NotificationViewModel {Text1 = text, Text2 = text2, Number1 = number, OverrideTimeout = overrideTimeout};
                 if (!string.IsNullOrEmpty(imageResource))
                 {
                     var resource = Application.Current.FindResource(imageResource);
@@ -1042,13 +1052,14 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="number">Numeric information (such as an item count) passed as a string</param>
         /// <param name="imageResource">Generic image resource to load a brush from (if this parameter is passed an the resource is found the image parameter is ignored)</param>
         /// <param name="image">A logo image (passed as a brush).</param>
-        /// <param name="model">Notification view model (if passed, text, number, and image parameters are ignored)</param>
+        /// <param name="model">Notification view model (if passed, text, number, image and overrideTimeout parameters are ignored)</param>
         /// <param name="standardView">Standard view to display</param>
         /// <param name="controllerType">Type of the controller (used as a context to find views)</param>
-        public static void Notification(StandardViews standardView, string text = "", string text2 = "", string number = "", string imageResource = "", Brush image = null, NotificationViewModel model = null, Type controllerType = null)
+        /// <param name="overrideTimeout">Overrides the theme's default notification timeout. If model is passed, set this property in model.</param>
+        public static void Notification(StandardViews standardView, string text = "", string text2 = "", string number = "", string imageResource = "", Brush image = null, NotificationViewModel model = null, Type controllerType = null, TimeSpan? overrideTimeout = null)
         {
             var viewName = "CODEFrameworkStandardView" + standardView;
-            Notification(text, text2, number, imageResource, image, model, viewName, controllerType);
+            Notification(text, text2, number, imageResource, image, model, viewName, controllerType, overrideTimeout);
         }
 
         /// <summary>Displays the specified notification</summary>
@@ -1057,10 +1068,11 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="number">Numeric information (such as an item count) passed as a string</param>
         /// <param name="imageResource">Generic image resource to load a brush from (if this parameter is passed an the resource is found the image parameter is ignored)</param>
         /// <param name="image">A logo image (passed as a brush).</param>
-        /// <param name="model">Notification view model (if passed, text, number, and image parameters are ignored)</param>
+        /// <param name="model">Notification view model (if passed, text, number, image and overrideTimeout parameters are ignored)</param>
         /// <param name="viewName">Name of a custom view to be used by the status.</param>
         /// <param name="controllerType">Type of the controller (used as a context to find views)</param>
-        public static void Notification(string text = "", string text2 = "", string number = "", string imageResource = "", Brush image = null, NotificationViewModel model = null, string viewName = "", Type controllerType = null)
+        /// <param name="overrideTimeout">Overrides the theme's default notification timeout. If model is passed, set this property in model.</param>
+        public static void Notification(string text = "", string text2 = "", string number = "", string imageResource = "", Brush image = null, NotificationViewModel model = null, string viewName = "", Type controllerType = null, TimeSpan? overrideTimeout = null)
         {
             var context = new RequestContext(new RouteData("NotificationMessage", new {viewName = string.Empty}));
 
@@ -1071,7 +1083,7 @@ namespace CODE.Framework.Wpf.Mvvm
             if (controller == null) controller = new Controller();
             context.ProcessingController = controller;
 
-            context.Result = controller.NotificationMessage(viewName, text, text2, number, imageResource, image, model);
+            context.Result = controller.NotificationMessage(viewName, text, text2, number, imageResource, image, model, overrideTimeout);
 
             ExecuteViewHandlers(context);
         }
@@ -1237,10 +1249,13 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             MakeViewVisibleOnLaunch = true;
             ForceNewShell = false;
+            LocalViews = new ObservableCollection<ViewResult>();
+            SelectedLocalViewIndex = -1;
         }
 
         private FrameworkElement _view;
         private string _viewTitle;
+        private int _selectedLocalViewIndex;
 
         /// <summary>Document object</summary>
         public FrameworkElement View
@@ -1283,6 +1298,9 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Defines the type of UI the view wants to be</summary>
         public ViewLevel ViewLevel { get; set; }
+
+        /// <summary>Defines the scope of the view (whether it is stand-alone or belongs to some other view in hierarchical fashion)</summary>
+        public ViewScope ViewScope { get; set; }
 
         /// <summary>In cases where the view is launched in a top-level window, this property may hold a reference to the window</summary>
         public Window TopLevelWindow { get; set; }
@@ -1342,6 +1360,25 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Hierarchical child views (potentially shown as popup dialogs)
+        /// </summary>
+        /// <remarks>Not used by all themes</remarks>
+        public ObservableCollection<ViewResult> LocalViews { get; set; }
+
+        /// <summary>
+        /// Index of the currently selected local view
+        /// </summary>
+        public int SelectedLocalViewIndex
+        {
+            get { return _selectedLocalViewIndex; }
+            set
+            {
+                _selectedLocalViewIndex = value;
+                OnPropertyChanged("SelectedLocalViewIndex");
+            }
         }
     }
 
@@ -1416,6 +1453,8 @@ namespace CODE.Framework.Wpf.Mvvm
     /// <summary>Document model class used for notifications</summary>
     public class NotificationViewModel : StandardViewModel
     {
+        ///<summary>If not null, overrides the theme's default notification timeout</summary>
+        public TimeSpan? OverrideTimeout { get; set; }
     }
 
     /// <summary>Document model specific to message box results</summary>
@@ -1545,6 +1584,23 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Shell level view ('application window')</summary>
         Shell
+    }
+
+    /// <summary>
+    /// Scope of the current view (defines whether the view is to be considered a stand-along view (global) or
+    /// whehter it conceptually belongs to some other view in a hierarchical relationship (local).
+    /// </summary>
+    /// <remarks>Not every theme will use this information</remarks>
+    public enum ViewScope
+    {
+        /// <summary>
+        /// Global view (stand-alone)
+        /// </summary>
+        Global,
+        /// <summary>
+        /// Local view (hierarchical child of other views)
+        /// </summary>
+        Local
     }
 
     /// <summary>Document handler interface</summary>

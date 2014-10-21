@@ -45,7 +45,7 @@ namespace CODE.Framework.Wpf.Mvvm
             set { SetValue(ViewProperty, value); }
         }
         /// <summary>Controller action associated with this partial view</summary>
-        public static readonly DependencyProperty ViewProperty = DependencyProperty.Register("Document", typeof(string), typeof(PartialView), new UIPropertyMetadata("", (d, e) => If.Real<PartialView>(d, d2 => d2.LoadView())));
+        public static readonly DependencyProperty ViewProperty = DependencyProperty.Register("View", typeof(string), typeof(PartialView), new UIPropertyMetadata("", (d, e) => If.Real<PartialView>(d, d2 => d2.LoadView())));
 
         /// <summary>Explicitly set model for the partial view</summary>
         public object Model

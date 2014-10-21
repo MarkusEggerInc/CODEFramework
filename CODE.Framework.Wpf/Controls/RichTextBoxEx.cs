@@ -1,10 +1,15 @@
-﻿using System;
+﻿using CODE.Framework.Core.Utilities;
+using CODE.Framework.Wpf.Utilities;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Threading;
+using core = CODE.Framework.Core.Configuration;
 
 namespace CODE.Framework.Wpf.Controls
 {

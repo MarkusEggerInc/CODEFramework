@@ -18,7 +18,7 @@
     <Grid>
         <ListBox Margin="10" x:Name="list"> <!--Style="{DynamicResource Metro-Control-ListBox-Columns}"-->
             <c:ListEx.Columns>
-                <c:ListColumnsCollection>
+                <c:ListColumnsCollection EditModeBindingPath="">
                     <c:ListColumn BindingPath="Text1" Header="Text 1" IsResizable="True" Width="100" HeaderClickCommandBindingPath="HeaderClick" />
                     <c:ListColumn BindingPath="Text2" Header="Text 2" IsResizable="True" Width="200" HeaderClickCommandBindingPath="HeaderClick" />
                     <c:ListColumn BindingPath="Text3" Header="Text 3" IsResizable="True" Width="250" HeaderClickCommandBindingPath="HeaderClick" />

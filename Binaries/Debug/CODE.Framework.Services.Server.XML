@@ -1,0 +1,1276 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Services.Server</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Services.Server.Contracts.IClientAccessPolicy">
+            <summary>
+            Interface used for self-hosted client access policy definitions
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.Contracts.IClientAccessPolicy.GetClientAccessPolicy">
+            <summary>
+            Gets the client access policy.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.Contracts.ClientAccessPolicy">
+            <summary>
+            Standard implementation of the client access policy for self-hosted services
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Contracts.ClientAccessPolicy.AllowedCallers">
+            <summary>
+            Collection of allowed callers
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.Contracts.ClientAccessPolicy.GetClientAccessPolicy">
+            <summary>
+            Gets the client access policy.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.CrossDomainScriptBehavior">
+            <summary>
+            Custom endpoint behavior object that gets applied automatically when script-cross-domain-calls are enabled on the ServiceGarden class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
+            <summary>
+            Implements a modification or extension of the service across an endpoint.
+            </summary>
+            <param name="endpoint">The endpoint that exposes the contract.</param>
+            <param name="endpointDispatcher">The endpoint dispatcher to be modified or extended.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptBehavior.Validate(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Implement to confirm that the endpoint meets some intended criteria.
+            </summary>
+            <param name="endpoint">The endpoint to validate.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)">
+            <summary>
+            Applies the dispatch behavior.
+            </summary>
+            <param name="operationDescription">The operation description.</param>
+            <param name="dispatchOperation">The dispatch operation.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Implement to pass data at runtime to bindings to support custom behavior.
+            </summary>
+            <param name="endpoint">The endpoint to modify.</param>
+            <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptBehavior.ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)">
+            <summary>
+            Implements a modification or extension of the client across an endpoint.
+            </summary>
+            <param name="endpoint">The endpoint that is to be customized.</param>
+            <param name="clientRuntime">The client runtime to be customized.</param>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.CrossDomainScriptCallMessageInspector">
+            <summary>
+            Inspector object used to add a cross-domain-call HTTP header
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptCallMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)">
+            <summary>
+            Called after an inbound message has been received but before the message is dispatched to the intended operation.
+            </summary>
+            <param name="request">The request message.</param>
+            <param name="channel">The incoming channel.</param>
+            <param name="instanceContext">The current service instance.</param>
+            <returns>
+            The object used to correlate state. This object is passed back in the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)"/> method.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.CrossDomainScriptCallMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)">
+            <summary>
+            Called after the operation has returned but before the reply message is sent.
+            </summary>
+            <param name="reply">The reply message. This value is null if the operation is one way.</param>
+            <param name="correlationState">The correlation object returned from the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)"/> method.</param>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.RestXmlHttpBehavior">
+            <summary>
+            Endpoint behavior configuration specific to XML formatted REST calls
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestXmlHttpBehavior.GetReplyDispatchFormatter(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>Handles REST XML formatting behavior</summary>
+            <param name="operationDescription"></param>
+            <param name="endpoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestXmlHttpBehavior.GetBehavior``1(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Tries to find a behavior attribute of a certain type and returns it
+            </summary>
+            <typeparam name="T">Type of behavior we are looking for</typeparam>
+            <param name="operationDescription">Operation description</param>
+            <returns>Behavior or null</returns>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.RestJsonHttpBehavior">
+            <summary>
+            Endpoint behavior configuration specific to XML formatted REST calls
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.GetReplyDispatchFormatter(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>Handles REST JSON formatting behavior</summary>
+            <param name="operationDescription"></param>
+            <param name="endpoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.GetBehavior``1(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Tries to find a behavior attribute of a certain type and returns it
+            </summary>
+            <typeparam name="T">Type of behavior we are looking for</typeparam>
+            <param name="operationDescription">Operation description</param>
+            <returns>Behavior or null</returns>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.ServiceGarden">
+            <summary>
+            Collection ('garden') of hosts for a list of service hosts
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.#cctor">
+            <summary>Static constructor</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.ServiceGarden.Hosts">
+            <summary>
+            Service hosts
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.GetHostByEndpointAddress(System.String)">
+            <summary>
+            Returns the host by its full address
+            </summary>
+            <param name="address"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostBasicHttp(System.Type,System.Boolean)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="exposeWsdl">if set to <c>true</c> a WSDL endpoint is exposed.</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostBasicHttp(System.Type,System.Boolean)">
+            <summary>
+            Tries to create a service host and logs appropriate information
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="exposeWsdl">if set to <c>true</c> a WSDL endpoint is exposed.</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.GetContractTypeFromServiceType(System.Type)">
+            <summary>
+            Returns the contract type (service interface/contract) for a given service implementation.
+            </summary>
+            <remarks>
+            This only works if there is only a single interface that is implemented by the service.
+            </remarks>
+            <param name="serviceType">Service type (implementation)</param>
+            <returns>Contract type or IndexOutOfBoundsException is raised if service contract can't be identified</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.GetSetting(System.String,System.String,System.String)">
+            <summary>
+            Returns a setting specific for a contract, or the generic setting, when a setting for the contract is not found.
+            </summary>
+            <param name="setting">The setting.</param>
+            <param name="contractName">Name of the contract.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.GetSettingInt(System.String,System.String,System.Int32)">
+            <summary>
+            Returns a setting specific (as integer) for a contract, or the generic setting, when a setting for the contract is not found.
+            </summary>
+            <param name="setting">The setting.</param>
+            <param name="contractName">Name of the contract.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.CreateServiceHost(System.Type,System.Type,System.Uri[])">
+            <summary>
+            Creates and configures the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="addresses">The addresses.</param>
+            <returns>ServiceHost.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostBasicHttp(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="exposeWsdl">if set to <c>true</c> a WSDL endpoint is exposed.</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostBasicHttp(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Tries to create the service host and logs appropriate information.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="exposeWsdl">if set to <c>true</c> a WSDL endpoint is exposed.</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostBasicHttp(System.Type,System.Type,System.String,System.Boolean)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostBasicHttp(System.Type,System.Type,System.String,System.Boolean)">
+            <summary>
+            Tries to create the service host and logs appropriate information.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.ServiceGarden._portOffset">
+            <summary>
+            For internal use. Memorizes the port offset for port-based services
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostNetTcp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Int32)">
+            <summary>
+            Creates a TCP/IP (net.tcp) service host
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="port">The port (-1 = use base port).</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">
+            Static BaseUrl property must be set on the ServiceGarden class before the garden can be populated.
+            or
+            Static BasePort property must be set on the ServiceGarden class before the garden can be populated.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostNetTcp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize)">
+            <summary>Tries to create the service host and logs appropriate information</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostBasicHttp(System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostBasicHttp(System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostBasicHttp(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostBasicHttp(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.GetServiceNamespace(System.Type,System.Type)">
+            <summary>
+            Detirmines the namespace for a given type
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostBasicHttp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a service host for Basic HTTP (SOAP) hosting.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceGarden class before the garden can be populated.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostBasicHttp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Attempts to create a Basic HTTP (SOAP) service host and handles and logs errors
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.StartService(System.String)">
+            <summary>
+            Starts the service.
+            </summary>
+            <param name="serviceId">The service id (key) that is to be started.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.StopService(System.Type)">
+            <summary>
+            Stops the service.
+            </summary>
+            <param name="contractType">Type of the service contract.</param>
+            <returns>True if the service was found and closed successfully</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.StopService(System.String)">
+            <summary>
+            Stops the service.
+            </summary>
+            <param name="serviceId">The service id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.StopAllServices">
+            <summary>
+            Closes all currently open hosts
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowSilverlightCrossDomainCalls">
+            <summary>Enables Silverlight and Flash cross-domain service access</summary>
+            <remarks>Cross-access domain calling is of particular importance for Silverlight clients.</remarks>
+            <returns>URL of the hosted policy</returns>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            ServiceGarden.AllowCrossDomainCalls();
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowSilverlightCrossDomainCalls">
+            <summary>
+            Tries to enable Silverlight and Flash cross-domain service access and logs information accordingly
+            </summary>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            ServiceGarden.AllowCrossDomainCalls();
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowSilverlightCrossDomainCalls(System.Uri)">
+            <summary>Enables Silverlight and Flash cross-domain service access</summary>
+            <param name="allowedCaller">The allowed caller.</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            // from the specified domain
+            ServiceGarden.AllowCrossDomainCalls(new Uri("www.eps-software.com"));
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowSilverlightCrossDomainCalls(System.Uri)">
+            <summary>
+            Tries to enable Silverlight and Flash cross-domain service access and logs information accordingly
+            </summary>
+            <param name="allowedCaller">The allowed caller.</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            // from the specified domain
+            ServiceGarden.AllowCrossDomainCalls(new Uri("www.eps-software.com"));
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowSilverlightCrossDomainCalls(System.Uri[])">
+            <summary>
+            Enables Silverlight and Flash cross-domain service access
+            </summary>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            // from the specified domain
+            ServiceGarden.AllowCrossDomainCalls(new Uri[] {new Uri("www.eps-software.com"), new Uri("www.Microsoft.com")});
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowSilverlightCrossDomainCalls(System.Uri[])">
+            <summary>
+            Tries to enable Silverlight and Flash cross-domain service access and logs information accordingly
+            </summary>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            // from the specified domain
+            ServiceGarden.AllowCrossDomainCalls(new Uri[] {new Uri("www.eps-software.com"), new Uri("www.Microsoft.com")});
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowSilverlightCrossDomainCalls(System.String)">
+            <summary>
+            Enables Silverlight and Flash cross-domain service access
+            </summary>
+            <param name="domain">The root domain the call is valid for.</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            </remarks>
+            <example>
+            // Enables all cross domain calls from any location to www.eps-software.com hosted services
+            ServiceGarden.AllowCrossDomainCalls("www.eps-software.com");
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowSilverlightCrossDomainCalls(System.String)">
+            <summary>
+            Tries to enable Flash and Silverlight cross-domain service access and logs information accordingly
+            </summary>
+            <param name="domain">The root domain the call is valid for.</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            </remarks>
+            <example>
+            // Enables all cross domain calls from any location to www.eps-software.com hosted services
+            ServiceGarden.AllowCrossDomainCalls("www.eps-software.com");
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowSilverlightCrossDomainCalls(System.Uri,System.Uri[])">
+            <summary>
+            Enables cross-domain service access
+            </summary>
+            <param name="domain">The root domain the call is valid for.</param>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            ServiceGarden.AllowCrossDomainCalls(
+                new Uri("www.epsservices.net"),
+                new Uri[] {new Uri("www.eps-software.com"), new Uri("www.Microsoft.com")}
+                );
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowSilverlightCrossDomainCalls(System.Uri,System.Uri[])">
+            <summary>
+            Tries to enablecross-domain service access and logs information accordingly
+            </summary>
+            <param name="domain">The root domain the call is valid for.</param>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            ServiceGarden.AllowCrossDomainCalls(
+                new Uri("www.epsservices.net"),
+                new Uri[] {new Uri("www.eps-software.com"), new Uri("www.Microsoft.com")}
+                );
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowHttpCrossDomainCalls">
+            <summary>Tries to Enable cross-domain service access for HTTP-based callers (such as JavaScript)</summary>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            This works by adding a cross-domain call HTTP header to service responses, which is used by browsers to check if these calls should be allowed.
+            Note that this is for JavaScript clients and this is different from the Silverlight cross domain calls (AllowCrossDomainCalls)
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            ServiceGarden.TryAllowHttpCrossDomainCalls();
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAllowHttpCrossDomainCalls(System.String)">
+            <summary>Tries to Enable cross-domain service access for HTTP-based callers (such as JavaScript)</summary>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            This works by adding a cross-domain call HTTP header to service responses, which is used by browsers to check if these calls should be allowed.
+            Note that this is for JavaScript clients and this is different from the Silverlight cross domain calls (AllowCrossDomainCalls)
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            ServiceGarden.TryAllowHttpCrossDomainCalls("www.eps-software.com");
+            </example>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowHttpCrossDomainCalls(System.String)">
+            <summary>Enables cross-domain service access for HTTP-based callers (such as JavaScript)</summary>
+            <param name="allowedCallers">Allowed caller domains (URLs or *).</param>
+            <returns>True if successful</returns>
+            <remarks>
+            This works by adding a cross-domain call HTTP header to service responses, which is used by browsers to check if these calls should be allowed.
+            Note that this is for JavaScript clients and this is different from the Silverlight cross domain calls (AllowCrossDomainCalls)
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            ServiceGarden.AllowHttpCrossDomainCalls("www.eps-software.com");
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AllowHttpCrossDomainCalls">
+            <summary>Enables cross-domain service access for HTTP-based callers (such as JavaScript)</summary>
+            <returns>True if successful</returns>
+            <remarks>
+            This works by adding a cross-domain call HTTP header to service responses, which is used by browsers to check if these calls should be allowed.
+            Note that this is for JavaScript clients and this is different from the Silverlight cross domain calls (AllowCrossDomainCalls)
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            ServiceGarden.AllowHttpCrossDomainCalls("www.eps-software.com");
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,System.Boolean)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostWsHttp(System.Type,System.Boolean)">
+            <summary>
+            Tries to create a service host and logs appropriate information
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostWsHttp(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Tries to create the service host and logs appropriate information.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,System.Type,System.String,System.Boolean)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostWsHttp(System.Type,System.Type,System.String,System.Boolean)">
+            <summary>
+            Tries to create the service host and logs appropriate information.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostWsHttp(System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a WS HTTP (SOAP) service host
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <param name="extension">Path extension for WS HTTP services (such as "ws" to create www.domain.com/MyService/ws)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceGarden class before the garden can be populated.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostWsHttp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String,System.String,System.Boolean)">
+            <summary>Attempts to create a new WS HTTP service host and handles and logs potential exceptions</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <param name="extension">Path extension for WS HTTP services (such as "ws" to create www.domain.com/MyService/ws)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostRestXml(System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostRestXml(System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostRestXml(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostRestXml(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostRestXml(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a REST service host with XML data format
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <param name="extension">Path extension for REST services (such as "rest/xml" to create www.domain.com/MyService/rest/xml)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceGarden class before the garden can be populated.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostRestXml(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>Tries to create a REST service host with XML data format and handles and logs potential exceptions</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <param name="extension">Path extension for REST services (such as "rest/xml" to create www.domain.com/MyService/rest/xml)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostRestJson(System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostRestJson(System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostRestJson(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Creates the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostRestJson(System.Type,System.Type,CODE.Framework.Services.Server.MessageSize,System.String,System.String)">
+            <summary>
+            Tries to create the service host.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <returns>
+            Service URL if successful. Empty string otherwise.
+            </returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostRestJson(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a REST service host with JSON data format
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <param name="extension">Path extension for REST services (such as "rest/xml" to create www.domain.com/MyService/rest/xml)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used.</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceGarden class before the garden can be populated.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostRestJson(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Trues to create a JSON formatted REST service host and handles and logs potential exceptions
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id (generally, 'virtual directory' part of the service URL).</param>
+            <param name="messageSize">Potential size of the message. (Should be large if the payload could potentially be more than an MB).</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/ws)</param>
+            <param name="extension">Path extension for REST services (such as "rest/xml" to create www.domain.com/MyService/rest/xml)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service URL if successful. Empty string otherwise.</returns>
+            <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BaseUrl">
+            <summary>
+            Base URL for the service
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BasePort">
+            <summary>
+            First used port number for the hosted services (each subsequent service will increase the listening port by 1)
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BasePath">
+            <summary>
+            Gets or sets the base path ("virtual directory")
+            </summary>
+            <value>The base path.</value>
+        </member>
+        <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeHostAdded">
+            <summary>
+            Fires before a new host is added (can be used to manipulate the host before it is opened)
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeEndpointAdded">
+            <summary>
+            Fires before a new host is added (can be used to manipulate the host before it is opened)
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HttpCrossDomainCallsAllowed">
+            <summary>
+            Indicates whether cross domain calls from script clients are allowed
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HttpCrossDomainCallsAllowedFrom">
+            <summary>
+            Indicates the URLs cross domain calls are allowed from
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.ServiceGarden.HostWrapper">
+            <summary>
+            Wrapper for a service host
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceGarden.HostWrapper.#ctor(System.ServiceModel.ServiceHost,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.ServiceGarden.HostWrapper"/> class.
+            </summary>
+            <param name="host">The host.</param>
+            <param name="endpointAddress">The endpoint address.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HostWrapper.Host">
+            <summary>
+            Gets or sets the host.
+            </summary>
+            <value>The host.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HostWrapper.EndpointAddress">
+            <summary>
+            Gets or sets the endpoint address.
+            </summary>
+            <value>The endpoint address.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.Protocol">
+            <summary>
+            Communication Protocol
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Protocol.NetTcp">
+            <summary>
+            Net TCP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Protocol.InProcess">
+            <summary>
+            Local in process service
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Protocol.BasicHttp">
+            <summary>
+            Basic HTTP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Protocol.WsHttp">
+            <summary>
+            WS HTTP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Protocol.RestHttpXml">
+            <summary>
+            XML Formatted REST over HTTP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.Protocol.RestHttpJson">
+            <summary>
+            JSON Formatted REST over HTTP
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.MessageSize">
+            <summary>
+            Message size
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.MessageSize.Normal">
+            <summary>
+            Normal (default message size as defined by WCF)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.MessageSize.Large">
+            <summary>
+            Large (up to 100MB)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.MessageSize.Medium">
+            <summary>
+            Medium (up to 10MB) - this is the default
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.MessageSize.Undefined">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.HostAddedEventArgs">
+            <summary>
+            Event arguments for added hosts
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.Host">
+            <summary>
+            Service host
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.ServiceFullAddress">
+            <summary>
+            Full address the service will be hosted at
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.Binding">
+            <summary>
+            Utilized binding
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.ServiceType">
+            <summary>
+            Service type (type implementing the service)
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.ContractType">
+            <summary>
+            Service contract type
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.ServiceId">
+            <summary>
+            Service ID
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.HostAddedEventArgs.MessageSize">
+            <summary>
+            Message Size hosted by the service
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.EndpointAddedEventArgs">
+            <summary>
+            Event arguments for added endpoints
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.EndpointAddedEventArgs.ServiceFullAddress">
+            <summary>
+            Full address the service will be hosted at
+            </summary>
+            <remarks>This address can be changed to change the actual address the service is hosted at</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.EndpointAddedEventArgs.Binding">
+            <summary>
+            Utilized binding
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.EndpointAddedEventArgs.ContractType">
+            <summary>
+            Service contract type
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.ServiceHelper">
+            <summary>
+            Generic helper methods used internally by various service components
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(CODE.Framework.Services.Server.MessageSize,System.ServiceModel.NetTcpBinding)">
+            <summary>
+            Configures NetTcpBinding message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">NetTcpBinding to configure</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceHelper.ConfigureMessageSizeOnWebHttpBinding(CODE.Framework.Services.Server.MessageSize,System.ServiceModel.WebHttpBinding)">
+            <summary>
+            Configures Web HTTP Binding (REST) message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">BasicHttpBinding to configure</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceHelper.ConfigureMessageSizeOnBasicHttpBinding(CODE.Framework.Services.Server.MessageSize,System.ServiceModel.BasicHttpBinding)">
+            <summary>
+            Configures Basic HTTP Binding message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">BasicHttpBinding to configure</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.ServiceHelper.ConfigureMessageSizeOnWsHttpBinding(CODE.Framework.Services.Server.MessageSize,System.ServiceModel.WSHttpBinding)">
+            <summary>
+            Configures WS HTTP Binding message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">BasicHttpBinding to configure</param>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.STAOperationAttribute">
+            <summary>STA (Single Thread Appartment) Behavior Attribute (used to force execution of methods in WCF into STA mode)</summary>
+            <remarks>In some very rare cases, it may be desirable to force service calls into a single threaded appartment model (server-side). This attribute can be used to decorate such service methods/operations, which will force STA processing.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.AddBindingParameters(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Implement to pass data at runtime to bindings to support custom behavior.
+            </summary>
+            <param name="operationDescription">The operation being examined. Use for examination only. If the operation description is modified, the results are undefined.</param>
+            <param name="bindingParameters">The collection of objects that binding elements require to support the behavior.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.ApplyClientBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.ClientOperation)">
+            <summary>
+            Implements a modification or extension of the client across an operation.
+            </summary>
+            <param name="operationDescription">The operation being examined. Use for examination only. If the operation description is modified, the results are undefined.</param>
+            <param name="clientOperation">The run-time object that exposes customization properties for the operation described by <paramref name="operationDescription"/>.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)">
+            <summary>
+            Implements a modification or extension of the service across an operation.
+            </summary>
+            <param name="operationDescription">The operation being examined. Use for examination only. If the operation description is modified, the results are undefined.</param>
+            <param name="dispatchOperation">The run-time object that exposes customization properties for the operation described by <paramref name="operationDescription"/>.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.Validate(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Implement to confirm that the operation meets some intended criteria.
+            </summary>
+            <param name="operationDescription">The operation being examined. Use for examination only. If the operation description is modified, the results are undefined.</param>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker">
+            <summary>
+            Class used to perform STA invocation as forced (and used) by the STAOperationAttribute class
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.#ctor(System.ServiceModel.Dispatcher.IOperationInvoker)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker"/> class.
+            </summary>
+            <param name="operationInvoker">The operation invoker.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.AllocateInputs">
+            <summary>
+            Returns an <see cref="T:System.Array"/> of parameter objects.
+            </summary>
+            <returns>
+            The parameters that are to be used as arguments to the operation.
+            </returns>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker._workerThread">
+            <summary>
+            Used as a single worker thread for all the STA operations.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker._pooledActions">
+            <summary>
+            Stack of operations to be executed
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker._pooledResults">
+            <summary>
+            Dictionary of results created by the STA actions.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.Invoke(System.Object,System.Object[],System.Object[]@)">
+            <summary>
+            Returns an object and a set of output objects from an instance and set of input objects.
+            </summary>
+            <param name="instance">The object to be invoked.</param>
+            <param name="inputs">The inputs to the method.</param>
+            <param name="outputs">The outputs from the method.</param>
+            <returns>The return value.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.IsResultReady(System.Guid)">
+            <summary>
+            Checks the result pool to see if the result is ready yet
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.GetResult(System.Guid)">
+            <summary>
+            Retrives the result form the result pool
+            </summary>
+            <param name="id">Identifies the specific result set we are interested in</param>
+            <returns>Array of result objects, or null (if result is not present)</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.StartSTAPool">
+            <summary>
+            Simple loop that checks for actions to be executed within this simple thread pool
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.InvokeBegin(System.Object,System.Object[],System.AsyncCallback,System.Object)">
+            <summary>
+            An asynchronous implementation of the <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)"/> method.
+            </summary>
+            <param name="instance">The object to be invoked.</param>
+            <param name="inputs">The inputs to the method.</param>
+            <param name="callback">The asynchronous callback object.</param>
+            <param name="state">Associated state data.</param>
+            <returns>
+            A <see cref="T:System.IAsyncResult"/> used to complete the asynchronous call.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.InvokeEnd(System.Object,System.Object[]@,System.IAsyncResult)">
+            <summary>
+            The asynchronous end method.
+            </summary>
+            <param name="instance">The object invoked.</param>
+            <param name="outputs">The outputs from the method.</param>
+            <param name="result">The <see cref="T:System.IAsyncResult"/> object.</param>
+            <returns>The return value.</returns>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.STAOperationAttribute.STAInvoker.IsSynchronous">
+            <summary>
+            Gets a value that specifies whether the <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)"/> or <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.InvokeBegin(System.Object,System.Object[],System.AsyncCallback,System.Object)"/> method is called by the dispatcher.
+            </summary>
+            <value></value>
+            <returns>true if the dispatcher invokes the synchronous operation; otherwise, false.</returns>
+        </member>
+    </members>
+</doc>

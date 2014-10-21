@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using CODE.Framework.Core.Exceptions;
 using CODE.Framework.Core.Utilities;
 using CODE.Framework.Wpf.Utilities;
 
@@ -22,7 +23,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Collection of actions
         /// </summary>
-        ObservableCollection<IViewAction> Actions { get; }
+        ViewActionsCollection Actions { get; }
 
         /// <summary>
         /// Fires when the list of actions changed (assuming change notification is active)
@@ -31,10 +32,45 @@ namespace CODE.Framework.Wpf.Mvvm
     }
 
     /// <summary>
+    /// Collection of view actions
+    /// </summary>
+    public class ViewActionsCollection : ObservableCollection<IViewAction>
+    {
+        /// <summary>Returns the view action specified by Id</summary>
+        /// <param name="id">The view action id.</param>
+        /// <returns>IViewAction</returns>
+        /// <exception cref="IndexOutOfBoundsException">ViewAction with Id ' + id + ' not found in collection.</exception>
+        public IViewAction this[string id]
+        {
+            get
+            {
+                foreach (var action in this)
+                    if (action.Id == id)
+                        return action;
+                
+                var id2 = id.Replace(" ", "");
+                foreach (var action in this)
+                    if (action.Id.Replace(" ", "") == id2)
+                        return action;
+
+                int id3;
+                if (int.TryParse(id, out id3))
+                    return base[id3];
+
+                throw new IndexOutOfBoundsException("ViewAction with Id '" + id + "' not found in collection.");
+            }
+        }
+    }
+
+    /// <summary>
     /// Interface defining action features beyond basic command features
     /// </summary>
     public interface IViewAction : ICommand
     {
+        /// <summary>
+        /// String identifier to identify an action independent of its caption (and independent of the locale)
+        /// </summary>
+        string Id { get; set; }
         /// <summary>
         /// Caption (can be used to display in the UI)
         /// </summary>
@@ -60,6 +96,18 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         bool IsPinned { get; set; }
         /// <summary>
+        /// Indicates whether the action is to be considered "checked"
+        /// </summary>
+        /// <remarks>
+        /// Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+        /// Most themes will only respect this property when ViewActionType = Toggle
+        /// </remarks>
+        bool IsChecked { get; set; }
+        /// <summary>
+        /// Indicates the type of the view action
+        /// </summary>
+        ViewActionTypes ViewActionType { get; set; }
+        /// <summary>
         /// Indicates that this view action is selected by default if the theme supports pre-selecting actions in some way (such as showing the page of the ribbon the action is in, or triggering the action in a special Office-style file menu).
         /// </summary>
         /// <remarks>If more than one action is flagged as the default selection, then the last one (in instantiation order) 'wins'</remarks>
@@ -68,6 +116,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Indicates whether or not this action is at all available (often translates directly to being visible or invisible)
         /// </summary>
         ViewActionAvailabilities Availability { get; }
+        /// <summary>
+        /// Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
+        /// </summary>
+        Visibility Visibility { get; set; }
         /// <summary>
         /// Significance of the action
         /// </summary>
@@ -126,6 +178,25 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <value>The shortcut modifier keys.</value>
         /// <remarks>Not all themes will pick this setting up</remarks>
         ModifierKeys ShortcutModifiers { get; set; }
+
+        /// <summary>Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.</summary>
+        /// <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
+        void InvalidateCanExecute();
+    }
+
+    /// <summary>
+    /// Types of view actions
+    /// </summary>
+    public enum ViewActionTypes
+    {
+        /// <summary>
+        /// Standard (triggers an action)
+        /// </summary>
+        Standard,
+        /// <summary>
+        /// Toggle (triggers actions that can be considered to 'toggle' something - these types of actions respect the IsChecked flag)
+        /// </summary>
+        Toggle
     }
 
     /// <summary>
@@ -265,6 +336,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="categoryAccessKey">Access key for the category (only used if a category is assigned).</param>
         /// <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
         /// <param name="isPinned">Indicates whether this action is considered to be pinned</param>
+        /// <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
         public ViewAction(string caption = "",
             bool beginGroup = false,
             Action<IViewAction, object> execute = null,
@@ -283,7 +355,8 @@ namespace CODE.Framework.Wpf.Mvvm
             ModifierKeys shortcutKeyModifiers = ModifierKeys.None,
             char categoryAccessKey = ' ',
             bool isDefaultSelection = false,
-            bool isPinned = false)
+            bool isPinned = false,
+            string id = "")
         {
 
             PropertyChanged += (s, e) =>
@@ -294,6 +367,8 @@ namespace CODE.Framework.Wpf.Mvvm
                                    };
             
             Caption = caption;
+            Id = string.IsNullOrEmpty(id) ? caption : id;
+
             BeginGroup = beginGroup;
             _executeDelegate = execute;
             _canExecuteDelegate = canExecute;
@@ -328,6 +403,22 @@ namespace CODE.Framework.Wpf.Mvvm
             ShortcutKey = shortcutKey;
             ShortcutModifiers = shortcutKeyModifiers;
         }
+
+        /// <summary>
+        /// To the string.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        public override string ToString()
+        {
+            var baseName = base.ToString();
+            return baseName + " (" + Caption + ")";
+        }
+
+        /// <summary>
+        /// String identifier to identify an action independent of its caption (and independent of the locale)
+        /// </summary>
+        /// <value>The identifier.</value>
+        public string Id { get; set; }
 
         /// <summary>Caption associated with this action</summary>
         public string Caption
@@ -609,7 +700,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Event that fires when the CanExecute state changed</summary>
         public event EventHandler CanExecuteChanged;
 
-        /// <summary>Fires the CanExecuteChanged event to force a re-evaluation of the CanExecute method</summary>
+        /// <summary>
+        /// Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
+        /// </summary>
+        /// <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
         public void InvalidateCanExecute()
         {
             if (CanExecuteChanged != null)
@@ -699,7 +793,56 @@ namespace CODE.Framework.Wpf.Mvvm
         public bool IsDefaultSelection { get; set; }
 
         /// <summary>Indicates whether an action is pinned (which is used for different things in different themes)</summary>
-        public bool IsPinned { get; set; }
+        public bool IsPinned
+        {
+            get { return _isPinned; }
+            set
+            {
+                _isPinned = value;
+                NotifyChanged("IsPinned");
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the action is to be considered "checked"
+        /// </summary>
+        /// <remarks>
+        /// Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+        /// Most themes will only respect this property when ViewActionType = Toggle
+        /// </remarks>
+        public bool IsChecked
+        {
+            get { return _isChecked; }
+            set
+            {
+                _isChecked = value;
+                NotifyChanged("IsChecked");
+                NotifyChanged("IsChecked_Visible");
+            }
+        }
+
+        /// <summary>
+        /// Returns Visible if IsChecked and Collapsed otherwise
+        /// </summary>
+        /// <value>The is checked_ visible.</value>
+        public Visibility IsChecked_Visible
+        {
+            get { return IsChecked ? Visibility.Visible : Visibility.Collapsed; }
+            set { IsChecked = value == Visibility.Visible; }
+        }
+
+        /// <summary>
+        /// Indicates the type of the view action
+        /// </summary>
+        public ViewActionTypes ViewActionType
+        {
+            get { return _viewActionType; }
+            set
+            {
+                _viewActionType = value; 
+                NotifyChanged("ViewActionType");
+            }
+        }
 
         /// <summary>
         /// Indicates whether or not this action is at all available (often translates directly to being visible or invisible)
@@ -738,6 +881,21 @@ namespace CODE.Framework.Wpf.Mvvm
                     return _availability;
             }
         }
+
+        /// <summary>
+        /// Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
+        /// </summary>
+        /// <value>The visibility.</value>
+        public Visibility Visibility
+        {
+            get { return _visibility; }
+            set
+            {
+                _visibility = value; 
+                NotifyChanged("Visibility");
+            }
+        }
+
         private ViewActionAvailabilities _availability = ViewActionAvailabilities.Unknown;
 
         /// <summary>
@@ -942,6 +1100,10 @@ namespace CODE.Framework.Wpf.Mvvm
         public Brush Logo2 { get; set; }
 
         private bool _inBrushUpdating;
+        private ViewActionTypes _viewActionType;
+        private bool _isChecked;
+        private bool _isPinned;
+        private Visibility _visibility = Visibility.Visible;
 
         private void CheckAllBrushesForResources()
         {

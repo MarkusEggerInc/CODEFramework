@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using CODE.Framework.Core.Utilities;
 using CODE.Framework.Core.Utilities.Extensions;
+
+// This is another test
 
 namespace BuildPackager
 {
@@ -38,6 +41,8 @@ namespace BuildPackager
             PackageSource(solutionFolder, version);
             PackageWpfThemeResources(solutionFolder, version);
 
+            PackageGitHubSource(solutionFolder, version);
+
             if (args.Length < 1)
             {
                 Console.WriteLine("Done.");
@@ -70,6 +75,129 @@ namespace BuildPackager
             zip.Save();
         }
 
+        private static void PackageGitHubSource(string solutionFolder, string version)
+        {
+            var gitHubSourceFolder = solutionFolder.Replace(@"\Framework\DotNet\CODE.Framework", @"\") + @"GitHub\CODEFramework\";
+            Console.WriteLine("Packaging GitHub Source to folder " + gitHubSourceFolder);
+
+            if (!Directory.Exists(gitHubSourceFolder)) Directory.CreateDirectory(gitHubSourceFolder);
+
+            var files = Directory.GetFiles(solutionFolder);
+            foreach (var file in files)
+            {
+                var fileInfo = new FileInfo(file);
+                var fileName = fileInfo.Name.ToLower();
+                if (!fileName.EndsWith(".user") && !fileName.EndsWith(".suo") && !fileName.EndsWith(".vssscc") && !fileName.EndsWith(".vspscc") &&
+                    !fileName.EndsWith(".docstates") && !fileName.ToLower().EndsWith(".ghostdoc.xml") && !fileName.EndsWith(".chw") && !fileName.ToLower().StartsWith("pingme.txt"))
+                {
+                    switch (fileInfo.Extension.ToLower())
+                    {
+                        case ".sln":
+                            var slnContents = GetStrippedSln(fileInfo.FullName);
+                            slnContents.ToFile(gitHubSourceFolder + fileInfo.Name);
+                            break;
+                        case ".csproj":
+                            var csprojContents = GetStrippedCsProj(fileInfo.FullName);
+                            csprojContents.ToFile(gitHubSourceFolder + fileInfo.Name);
+                            break;
+                    }
+                }
+            }
+
+            var folders = Directory.GetDirectories(solutionFolder);
+            foreach (var folder in folders)
+            {
+                var folderName = folder.JustFileName().ToLower();
+                if (!folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
+                {
+                    var fullGitFolderName = gitHubSourceFolder + folder.JustFileName() + @"\";
+                    if (!Directory.Exists(fullGitFolderName)) Directory.CreateDirectory(fullGitFolderName);
+                    ProcessFolderForGitSource(folder, fullGitFolderName, solutionFolder);
+                }
+            }
+
+            var debugBuildFolder = solutionFolder + @"\Build\" + version + @"\Debug\";
+            var debugBuildOutputFolder = gitHubSourceFolder + @"Binaries\Debug\";
+            var debugBuildFiles = Directory.GetFiles(debugBuildFolder);
+            foreach (var debugBuildFile in debugBuildFiles)
+            {
+                if (!Directory.Exists(debugBuildOutputFolder)) Directory.CreateDirectory(debugBuildOutputFolder);
+                File.Copy(debugBuildFile, debugBuildOutputFolder + debugBuildFile.JustFileName(), true);
+            }
+
+            var releaseBuildFolder = solutionFolder + @"\Build\" + version + @"\Release\";
+            var releaseBuildOutputFolder = gitHubSourceFolder + @"Binaries\Release\";
+            var releaseBuildFiles = Directory.GetFiles(releaseBuildFolder);
+            foreach (var releaseBuildFile in releaseBuildFiles)
+            {
+                if (!Directory.Exists(releaseBuildOutputFolder)) Directory.CreateDirectory(releaseBuildOutputFolder);
+                File.Copy(releaseBuildFile, releaseBuildOutputFolder + releaseBuildFile.JustFileName(), true);
+            }
+
+            var docsFolder = gitHubSourceFolder + @"Documentation\";
+            if (!Directory.Exists(docsFolder)) Directory.CreateDirectory(docsFolder);
+            File.Copy(solutionFolder + @"\Build\CODE.Framework.chm", docsFolder + "CODE.Framework.chm", true);
+        }
+
+        private static void ProcessFolderForGitSource(string fullFolder, string fullGitFolderName, string solutionFolder)
+        {
+            var files = Directory.GetFiles(fullFolder);
+            foreach (var file in files)
+            {
+                var fileInfo = new FileInfo(file);
+                var fileName = file.Replace(solutionFolder + @"\", string.Empty);
+                if (!fileName.EndsWith(".user") && !fileName.EndsWith(".suo") && !fileName.EndsWith(".vssscc") && !fileName.EndsWith(".vspscc") &&
+                    !fileName.EndsWith(".docstates") && !fileName.ToLower().EndsWith(".ghostdoc.xml") && !fileName.EndsWith(".chw") && !fileName.ToLower().StartsWith("pingme.txt"))
+                    switch (fileInfo.Extension.ToLower())
+                    {
+                        case ".sln":
+                            var slnContents = GetStrippedSln(fileInfo.FullName);
+                            slnContents.ToFile(fullGitFolderName + fileInfo.Name);
+                            break;
+                        case ".csproj":
+                            var csprojContents = GetStrippedCsProj(fileInfo.FullName);
+                            csprojContents.ToFile(fullGitFolderName + fileInfo.Name);
+                            break;
+                        default:
+                            if (fileInfo.Extension.ToLower() != "zip")
+                            {
+                                if (File.Exists(fullGitFolderName + fileInfo.Name))
+                                {
+                                    var destinationFileInfo = new FileInfo(fullGitFolderName + fileInfo.Name);
+                                    if (destinationFileInfo.IsReadOnly)
+                                    {
+                                        destinationFileInfo.IsReadOnly = false;
+                                        destinationFileInfo.Refresh();
+                                    }
+                                }
+                                File.Copy(fileInfo.FullName, fullGitFolderName + fileInfo.Name, true);
+                                if (File.Exists(fullGitFolderName + fileInfo.Name))
+                                {
+                                    var destinationFileInfo = new FileInfo(fullGitFolderName + fileInfo.Name);
+                                    if (destinationFileInfo.IsReadOnly)
+                                    {
+                                        destinationFileInfo.IsReadOnly = false;
+                                        destinationFileInfo.Refresh();
+                                    }
+                                }
+                            }
+                            break;
+                    }
+            }
+
+            var folders = Directory.GetDirectories(fullFolder);
+            foreach (var folder2 in folders)
+            {
+                var folderName = folder2.JustFileName().ToLower();
+                if (!folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
+                {
+                    var fullGitFolderName2 = fullGitFolderName + folder2.JustFileName() + @"\";
+                    if (!Directory.Exists(fullGitFolderName2)) Directory.CreateDirectory(fullGitFolderName2);
+                    ProcessFolderForGitSource(folder2, fullGitFolderName2, solutionFolder);
+                }
+            }
+        }
+
         private static void PackageSource(string solutionFolder, string version)
         {
             Console.WriteLine(string.Empty);
@@ -78,6 +206,7 @@ namespace BuildPackager
             var outputFolder = solutionFolder + @"\Build\" + version + @"\";
             var zipFileName = outputFolder + @"\CODE.Framework.Source." + version + ".zip";
             if (File.Exists(zipFileName)) File.Delete(zipFileName);
+
             var zip = new ZipFile(zipFileName);
 
             var files = Directory.GetFiles(solutionFolder);
@@ -168,8 +297,6 @@ namespace BuildPackager
             foreach (var file in files)
             {
                 Console.WriteLine("Processing file:   " + file);
-                //if (file == @"d:\Projects\CODE.Framework\Framework\DotNet\CODE.Framework\_SharedFiles\Properties\AssemblyInfoShared.cs")
-                //    Debugger.Break();
 
                 var fileInfo = new FileInfo(file);
                 var fileName = file.Replace(solutionFolder + @"\", string.Empty);

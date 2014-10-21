@@ -48,79 +48,74 @@ namespace CODE.Framework.Core.Utilities
                 var information = new PowerInformation();
 
                 var powerStatus = new SYSTEM_POWER_STATUS();
-                bool result = NativeMethods.GetSystemPowerStatus(powerStatus);
-                if (result)
+                var result = NativeMethods.GetSystemPowerStatus(powerStatus);
+                if (!result) return information;
+                // Power source
+                if (powerStatus.ACLineStatus == (byte)ACLineStatus.Battery) { information.Source = PowerSource.Battery; }
+                else if (powerStatus.ACLineStatus == (byte)ACLineStatus.AC) { information.Source = PowerSource.PluggedIn; }
+                else { information.Source = PowerSource.Unknown; }
+
+                // Battery charge status
+                information.BatteryIsCharging = (powerStatus.BatteryFlag & (byte)BatteryFlag.Charging) == (int)BatteryFlag.Charging;
+                information.BatteryAvailable = (powerStatus.BatteryFlag & (byte)BatteryFlag.NoSystemBattery) != (int)BatteryFlag.NoSystemBattery;
+                if ((powerStatus.BatteryFlag & (byte)BatteryFlag.Critical) == (int)BatteryFlag.Critical) { information.BatteryChargeState = BatteryChargeState.Critical; }
+                else if ((powerStatus.BatteryFlag & (byte)BatteryFlag.High) == (int)BatteryFlag.High) { information.BatteryChargeState = BatteryChargeState.High; }
+                else if ((powerStatus.BatteryFlag & (byte)BatteryFlag.Low) == (int)BatteryFlag.Low) { information.BatteryChargeState = BatteryChargeState.Low; }
+                else { information.BatteryChargeState = BatteryChargeState.Normal; }
+
+                // Battery life precentage
+                if (powerStatus.BatteryLifePercent == 255) { information.BatteryPercentLeft = -1f; }
+                else { information.BatteryPercentLeft = (100 / powerStatus.BatteryLifePercent); }
+
+                // Battery lifetime
+                if (powerStatus.BatteryLifeTime > -1) { information.RemainingBatteryLifeTime = new TimeSpan(0, 0, powerStatus.BatteryLifeTime); }
+                if (powerStatus.BatteryFullLifeTime > -1) { information.TotalBatteryLifeTime = new TimeSpan(0, 0, powerStatus.BatteryFullLifeTime); }
+
+                // Power scheme (Vista Only)
+                if (IsVistaOrLater())
                 {
-                    // Power source
-                    if (powerStatus.ACLineStatus == (byte)ACLineStatus.Battery) { information.Source = PowerSource.Battery; }
-                    else if (powerStatus.ACLineStatus == (byte)ACLineStatus.AC) { information.Source = PowerSource.PluggedIn; }
-                    else { information.Source = PowerSource.Unknown; }
-
-                    // Battery charge status
-                    information.BatteryIsCharging = (powerStatus.BatteryFlag & (byte)BatteryFlag.Charging) == (int)BatteryFlag.Charging;
-                    information.BatteryAvailable = (powerStatus.BatteryFlag & (byte)BatteryFlag.NoSystemBattery) != (int)BatteryFlag.NoSystemBattery;
-                    if ((powerStatus.BatteryFlag & (byte)BatteryFlag.Critical) == (int)BatteryFlag.Critical) { information.BatteryChargeState = BatteryChargeState.Critical; }
-                    else if ((powerStatus.BatteryFlag & (byte)BatteryFlag.High) == (int)BatteryFlag.High) { information.BatteryChargeState = BatteryChargeState.High; }
-                    else if ((powerStatus.BatteryFlag & (byte)BatteryFlag.Low) == (int)BatteryFlag.Low) { information.BatteryChargeState = BatteryChargeState.Low; }
-                    else { information.BatteryChargeState = BatteryChargeState.Normal; }
-
-                    // Battery life precentage
-                    if (powerStatus.BatteryLifePercent == 255) { information.BatteryPercentLeft = -1f; }
-                    else { information.BatteryPercentLeft = (100 / powerStatus.BatteryLifePercent); }
-
-                    // Battery lifetime
-                    if (powerStatus.BatteryLifeTime > -1) { information.RemainingBatteryLifeTime = new TimeSpan(0, 0, powerStatus.BatteryLifeTime); }
-                    if (powerStatus.BatteryFullLifeTime > -1) { information.TotalBatteryLifeTime = new TimeSpan(0, 0, powerStatus.BatteryFullLifeTime); }
-
-                    // Power scheme (Vista Only)
-                    if (IsVistaOrLater())
+                    // This is Vista or later
+                    IntPtr schemaPointer;
+                    var result2 = NativeMethods.PowerGetActiveScheme(IntPtr.Zero, out schemaPointer);
+                    if (result2 == 0)
                     {
-                        // This is Vista or later
-                        IntPtr schemaPointer;
-                        uint result2 = NativeMethods.PowerGetActiveScheme(IntPtr.Zero, out schemaPointer);
-                        if (result2 == 0)
-                        {
-                            var schemaGuid = (Guid)Marshal.PtrToStructure(schemaPointer, typeof(Guid));
-                            if (schemaGuid == PowerSettings.GUID_MAX_POWER_SAVINGS)
-                                information.Plan = PowerPlan.PowerSaver;
-                            else if (schemaGuid == PowerSettings.GUID_MIN_POWER_SAVINGS)
-                                information.Plan = PowerPlan.HighPerformance;
-                            else if (schemaGuid == PowerSettings.GUID_TYPICAL_POWER_SAVINGS)
-                                information.Plan = PowerPlan.Balanced;
-                            else
-                                information.Plan = PowerPlan.Unknown;
-                        }
-                    }
-
-                    // Disk power state
-                    bool deviceOn = false;
-                    FileStream[] files = Assembly.GetExecutingAssembly().GetFiles();
-                    if (files.Length > 0)
-                    {
-                        IntPtr fileHandle = files[0].Handle;
-                        if (NativeMethods.GetDevicePowerState(fileHandle, out deviceOn))
-                            if (deviceOn)
-                                information.DiskDriveState = DeviceState.On;
-                            else
-                                information.DiskDriveState = DeviceState.Off;
+                        var schemaGuid = (Guid)Marshal.PtrToStructure(schemaPointer, typeof(Guid));
+                        if (schemaGuid == PowerSettings.GUID_MAX_POWER_SAVINGS)
+                            information.Plan = PowerPlan.PowerSaver;
+                        else if (schemaGuid == PowerSettings.GUID_MIN_POWER_SAVINGS)
+                            information.Plan = PowerPlan.HighPerformance;
+                        else if (schemaGuid == PowerSettings.GUID_TYPICAL_POWER_SAVINGS)
+                            information.Plan = PowerPlan.Balanced;
                         else
-                            information.DiskDriveState = DeviceState.Unknown;
+                            information.Plan = PowerPlan.Unknown;
                     }
+                }
 
-                    // Monitor power state (Vista only)
-                    if (IsVistaOrLater())
-                    {
-                        // TODO: Implement this
-                        //bool monitorOn = false;
+                // Disk power state
+                var files = Assembly.GetExecutingAssembly().GetFiles();
+                if (files.Length > 0)
+                {
+                    var fileHandle = files[0].Handle;
+                    bool deviceOn;
+                    if (NativeMethods.GetDevicePowerState(fileHandle, out deviceOn))
+                        information.DiskDriveState = deviceOn ? DeviceState.On : DeviceState.Off;
+                    else
+                        information.DiskDriveState = DeviceState.Unknown;
+                }
 
-                        //System.Windows.Forms.Screen
+                // Monitor power state (Vista only)
+                if (IsVistaOrLater())
+                {
+                    // TODO: Implement this
+                    //bool monitorOn = false;
 
-                        //IntPtr monitorPointer = IntPtr.Zero;
-                        //Marshal.StructureToPtr(PowerSettings.GUID_MONITOR_POWER_ON, monitorPointer, false);
-                        //if (PowerHelper.GetDevicePowerState(monitorPointer, out monitorOn))
-                        //{
-                        //}
-                    }
+                    //System.Windows.Forms.Screen
+
+                    //IntPtr monitorPointer = IntPtr.Zero;
+                    //Marshal.StructureToPtr(PowerSettings.GUID_MONITOR_POWER_ON, monitorPointer, false);
+                    //if (PowerHelper.GetDevicePowerState(monitorPointer, out monitorOn))
+                    //{
+                    //}
                 }
 
                 return information;
@@ -149,18 +144,16 @@ namespace CODE.Framework.Core.Utilities
         /// </summary>
         private static void RegisterForPowerNotifications()
         {
-            if (!_listeningForPowerEvents)
-            {
-                _dummyMessageReceiver = new MessageSinkWindow();
-                _windowHandle = _dummyMessageReceiver.Handle;
+            if (_listeningForPowerEvents) return;
+            _dummyMessageReceiver = new MessageSinkWindow();
+            _windowHandle = _dummyMessageReceiver.Handle;
 
-                _handlePowerSource = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_ACDC_POWER_SOURCE, DEVICE_NOTIFY_WINDOW_HANDLE);
-                _handleBatteryCapacity = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_BATTERY_PERCENTAGE_REMAINING, DEVICE_NOTIFY_WINDOW_HANDLE);
-                _handleMonitorOn = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_MONITOR_POWER_ON, DEVICE_NOTIFY_WINDOW_HANDLE);
-                _handlePowerScheme = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_POWERSCHEME_PERSONALITY, DEVICE_NOTIFY_WINDOW_HANDLE);
+            _handlePowerSource = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_ACDC_POWER_SOURCE, DEVICE_NOTIFY_WINDOW_HANDLE);
+            _handleBatteryCapacity = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_BATTERY_PERCENTAGE_REMAINING, DEVICE_NOTIFY_WINDOW_HANDLE);
+            _handleMonitorOn = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_MONITOR_POWER_ON, DEVICE_NOTIFY_WINDOW_HANDLE);
+            _handlePowerScheme = NativeMethods.RegisterPowerSettingNotification(_windowHandle, ref PowerSettings.GUID_POWERSCHEME_PERSONALITY, DEVICE_NOTIFY_WINDOW_HANDLE);
 
-                _listeningForPowerEvents = true;
-            }
+            _listeningForPowerEvents = true;
         }
 
         /// <summary>
@@ -448,7 +441,7 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>
         /// Battery flag
         /// </summary>
-        [FlagsAttribute]
+        [Flags]
         private enum BatteryFlag : byte
         {
             /// <summary>
@@ -486,18 +479,18 @@ namespace CODE.Framework.Core.Utilities
             /// High Performance - The scheme is designed to deliver maximum performance 
             /// at the expense of power consumption savings.
             /// </summary>
-            public static Guid GUID_MIN_POWER_SAVINGS = new Guid("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+            public static readonly Guid GUID_MIN_POWER_SAVINGS = new Guid("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
             /// <summary>
             /// Power Saver - The scheme is designed to deliver maximum power consumption 
             /// savings at the expense of system performance and responsiveness.
             /// </summary>
-            public static Guid GUID_MAX_POWER_SAVINGS = new Guid("a1841308-3541-4fab-bc81-f71556f20b4a");
+            public static readonly Guid GUID_MAX_POWER_SAVINGS = new Guid("a1841308-3541-4fab-bc81-f71556f20b4a");
 
             /// <summary>
             /// Automatic (Balanced) - The scheme is designed to automatically balance 
             /// performance and power consumption savings.
             /// </summary>
-            public static Guid GUID_TYPICAL_POWER_SAVINGS = new Guid("381b4222-f694-41f0-9685-ff5bb260df2e");
+            public static readonly Guid GUID_TYPICAL_POWER_SAVINGS = new Guid("381b4222-f694-41f0-9685-ff5bb260df2e");
 
             /// <summary>
             /// Monitor on switch
@@ -523,7 +516,7 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>
         /// Thread execution state
         /// </summary>
-        [FlagsAttribute]
+        [Flags]
         private enum EXECUTION_STATE : uint
         {
             /// <summary>

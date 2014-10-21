@@ -3,26 +3,39 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
       xmlns:bindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
-      controls:GridEx.ColumnWidths="Auto,Auto,*">
+      controls:GridEx.RowHeights="Auto,*" controls:GridEx.ColumnWidths="Auto,*">
+
     <Grid.Resources>
         <bindingConverters:NullToVisibleConverter x:Key="NullToVisibleConverter" />
     </Grid.Resources>
 
-    <Rectangle Fill="{Binding Logo1}" Height="22" Width="22" Margin="6,2,0,2"
+    <Grid.Background>
+        <LinearGradientBrush StartPoint="1,0" EndPoint="0,1">
+            <GradientStop Color="#FBE56E" Offset="0"/>
+            <GradientStop Color="#F8EC75" Offset=".5"/>
+            <GradientStop Color="#FEFC8E" Offset="1"/>
+        </LinearGradientBrush>
+    </Grid.Background>
+    
+    <Grid.Effect>
+        <DropShadowEffect BlurRadius="5" ShadowDepth="8" Direction="210" Opacity=".25" Color="Black" />
+    </Grid.Effect>
+
+    <Ellipse Width="8" Height="8" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.ColumnSpan="2" Fill="#98381A" Margin="0,4,0,0"/>
+    <Rectangle Fill="{Binding Logo1}" Height="18" Width="18" Margin="6,12,0,2"
                Visibility="{Binding Logo1, Converter={StaticResource NullToVisibleConverter}}"/>
 
     <TextBlock Text="{Binding Text1}" 
-               Grid.Column="1" Margin="10,0,0,0" Opacity=".8"
-               FontWeight="Bold"
-               FontFamily="{DynamicResource DefaultFont}" 
+               Grid.Column="1" Margin="10,12,10,2"
+               FontWeight="Bold" TextWrapping="Wrap"
+               FontFamily="Comic Sans MS" 
                FontSize="{DynamicResource FontSize-Normal}" 
-               VerticalAlignment="Center" HorizontalAlignment="Left"
-               Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+               VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
     <TextBlock Text="{Binding Text2}" 
-               Grid.Column="3" Margin="10,0" Opacity=".8"
-               FontFamily="{DynamicResource DefaultFont}" 
+               Grid.Row="1" Grid.ColumnSpan="2" Margin="10,10,10,25"
+               FontFamily="Comic Sans MS" TextWrapping="Wrap"
                FontSize="{DynamicResource FontSize-Normal}" 
-               VerticalAlignment="Center" HorizontalAlignment="Left"
-               Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+               VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
 </Grid>

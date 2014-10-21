@@ -19,6 +19,8 @@ namespace CODE.Framework.Wpf.Controls
         {
             Visibility = Visibility.Collapsed;
             ClipToBounds = true;
+            IsHitTestVisible = true;
+            Background = Brushes.Transparent;
         }
 
         /// <summary>Generic column definition</summary>
@@ -104,11 +106,18 @@ namespace CODE.Framework.Wpf.Controls
         {
             var header = o as ListBoxGridHeader;
             if (header == null || header.Content == null) return;
+            header.InvalidateHorizontalHeaderOffset();
+        }
 
-            var content = header.Content as Grid;
+        /// <summary>
+        /// Forces re-applying of the horizontal header offset
+        /// </summary>
+        public void InvalidateHorizontalHeaderOffset()
+        {
+            if (Content == null) return;
+            var content = Content as Grid;
             if (content == null) return;
-
-            content.Margin = new Thickness((double) args.NewValue*-1, 0, 0, 0);
+            content.Margin = new Thickness(HorizontalHeaderOffset * -1, 0, 0, 0);
         }
 
         private void ForceParentRefresh()
@@ -203,6 +212,8 @@ namespace CODE.Framework.Wpf.Controls
                         var sort = new SortOrderIndicator();
                         if (!string.IsNullOrEmpty(column.SortOrderBindingPath))
                             sort.SetBinding(SortOrderIndicator.OrderProperty, new Binding(column.SortOrderBindingPath));
+                        else
+                            sort.Order = column.SortOrder;
                         textPlusGraphic.Children.Add(sort);
                         Grid.SetRow(textPlusGraphic, 1);
                         contentGrid.Children.Add(textPlusGraphic);
@@ -213,7 +224,7 @@ namespace CODE.Framework.Wpf.Controls
                         if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlBindingPath))
                             headerTb.SetBinding(TextBox.TextProperty, new Binding(column.ColumnHeaderEditControlBindingPath) {UpdateSourceTrigger = column.ColumnHeaderEditControlUpdateTrigger});
                         if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlWatermarkText))
-                            TextBoxEx.SetWatermarkTextProperty(headerTb, column.ColumnHeaderEditControlWatermarkText);
+                            TextBoxEx.SetWatermarkText(headerTb, column.ColumnHeaderEditControlWatermarkText);
                         contentGrid.Children.Add(headerTb);
                     }
                     contentParent.Content = contentGrid;
@@ -272,8 +283,20 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         public HeaderContentControl()
         {
+            IsHitTestVisible = true;
+            Background = Brushes.Transparent;
+
+            MouseLeftButtonDown += (s, e) =>
+            {
+                Mouse.Capture(this);
+                e.Handled = true;
+            };
+
             MouseLeftButtonUp += (s, e) =>
             {
+                if (Mouse.Captured == this) Mouse.Capture(null);
+                var position = Mouse.GetPosition(this);
+                if (position.X < 0 || position.Y < 0 || position.X > ActualWidth || position.Y > ActualHeight) return;
                 var localContent = s as HeaderContentControl;
                 if (localContent == null) return;
                 if (e.ClickCount != 1) return;

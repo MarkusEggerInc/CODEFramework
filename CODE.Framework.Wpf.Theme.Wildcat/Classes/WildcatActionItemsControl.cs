@@ -98,6 +98,16 @@ namespace CODE.Framework.Wpf.Theme.Wildcat.Classes
         }
 
         /// <summary>
+        /// String identifier to identify an action independent of its caption (and independent of the locale)
+        /// </summary>
+        /// <value>The identifier.</value>
+        public string Id
+        {
+            get { return _originalAction.Id; }
+            set { _originalAction.Id = value; }
+        }
+
+        /// <summary>
         /// Indicates whether this action starts a new group
         /// </summary>
         /// <value><c>true</c> if [begin group]; otherwise, <c>false</c>.</value>
@@ -148,6 +158,27 @@ namespace CODE.Framework.Wpf.Theme.Wildcat.Classes
         }
 
         /// <summary>
+        /// Indicates whether the action is to be considered "checked"
+        /// </summary>
+        /// <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+        /// <remarks>Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+        /// Most themes will only respect this property when ViewActionType = Toggle</remarks>
+        public bool IsChecked
+        {
+            get { return _originalAction.IsChecked; }
+            set { _originalAction.IsChecked = value; }
+        }
+        /// <summary>
+        /// Indicates the type of the view action
+        /// </summary>
+        /// <value>The type of the view action.</value>
+        public ViewActionTypes ViewActionType
+        {
+            get { return _originalAction.ViewActionType; }
+            set { _originalAction.ViewActionType = value; }
+        }
+
+        /// <summary>
         /// Indicates that this view action is selected by default if the theme supports pre-selecting actions in some way (such as showing the page of the ribbon the action is in, or triggering the action in a special Office-style file menu).
         /// </summary>
         /// <value><c>true</c> if this instance is default selection; otherwise, <c>false</c>.</value>
@@ -165,6 +196,16 @@ namespace CODE.Framework.Wpf.Theme.Wildcat.Classes
         public ViewActionAvailabilities Availability
         {
             get { return _originalAction.Availability; }
+        }
+
+        /// <summary>
+        /// Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
+        /// </summary>
+        /// <value>The visibility.</value>
+        public Visibility Visibility 
+        {
+            get { return _originalAction.Visibility; }
+            set { _originalAction.Visibility = value; } 
         }
 
         /// <summary>
@@ -277,5 +318,15 @@ namespace CODE.Framework.Wpf.Theme.Wildcat.Classes
             set { _originalAction.ShortcutModifiers = value; }
         }
 
+        /// <summary>
+        /// Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
+        /// </summary>
+        /// <exception cref="System.NotImplementedException"></exception>
+        /// <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
+        public void InvalidateCanExecute()
+        {
+            if (CanExecuteChanged != null)
+                CanExecuteChanged(this, new EventArgs());
+        }
     }
 }

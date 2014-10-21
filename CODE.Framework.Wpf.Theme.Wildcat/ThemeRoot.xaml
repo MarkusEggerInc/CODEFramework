@@ -16,9 +16,10 @@
         <ResourceDictionary Source="Wildcat-Control-DockHost.xaml"/>-->
         <ResourceDictionary Source="Wildcat-Control-Label.xaml"/>
         <ResourceDictionary Source="Wildcat-Control-ListBox.xaml"/>
-        <!--<ResourceDictionary Source="Wildcat-Control-PasswordBox.xaml"/>
-        <ResourceDictionary Source="Wildcat-Control-Ribbon.xaml"/>-->
+        <ResourceDictionary Source="Wildcat-Control-PasswordBox.xaml"/>
+        <!--<ResourceDictionary Source="Wildcat-Control-Ribbon.xaml"/>-->
         <ResourceDictionary Source="Wildcat-Control-ScrollBar.xaml"/>
+        <ResourceDictionary Source="Wildcat-Control-TabControl.xaml"/>
         <!--<ResourceDictionary Source="Wildcat-Control-TextBlock.xaml"/>-->
         <ResourceDictionary Source="Wildcat-Control-TextBox.xaml"/>
         <!--<ResourceDictionary Source="Wildcat-Control-Window.xaml" />-->

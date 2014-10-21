@@ -52,6 +52,7 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="Classes\SelfCenteringPopup.cs" />
+    <Compile Include="Classes\StickyNotePanel.cs" />
     <Compile Include="Classes\ThemeColorConverter.cs" />
     <Compile Include="Classes\ViewIconConverter.cs" />
     <Compile Include="Classes\WildcatActionItemsControl.cs" />
@@ -91,7 +92,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Wildcat-Control-PasswordBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Wildcat-Control-ScrollBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wildcat-Control-TabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

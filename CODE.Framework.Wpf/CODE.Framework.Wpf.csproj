@@ -69,6 +69,8 @@
     <Compile Include="Controls\DockHost.cs" />
     <Compile Include="Controls\Ex.cs" />
     <Compile Include="Controls\ListBoxEx.cs" />
+    <Compile Include="Controls\ListBoxFastGridHeader.cs" />
+    <Compile Include="Controls\ListBoxFastSmartDataTemplate.cs" />
     <Compile Include="Controls\ListBoxGridHeader.cs" />
     <Compile Include="Controls\ListBoxItemEx.cs" />
     <Compile Include="Controls\ListBoxSmartDataTemplate.cs" />
@@ -76,11 +78,15 @@
     <Compile Include="Controls\PasswordBoxEx.cs" />
     <Compile Include="Controls\RichTextBoxEx.cs" />
     <Compile Include="Controls\SortOrderIndicator.cs" />
+    <Compile Include="Controls\TextBlockEx.cs" />
     <Compile Include="Controls\TextBoxEx.cs" />
     <Compile Include="Controls\TreeViewEx.cs" />
     <Compile Include="Controls\WindowButtons.cs" />
     <Compile Include="Controls\WindowEx.cs" />
     <Compile Include="Controls\ZoomSlider.cs" />
+    <Compile Include="Interfaces\IHorizontalOffset.cs" />
+    <Compile Include="Interfaces\IInvalidated.cs" />
+    <Compile Include="Interfaces\ILazyLoad.cs" />
     <Compile Include="Interfaces\ISourceInformation.cs" />
     <Compile Include="Interfaces\ITitle.cs" />
     <Compile Include="Interfaces\IUserInterfaceActivation.cs" />
@@ -90,9 +96,13 @@
     <Compile Include="Layout\EditForm.cs" />
     <Compile Include="Layout\FlowForm.cs" />
     <Compile Include="Layout\GridPrimarySecondary.cs" />
+    <Compile Include="Layout\LazyLoadStackPanel.cs" />
     <Compile Include="Layout\MetroTiles.cs" />
     <Compile Include="Controls\GridEx.cs" />
+    <Compile Include="Layout\MultiPanel.cs" />
     <Compile Include="Layout\OneToManyPanel.cs" />
+    <Compile Include="Layout\PropertySheet.cs" />
+    <Compile Include="Layout\ScrollAwareItemsPresenter.cs" />
     <Compile Include="Layout\View.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -112,6 +122,7 @@
     <Compile Include="Utilities\FocusHelper.cs" />
     <Compile Include="Utilities\ImageHelper.cs" />
     <Compile Include="Utilities\ResourceHelper.cs" />
+    <Compile Include="Utilities\SpellCheckHelper.cs" />
     <Compile Include="Utilities\VisualHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -128,6 +139,12 @@
       <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
       <Name>CODE.Framework.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Styles\MultiColumnList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

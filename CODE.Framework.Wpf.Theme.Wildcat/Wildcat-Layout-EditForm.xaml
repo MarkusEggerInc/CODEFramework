@@ -9,13 +9,13 @@
                     <layout:EditForm Margin="10" LayoutElasticity="Layout" 
                                      GroupHeaderFontWeight="Normal" GroupHeaderFontFamily="{DynamicResource DefaultFont}"
                                      GroupHeaderFontSize="{DynamicResource FontSize-Larger}"
-                                     GroupHeaderForegroundBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}"/>
+                                     GroupHeaderForegroundBrush="{DynamicResource CODE.Framework-Application-ThemeBrush2}"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
         <Style.Resources>
             <Style TargetType="Label">
-                <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+                <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
                 <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}"/>
                 <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
                 <Setter Property="Margin" Value="0" />

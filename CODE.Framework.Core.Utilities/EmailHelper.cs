@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System.Net;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 
 namespace CODE.Framework.Core.Utilities
@@ -18,42 +19,31 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="subject">Subject</param>
         /// <param name="textBody">Email Body (text-only version)</param>
         /// <param name="htmlBody">Email Body (HTML version)</param>
-        /// <param name="mailServer">Mail server used to route the email</param>
+        /// <param name="mailServer">Mail server used to route the email. If null or not supplied, uses DefaultMailServer appSetting from config file</param>
+        /// <param name="portNumber">If null or not supplied, uses default of 25</param>
+        /// <param name="userName">Only required if SMTP server requires authentication to send</param>
+        /// <param name="password">Only required if SMTP server requires authentication to send</param>
         /// <returns>True if sent successfully</returns>
-        public static bool SendEmail(string senderName, string senderEmail, string recipientName, string recipientEmail, string subject, string textBody, string htmlBody, string mailServer)
+        public static bool SendEmail(string senderName, string senderEmail, string recipientName, string recipientEmail, string subject, string textBody, string htmlBody,
+            string mailServer = null, int portNumber = 25, string userName = null, string password = null)
         {
-            var smtp = new SmtpClient(mailServer);
+            if (mailServer == null)
+            {
+                if (Configuration.ConfigurationSettings.Settings.IsSettingSupported("DefaultMailServer")) mailServer = Configuration.ConfigurationSettings.Settings["DefaultMailServer"];
+                else throw new Exceptions.MissingConfigurationSettingException("DefaultMailServer");
+            }
+
+            var smtp = new SmtpClient(mailServer, portNumber);
+            if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password)) smtp.Credentials = new NetworkCredential(userName, password);
+
             var message = new MailMessage(new MailAddress(senderEmail, senderName), new MailAddress(recipientEmail, recipientName));
             message.Subject = subject;
             message.IsBodyHtml = !string.IsNullOrEmpty(htmlBody);
             message.Body = message.IsBodyHtml ? htmlBody : textBody;
+
             smtp.Send(message);
             message.Dispose();
             return true;
-        }
-
-        /// <summary>
-        /// Sends an email to the specified recipient
-        /// </summary>
-        /// <param name="senderName">Sender Name</param>
-        /// <param name="senderEmail">Sender Email Address</param>
-        /// <param name="recipientName">Recipient Name</param>
-        /// <param name="recipientEmail">Recipient Email Address</param>
-        /// <param name="subject">Subject</param>
-        /// <param name="textBody">Email Body (text-only version)</param>
-        /// <param name="htmlBody">Email Body (HTML version)</param>
-        /// <returns>True if sent successfully</returns>
-        /// <remarks>
-        /// Uses the DefaultMailServer setting to figure out which server to use to send the email.
-        /// </remarks>
-        public static bool SendEmail(string senderName, string senderEmail, string recipientName, string recipientEmail, string subject, string textBody, string htmlBody)
-        {
-            if (Configuration.ConfigurationSettings.Settings.IsSettingSupported("DefaultMailServer"))
-            {
-                string mailServer = Configuration.ConfigurationSettings.Settings["DefaultMailServer"];
-                return SendEmail(senderName, senderEmail, recipientName, recipientEmail, subject, textBody, htmlBody, mailServer);
-            }
-            throw new Exceptions.MissingConfigurationSettingException("DefaultMailServer");
         }
 
         /// <summary>

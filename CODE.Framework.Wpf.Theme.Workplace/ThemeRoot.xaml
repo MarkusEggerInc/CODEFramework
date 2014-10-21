@@ -13,7 +13,9 @@
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Workplace-Control-Button.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Calendar.xaml"/>
+        <ResourceDictionary Source="Workplace-Control-DatePicker.xaml"/>
         <ResourceDictionary Source="Workplace-Control-DockHost.xaml"/>
+        <ResourceDictionary Source="Workplace-Control-FloatingDockWindow.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Label.xaml"/>
         <ResourceDictionary Source="Workplace-Control-ListBox.xaml"/>
         <ResourceDictionary Source="Workplace-Control-PasswordBox.xaml"/>
@@ -28,6 +30,7 @@
         <ResourceDictionary Source="Workplace-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-OneToManyPanel.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-PrimarySecondaryForm.xaml"/>
+        <ResourceDictionary Source="Workplace-Layout-PropertySheet.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-StandardForm.xaml"/>
 

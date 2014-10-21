@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CODE.Framework.Wpf.Interfaces;
+using CODE.Framework.Wpf.Layout;
+using CODE.Framework.Wpf.Utilities;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -8,9 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
-using CODE.Framework.Wpf.Interfaces;
-using CODE.Framework.Wpf.Layout;
-using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Mvvm
 {
@@ -360,6 +360,15 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Defines what should show in the title bar of the shell window</summary>
         public static readonly DependencyProperty TitleModeProperty = DependencyProperty.Register("TitleMode", typeof(ShellTitleMode), typeof(Shell), new PropertyMetadata(ShellTitleMode.OriginalTitleOnly));
 
+        /// <summary>If set to true, the current shell can handle views with a local scope special by adding it to the TopLevelViewsLocal collection</summary>
+        public bool HandleLocalViewsSpecial
+        {
+            get { return (bool)GetValue(HandleLocalViewsSpecialProperty); }
+            set { SetValue(HandleLocalViewsSpecialProperty, value); }
+        }
+        /// <summary>If set to true, the current shell can handle views with a local scope special by adding it to the TopLevelViewsLocal collection</summary>
+        public static readonly DependencyProperty HandleLocalViewsSpecialProperty = DependencyProperty.Register("HandleLocalViewsSpecial", typeof(bool), typeof(Shell), new PropertyMetadata(false));
+
         /// <summary>Handles opening of views that are status messages</summary>
         /// <param name="context">The request context.</param>
         /// <returns>True of view was handled</returns>
@@ -399,8 +408,9 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Handles opening of views that are notification messages</summary>
         /// <param name="context">The request context.</param>
+        /// <param name="overrideTimeout">Overrides the theme's default notification timeout.</param>
         /// <returns>True of view was handled</returns>
-        protected virtual bool HandleNotificationMessage(RequestContext context)
+        protected virtual bool HandleNotificationMessage(RequestContext context, TimeSpan? overrideTimeout = null)
         {
             var notificationResult = context.Result as NotificationMessageResult;
             if (notificationResult == null) return false;
@@ -436,12 +446,12 @@ namespace CODE.Framework.Wpf.Mvvm
 
             RaiseEvent(new RoutedEventArgs(NotificationChangedEvent));
 
-
+            var timeout = overrideTimeout ?? NotificationTimeout;
             wrapper.InternalTimer = new Timer(state => Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     CurrentNotifications.Remove(wrapper);
                     CurrentNotificationsCount = CurrentNotifications.Count;
-                })), null, NotificationTimeout, new TimeSpan(-1));
+                })), null, timeout, new TimeSpan(-1));
 
             return true;
         }
@@ -466,7 +476,11 @@ namespace CODE.Framework.Wpf.Mvvm
         public bool OpenView(RequestContext context)
         {
             if (context.Result is StatusMessageResult) return HandleStatusMessage(context);
-            if (context.Result is NotificationMessageResult) return HandleNotificationMessage(context);
+            if (context.Result is NotificationMessageResult)
+            {
+                var result = context.Result as NotificationMessageResult;
+                return HandleNotificationMessage(context, result.Model.OverrideTimeout);
+            }
 
             var viewResult = context.Result as ViewResult;
             if (viewResult != null && viewResult.ForceNewShell)
@@ -573,6 +587,8 @@ namespace CODE.Framework.Wpf.Mvvm
                     WindowStartupLocation = WindowStartupLocation.CenterScreen
                 };
 
+            window.SetBinding(TitleProperty, new Binding("ViewTitle") {Source = viewResult});
+
             var simpleView = viewResult.View as SimpleView;
             if (simpleView != null)
                 if (SimpleView.GetSizeStrategy(simpleView) == ViewSizeStrategies.UseMaximumSizeAvailable)
@@ -610,8 +626,19 @@ namespace CODE.Framework.Wpf.Mvvm
             //        iconBrush = Brushes.Transparent;
             //    }
 
-            // Need to make sure we do not open more than allowed
-            if (MaximumTopLevelViewCount > -1)
+            // If we respect local views and the view is in fact a local view, and we have a normal view already open, then we open it in a local way only.
+            if (viewResult.ViewScope == ViewScope.Local && HandleLocalViewsSpecial && SelectedNormalView > -1)
+            {
+                var selectedView = NormalViews[SelectedNormalView];
+                if (selectedView == null) return false;
+                selectedView.LocalViews.Add(viewResult);
+                if (viewResult.MakeViewVisibleOnLaunch)
+                    selectedView.SelectedLocalViewIndex = selectedView.LocalViews.Count - 1;
+                return true;
+            }
+
+            //Need to make sure we do not open more than allowed - Popups should not close underlying views.
+            if (viewResult.ViewLevel != ViewLevel.Popup && MaximumTopLevelViewCount > -1)
             {
                 var inplaceTopLevelviews = TopLevelViews.Where(v => v.TopLevelWindow == null).ToList();
                 while (inplaceTopLevelviews.Count + 1 > MaximumTopLevelViewCount)
@@ -643,6 +670,8 @@ namespace CODE.Framework.Wpf.Mvvm
                         WindowStartupLocation = WindowStartupLocation.CenterScreen,
                         Owner = this
                     };
+
+                window.SetBinding(TitleProperty, new Binding("ViewTitle") { Source = viewResult });
 
                 // Setting the size strategy
                 var strategy = SimpleView.GetSizeStrategy(viewResult.View);
@@ -716,6 +745,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 }
 
             foreach (var view in NormalViews)
+            {
                 if (view.Model != null && view.Model == model)
                 {
                     NormalViews.Remove(view);
@@ -726,6 +756,16 @@ namespace CODE.Framework.Wpf.Mvvm
                     view.RaiseViewClosed();
                     return true;
                 }
+                foreach (var localView in view.LocalViews)
+                    if (localView.Model != null && localView.Model == model)
+                    {
+                        view.LocalViews.Remove(localView);
+                        if (view.SelectedLocalViewIndex >= view.LocalViews.Count)
+                            view.SelectedLocalViewIndex = view.LocalViews.Count - 1;
+                        localView.RaiseViewClosed();
+                        return true;
+                    }
+            }
 
             return false;
         }
@@ -776,8 +816,13 @@ namespace CODE.Framework.Wpf.Mvvm
                     return view.View;
 
             foreach (var view in NormalViews)
+            {
                 if (view.Model != null && view.Model == model)
                     return view.View;
+                foreach (var localView in view.LocalViews)
+                    if (localView.Model != null && localView.Model == model)
+                        return localView;
+            }
 
             return null;
         }

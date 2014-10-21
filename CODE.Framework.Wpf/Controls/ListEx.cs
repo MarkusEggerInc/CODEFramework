@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -37,6 +38,77 @@ namespace CODE.Framework.Wpf.Controls
         public static bool GetShowHeaderEditControls(DependencyObject o)
         {
             return (bool)o.GetValue(ShowHeaderEditControlsProperty);
+        }
+
+        /// <summary>
+        /// Setting this property to true on a ListBox automatically loads appropriate templates for the ListBox to support rows and columns
+        /// </summary>
+        public static readonly DependencyProperty AutoEnableListColumnsProperty = DependencyProperty.RegisterAttached("AutoEnableListColumns", typeof(bool), typeof(ListEx), new PropertyMetadata(false, OnAutoEnableListColumnsChanged));
+
+        /// <summary>
+        /// Fires when the AutoEnableListColumns property changed
+        /// </summary>
+        /// <param name="d">The dependency object (ListBox)</param>
+        /// <param name="args">Event args.</param>
+        private static void OnAutoEnableListColumnsChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            if (!((bool)args.NewValue)) return;
+            var list = d as ListBox;
+            if (list == null) return;
+
+            var dictionaryFound = false;
+            foreach (var resource in list.Resources.OfType<ResourceDictionary>())
+                foreach (var dictionary in resource.MergedDictionaries)
+                    if (dictionary.Source.AbsoluteUri.EndsWith("component/styles/MultiColumnList.xaml"))
+                    {
+                        dictionaryFound = true;
+                        break;
+                    }
+
+            if (!dictionaryFound)
+                list.Resources.MergedDictionaries.Add(new ResourceDictionary {Source = new Uri("pack://application:,,,/CODE.Framework.Wpf;component/styles/MultiColumnList.xaml", UriKind.Absolute)});
+
+            list.SetResourceReference(FrameworkElement.StyleProperty, "CODE.Framework-MultiColumnList");
+        }
+
+        /// <summary>
+        /// Setting this property to true on a ListBox automatically loads appropriate templates for the ListBox to support rows and columns
+        /// </summary>
+        public static void SetAutoEnableListColumns(DependencyObject d, bool value)
+        {
+            d.SetValue(AutoEnableListColumnsProperty, value);
+        }
+        /// <summary>
+        /// Setting this property to true on a ListBox automatically loads appropriate templates for the ListBox to support rows and columns
+        /// </summary>
+        public static bool GetAutoEnableListColumns(DependencyObject d)
+        {
+            return (bool)d.GetValue(AutoEnableListColumnsProperty);
+        }
+
+        /// <summary>
+        /// Indicates whether the league is to be forced into edit more (if set to true)
+        /// </summary>
+        public static readonly DependencyProperty IsEditableProperty = DependencyProperty.RegisterAttached("IsEditable", typeof(bool), typeof(ListEx), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Indicates whether the league is to be forced into edit more (if set to true)
+        /// </summary>
+        /// <param name="d">The object to set the value on</param>
+        /// <param name="value">True or false</param>
+        public static void SetIsEditable(DependencyObject d, bool value)
+        {
+            d.SetValue(IsEditableProperty, value);
+        }
+
+        /// <summary>
+        /// Indicates whether the league is to be forced into edit more (if set to true)
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <returns>True or false</returns>
+        public static bool GetIsEditable(DependencyObject d)
+        {
+            return (bool) d.GetValue(IsEditableProperty);
         }
     }
 
@@ -139,7 +211,26 @@ namespace CODE.Framework.Wpf.Controls
             set { SetValue(WidthProperty, value); }
         }
         /// <summary>Column Width</summary>
-        public static readonly DependencyProperty WidthProperty = DependencyProperty.Register("Width", typeof(GridLength), typeof(ListColumn), new UIPropertyMetadata(new GridLength(100d)));
+        public static readonly DependencyProperty WidthProperty = DependencyProperty.Register("Width", typeof(GridLength), typeof(ListColumn), new UIPropertyMetadata(new GridLength(100d), OnWidthChanged));
+
+        /// <summary>
+        /// Fires when the column width changes
+        /// </summary>
+        /// <param name="d">Column object</param>
+        /// <param name="args">Event arguments</param>
+        private static void OnWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            var column = d as ListColumn;
+            if (column == null) return;
+
+            if (column.WidthChanged != null)
+                column.WidthChanged(column, new EventArgs());
+        }
+
+        /// <summary>
+        /// Occurs when the column width changes
+        /// </summary>
+        public event EventHandler WidthChanged;
 
         /// <summary>For internal use only</summary>
         public double ActualWidth
@@ -315,6 +406,15 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Content alignment for cell content</summary>
         public static readonly DependencyProperty CellContentAlignmentProperty = DependencyProperty.Register("CellContentAlignment", typeof(ListColumnContentAlignment), typeof(ListColumn), new PropertyMetadata(ListColumnContentAlignment.Default));
+
+        /// <summary>Text alignment for simple text headers</summary>
+        public TextAlignment HeaderTextAlignment
+        {
+            get { return (TextAlignment)GetValue(HeaderTextAlignmentProperty); }
+            set { SetValue(HeaderTextAlignmentProperty, value); }
+        }
+        /// <summary>Text alignment for simple text headers</summary>
+        public static readonly DependencyProperty HeaderTextAlignmentProperty = DependencyProperty.Register("HeaderTextAlignment", typeof(TextAlignment), typeof(ListColumn), new PropertyMetadata(TextAlignment.Left));
 
         /// <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
         /// <value>The text list item source binding path.</value>
@@ -503,9 +603,56 @@ namespace CODE.Framework.Wpf.Controls
             get { return (string)GetValue(SortOrderBindingPathProperty); }
             set { SetValue(SortOrderBindingPathProperty, value); }
         }
+
         /// <summary>Binding path for a dynamically set sort order</summary>
         /// <value>The sort order binding path.</value>
         public static readonly DependencyProperty SortOrderBindingPathProperty = DependencyProperty.Register("SortOrderBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>Indicates whether the column is considered to be "frozen"</summary>
+        /// <remarks>Frozen status usually indicates that all frozen columns are kept visible on the left side of the listbox. Note that different controls and styles may interpret this property differently.</remarks>
+        public bool IsFrozen
+        {
+            get { return (bool)GetValue(IsFrozenProperty); }
+            set { SetValue(IsFrozenProperty, value); }
+        }
+
+        /// <summary>Indicates whether the column is considered to be "frozen"</summary>
+        /// <remarks>Frozen status usually indicates that all frozen columns are kept visible on the left side of the listbox. Note that different controls and styles may interpret this property differently.</remarks>
+        public static readonly DependencyProperty IsFrozenProperty = DependencyProperty.Register("IsFrozen", typeof(bool), typeof(ListColumn), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets the visible of the column.
+        /// </summary>
+        /// <value>The visible.</value>
+        public Visibility Visibility
+        {
+            get { return (Visibility)GetValue(VisibilityProperty); }
+            set { SetValue(VisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the visible of the column.
+        /// </summary>
+        public static readonly DependencyProperty VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(ListColumn), new PropertyMetadata(Visibility.Visible, OnVisibilityChanged));
+
+        /// <summary>
+        /// Occurs when the visibility of the column changes
+        /// </summary>
+        /// <param name="d">ListColumn</param>
+        /// <param name="args">Event args</param>
+        private static void OnVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            var column = d as ListColumn;
+            if (column == null) return;
+
+            if (column.VisibilityChanged != null)
+                column.VisibilityChanged(column, new EventArgs());
+        }
+
+        /// <summary>
+        /// Occurs when the column width changes
+        /// </summary>
+        public event EventHandler VisibilityChanged;
     }
 
     /// <summary>

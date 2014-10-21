@@ -427,7 +427,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="-100,0,-100,15">
                                 <Rectangle Height="48" Width="48" Fill="{Binding Path=TitleIconBrush, ElementName=headerGrid}" />
                                 <Label Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" 
-                                       Content="{Binding Path=ViewTitle, ElementName=headerGrid}" 
+                                       Content="{Binding Path=View.Title}" 
                                        FontSize="{DynamicResource FontSize-Larger}" FontWeight="Light"
                                        VerticalAlignment="Center" />
                             </StackPanel>

@@ -1,0 +1,865 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Services.Tools</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ServiceTestHarness">
+            <summary>
+            Service test harness
+            </summary>
+            <summary>
+            Service test harness
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarness.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.ServiceTestHarness"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarness.ShowService(CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper)">
+            <summary>
+            Shows the service.
+            </summary>
+            <param name="serviceInfo">The service info.</param>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ServiceTestHarness.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarness.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarness.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI">
+            <summary>
+            Interaction logic for ServiceTestHarnessUI.xaml
+            </summary>
+            <summary>
+            ServiceTestHarnessUI
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.ShowService(System.ServiceModel.ServiceHost,System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri)">
+            <summary>
+            Shows the service.
+            </summary>
+            <param name="host">The host.</param>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.SerializeToRestXml(System.Object)">
+            <summary>
+            Serializes to REST XML.
+            </summary>
+            <param name="objectToSerialize">The object to serialize.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.SerializeToRestJson(System.Object)">
+            <summary>
+            Serializes to REST JSON.
+            </summary>
+            <param name="objectToSerialize">The object to serialize.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.EditContractTemplateSelector">
+            <summary>
+            Template selector for the contracts
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.EditContractTemplateSelector.SelectTemplate(System.Object,System.Windows.DependencyObject)">
+            <summary>
+            When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate"/> based on custom logic.
+            </summary>
+            <param name="item">The data object for which to select the template.</param>
+            <param name="container">The data-bound object.</param>
+            <returns>
+            Returns a <see cref="T:System.Windows.DataTemplate"/> or null. The default value is null.
+            </returns>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ParameterItem">
+            <summary>
+            Represents a parameter
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.ParameterItem"/> class.
+            </summary>
+            <param name="dataContext">The data context.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.ConfigureEnum(System.Type)">
+            <summary>
+            Configures enum settings
+            </summary>
+            <param name="propertyType">Type of the property.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>
+            The name.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.MemberType">
+            <summary>
+            Gets or sets the type of the member.
+            </summary>
+            <value>
+            The type of the member.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.MethodName">
+            <summary>
+            Gets or sets the name of the method.
+            </summary>
+            <value>
+            The name of the method.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.ContractType">
+            <summary>
+            Gets or sets the type of the contract.
+            </summary>
+            <value>
+            The type of the contract.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.IsEnum">
+            <summary>
+            Gets or sets a value indicating whether this instance is an enum.
+            </summary>
+            <value><c>true</c> if this instance is enum; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.NullElementVisible">
+            <summary>
+            Is the null element visible?
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.MemberTypeFullText">
+            <summary>
+            Gets the member type full text.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.Value">
+            <summary>
+            Gets or sets the value.
+            </summary>
+            <value>
+            The value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.TextValue">
+            <summary>
+            Gets or sets the text value.
+            </summary>
+            <value>
+            The text value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.BooleanValue">
+            <summary>
+            Gets or sets a value indicating whether [boolean value].
+            </summary>
+            <value>
+              <c>true</c> if [boolean value]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.IntegerValue">
+            <summary>
+            Gets or sets the integer value.
+            </summary>
+            <value>
+            The integer value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.DecimalValue">
+            <summary>
+            Gets or sets the decimal value.
+            </summary>
+            <value>
+            The decimal value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.DoubleValue">
+            <summary>
+            Gets or sets the double value.
+            </summary>
+            <value>
+            The double value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.FloatValue">
+            <summary>
+            Gets or sets the float value.
+            </summary>
+            <value>
+            The float value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.LongValue">
+            <summary>
+            Gets or sets the long value.
+            </summary>
+            <value>
+            The long value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.EnumValue">
+            <summary>
+            Gets or sets the enum value.
+            </summary>
+            <value>The enum value.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.DateTimeValue">
+            <summary>
+            Gets or sets the decimal value.
+            </summary>
+            <value>
+            The decimal value.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.EnumValues">
+            <summary>
+            Gets or sets the enum values.
+            </summary>
+            <value>The enum values.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.IsRequired">
+            <summary>
+            Gets or sets a value indicating whether this instance is required.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is required; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.ManipulationTextBoxVisible">
+            <summary>
+            Gets or sets the manipulation text box visible.
+            </summary>
+            <value>
+            The manipulation text box visible.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.TypeVisible">
+            <summary>
+            Gets or sets the type visible.
+            </summary>
+            <value>
+            The type visible.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.NodeType">
+            <summary>
+            Gets or sets the type of the node.
+            </summary>
+            <value>
+            The type of the node.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.SubItems">
+            <summary>
+            Gets or sets the sub items.
+            </summary>
+            <value>
+            The sub items.
+            </value>
+        </member>
+        <member name="E:CODE.Framework.Services.Tools.Windows.ParameterItem.PropertyChanged">
+            <summary>
+            Occurs when a property value changes.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ParameterNodeType">
+            <summary>
+            Parameter node type
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ParameterNodeType.Root">
+            <summary>
+            Root element
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ParameterNodeType.SimpleParameter">
+            <summary>
+            Simple parameter
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ParameterNodeType.ComplexParameter">
+            <summary>
+            Complex parameter
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ParameterNodeType.List">
+            <summary>
+            List paramete
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ShowDataContract">
+            <summary>
+            Show data contract
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ShowDataContract.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.ShowDataContract"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ShowDataContract.Show(System.Object)">
+            <summary>
+            Launches the data contract inspection UI
+            </summary>
+            <param name="contract"></param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ShowDataContract.ShowContract(System.Object)">
+            <summary>
+            Shows the contract.
+            </summary>
+            <param name="contract">The contract.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ShowDataContract.ShowObject(System.Object,System.Windows.Forms.TreeNode)">
+            <summary>
+            Shows the object.
+            </summary>
+            <param name="contract">The contract.</param>
+            <param name="parentNode">The parent node.</param>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ShowDataContract.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ShowDataContract.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ShowDataContract.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.PropertyLink">
+            <summary>
+            Property link
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.PropertyLink.#ctor(System.Object,System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.PropertyLink"/> class.
+            </summary>
+            <param name="instance">The instance.</param>
+            <param name="propertyInfo">The property info.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.PropertyLink.Instance">
+            <summary>
+            Gets or sets the instance.
+            </summary>
+            <value>The instance.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.PropertyLink.PropertyInfo">
+            <summary>
+            Gets or sets the property info.
+            </summary>
+            <value>The property info.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.TestServiceHost">
+            <summary>
+            Test host window
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.TestServiceHost"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.textDomain_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            Handles the SelectedIndexChanged event of the textDomain control.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.textPort_TextChanged(System.Object,System.EventArgs)">
+            <summary>
+            Handles the TextChanged event of the textPort control.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.OnShown(System.EventArgs)">
+            <summary>
+            Raises the <see cref="E:System.Windows.Forms.Form.Shown" /> event.
+            </summary>
+            <param name="e">A <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.OnActivated(System.EventArgs)">
+            <summary>
+            Raises the <see cref="E:System.Windows.Forms.Form.Activated" /> event.
+            </summary>
+            <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.OnLoad(System.EventArgs)">
+            <summary>
+            Raises the <see cref="E:System.Windows.Forms.Form.Load" /> event.
+            </summary>
+            <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostWsHttp(System.Type,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostWsHttp(System.Type,CODE.Framework.Services.Server.MessageSize)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostWsHttp(System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostWsHttp(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostWsHttp(System.Type,System.Type,System.String,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostWsHttp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Adds a WS HTTP based service host
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+            <param name="baseAddress">The base address.</param>
+            <param name="basePath">The base path.</param>
+            <param name="extension">The extension.</param>
+            <param name="useHttps">Indicates whether HTTP is to be used</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostRestXml(System.Type,CODE.Framework.Services.Server.MessageSize)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostRestXml(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>Adds a new service ost using REST XML standards</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">The base address.</param>
+            <param name="basePath">The base path.</param>
+            <param name="extension">The extension.</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostRestJson(System.Type,CODE.Framework.Services.Server.MessageSize)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostRestJson(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>Adds a new REST service using JSON data format</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">The base address.</param>
+            <param name="basePath">The base path.</param>
+            <param name="extension">The extension.</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostBasicHttp(System.Type,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostNetTcp(System.Type,CODE.Framework.Services.Server.MessageSize)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostBasicHttp(System.Type,CODE.Framework.Services.Server.MessageSize)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostBasicHttp(System.Type,CODE.Framework.Services.Server.MessageSize,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostBasicHttp(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostBasicHttp(System.Type,System.Type,System.String,System.Boolean)">
+            <summary>
+            Adds another service to the list of hosted services
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="exposeWsdl">if set to <c>true</c> [expose WSDL].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostNetTcp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize)">
+            <summary>Adds a TCP/IP (net.tcp) service host</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceHostBasicHttp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize,System.Boolean,System.String,System.String,System.String,System.Boolean)">
+            <summary>Hosts a Basic HTTP service</summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="exposeWsdl">if set to <c>true</c> a WSDL endpoint is exposed.</param>
+            <param name="baseAddress">The base address.</param>
+            <param name="basePath">The base path.</param>
+            <param name="extension">The extension.</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AddServiceInfo(System.Type,System.Type,System.String,System.String,System.ServiceModel.ServiceHost)">
+            <summary>
+            Adds the service info.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the contract.</param>
+            <param name="url">The URL.</param>
+            <param name="binding">The binding.</param>
+            <param name="host">The actual service host</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowHttpCrossDomainCalls(System.String)">
+            <summary>Enables cross-domain service access for HTTP-based callers (such as JavaScript)</summary>
+            <param name="allowedCallers">Allowed caller domains (URLs or *).</param>
+            <returns>True if successful</returns>
+            <remarks>
+            This works by adding a cross-domain call HTTP header to service responses, which is used by browsers to check if these calls should be allowed.
+            Note that this is for JavaScript clients and this is different from the Silverlight cross domain calls (AllowCrossDomainCalls)
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            host.AllowHttpCrossDomainCalls("www.eps-software.com");
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowHttpCrossDomainCalls">
+            <summary>Enables cross-domain service access for HTTP-based callers (such as JavaScript)</summary>
+            <returns>True if successful</returns>
+            <remarks>
+            This works by adding a cross-domain call HTTP header to service responses, which is used by browsers to check if these calls should be allowed.
+            Note that this is for JavaScript clients and this is different from the Silverlight cross domain calls (AllowCrossDomainCalls)
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from all domains
+            host.AllowHttpCrossDomainCalls();
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowSilverlightCrossDomainCalls">
+            <summary>
+            Enables cross-domain service access
+            </summary>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            var host = new TestServiceHost();
+            host.AllowCrossDomainCalls();
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowSilverlightCrossDomainCalls(System.Uri)">
+            <summary>
+            Enables cross-domain service access
+            </summary>
+            <param name="allowedCaller">The allowed caller.</param>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            // from the specified domain
+            var host = new TestServiceHost();
+            host.AllowCrossDomainCalls(new Uri("www.eps-software.com"));
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowSilverlightCrossDomainCalls(System.Uri[])">
+            <summary>
+            Enables cross-domain service access
+            </summary>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls for the current service base URL
+            // from the specified domain
+            var host = new TestServiceHost();
+            host.AllowCrossDomainCalls(new Uri[] {new Uri("www.eps-software.com"), new Uri("www.Microsoft.com")});
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowSilverlightCrossDomainCalls(System.String)">
+            <summary>
+            Enables cross-domain service access for Silverlight service calls
+            </summary>
+            <param name="domain">The root domain the call is valid for.</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            </remarks>
+            <example>
+            // Enables all cross domain calls from any location to www.eps-software.com hosted services
+            var host = new TestServiceHost();
+            host.AllowCrossDomainCalls("www.eps-software.com");
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.AllowSilverlightCrossDomainCalls(System.Uri,System.Uri[])">
+            <summary>
+            Enables cross-domain service access
+            </summary>
+            <param name="domain">The root domain the call is valid for.</param>
+            <param name="allowedCallers">Allowed caller domains (URLs).</param>
+            <returns>URL of the hosted policy</returns>
+            <remarks>
+            Cross-access domain calling is of particular importance for Silverlight clients.
+            Note that the allowed callers are shared across all root domains if this method is called multiple times
+            to enable different root domains. (This means that the service garden hosts service calls who's endpoints
+            are on different domains, which rarely happens).
+            </remarks>
+            <example>
+            // Enables all cross domain calls to the specified domain 
+            // from the specified domains
+            var host = new TestServiceHost();
+            host.AllowCrossDomainCalls(
+                new Uri("www.epsservices.net"),
+                new Uri[] {new Uri("www.eps-software.com"), new Uri("www.Microsoft.com")}
+                );
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.listView1_ColumnClick(System.Object,System.Windows.Forms.ColumnClickEventArgs)">
+            <summary>
+            Handles the ColumnClick event of the listView1 control.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The <see cref="T:System.Windows.Forms.ColumnClickEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.Log(System.String,CODE.Framework.Core.Utilities.LogEventType)">
+            <summary>
+            Logs the specified event (text).
+            </summary>
+            <param name="logEvent">The event (text).</param>
+            <param name="type">The event type.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.Log(System.Object,CODE.Framework.Core.Utilities.LogEventType)">
+            <summary>
+            Logs the specified event (object).
+            </summary>
+            <param name="logEvent">The event (object).</param>
+            <param name="type">The event type.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.listView1_MouseDoubleClick(System.Object,System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            We will attempt to bring up more information about the double-clicked item
+            </summary>
+            <param name="sender">Sender</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.LogItemDoubleClick(System.Object,System.EventArgs)">
+            <summary>
+            Handles the DoubleClick event of the listView2 control.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ShowMessageDetail(System.String)">
+            <summary>
+            Displays a window with detailed exception information
+            </summary>
+            <param name="text">The text to display.</param>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.TestServiceHost.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.TypeFilter">
+            <summary>
+            Gets or sets the type filter.
+            </summary>
+            <value>The type filter.</value>
+            <remarks>
+            Only events that match the type filter will be considered by this logger.
+            </remarks>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter">
+            <summary>
+            This class is an implementation of the 'IComparer' interface.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter._objectCompare">
+            <summary>
+            Case insensitive comparer object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.#ctor">
+            <summary>
+            Class constructor.  Initializes various elements
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.Compare(System.Object,System.Object)">
+            <summary>
+            This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
+            </summary>
+            <param name="x">First object to be compared</param>
+            <param name="y">Second object to be compared</param>
+            <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.SortColumn">
+            <summary>
+            Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.Order">
+            <summary>
+            Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper">
+            <summary>
+            Service info wrapper
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.ServiceType">
+            <summary>
+            Gets or sets the type of the service.
+            </summary>
+            <value>The type of the service.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.ServiceContract">
+            <summary>
+            Gets or sets the service contract.
+            </summary>
+            <value>The service contract.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.Url">
+            <summary>
+            Gets or sets the URL.
+            </summary>
+            <value>The URL.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.Protocol">
+            <summary>
+            Gets or sets the Protocol.
+            </summary>
+            <value>The Protocol.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.Host">
+            <summary>
+            Actual service host
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.MessageSize">
+            <summary>
+            Supported Message Size
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.WsdlExposed">
+            <summary>
+            Information about whether a WSDL file is exposed or not
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper.Port">
+            <summary>
+            Service Port
+            </summary>
+        </member>
+    </members>
+</doc>

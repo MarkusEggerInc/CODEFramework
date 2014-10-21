@@ -30,7 +30,7 @@ namespace CODE.Framework.Wpf.Mvvm.Tools
         /// </summary>
         public ViewVisualizer()
         {
-            _currentVisualizer = this;
+            CurrentVisualizer = this;
             LoadingVisibility = Visibility.Collapsed;
             DataContext = this;
             Views = new ObservableCollection<ViewVisualizerItem>();
@@ -40,7 +40,7 @@ namespace CODE.Framework.Wpf.Mvvm.Tools
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static ViewVisualizer _currentVisualizer;
+        public static ViewVisualizer CurrentVisualizer;
 
         /// <summary>
         /// Gets or sets the views.
@@ -976,8 +976,8 @@ namespace CODE.Framework.Wpf.Mvvm.Tools
                 if (currentElement == null) return new ObservableCollection<ControlPropertyViewModel>();
 
                 var retVal = new ObservableCollection<ControlPropertyViewModel>();
-                ViewVisualizer._currentVisualizer.OperationsInProgress++;
-                ViewVisualizer._currentVisualizer.ModelStatus = ModelStatus.Loading;
+                ViewVisualizer.CurrentVisualizer.OperationsInProgress++;
+                ViewVisualizer.CurrentVisualizer.ModelStatus = ModelStatus.Loading;
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { })); // DoEvents()
 
                 PopulateProperties(currentElement, currentElement.GetType(), properties);
@@ -985,9 +985,9 @@ namespace CODE.Framework.Wpf.Mvvm.Tools
 
                 retVal.AddRange(sortedProperties);
 
-                ViewVisualizer._currentVisualizer.OperationsInProgress--;
-                if (ViewVisualizer._currentVisualizer.OperationsInProgress < 1)
-                    ViewVisualizer._currentVisualizer.ModelStatus = ModelStatus.Ready;
+                ViewVisualizer.CurrentVisualizer.OperationsInProgress--;
+                if (ViewVisualizer.CurrentVisualizer.OperationsInProgress < 1)
+                    ViewVisualizer.CurrentVisualizer.ModelStatus = ModelStatus.Ready;
                 return retVal;
             }
         }

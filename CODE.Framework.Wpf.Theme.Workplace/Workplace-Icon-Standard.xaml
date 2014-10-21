@@ -967,7 +967,57 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 16.2031,0C 16.3198,0 16.4349,0.0354614 16.5484,0.106262C 16.662,0.177063 16.763,0.265625 16.8516,0.371887C 16.9401,0.478149 17.012,0.594299 17.0672,0.720337C 17.1224,0.846375 17.15,0.967712 17.15,1.08441L 17.15,16.0532C 17.15,16.1677 17.101,16.2834 17.0031,16.4C 16.9052,16.5167 16.7865,16.6182 16.6469,16.7047C 16.5073,16.7912 16.3594,16.862 16.2031,16.9172C 16.0469,16.9724 15.9094,17 15.7906,17L 0.946869,17C 0.8302,17 0.715088,16.9724 0.601563,16.9172C 0.488007,16.862 0.386963,16.7912 0.298431,16.7047C 0.209885,16.6182 0.138016,16.5167 0.0827942,16.4C 0.0275879,16.2834 0,16.1677 0,16.0532L 0,1.08441C 0,0.967712 0.0275879,0.846375 0.0827942,0.720337C 0.138016,0.594299 0.209885,0.478149 0.298431,0.371887C 0.386963,0.265625 0.488007,0.177063 0.601563,0.106262C 0.715088,0.0354614 0.8302,0 0.946869,0L 16.2031,0 Z M 16.2031,3.7594L 0.946869,3.7594L 0.946869,16.1406L 16.2031,16.1406L 16.2031,3.7594 Z M 4.76563,4.70624L 6.67188,4.70624L 6.67188,6.60938L 4.76563,6.60938L 4.76563,4.70624 Z M 1.89374,7.56561L 3.80937,7.56561L 3.80937,9.47186L 1.89374,9.47186L 1.89374,7.56561 Z M 7.61874,4.70624L 9.52187,4.70624L 9.52187,6.60938L 7.61874,6.60938L 7.61874,4.70624 Z M 10.4781,4.70624L 12.3844,4.70624L 12.3844,6.60938L 10.4781,6.60938L 10.4781,4.70624 Z M 13.3312,4.70624L 15.2437,4.70624L 15.2437,6.60938L 13.3312,6.60938L 13.3312,4.70624 Z M 4.76563,7.56561L 6.67188,7.56561L 6.67188,9.47186L 4.76563,9.47186L 4.76563,7.56561 Z M 7.61874,7.56561L 9.52187,7.56561L 9.52187,9.47186L 7.61874,9.47186L 7.61874,7.56561 Z M 10.4781,7.56561L 12.3844,7.56561L 12.3844,9.47186L 10.4781,9.47186L 10.4781,7.56561 Z M 13.3312,7.56561L 15.2437,7.56561L 15.2437,9.47186L 13.3312,9.47186L 13.3312,7.56561 Z M 1.89374,10.4188L 3.80937,10.4188L 3.80937,12.3312L 1.89374,12.3312L 1.89374,10.4188 Z M 4.76563,10.4188L 6.67188,10.4188L 6.67188,12.3312L 4.76563,12.3312L 4.76563,10.4188 Z M 7.61874,10.4188L 9.52187,10.4188L 9.52187,12.3312L 7.61874,12.3312L 7.61874,10.4188 Z M 10.4781,10.4188L 12.3844,10.4188L 12.3844,12.3312L 10.4781,12.3312L 10.4781,10.4188 Z M 13.3312,10.4188L 15.2437,10.4188L 15.2437,12.3312L 13.3312,12.3312L 13.3312,10.4188 Z M 1.89374,13.2906L 3.80937,13.2906L 3.80937,15.1938L 1.89374,15.1938L 1.89374,13.2906 Z M 4.76563,13.2906L 6.67188,13.2906L 6.67188,15.1938L 4.76563,15.1938L 4.76563,13.2906 Z M 7.61874,13.2906L 9.52187,13.2906L 9.52187,15.1938L 7.61874,15.1938L 7.61874,13.2906 Z M 10.4781,13.2906L 12.3844,13.2906L 12.3844,15.1938L 10.4781,15.1938L 10.4781,13.2906 Z "/>
+                    <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 0.5,0.500002L 19.5,0.500002L 19.5,19.5L 0.5,19.5L 0.5,0.500002 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FF727272"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF727272" Geometry="F1 M 1.30137e-006,5.72205e-006L 20,5.72205e-006L 20,4L 1.30137e-006,4L 1.30137e-006,5.72205e-006 Z "/>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 1,7.5L 19,7.5">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 1,11.5L 19,11.5">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 1,15.5L 19,15.5">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 4,4L 4,19">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 8,4L 8,19">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 12,4L 12,19">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFB3B3B3" Geometry="F1 M 16,4L 16,19">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFB3B3B3"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 11,6.5L 17,6.5L 17,12.5L 11,12.5L 11,6.5 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 12,7.5L 16,7.5L 16,11.5L 12,11.5L 12,7.5 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FFFF0000"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -1629,6 +1679,33 @@
             <DrawingGroup>
                 <DrawingGroup.Children>
                     <GeometryDrawing Brush="{DynamicResource IconOrangeBrush}" Geometry="M23.104071,28.527C23.783672,30.139721,24.661274,31.64304,25.672976,33.045959L6.1626358,52.557308C5.3109837,53.410118 5.3123531,54.798935 6.1652355,55.651146 7.0154877,56.502056 8.4060497,56.502056 9.2576818,55.651146L28.558481,36.346802C30.955587,38.615128,33.833193,40.376751,37.025999,41.465466L37.025999,44.934811C37.025999,46.033024,36.130097,46.930336,35.031196,46.930336L29.542884,46.930336 29.542884,52.418606C29.542884,53.51762,28.647082,54.414131,27.548079,54.414131L22.059769,54.414131 22.059769,59.9025C22.059768,61.001415,21.162666,61.897926,20.063663,61.897926L14.472452,61.897926 13.07935,63.291145C12.227648,64.143456 3.6833897,64.59446 1.544035,62.457832 -0.59527969,60.319107 -0.14346504,51.773499 0.70950317,50.920685z M50.746134,6.7629433C47.162842,6.7629433 44.257851,9.6692162 44.257851,13.24983 44.257851,16.835785 47.162842,19.741947 50.746134,19.741947 54.330822,19.741947 57.237015,16.835785 57.237015,13.24983 57.237015,9.6692162 54.330822,6.7629433 50.746134,6.7629433z M44.510548,0C55.27342,0 64,8.7238588 64,19.48875 64,30.251614 55.27342,38.978001 44.510548,38.978001 33.747477,38.978001 25.020999,30.251614 25.021,19.48875 25.020999,8.7238588 33.747477,0 44.510548,0z"/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="CODE.Framework-Icon-Collapsed" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Geometry="F1 M 2,1L 6.5,4L 2,7L 2,1 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FF000000"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-Expanded" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#FF000000" Geometry="F1 M 6.5,2L 6.5,6.5L 2,6.5L 6.5,2 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen MiterLimit="2.75" Brush="#FF000000"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>

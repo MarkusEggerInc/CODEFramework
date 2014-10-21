@@ -85,8 +85,14 @@
     <Compile Include="FlowFormTest.xaml.cs">
       <DependentUpon>FlowFormTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LazyList.xaml.cs">
+      <DependentUpon>LazyList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ListBoxGrid.xaml.cs">
       <DependentUpon>ListBoxGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ListBoxGridReadOnly.xaml.cs">
+      <DependentUpon>ListBoxGridReadOnly.xaml</DependentUpon>
     </Compile>
     <Compile Include="ListDependencyProperties.xaml.cs">
       <DependentUpon>ListDependencyProperties.xaml</DependentUpon>
@@ -97,8 +103,17 @@
     <Compile Include="MetroListBoxes.xaml.cs">
       <DependentUpon>MetroListBoxes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MultiPanelTest.xaml.cs">
+      <DependentUpon>MultiPanelTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectHelperTest.xaml.cs">
+      <DependentUpon>ObjectHelperTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProgressAnimations.xaml.cs">
       <DependentUpon>ProgressAnimations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertySheetTest.xaml.cs">
+      <DependentUpon>PropertySheetTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="ScaleSliderTest.xaml.cs">
       <DependentUpon>ScaleSliderTest.xaml</DependentUpon>
@@ -109,11 +124,23 @@
     <Compile Include="SizeCalcEx.xaml.cs">
       <DependentUpon>SizeCalcEx.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SpellCheck.xaml.cs">
+      <DependentUpon>SpellCheck.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StandardIcons.xaml.cs">
       <DependentUpon>StandardIcons.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StickyNoteTest.xaml.cs">
+      <DependentUpon>StickyNoteTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TextBlockExTest.xaml.cs">
+      <DependentUpon>TextBlockExTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TextBoxTest.xaml.cs">
       <DependentUpon>TextBoxTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TreeViewTest.xaml.cs">
+      <DependentUpon>TreeViewTest.xaml</DependentUpon>
     </Compile>
     <Page Include="AsyncTest.xaml">
       <SubType>Designer</SubType>
@@ -171,7 +198,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="LazyList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ListBoxGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListBoxGridReadOnly.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -205,7 +240,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MultiPanelTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ObjectHelperTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProgressAnimations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertySheetTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -221,11 +268,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SpellCheck.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StandardIcons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="StickyNoteTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TextBlockExTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TextBoxTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TreeViewTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -248,6 +311,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -282,6 +346,10 @@
     <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Vapor\CODE.Framework.Wpf.Theme.Vapor.csproj">
       <Project>{dbd7b756-0aeb-4e71-8b9a-3536c70f3bca}</Project>
       <Name>CODE.Framework.Wpf.Theme.Vapor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Wildcat\CODE.Framework.Wpf.Theme.Wildcat.csproj">
+      <Project>{78EF2A78-5FDE-4B33-90FD-9C9EA3B1FA55}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Wildcat</Name>
     </ProjectReference>
     <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Workplace\CODE.Framework.Wpf.Theme.Workplace.csproj">
       <Project>{9f54b124-c4cd-4d34-8308-e62a87785b69}</Project>

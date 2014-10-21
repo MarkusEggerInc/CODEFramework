@@ -596,5 +596,19 @@ namespace CODE.Framework.Core.Utilities
         {
             return TryGuidParse(value, Guid.Empty);
         }
+
+        /// <summary>Tries to parse a string value as a boolean.</summary>
+        /// <param name="value">The value.</param>
+        /// <param name="failedDefault">Value returned if the string cannot be converted to a boolean.</param>
+        /// <returns></returns>
+        /// <example>
+        /// string value = "xxx";
+        /// bool valueBool = StringHelper.TryBoolParse(value);
+        /// </example>
+        public static bool TryBoolParse(string value, bool failedDefault = false)
+        {
+            bool parsedValue;
+            return bool.TryParse(value, out parsedValue) ? parsedValue : failedDefault;
+        }
     }
 }

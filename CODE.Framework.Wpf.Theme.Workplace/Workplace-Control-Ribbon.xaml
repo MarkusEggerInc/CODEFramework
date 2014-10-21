@@ -172,6 +172,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:RibbonButtonLarge">
                     <Grid controls:GridEx.RowHeights="36,*">
+                        <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush1}" Visibility="Hidden" x:Name="checkedIndicator"/>
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush2}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
                         <Rectangle Height="32" Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
@@ -192,6 +193,9 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Visibility" TargetName="highlight" Value="Visible" />
                         </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Visibility" TargetName="checkedIndicator" Value="Visible" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -208,6 +212,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:RibbonButtonSmall">
                     <Grid controls:GridEx.ColumnWidths="22,*">
+                        <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush1}" Visibility="Hidden" x:Name="checkedIndicator"/>
                         <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush2}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
                         <Rectangle Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
@@ -227,6 +232,9 @@
                         </MultiTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Visibility" TargetName="highlight" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Visibility" TargetName="checkedIndicator" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

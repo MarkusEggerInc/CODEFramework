@@ -1,8 +1,14 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
+using CODE.Framework.Core.Utilities;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Controls
 {
@@ -16,14 +22,14 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Watermark text property (can be used to set text for empty textboxes)</summary>
         /// <param name="o">The object to set the value on.</param>
         /// <param name="value">The value.</param>
-        public static void SetWatermarkTextProperty(DependencyObject o, string value)
+        public static void SetWatermarkText(DependencyObject o, string value)
         {
             o.SetValue(WatermarkTextProperty, value);
         }
         /// <summary>Watermark text property (can be used to set text for empty textboxes)</summary>
         /// <param name="o">The object to get the value for.</param>
         /// <returns>System.String.</returns>
-        public static string GetWatermarkTextProperty(DependencyObject o)
+        public static string GetWatermarkText(DependencyObject o)
         {
             return (string)o.GetValue(WatermarkTextProperty);
         }
@@ -175,6 +181,221 @@ namespace CODE.Framework.Wpf.Controls
         public static string GetInputMaskRegEx(DependencyObject o)
         {
             return (string)o.GetValue(InputMaskRegExProperty);
+        }
+
+
+        //CUSTOM SPELLCHECK DICTIONARIES
+        private static string _customDictionaryFile;
+        private static string _ignoreAllDictionaryFile;
+        private static List<string> _customDictionaries;
+        /// <summary>
+        /// Fires when the spell check flag is toggled
+        /// </summary>
+        public static event EventHandler ToggleSpellCheck;
+
+        ///<summary>When set to True, assumes a custom user dictionary named UserDictionary.lex in the application folder.
+        ///Spell check context menu allows user to add words to the UserDictionary.lex custom dictionary.
+        ///If UserDictionary.lex does not exist, it will be created.
+        ///IgnoreAllDictionary.lex will also be created. Unlike UserDictionary.lex it will be overwritten each time the app is restarted.
+        ///Other custom dictionaries found in the same folder will be used, but only UserDictionary.lex will get "Added" words.
+        ///Custom dictionary path can be overridden in the app.config by adding a CustomDictionaryPath key and value to appSettings.
+        ///Custom dictionary path setting is applicaiton wide.</summary>
+        public static readonly DependencyProperty UseCustomDictionariesProperty = DependencyProperty.RegisterAttached("UseCustomDictionaries", typeof(bool), typeof(TextBoxEx), new PropertyMetadata(false, UseCustomDictionariesChanged));
+        /// <summary>
+        /// Gets UseCustomDictionaries
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public static bool GetUseCustomDictionaries(DependencyObject obj) { return (bool)obj.GetValue(UseCustomDictionariesProperty); }
+        /// <summary>
+        /// Sets UseCustomDictionaries
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="value">if set to <c>true</c> [value].</param>
+        public static void SetUseCustomDictionaries(DependencyObject obj, bool value) { obj.SetValue(UseCustomDictionariesProperty, value); }
+
+        /// <summary>
+        /// Fires when UseCustomDictionaries changes
+        /// </summary>
+        /// <param name="dependencyObject">The dependency object.</param>
+        /// <param name="a">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void UseCustomDictionariesChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs a)
+        {
+            var textBoxBase = dependencyObject as TextBoxBase;
+            if (textBoxBase == null) return;
+            var isEnabled = (bool)a.NewValue;
+
+            if (isEnabled)
+            {
+                var handler = new EventHandler((s, e) =>
+                {
+                    SpellCheck.SetIsEnabled(textBoxBase, false);
+                    SpellCheck.SetIsEnabled(textBoxBase, true);
+                });
+
+                ToggleSpellCheck += handler;
+                textBoxBase.Unloaded += (s, e) => ToggleSpellCheck -= handler;
+
+                SpellCheck.SetIsEnabled(textBoxBase, true);
+
+                lock (textBoxBase)
+                {
+                    try
+                    {
+                        if (_customDictionaries == null) //load custom dictionaries
+                        {
+                            _customDictionaries = new List<string>();
+                            var customDictionaryPath = SpellCheckHelper.GetCustomDictionaryPath();
+                            if (!Directory.Exists(customDictionaryPath)) Directory.CreateDirectory(customDictionaryPath);
+                            _customDictionaryFile = SpellCheckHelper.GetCustomDictionaryFile(customDictionaryPath);
+                            _ignoreAllDictionaryFile = SpellCheckHelper.GetIgnoreAllDictionaryFile(customDictionaryPath);
+                            var fs = File.Create(_ignoreAllDictionaryFile);
+                            fs.Close();
+                            if (!File.Exists(_customDictionaryFile))
+                            {
+                                fs = File.Create(_customDictionaryFile);
+                                fs.Close();
+                            }
+
+                            var dir = new DirectoryInfo(customDictionaryPath);
+                            foreach (var fileInfo in dir.GetFiles("*.lex")) _customDictionaries.Add(fileInfo.FullName);
+                        }
+                        var dictionaries = SpellCheck.GetCustomDictionaries(textBoxBase);
+                        dictionaries.Clear();
+                        foreach (var fileName in _customDictionaries) dictionaries.Add(new Uri(fileName));
+                    }
+                    catch (Exception ex) { LoggingMediator.Log(ex); }
+                }
+
+                if (textBoxBase.ContextMenu != null) return;
+                textBoxBase.ContextMenu = new ContextMenu();
+                textBoxBase.ContextMenuOpening += textBoxEx_ContextMenuOpening;
+            }
+        }
+
+        private static void textBoxEx_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var textBoxBase = sender as TextBoxBase;
+            if (textBoxBase == null) return;
+
+            textBoxBase.ContextMenu.Items.Clear();
+            SpellingError spellingError = null;
+            if (textBoxBase is TextBox)
+            {
+                var textBox = textBoxBase as TextBox;
+                spellingError = textBox.GetSpellingError(textBox.CaretIndex);
+            }
+            else if (textBoxBase is RichTextBox)
+            {
+                var richTextBox = textBoxBase as RichTextBox;
+                spellingError = richTextBox.GetSpellingError(richTextBox.CaretPosition);
+            }
+            if (spellingError == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            var menuItemIndex = 0;
+            foreach (var str in spellingError.Suggestions)
+            {
+                var mi = new MenuItem
+                {
+                    Header = str,
+                    FontWeight = FontWeights.Bold,
+                    Command = EditingCommands.CorrectSpellingError,
+                    CommandParameter = str,
+                    CommandTarget = textBoxBase,
+                };
+                textBoxBase.ContextMenu.Items.Insert(menuItemIndex, mi);
+                menuItemIndex++;
+            }
+            if (menuItemIndex == 0)
+            {
+                var mi = new MenuItem
+                {
+                    Header = "(no suggestions)",
+                    IsEnabled = false,
+                };
+                textBoxBase.ContextMenu.Items.Insert(menuItemIndex, mi);
+                menuItemIndex++;
+            }
+
+            var separator = new Separator();
+            textBoxBase.ContextMenu.Items.Insert(menuItemIndex, separator);
+            menuItemIndex++;
+
+            var ignoreAll = new MenuItem
+            {
+                Header = "Ignore All",
+                CommandTarget = textBoxBase,
+            };
+            ignoreAll.Click += ignoreAll_Click;
+            textBoxBase.ContextMenu.Items.Insert(menuItemIndex, ignoreAll);
+            menuItemIndex++;
+
+            if (textBoxBase is TextBox)
+            {
+                var textBox = textBoxBase as TextBox;
+                textBox.Text.Substring(textBox.GetSpellingErrorStart(textBox.CaretIndex), textBox.GetSpellingErrorLength(textBox.CaretIndex));
+            }
+            else if (textBoxBase is RichTextBox)
+            {
+                var richTextBox = textBoxBase as RichTextBox;
+                var range = richTextBox.GetSpellingErrorRange(richTextBox.CaretPosition);
+                if (range != null);
+            }
+
+            var usingCustomDictionaries = textBoxBase.SpellCheck.CustomDictionaries.Count > 0;
+            var addToDictionary = new MenuItem
+            {
+                Header = "Add to Dictionary",
+                CommandTarget = textBoxBase,
+            };
+
+            addToDictionary.Click += addToDictionary_Click;
+            textBoxBase.ContextMenu.Items.Insert(menuItemIndex, addToDictionary);
+        }
+
+        private static void addToDictionary_Click(object sender, RoutedEventArgs e)
+        {
+            WriteToDictionary(sender, _customDictionaryFile);
+        }
+
+        private static void ignoreAll_Click(object sender, RoutedEventArgs e)
+        {
+            WriteToDictionary(sender, _ignoreAllDictionaryFile);
+        }
+        
+        private static void WriteToDictionary(object sender, string dictionaryFile)
+        {
+            var item = sender as MenuItem;
+            if (item == null) return;
+            var textBoxBase = item.CommandTarget as TextBoxBase; ;
+            if (textBoxBase == null) return;
+
+            string misspelledWord = string.Empty;
+            if (textBoxBase is TextBox)
+            {
+                var textBox = textBoxBase as TextBox;
+                misspelledWord = textBox.Text.Substring(textBox.GetSpellingErrorStart(textBox.CaretIndex), textBox.GetSpellingErrorLength(textBox.CaretIndex));
+            }
+            else if (textBoxBase is RichTextBox)
+            {
+                var richTextBox = textBoxBase as RichTextBox;
+                var range = richTextBox.GetSpellingErrorRange(richTextBox.CaretPosition);
+                if (range != null) misspelledWord = range.Text;
+            }
+            if (string.IsNullOrWhiteSpace(misspelledWord)) return;
+
+            try
+            {
+                var writer = File.AppendText(dictionaryFile);
+                writer.WriteLine(misspelledWord);
+                writer.Close();
+                if (ToggleSpellCheck != null) ToggleSpellCheck(textBoxBase, null);
+            }
+            catch (Exception ex) { LoggingMediator.Log(ex); }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -9,20 +10,19 @@ namespace CODE.Framework.Core.Utilities
     /// <summary>
     /// Abstract logger class.
     /// </summary>
-    /// <remarks>
-    /// This class provides the basic implementation of a logger class.
-    /// The only part that must be overriden is the Log() method with the string overload.
-    /// </remarks>
+    /// 
     /// <example>
     /// public class MyLogger : Logger
     /// {
-    ///     public override void Log(string logEvent, LogEventType type)
-    ///     {
-    ///         MessageBox.Show(logEvent);
-    ///     }
+    /// public override void Log(string logEvent, LogEventType type)
+    /// {
+    /// MessageBox.Show(logEvent);
+    /// }
     /// }
     /// </example>
-    public abstract class Logger : ILogger
+    /// <remarks>This class provides the basic implementation of a logger class.
+    /// The only part that must be overriden is the Log() method with the string overload.</remarks>
+    public abstract class Logger : ILogger, IExceptionLogger
     {
         /// <summary>
         /// Logs the specified event (text).
@@ -58,6 +58,41 @@ namespace CODE.Framework.Core.Utilities
             get { return _typeFilter; }
             set { _typeFilter = value; }
         }
+
+        /// <summary>
+        /// Logs the specified event (text).
+        /// </summary>
+        /// <param name="exception">The exception that is to be logged.</param>
+        /// <param name="type">The event type.</param>
+        public virtual void Log(Exception exception, LogEventType type)
+        {
+            var text = GetSerializedExceptionText(exception, type);
+            Log(text, type);
+        }
+
+        /// <summary>
+        /// Logs the specified event (text).
+        /// </summary>
+        /// <param name="leadingText">The leading text.</param>
+        /// <param name="exception">The exception that is to be logged.</param>
+        /// <param name="type">The event type.</param>
+        public virtual void Log(string leadingText, Exception exception, LogEventType type)
+        {
+            var text = leadingText + GetSerializedExceptionText(exception, type);
+            Log(text, type);
+        }
+
+        /// <summary>
+        /// Serializes the exception and returns the serialzied text
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <param name="type">The log info type.</param>
+        /// <returns>Serialized exception information</returns>
+        /// <remarks>This method is designed to be overridden in subclasses</remarks>
+        protected virtual string GetSerializedExceptionText(Exception exception, LogEventType type)
+        {
+            return ExceptionHelper.GetExceptionText(exception);
+        }
     }
 
     /// <summary>
@@ -81,7 +116,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="type">The event type.</param>
         public override void Log(string logEvent, LogEventType type)
         {
-            Console.WriteLine(type.ToString() + ": " + logEvent);
+            Console.WriteLine(type + ": " + logEvent);
         }
     }
 
@@ -287,10 +322,16 @@ namespace CODE.Framework.Core.Utilities
                 var root = document.AppendChild(document.CreateNode(XmlNodeType.Element, XmlRootNode, string.Empty));
                 var eventNode = root.AppendChild(document.CreateNode(XmlNodeType.Element, XmlEventNode, string.Empty));
                 eventNode.InnerText = logEvent;
-                var eventTypeNode = eventNode.Attributes.SetNamedItem(document.CreateNode(XmlNodeType.Attribute, XmlEventTypeAttribute, string.Empty));
-                eventTypeNode.Value = type.ToString();
-                var eventTimeStampNode = eventNode.Attributes.SetNamedItem(document.CreateNode(XmlNodeType.Attribute, XmlEventTimeStampAttribute, string.Empty));
-                eventTimeStampNode.Value = DateTime.Now.ToUniversalTime().ToString();
+                if (eventNode.Attributes != null)
+                {
+                    var eventTypeNode = eventNode.Attributes.SetNamedItem(document.CreateNode(XmlNodeType.Attribute, XmlEventTypeAttribute, string.Empty));
+                    eventTypeNode.Value = type.ToString();
+                }
+                if (eventNode.Attributes != null)
+                {
+                    var eventTimeStampNode = eventNode.Attributes.SetNamedItem(document.CreateNode(XmlNodeType.Attribute, XmlEventTimeStampAttribute, string.Empty));
+                    eventTimeStampNode.Value = DateTime.Now.ToUniversalTime().ToString(CultureInfo.InvariantCulture);
+                }
             }
 
             // Ready to save the file away
@@ -392,7 +433,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="type">The event type.</param>
         public override void Log(string logEvent, LogEventType type)
         {
-            string fileName = StringHelper.AddBS(Folder) + FileName;
+            var fileName = StringHelper.AddBS(Folder) + FileName;
 
             //Create the file if it does not exist and open it
             using (var stream = new FileStream(fileName, FileMode.Append, FileAccess.Write))
@@ -546,19 +587,25 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="type">The event type.</param>
         public override void Log(string logEvent, LogEventType type)
         {
-            string fileName = StringHelper.AddBS(Folder) + FileName;
+            var fileName = StringHelper.AddBS(Folder) + FileName;
 
             // If the file exists, we try to load it
             var xml = GetXmlDocument(fileName);
             var root = xml.SelectSingleNode(XmlRootNode);
 
             // We add another event
-            var eventNode = root.AppendChild(xml.CreateNode(XmlNodeType.Element, XmlEventNode, string.Empty));
-            eventNode.InnerText = logEvent;
-            var eventTypeNode = eventNode.Attributes.SetNamedItem(xml.CreateNode(XmlNodeType.Attribute, XmlEventTypeAttribute, string.Empty));
-            eventTypeNode.Value = type.ToString();
-            var eventTimeStampNode = eventNode.Attributes.SetNamedItem(xml.CreateNode(XmlNodeType.Attribute, XmlEventTimeStampAttribute, string.Empty));
-            eventTimeStampNode.Value = DateTime.Now.ToUniversalTime().ToString();
+            if (root != null)
+            {
+                var eventNode = root.AppendChild(xml.CreateNode(XmlNodeType.Element, XmlEventNode, string.Empty));
+                eventNode.InnerText = logEvent;
+                if (eventNode.Attributes != null)
+                {
+                    var eventTypeNode = eventNode.Attributes.SetNamedItem(xml.CreateNode(XmlNodeType.Attribute, XmlEventTypeAttribute, string.Empty));
+                    eventTypeNode.Value = type.ToString();
+                    var eventTimeStampNode = eventNode.Attributes.SetNamedItem(xml.CreateNode(XmlNodeType.Attribute, XmlEventTimeStampAttribute, string.Empty));
+                    eventTimeStampNode.Value = DateTime.Now.ToUniversalTime().ToString(CultureInfo.InvariantCulture);
+                }
+            }
 
             // If log growth is restricted, we truncate it
             TruncateLog(xml);
@@ -588,7 +635,6 @@ namespace CODE.Framework.Core.Utilities
                 {
                     xml.Load(fileName);
                     if (xml.SelectSingleNode(XmlRootNode) == null) // Must exist to be valid
-
                         xml = CreateXmlDocument();
                 }
                 catch
@@ -596,7 +642,7 @@ namespace CODE.Framework.Core.Utilities
                     xml = CreateXmlDocument();
                 }
             }
-            else
+            else 
                 xml = CreateXmlDocument();
             return xml;
         }
@@ -617,19 +663,17 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="log">The log XML document.</param>
         protected virtual void TruncateLog(XmlDocument log)
         {
-            if (MaximumEntries == -1) // Unlimited growth
-                return;
+            if (MaximumEntries == -1) return; // Unlimited growth
 
             var nodePath = XmlRootNode + "/" + XmlEventNode;
             var nodes = log.SelectNodes(nodePath);
             var root = log.SelectSingleNode(XmlRootNode);
-            while (nodes.Count > MaximumEntries)
+            while (nodes != null && nodes.Count > MaximumEntries)
             {
                 var childNode = log.SelectSingleNode(nodePath);
                 if (childNode == null) // Should never happen
-
                     return; // But just in case...
-                root.RemoveChild(childNode);
+                if (root != null) root.RemoveChild(childNode);
                 nodes = log.SelectNodes(nodePath);
             }
         }

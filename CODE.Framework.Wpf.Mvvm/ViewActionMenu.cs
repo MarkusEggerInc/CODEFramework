@@ -197,6 +197,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 {
                     var newMenuItem1 = new ViewActionMenuItem {Header = GetMenuTitle(matchingAction), Command = matchingAction};
                     HandleMenuShortcutKey(newMenuItem1, matchingAction);
+                    if (matchingAction.ViewActionType == ViewActionTypes.Toggle)
+                    {
+                        newMenuItem1.IsCheckable = true;
+                        newMenuItem1.SetBinding(MenuItem.IsCheckedProperty, new Binding("IsChecked") {Source = matchingAction});
+                    }
                     var realAction = matchingAction as ViewAction;
                     if (realAction != null && realAction.HasBrush)
                         newMenuItem1.Icon = new ViewActionMenuIcon(realAction.PopulatedBrush);

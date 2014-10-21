@@ -27,6 +27,9 @@ namespace CODE.Framework.Core.Utilities
             if (lightFactor - 1.0f < 0.01f && lightFactor - 1.0f > -0.01f)
                 // No transformation needed
                 return originalColor;
+            if (lightFactor <= 0.0f)
+                // No calculations needed. This is white
+                return Color.Black;
             if (lightFactor >= 2.0f)
                 // No calculations needed. This is white
                 return Color.White;
@@ -38,30 +41,24 @@ namespace CODE.Framework.Core.Utilities
 
             // Do we need to add or remove light?
             if (lightFactor < 1.0f)
-            {
                 // Darken
                 // We can simply reduce the color intensity
-                var newColor = Color.FromArgb((int)(red * lightFactor), (int)(green * lightFactor), (int)(blue * lightFactor));
-                return newColor;
-            }
-            else
-            {
-                // Lighten
-                // We do this by approaching 256 for a light factor of 2.0f
-                float lightFactor2 = lightFactor;
-                if (lightFactor2 > 1.0f) lightFactor2 -= 1.0f;
-                int iRed2 = 255 - red;
-                int iGreen2 = 255 - green;
-                int iBlue2 = 255 - blue;
-                red += (int)(iRed2 * lightFactor2);
-                green += (int)(iGreen2 * lightFactor2);
-                blue += (int)(iBlue2 * lightFactor2);
-                if (red > 255) { red = 255; }
-                if (green > 255) { green = 255; }
-                if (blue > 255) { blue = 255; }
-                var newColor = Color.FromArgb(red, green, blue);
-                return newColor;
-            }
+                return Color.FromArgb((int) (red*lightFactor), (int) (green*lightFactor), (int) (blue*lightFactor));
+            // Lighten
+            // We do this by approaching 255 for a light factor of 2.0f
+            var lightFactor2 = lightFactor;
+            if (lightFactor2 > 1.0f) lightFactor2 -= 1.0f;
+            var red2 = 255 - red;
+            var green2 = 255 - green;
+            var blue2 = 255 - blue;
+            red += (int) (red2*lightFactor2);
+            green += (int) (green2*lightFactor2);
+            blue += (int) (blue2*lightFactor2);
+            if (red > 255) red = 255;
+            if (green > 255) green = 255;
+            if (blue > 255) blue = 255;
+            var newColor = Color.FromArgb(red, green, blue);
+            return newColor;
         }
 
         /// <summary>

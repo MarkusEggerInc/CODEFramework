@@ -37,7 +37,7 @@ namespace CODE.Framework.Wpf.Controls
                 if (content != null)
                 {
                     host.Content = content;
-                    host.Visibility = Visibility.Visible;
+                    host.Visibility = host.ContentVisibility;
                 }
                 if (!host._windowClosing)
                 {
@@ -50,16 +50,9 @@ namespace CODE.Framework.Wpf.Controls
                 // Switching into float mode
                 if (host._floatWindow == null)
                 {
-                    host._floatWindow = new Window {Title = host.Title, DataContext = host.DataContext};
+                    host._floatWindow = new FloatingDockWindow(host);
                     if (host.FloatWindowStyle != null)
                         host._floatWindow.Style = host.FloatWindowStyle;
-                    host._floatWindow.Closing += (o, e) =>
-                    {
-                        host._windowClosing = true;
-                        host.IsDocked = true;
-                        host._windowClosing = false;
-                        host._floatWindow = null;
-                    };
                 }
 
                 var content = host.Content;
@@ -73,8 +66,40 @@ namespace CODE.Framework.Wpf.Controls
             }
         }
 
-        private Window _floatWindow;
+        private FloatingDockWindow _floatWindow;
+
+        /// <summary>
+        /// Potential reference to the window used to host the floating content
+        /// </summary>
+        public FloatingDockWindow FloatWindow
+        {
+            get
+            {
+                return _floatWindow;
+            }
+            set
+            {
+                _floatWindow = value;
+            }
+        }
+
         private bool _windowClosing;
+
+        /// <summary>
+        /// True when the window is in the process of being closed
+        /// </summary>
+        /// <value><c>true</c> if [window closing]; otherwise, <c>false</c>.</value>
+        public bool WindowClosing
+        {
+            get
+            {
+                return _windowClosing;
+            }
+            set
+            {
+                _windowClosing = value;
+            }
+        }
 
         /// <summary>Gets or sets the title.</summary>
         /// <value>The title.</value>
@@ -149,6 +174,68 @@ namespace CODE.Framework.Wpf.Controls
                     // We are going into hiding, so we take things inline again and close the window
                     host.IsDocked = true;
             }
+        }
+    }
+
+    /// <summary>
+    /// Window class used by the DockHost to display undocked windows
+    /// </summary>
+    public class FloatingDockWindow : Window
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FloatingDockWindow"/> class.
+        /// </summary>
+        /// <param name="host">The host.</param>
+        public FloatingDockWindow(DockHost host)
+        {
+            DataContext = host.DataContext;
+            Title = host.Title;
+
+            Closing += (o, e) =>
+            {
+                host.WindowClosing = true;
+                if (!AutoDockOnClose)
+                    host.ContentVisibility = Visibility.Collapsed; // Also causes the content to dock again... although it won't be visible at this point... but if the control becomes visible again, the content will be there again
+                else 
+                    host.IsDocked = true;
+                host.WindowClosing = false;
+                host.FloatWindow = null;
+            };
+        }
+
+        /// <summary>
+        /// Indicates whether clicking the close button will automatically dock the content back into the host
+        /// </summary>
+        public bool AutoDockOnClose
+        {
+            get { return (bool)GetValue(AutoDockOnCloseProperty); }
+            set { SetValue(AutoDockOnCloseProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether clicking the close button will automatically dock the content back into the host
+        /// </summary>
+        public static readonly DependencyProperty AutoDockOnCloseProperty = DependencyProperty.Register("AutoDockOnClose", typeof(bool), typeof(FloatingDockWindow), new PropertyMetadata(true));
+    }
+
+    /// <summary>
+    /// Button to initiate a dock operation in the floating dock window
+    /// </summary>
+    public class DockWindowContentButton : SpecialWindowButton
+    {
+        /// <summary>
+        /// Called when a <see cref="T:System.Windows.Controls.Button" /> is clicked.
+        /// </summary>
+        protected override void OnClick()
+        {
+            var window = RootWindow;
+            if (window == null) return;
+            var floatWindow = window as FloatingDockWindow;
+            if (floatWindow != null)
+                floatWindow.AutoDockOnClose = true; // Will cause a dock operation when the window closes
+
+            window.Close();
+
+            base.OnClick();
         }
     }
 }

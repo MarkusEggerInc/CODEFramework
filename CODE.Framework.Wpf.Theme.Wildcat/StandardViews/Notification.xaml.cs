@@ -7,6 +7,9 @@ namespace CODE.Framework.Wpf.Theme.Wildcat.StandardViews
     /// </summary>
     public partial class Notification : Grid
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Notification"/> class.
+        /// </summary>
         public Notification()
         {
             InitializeComponent();

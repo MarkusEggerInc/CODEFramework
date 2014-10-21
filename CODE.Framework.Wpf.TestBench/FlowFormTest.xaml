@@ -17,22 +17,18 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <layout:FlowForm>
+    <layout:FlowForm Margin="10">
      
-        <TextBox Width="200" mvvm:View.Label="First:" />
-        <TextBlock>Last Name:</TextBlock>
-        <TextBox Width="200" />
+        <TextBox Width="150" mvvm:View.Label="First:" />
+        <TextBlock Text="Test" />
+        <TextBox Width="150" />
 
-        <TextBox Width="300" mvvm:View.Label="Company" 
+        <!--<TextBox Width="300" mvvm:View.Label="Company" 
                  mvvm:View.LabelFontFamily="Comic Sans MS"
                  mvvm:View.LabelForegroundBrush="Red" 
                  mvvm:View.LabelFontWeight="Bold" 
                  mvvm:View.LabelFontStyle="Italic" 
-                 mvvm:View.LabelFontSize="12"/>
-
-        <TextBox mvvm:View.SpanFullWidth="True" 
-                 mvvm:View.LineBreak="True" 
-                 Height="75" />
+                 mvvm:View.LabelFontSize="12"/>-->
 
         <CheckBox mvvm:View.LineBreak="True" mvvm:View.Label="Current Status:" Content="One" />
         <CheckBox Content="Two" />
@@ -41,7 +37,7 @@
         <CheckBox mvvm:View.Label="Something Else:" Content="One" />
         <CheckBox Content="Two" />
         <CheckBox Content="Three" />
-        <TextBox Width="200" mvvm:View.Label="First:" />
+        <!--<TextBox Width="200" mvvm:View.Label="First:" />-->
 
         <RadioButton mvvm:View.LineBreak="True" mvvm:View.Label="Current Status:" Content="One" GroupName="x" />
         <RadioButton Content="Two" GroupName="x"/>
@@ -50,7 +46,11 @@
         <RadioButton mvvm:View.Label="Something Else:" Content="One" GroupName="y"/>
         <RadioButton Content="Two" GroupName="y"/>
         <RadioButton Content="Three" GroupName="y"/>
-        <TextBox Width="200" mvvm:View.Label="First:" />
+        <!--<TextBox Width="200" mvvm:View.Label="First:" />-->
+
+        <TextBox mvvm:View.SpanFullWidth="True" 
+                 mvvm:View.LineBreak="True" 
+                 Height="175" />
 
     </layout:FlowForm>
 </Window>

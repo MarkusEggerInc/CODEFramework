@@ -26,7 +26,7 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>Selected node (item)</summary>
-        public static readonly DependencyProperty SelectedNodeProperty = DependencyProperty.Register("SelectedNode", typeof (object), typeof (TreeViewEx), new UIPropertyMetadata(null, SelectedNodePropertyChanged));
+        public static readonly DependencyProperty SelectedNodeProperty = DependencyProperty.Register("SelectedNode", typeof (object), typeof (TreeViewEx), new FrameworkPropertyMetadata(null, SelectedNodePropertyChanged) {BindsTwoWayByDefault = true});
 
         /// <summary>Change-handler for the selected node property</summary>
         /// <param name="d">The dependency object the property is set on (TreeViewEx).</param>
@@ -52,11 +52,24 @@ namespace CODE.Framework.Wpf.Controls
             if (treeItem == null) return;
 
             treeItem.IsSelected = true;
+            if (BringItemIntoViewWhenSelected) treeItem.BringIntoView();
+            treeItem.Focus();
 
             var info = typeof (TreeViewItem).GetMethod("Select", BindingFlags.NonPublic | BindingFlags.Instance);
             if (info == null) return;
             info.Invoke(treeItem, new object[] {true});
         }
+
+        ///<summary>When set to true, programmatically selecting an item in the tree will also bring it into view</summary>
+        public bool BringItemIntoViewWhenSelected
+        {
+            get { return (bool)GetValue(BringItemIntoViewWhenSelectedProperty); }
+            set { SetValue(BringItemIntoViewWhenSelectedProperty, value); }
+        }
+
+        ///<summary>When set to true, programmatically selecting an item in the tree will also bring it into view</summary>
+        public static readonly DependencyProperty BringItemIntoViewWhenSelectedProperty 
+            = DependencyProperty.Register("BringItemIntoViewWhenSelected", typeof(bool), typeof(TreeViewEx));
 
         /// <summary>Attached property to set a tree view's command</summary>
         public static readonly DependencyProperty CommandProperty = DependencyProperty.RegisterAttached("Command", typeof(ICommand), typeof(TreeViewEx), new PropertyMetadata(null, CommandPropertyChanged));

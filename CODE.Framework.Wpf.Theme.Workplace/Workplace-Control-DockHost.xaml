@@ -2,45 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
     
-    <Style TargetType="controls:DockHost">
-        <Setter Property="FloatWindowStyle">
-            <Setter.Value>
-                <Style TargetType="Window">
-                    <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush1}" />
-                    <Setter Property="ShowInTaskbar" Value="True" />
-                    <Setter Property="controls:WindowEx.HeaderHeight" Value="26" />
-                    <Setter Property="controls:WindowEx.DynamicIcon" Value="/Images/Application.png" />
-                    <Setter Property="controls:WindowEx.IsBorderless" Value="True" />
-                    <Setter Property="controls:WindowEx.AutoWindowDragEnabled" Value="True" />
-                    <Setter Property="controls:WindowEx.AutoWindowMaximizeEnabled" Value="True" />
-                    <Setter Property="controls:WindowEx.AutoWindowResizingEnabled" Value="True"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Window}">
-                                <Grid controls:GridEx.RowHeights="Auto,*" Background="{TemplateBinding Background}">
-                                    <Border Grid.RowSpan="3" BorderThickness="1" BorderBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" />
-                                    <Grid controls:GridEx.ColumnWidths="Auto,*,Auto">
-                                        <Image Source="{TemplateBinding Icon}" Stretch="Uniform" Height="22" Width="22" Margin="8,4"/>
-                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
-                                                   x:Name="windowTitle" Text="{TemplateBinding Title}" Grid.Column="1" Margin="20,5"
-                                                   FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}"
-                                                   Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Height="22" Margin="0,3,1,0" Grid.Column="2">
-                                            <controls:MinimizeButton/>
-                                            <controls:ToggleMaximizeButton/>
-                                            <controls:CloseButton/>
-                                        </StackPanel>
-                                    </Grid>
-                                    <AdornerDecorator Grid.Row="1">
-                                        <ContentPresenter Margin="1" />
-                                    </AdornerDecorator>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <Style TargetType="controls:DockHost"/>
     
 </ResourceDictionary>

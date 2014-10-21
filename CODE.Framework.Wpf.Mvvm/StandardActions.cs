@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Input;
 
 namespace CODE.Framework.Wpf.Mvvm
 {
@@ -12,10 +14,13 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             BrushResourceKey = "CODE.Framework-Icon-ClosePane";
         }
+
         /// <summary>Initializes a new instance of the <see cref="ApplicationShutdownViewAction"/> class.</summary>
         /// <param name="caption">The caption.</param>
         /// <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
-        public ApplicationShutdownViewAction(string caption = "Shutdown", bool beginGroup = false) : base(caption, beginGroup, ExecuteCommand) { }
+        public ApplicationShutdownViewAction(string caption = "Shutdown", bool beginGroup = false) : base(caption, beginGroup, ExecuteCommand)
+        {
+        }
 
         private static void ExecuteCommand(IViewAction a, object s)
         {
@@ -117,6 +122,46 @@ namespace CODE.Framework.Wpf.Mvvm
             var appEx = Application.Current as ApplicationEx;
             if (appEx != null)
                 appEx.Theme = _theme;
+        }
+    }
+
+    /// <summary>
+    /// This view action automatically toggles its IsChecked state every time it executes.
+    /// </summary>
+    public class ToggleViewAction : ViewAction
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ToggleViewAction"/> class.
+        /// </summary>
+        public ToggleViewAction(string caption = "",
+            bool beginGroup = false,
+            Action<IViewAction, object> execute = null,
+            Func<IViewAction, object, bool> canExecute = null,
+            string visualResourceKey = "",
+            string category = "", string categoryCaption = "", int categoryOrder = 0,
+            bool isDefault = false, bool isCancel = false,
+            ViewActionSignificance significance = ViewActionSignificance.Normal,
+            string[] userRoles = null,
+            string brushResourceKey = "CODE.Framework-Icon-View",
+            string logoBrushResourceKey = "",
+            string groupTitle = "",
+            int order = 10000,
+            char accessKey = ' ',
+            Key shortcutKey = Key.None,
+            ModifierKeys shortcutKeyModifiers = ModifierKeys.None,
+            char categoryAccessKey = ' ',
+            bool isDefaultSelection = false,
+            bool isPinned = false,
+            string id = "") :
+                base(caption, beginGroup, null, canExecute, visualResourceKey, category, categoryCaption, categoryOrder, isDefault, isCancel, significance, userRoles,
+                    brushResourceKey, logoBrushResourceKey, groupTitle, order, accessKey, shortcutKey, shortcutKeyModifiers, categoryAccessKey, isDefaultSelection, isPinned, id)
+        {
+            ViewActionType = ViewActionTypes.Toggle;
+            SetExecutionDelegate((a, o) =>
+            {
+                a.IsChecked = !a.IsChecked;
+                if (execute != null) execute(a, o);
+            });
         }
     }
 }

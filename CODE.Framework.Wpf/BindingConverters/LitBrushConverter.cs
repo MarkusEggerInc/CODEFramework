@@ -23,11 +23,15 @@ namespace CODE.Framework.Wpf.BindingConverters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value is SolidColorBrush)) return value;
-            var originalColor = ((SolidColorBrush)value).Color;
+            var originalColor = ((SolidColorBrush) value).Color;
             var lightFactor = decimal.Parse(parameter.ToString(), CultureInfo.InvariantCulture);
 
-            if (lightFactor >= 2.0m)
-                // No calculations needed. This is white
+            // Do we need to add or remove light?
+            if (lightFactor == 1.0m)
+                return originalColor; // No change
+            if (lightFactor <= 0m)
+                return Brushes.Black; // No calc needed. This is black
+            if (lightFactor >= 2.0m) // No calculations needed. This is white
                 return Brushes.White;
 
             // OK, lighting is required, so here we go
@@ -38,23 +42,17 @@ namespace CODE.Framework.Wpf.BindingConverters
             // Do we need to add or remove light?
             if (lightFactor < 1.0m)
                 // Darken - We can simply reduce the color intensity
-                return new SolidColorBrush(Color.FromRgb((byte)(red * lightFactor), (byte)(green * lightFactor), (byte)(blue * lightFactor)));
-            // Lighten - We do this by approaching 256 for a light factor of 2.0f
+                return new SolidColorBrush(Color.FromRgb((byte) (red*lightFactor), (byte) (green*lightFactor), (byte) (blue*lightFactor)));
+            // Lighten - We do this by approaching 255 for a light factor of 2.0f
             var lightFactor2 = lightFactor;
             if (lightFactor2 > 1.0m)
                 lightFactor2 -= 1.0m;
             var red2 = 255 - red;
             var green2 = 255 - green;
             var blue2 = 255 - blue;
-            red += (byte)(red2 * lightFactor2);
-            green += (byte)(green2 * lightFactor2);
-            blue += (byte)(blue2 * lightFactor2);
-            if (red > 255)
-                red = 255;
-            if (green > 255)
-                green = 255;
-            if (blue > 255)
-                blue = 255;
+            red += (byte) (red2*lightFactor2);
+            green += (byte) (green2*lightFactor2);
+            blue += (byte) (blue2*lightFactor2);
             return new SolidColorBrush(Color.FromRgb(red, green, blue));
         }
 

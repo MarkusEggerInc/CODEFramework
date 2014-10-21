@@ -505,7 +505,7 @@ namespace CODE.Framework.Wpf.Layout
             if (requiredSize.Height > availableSize.Height && LayoutElasticity != LayoutElasticity.None)
             {
                 // We know the overall height is too large. As a result, we have to take a look at each column and see if we need to shrink it
-                int columnCount = 0;
+                var columnCount = 0;
                 foreach (var column in _columnsUsed)
                 {
                     columnCount++;
@@ -1175,6 +1175,7 @@ namespace CODE.Framework.Wpf.Layout
         {
             _secondarySpacing = secondarySpacing;
             SecondaryControls = new List<UIElement>();
+            AdditionalEditControls = new List<UIElement>();
         }
 
         /// <summary>The label element</summary>
@@ -1338,6 +1339,15 @@ namespace CODE.Framework.Wpf.Layout
                 return text;
             }
         }
+
+        /// <summary>
+        /// List of additional UI controls that create a flow
+        /// </summary>
+        public List<UIElement> AdditionalEditControls { get; private set; }
+
+        /// <summary>Indicates whether the label control spans the full available width of the property sheet (no edit controls are displayed in that case)</summary>
+        /// <value><c>true</c> if [label spans full width]; otherwise, <c>false</c>.</value>
+        public bool LabelSpansFullWidth { get; set; }
     }
 
     /// <summary>Defines the position of the labels in an edit form</summary>

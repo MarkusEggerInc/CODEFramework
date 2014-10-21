@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using CODE.Framework.Wpf.BindingConverters;
 
@@ -348,6 +350,138 @@ namespace CODE.Framework.Wpf.Controls
         public static void SetBackgroundBrushOpacity(DependencyObject obj, double value)
         {
             obj.SetValue(BackgroundBrushOpacityProperty, value);
+        }
+
+        /// <summary>
+        /// When set to true, this property enables mouse moving of the element using render transforms (translate transform)
+        /// </summary>
+        public static bool GetEnableRenderTransformMouseMove(DependencyObject obj, bool value)
+        {
+            return (bool)obj.GetValue(EnableRenderTransformMouseMoveProperty);
+        }
+
+        /// <summary>
+        /// When set to true, this property enables mouse moving of the element using render transforms (translate transform)
+        /// </summary>
+        public static void SetEnableRenderTransformMouseMove(DependencyObject obj, bool value)
+        {
+            obj.SetValue(EnableRenderTransformMouseMoveProperty, value);
+        }
+
+        /// <summary>
+        /// When set to true, this property enables mouse moving of the element using render transforms (translate transform)
+        /// </summary>
+        public static readonly DependencyProperty EnableRenderTransformMouseMoveProperty = DependencyProperty.RegisterAttached("EnableRenderTransformMouseMove", typeof(bool), typeof(GridEx), new PropertyMetadata(false, OnEnableRenderTransformMouseMoveChanged));
+
+        private static Window GetWindow(UIElement element)
+        {
+            var parent = VisualTreeHelper.GetParent(element);
+            while (!(parent is Window))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+                if (parent == null) return null;
+            }
+            return parent as Window;
+        }
+
+        /// <summary>
+        /// Fires when the EnableRenderTransformMouseMove property changes
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="args">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        private static void OnEnableRenderTransformMouseMoveChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            if (!(bool) args.NewValue) return;
+
+            var grid = d as Grid;
+            if (grid == null) return;
+
+            grid.MouseLeftButtonDown += (s, e) =>
+            {
+                var grid2 = s as Grid;
+                if (grid2 == null) return;
+                if (_mouseMoveDownPositions == null) _mouseMoveDownPositions = new Dictionary<DependencyObject, MouseMoveWrapper>();
+
+                var window = GetWindow(grid2);
+                if (window == null) return;
+                var position = e.GetPosition(window);
+                var mouseInfo = new MouseMoveWrapper {DownPosition = position, ParentWindow = window, IsButtonDown = true};
+                var translateTransform = grid2.RenderTransform as TranslateTransform;
+                if (translateTransform != null) mouseInfo.OriginalTranslate = new Point(translateTransform.X, translateTransform.Y);
+
+                if (_mouseMoveDownPositions.ContainsKey(grid2)) _mouseMoveDownPositions[grid2] = mouseInfo;
+                else
+                {
+                    _mouseMoveDownPositions.Add(grid2, mouseInfo);
+
+                    window.MouseMove += (s2, e2) =>
+                    {
+                        if (!_mouseMoveDownPositions.ContainsKey(grid2)) return;
+                        if (!_mouseMoveDownPositions[grid2].IsButtonDown) return;
+
+                        var mouseInfo2 = _mouseMoveDownPositions[grid2];
+                        var position2 = e2.GetPosition(mouseInfo2.ParentWindow);
+                        var delta2 = new Point(position2.X - mouseInfo2.DownPosition.X, position2.Y - mouseInfo2.DownPosition.Y);
+                        var newTranslate2 = new Point(delta2.X + mouseInfo2.OriginalTranslate.X, delta2.Y + mouseInfo2.OriginalTranslate.Y);
+
+                        if (grid2.RenderTransform == null || grid.RenderTransform is MatrixTransform)
+                        {
+                            grid2.RenderTransform = new TranslateTransform(newTranslate2.X, newTranslate2.Y);
+                            return;
+                        }
+
+                        var transformGroup = grid2.RenderTransform as TransformGroup;
+                        if (transformGroup != null)
+                        {
+                            foreach (var transform in transformGroup.Children)
+                            {
+                                var translateTransform2 = transform as TranslateTransform;
+                                if (translateTransform2 != null)
+                                {
+                                    translateTransform2.X = newTranslate2.X;
+                                    translateTransform2.Y = newTranslate2.Y;
+                                    return;
+                                }
+                            }
+                            transformGroup.Children.Add(new TranslateTransform(newTranslate2.X, newTranslate2.Y));
+                            return;
+                        }
+
+                        if ((delta2.X > 1 || delta2.X < -1) || (delta2.Y > 1 || delta2.Y < -1))
+                        {
+                            var translateTransform2 = grid2.RenderTransform as TranslateTransform;
+                            if (translateTransform2 != null)
+                            {
+                                translateTransform2.X = newTranslate2.X;
+                                translateTransform2.Y = newTranslate2.Y;
+                                return;
+                            }
+                            grid2.RenderTransform = new TranslateTransform(newTranslate2.X, newTranslate2.Y);
+                        }
+                    };
+
+                    window.MouseLeftButtonUp += (s3, e3) =>
+                    {
+                        if (!_mouseMoveDownPositions.ContainsKey(grid2)) return;
+                        if (!_mouseMoveDownPositions[grid2].IsButtonDown) return;
+                        _mouseMoveDownPositions[grid2].IsButtonDown = false;
+                        Mouse.Capture(null);
+                    };
+                }
+
+                Mouse.Capture(window);
+            };
+        }
+
+        private static Dictionary<DependencyObject, MouseMoveWrapper> _mouseMoveDownPositions;
+
+        private class MouseMoveWrapper
+        {
+            public Point DownPosition { get; set; }
+            public Point OriginalTranslate { get; set; }
+            public Window ParentWindow { get; set; }
+            public bool IsButtonDown { get; set; }
         }
     }
 }

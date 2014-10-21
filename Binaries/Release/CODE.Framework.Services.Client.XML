@@ -1,0 +1,1419 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Services.Client</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Services.Client.Protocol">
+            <summary>
+            Communication Protocol
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.Protocol.NetTcp">
+            <summary>
+            Net TCP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.Protocol.InProcess">
+            <summary>
+            Local in process service
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.Protocol.BasicHttp">
+            <summary>
+            Basic HTTP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.Protocol.WsHttp">
+            <summary>
+            WS HTTP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.Protocol.RestHttpXml">
+            <summary>
+            XML Formatted REST over HTTP
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.Protocol.RestHttpJson">
+            <summary>
+            JSON Formatted REST over HTTP
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.MessageSize">
+            <summary>
+            Message size
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.MessageSize.Normal">
+            <summary>
+            Normal (default message size as defined by WCF)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.MessageSize.Large">
+            <summary>
+            Large (up to 100MB)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.MessageSize.Medium">
+            <summary>
+            Medium (up to 10MB) - this is the default
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.MessageSize.Undefined">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceClient">
+            <summary>
+            Helper class that provides methods that make it easier to talk to services
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.#cctor">
+            <summary>
+            Initializes the <see cref="T:CODE.Framework.Services.Client.ServiceClient"/> class.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.OpenChannels">
+            <summary>
+            Internal channel cache
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelCacheIndex(System.Type,CODE.Framework.Services.Client.MessageSize,System.Int32,System.String,System.String,System.String)">
+            <summary>
+            Tries to find the desired channel in the cache and if found returns the cache index (otherwise returns -1)
+            </summary>
+            <param name="serviceType">Requested service type (interface)</param>
+            <param name="messageSize">Requested message size</param>
+            <param name="port">Requested port</param>
+            <param name="serviceId">Requested service ID</param>
+            <param name="baseAddress">Requested service base URL</param>
+            <param name="basePath">Requested service base path</param>
+            <returns>Cache index or -1 if channel is not cached</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetCachedChannel``1(System.Int32)">
+            <summary>
+            Retrieves a channel from the channel cache and verifies that the channel is valid (open)
+            </summary>
+            <typeparam name="TServiceType">Expected type of the service</typeparam>
+            <param name="cacheIndex">Channel index in the cache (usually retrieved using the GetChannelCacheIndex method)</param>
+            <returns>Open channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetCachedChannel(System.Type,System.Int32)">
+            <summary>
+            Retrieves a channel from the channel cache and verifies that the channel is valid (open)
+            </summary>
+            <param name="serviceType">Service type (contract)</param>
+            <param name="cacheIndex">Channel index in the cache (usually retrieved using the GetChannelCacheIndex method)</param>
+            <returns>Open channel</returns>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedMessageSizes">
+            <summary>Internal message size cache</summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.MustRetryCall(System.Exception)">
+            <summary>Detirmines whether a call needs to be auto-retried</summary>
+            <param name="exception">The exception that caused the original failure.</param>
+            <returns>True if the call should be retried</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetMessageSize``1">
+            <summary>
+            Gets the allowable message size for a specific interface
+            </summary>
+            <typeparam name="TServiceType">The type of the T service type.</typeparam>
+            <returns>MessageSize.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetMessageSize(System.String)">
+            <summary>
+            Gets the allowable message size for a specific interface
+            </summary>
+            <param name="interfaceName">Name of the interface.</param>
+            <returns>MessageSize.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32,System.String)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannelDedicated``1(System.Int32,System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel instance
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32,System.String,System.String,System.String)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannelDedicated``1(System.Int32,System.String,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel instance
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32,CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannelDedicated``1(System.Int32,CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel instance
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannel``1(System.Int32,System.String,System.String)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetNetTcpChannelDedicated``1(System.Int32,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel instance
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Gets the channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <param name="useCachedChannel">If true, the system is free to use a cached channel</param>
+            <returns>Service</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceClient class.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannelDedicated``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Gets a dedicated channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannel``1(System.String,System.String,System.String)">
+            <summary>
+            Gets the channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannelDedicated``1(System.String,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannel``1(CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets the channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="size">Message size</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannelDedicated``1(CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="size">Message size</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannel``1(System.String,System.String)">
+            <summary>
+            Gets the channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasicHttpChannelDedicated``1(System.String,System.String)">
+            <summary>
+            Gets the channel using Basic HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedProtocols">
+            <summary>Cached protocols</summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetProtocol``1">
+            <summary>
+            Gets the protocol for the specified service.
+            </summary>
+            <typeparam name="TServiceType">Type of the service (contract).</typeparam>
+            <returns>Protocol.</returns>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedPorts">
+            <summary>Cached ports</summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetServicePort``1">
+            <summary>
+            Gets the service port.
+            </summary>
+            <typeparam name="TServiceType">The service type (contract).</typeparam>
+            <returns>System.Int32.</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.MissingConfigurationSettingException">ServicePort: + interfaceName +  - setting missing.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1">
+            <summary>
+            Gets a channel to a data contract.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <returns>Operations service</returns>
+            <example>
+            var service = ServiceClient.GetChannel&lt;IUserService&gt;();
+            var result = service.GetUsers();
+            </example>
+            <remarks>
+            Relies on service configurations to figure out which protocol (and so forth)
+            to use for the desired service.
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(System.Action{``0})">
+            <summary>Opens a dedicated channel, performs an action on it, and immediately closes the channel</summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="action">The action that is to be performed</param>
+            <returns>Operations service</returns>
+            <example>
+            ServiceClient.Call&lt;IUserService&gt;(s => s.GetAllUsers());
+            </example>
+            <remarks>
+            Relies on service configurations to figure out which protocol (and so forth) to use for the desired service.
+            Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1">
+            <summary>
+            Gets a dedicated channel to a data contract.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <returns>Operations service</returns>
+            <example>
+            var service = ServiceClient.GetChannelDedicated&lt;IUserService&gt;();
+            var result = service.GetUsers();
+            ServiceClient.CloseChannel(service);
+            </example>
+            <remarks>
+            Relies on service configurations to figure out which protocol (and so forth) to use for the desired service.
+            Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets a channel to a data contract.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="messageSize">Size of the message.</param>
+            <returns>Operations service</returns>
+            <example>
+            var service = ServiceClient.GetChannel&lt;IUserService&gt;();
+            var result = service.GetUsers();
+            </example>
+            <remarks>
+            Relies on service configurations to figure out which protocol (and so forth)
+            to use for the desired service.
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1(CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets a dedicated channel to a data contract.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="messageSize">Size of the message.</param>
+            <returns>Operations service</returns>
+            <example>
+            var service = ServiceClient.GetChannelDedicated&lt;IUserService&gt;();
+            var result = service.GetUsers();
+            ServiceClient.CloseChannel(service);
+            </example>
+            <remarks>
+            Relies on service configurations to figure out which protocol (and so forth) to use for the desired service.
+            Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(CODE.Framework.Services.Client.MessageSize,System.Action{``0})">
+            <summary>Opens a channel, immediately performs an action on it, and then closes the channel right away</summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="messageSize">Size of the message.</param>
+            <param name="action">The action that is to be performed</param>
+            <remarks>Relies on service configurations to figure out which protocol (and so forth) to use for the desired service.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(System.Int32,CODE.Framework.Services.Client.Protocol)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1(System.Int32,CODE.Framework.Services.Client.Protocol)">
+            <summary>
+            Gets the dedicated channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(System.Int32,CODE.Framework.Services.Client.Protocol,System.Action{``0})">
+            <summary>Opens a channel, immediately performs an action on it, and closes the channel again</summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <returns>Service</returns>
+            <param name="action">The action that is to be performed</param>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedServiceIds">
+            <summary>The cached service ids</summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetServiceId``1">
+            <summary>
+            Gets the service id.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol)">
+            <summary>
+            Gets the dedicated channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CallREST``3(System.String,``1,CODE.Framework.Services.Client.RestHttpVerbs,CODE.Framework.Services.Client.ServiceDataFormat)">
+            <summary>
+            Calls a REST-based service
+            </summary>
+            <typeparam name="TServiceType">Service contract type.</typeparam>
+            <typeparam name="TRequest">Request type</typeparam>
+            <typeparam name="TResult">Expected result type</typeparam>
+            <param name="methodName">Name of the method.</param>
+            <param name="request">The request.</param>
+            <param name="verb">The HTTP verb.</param>
+            <param name="dataFormat">The data format.</param>
+            <returns>Response type or null</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CallREST``2(System.String,System.String,``0,CODE.Framework.Services.Client.RestHttpVerbs,CODE.Framework.Services.Client.ServiceDataFormat)">
+            <summary>
+            Calls a REST-based service
+            </summary>
+            <typeparam name="TRequest">Request type</typeparam>
+            <typeparam name="TResult">Expected result type</typeparam>
+            <param name="service">The service name.</param>
+            <param name="methodName">Name of the method.</param>
+            <param name="request">The request.</param>
+            <param name="verb">The HTTP verb.</param>
+            <param name="dataFormat">The data format.</param>
+            <returns>Response type or null</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CallREST``1(System.String,System.String,``0,CODE.Framework.Services.Client.RestHttpVerbs,CODE.Framework.Services.Client.ServiceDataFormat)">
+            <summary>
+            Calls a REST-based service
+            </summary>
+            <typeparam name="TRequest">Request type</typeparam>
+            <param name="service">The service name.</param>
+            <param name="methodName">Name of the method.</param>
+            <param name="request">The request.</param>
+            <param name="verb">The HTTP verb.</param>
+            <param name="dataFormat">The data format.</param>
+            <returns>String</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CallREST(System.String,System.String,System.String,CODE.Framework.Services.Client.RestHttpVerbs,CODE.Framework.Services.Client.ServiceDataFormat)">
+            <summary>
+            Calls a REST-based service
+            </summary>
+            <param name="service">The service name.</param>
+            <param name="methodName">Name of the method.</param>
+            <param name="request">The request.</param>
+            <param name="verb">The HTTP verb.</param>
+            <param name="dataFormat">The data format.</param>
+            <returns>String</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CallREST``2(System.String,``0,CODE.Framework.Services.Client.RestHttpVerbs,CODE.Framework.Services.Client.ServiceDataFormat)">
+            <summary>
+            Calls a REST-based service
+            </summary>
+            <param name="serviceUrl">The complete service URL.</param>
+            <param name="request">The request.</param>
+            <param name="verb">The HTTP verb.</param>
+            <param name="dataFormat">The data format.</param>
+            <returns>String</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CallREST(System.String,System.String,CODE.Framework.Services.Client.RestHttpVerbs,CODE.Framework.Services.Client.ServiceDataFormat)">
+            <summary>
+            Calls a REST-based service
+            </summary>
+            <param name="serviceUrl">The complete service URL.</param>
+            <param name="request">The request.</param>
+            <param name="verb">The HTTP verb.</param>
+            <param name="dataFormat">The data format.</param>
+            <returns>String</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,System.Action{``0})">
+            <summary>Opens a dedicated channel, performs an action on it, and immediately closes the channel</summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="action">The action that is to be performed</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1(System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets the dedicated channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Action{``0})">
+            <summary>Opens a dedicated channel, immediately performs an action on it, and closes the channel again</summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="action">The action that is to be performed</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize)">
+            <summary>
+            Gets a dedicated channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Action{``0})">
+            <summary>Opens a dedicated channel, immediately performs an action, and closes the channel</summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="action">The action that is to be performed</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="serviceUri">The service URI.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri,System.Action{``0})">
+            <summary>
+            Opens a dedicated channel and immediately performs an action on it and closes the channel
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="action">The action that is to be performed on the channel</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri)">
+            <summary>
+            Gets a dedicated channel
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="serviceUri">The service URI.</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.Call``1(System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri,System.Action{``0})">
+            <summary>Opens a dedicated channel, immediately performs an action on it and then immediately closes the channel</summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="action">The action that is to be performed</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannel(System.Type,System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri)">
+            <summary>
+            Gets the channel.
+            </summary>
+            <param name="serviceType">Service Type (contract)</param>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="serviceUri">The service URI.</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelDedicated(System.Type,System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri)">
+            <summary>
+            Gets a dedicated channel
+            </summary>
+            <param name="serviceType">Service Type (contract)</param>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="protocol">The protocol used for transmission.</param>
+            <param name="messageSize">Size of the messages sent back and forth.</param>
+            <param name="serviceUri">The service URI.</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalInProcessChannel``1">
+            <summary>
+            Gets the internal in-process channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalInProcessChannel(System.Type)">
+            <summary>
+            Gets the internal in-process channel.
+            </summary>
+            <param name="serviceType">Service Type (contract)</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalNetTcpChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.MessageSize,System.Boolean)">
+            <summary>
+            Gets the internal net TCP channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetStandardNetTcpBinding">
+            <summary>
+            Creates a standard instance of a NetTcp binding and performs some basic configurations.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalNetTcpChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.Boolean)">
+            <summary>
+            Gets the internal net TCP channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="port">The port.</param>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService)</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CreateChannel``1(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Creates a channel using a (potentially cached) channel factory
+            </summary>
+            <typeparam name="TServiceType">Service type to create</typeparam>
+            <param name="binding">The binding.</param>
+            <param name="endpoint">The endpoint.</param>
+            <returns>Service type</returns>
+            <exception cref="N:CODE.Framework.Core">Error creating service client.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.RemoveCachedChannelFactory``1(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Removes the cached channel factory.
+            </summary>
+            <typeparam name="TServiceType">The type of the T service type.</typeparam>
+            <param name="binding">The binding.</param>
+            <param name="endpoint">The endpoint.</param>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedChannelFactories">
+            <summary>
+            Internal list of cached channel factories
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalNetTcpChannel``1(CODE.Framework.Services.Client.MessageSize,System.Uri,System.Boolean)">
+            <summary>
+            Gets the internal net TCP channel.
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="useCachedChannel">If true, the systme will try to use a cached channel, rather than creating a new one.</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelFactory(System.Type,System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Dynamically generates a Channel Factory for the provided type, binding, and endpoint 
+            </summary>
+            <param name="contract">Contract (type)</param>
+            <param name="binding">Binding</param>
+            <param name="address">Endpoint Address</param>
+            <returns>Channel factory ready to be opened</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CreateChannel(System.ServiceModel.ChannelFactory)">
+            <summary>
+            Uses an abstract channel factory type and invokes the parameter-less CreateChannel() method
+            </summary>
+            <param name="factory">Factory</param>
+            <returns>Channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalNetTcpChannel(System.Type,CODE.Framework.Services.Client.MessageSize,System.Uri,System.Boolean)">
+            <summary>
+            Gets the internal net TCP channel.
+            </summary>
+            <param name="serviceType">Service type (contract)</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalBasicHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalBasicHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalBasicHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>TCP/IP channel</returns>
+            <exception cref="T:CODE.Framework.Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceClient class.</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalBasicHttpChannel``1(CODE.Framework.Services.Client.MessageSize,System.Uri,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalBasicHttpChannel(System.Type,CODE.Framework.Services.Client.MessageSize,System.Uri,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <param name="serviceType">The type of the service type.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelState(System.Object)">
+            <summary>
+            Gets the state of a WCF channel (interface)
+            </summary>
+            <param name="channel">Service channel/interface</param>
+            <returns>Current channel state</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.AbortChannel(System.Object,System.Exception)">
+            <summary>
+            Aborts the channel.
+            </summary>
+            <param name="channel">The channel.</param>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.CloseChannel(System.Object,System.Boolean)">
+            <summary>
+            Explicitly closes a WCF channel
+            </summary>
+            <param name="channel">Service (channel/interface) to close</param>
+            <param name="channelMayBeShared">If the channel may be a shared channel, some extra steps have to be taken. If one is sure the channel is dedicated, false may be passed for better performance.</param>
+            <returns>True if channel closed successfully</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.VerifyChannelIsValid``1(``0)">
+            <summary>
+            Inspects a channel to make sure it is usable (open). If the channel is not usable,
+            this method attempts to create a new channel to the same service.
+            </summary>
+            <typeparam name="TChannel">Channel (service interface)</typeparam>
+            <param name="channel">Channel</param>
+            <returns>Valid channel if possible</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBaseAddressFromUri(System.Uri)">
+            <summary>
+            Returns the base address the specified URI is using
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetBasePathFromUri(System.Uri)">
+            <summary>
+            Returns the base path the specified URI is using
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetServiceIdFromUri(System.Uri)">
+            <summary>
+            Returns the service ID the specified URI is using
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.ExtractRawUrlFromUri(System.Uri)">
+            <summary>
+            Returns the URL as a string without the protocol prefix
+            </summary>
+            <param name="uri">URI to parse</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Gets the channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useCachedChannel">If true, the system is free to use a cached channel</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannelDedicated``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Gets a dedicated channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannel``1(System.String,System.String,System.String)">
+            <summary>
+            Gets the channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannelDedicated``1(System.String,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannel``1(CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets the channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="size">Message size</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannelDedicated``1(CODE.Framework.Services.Client.MessageSize,System.String,System.String)">
+            <summary>
+            Gets a dedicated channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="size">Message size</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannel``1(System.String,System.String)">
+            <summary>
+            Gets the channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetWsHttpChannelDedicated``1(System.String,System.String)">
+            <summary>
+            Gets the channel using WS HTTP protocol.
+            </summary>
+            <typeparam name="TServiceType">The type of the service.</typeparam>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <returns>Service</returns>
+            <remarks>Creates a channel exclusive to this caller. It is up to the caller to close the channel after use!</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalWsHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalWsHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalWsHttpChannel``1(System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="serviceId">The service id.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="baseAddress">Base service address (such as www.domain.com)</param>
+            <param name="basePath">Base path (such as "MyService" to create www.domain.com/MyService/basic)</param>
+            <param name="extension">Path extension for basic HTTP services (such as "basic" to create www.domain.com/MyService/basic)</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <param name="useHttps">Indicates whether HTTPS should be used</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalWsHttpChannel``1(CODE.Framework.Services.Client.MessageSize,System.Uri,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <typeparam name="TServiceType">The type of the service type.</typeparam>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalWsHttpChannel(System.Type,CODE.Framework.Services.Client.MessageSize,System.Uri,System.Boolean)">
+            <summary>
+            Creates a basic HTTP channel to the desired service type
+            </summary>
+            <param name="serviceType">The type of the service type.</param>
+            <param name="messageSize">Size of the message.</param>
+            <param name="serviceUri">The service URI.</param>
+            <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
+            <returns>TCP/IP channel</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetSetting(System.String,System.Boolean,System.String)">
+            <summary>
+            Retrieves a setting from the configuration system
+            </summary>
+            <param name="setting">Name of the setting.</param>
+            <param name="ignoreCache">If set to <c>true</c> setting caching is ignored.</param>
+            <param name="defaultValue">Default value in case the setting is not found</param>
+            <returns>Setting value</returns>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceClient.SettingsCache">
+            <summary>Internal settings cache</summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.BaseUrl">
+            <summary>
+            Base URL for the service
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.BasePath">
+            <summary>
+            Gets or sets the base path ("virtual directory")
+            </summary>
+            <value>The base path.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.HandleChannelExceptions">
+            <summary>Indicates whether channel exceptions should be handled (and thus hidden) or thrown to the caller.</summary>
+            <value>False (default) to throw the exception to the caller or True to handle the exceptions internally</value>
+            <remarks>See also: ClientException event</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.CacheSettings">
+            <summary>
+            Indicates whether configuration settings shoudl be cached (default = yes)
+            </summary>
+            <value><c>true</c> if [cache settings]; otherwise, <c>false</c>.</value>
+            <remarks>
+            When settings get cached, they are only retrieved from the configuration system
+            the first time they are needed. Subsequent uses will be based on the cache, which improves performance.
+            However, if settings are meant to change dynamically, caching needs to be turned off, otherwise
+            new configuration settings will be ignored by the service client.
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryFailedCalls">
+            <summary>Indicates whether calls that caused faults should automatically be re-issued a second time. (True by default)</summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryDelay">
+            <summary>Defines the delay (milliseconds) between auto-retry calls</summary>
+            <remarks>The delay is defined in milliseconds (-1 = no delay). Note that the delay puts the thread to sleep, so this should not be done on foreground threads.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryFailedCallsForExceptions">
+            <summary>Defines the list of exception types for which to auto-retry calls</summary>
+        </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.ChannelException">
+            <summary>Exception callback for exceptions occuring on the channel</summary>
+        </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.BeforeChannelOpens">
+            <summary>
+            Event fires before a channel opens (can be used to programmatically configure a channel if need be)
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceClient.OpenChannelInformationList">
+            <summary>
+            Almost the same as a List of T, but with a destructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.OpenChannelInformationList.Finalize">
+            <summary>
+            Destructor used to clean up potential open channels
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ChannelState">
+            <summary>
+            State of the WCF Channel
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Created">
+            <summary>
+            Created
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Opening">
+            <summary>
+            Opening
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Opened">
+            <summary>
+            Opened
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Closing">
+            <summary>
+            Closing
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Closed">
+            <summary>
+            Closed
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Faulted">
+            <summary>
+            Faulted
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ChannelState.Unknown">
+            <summary>
+            Unknown
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.OpenChannelInformation">
+            <summary>
+            Class used internally to cache channel information and actual challens
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.OpenChannelInformation.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.OpenChannelInformation.IsMatch(System.Type,CODE.Framework.Services.Client.MessageSize,System.Int32,System.String,System.String,System.String)">
+            <summary>
+            Compares two instances of this object and returns 0 if both instances represent the same cached reference
+            </summary>
+            <param name="serviceType">Requested service type (interface)</param>
+            <param name="messageSize">Requested message size</param>
+            <param name="port">Requested port</param>
+            <param name="serviceId">Requested service ID</param>
+            <param name="baseAddress">Requested service base URL</param>
+            <param name="basePath">Requested service base path</param>
+            <returns></returns>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.MessageSize">
+            <summary>
+            Message size configured for this instance
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.Port">
+            <summary>
+            Port (if applicable)
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.ServiceId">
+            <summary>
+            Service ID (if applicable)
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.BaseUrl">
+            <summary>
+            Base URL
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.BasePath">
+            <summary>
+            Base Path
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.Channel">
+            <summary>
+            Cached channel object
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.ChannelType">
+            <summary>
+            Contract type of the channel
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs">
+            <summary>
+            Event arguments for channel open event
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.Channel">
+            <summary>
+            Channel that is about to be opened
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.Port">
+            <summary>
+            Port used by the channel
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.ServiceId">
+            <summary>
+            Service ID
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.MessageSize">
+            <summary>
+            Message Size
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.BaseAddress">
+            <summary>
+            Base Address
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.BasePath">
+            <summary>
+            Base Path
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs.ChannelType">
+            <summary>
+            Channel Type (contract)
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ChannelExceptionEventArgs">
+            <summary>Special event args used for ChannelException events</summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ChannelExceptionEventArgs.#ctor(System.ServiceModel.IClientChannel,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.ChannelExceptionEventArgs"/> class.
+            </summary>
+            <param name="channel">The channel.</param>
+            <param name="exception">The exception.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ChannelExceptionEventArgs.Channel">
+            <summary>The channel that caused the exception</summary>
+            <value>The channel.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ChannelExceptionEventArgs.Exception">
+            <summary>The exception</summary>
+            <value>The exception.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.RestHttpVerbs">
+            <summary>
+            HTTP Verbs used to communicate with REST Services
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.RestHttpVerbs.Get">
+            <summary>
+            GET
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.RestHttpVerbs.Post">
+            <summary>
+            POST
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.RestHttpVerbs.Put">
+            <summary>
+            PUT
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.RestHttpVerbs.Delete">
+            <summary>
+            DELETE
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceDataFormat">
+            <summary>
+            Data format used by service
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceDataFormat.Json">
+            <summary>
+            JSON data format
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.ServiceDataFormat.Xml">
+            <summary>
+            XML data format
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceGardenLocal">
+            <summary>
+            Provides an in-process service garden
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceGardenLocal.#cctor">
+            <summary>
+            Initializes the <see cref="T:CODE.Framework.Services.Client.ServiceGardenLocal"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceGardenLocal.AddServiceHost(System.Type)">
+            <summary>
+            Adds a local service based on the services type
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <returns>True if successful</returns>
+            <remarks>The interface used by the service is automatically detirmined.</remarks>
+            <example>
+            ServiceGardenLocal.AddServiceHost(typeof(MyNamespace.CustomerService));
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceGardenLocal.AddServiceHost(System.Type,System.Type)">
+            <summary>
+            Adds a local service
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="contractType">Type of the operation contract (interface).</param>
+            <returns>True if successful</returns>
+            <example>
+            ServiceGardenLocal.AddServiceHost(typeof(MyNamespace.CustomerService), typeof(MyContracts.ICustomerServicce));
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceGardenLocal.GetService``1">
+            <summary>
+            Gets the service.
+            </summary>
+            <typeparam name="TContractType">The type of the operations ontract (interface).</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceGardenLocal.GetService(System.Type)">
+            <summary>
+            Gets the service.
+            </summary>
+            <param name="contractType">Contract Type</param>
+            <returns></returns>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceGardenLocal.Hosts">
+            <summary>
+            Collection of known hosts
+            </summary>
+            <value>Hosts</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceHelper">
+            <summary>
+            Generic helper methods used internally by various service components
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(CODE.Framework.Services.Client.MessageSize,System.ServiceModel.NetTcpBinding)">
+            <summary>
+            Configures NetTcpBinding message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">NetTcpBinding to configure</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceHelper.ConfigureMessageSizeOnBasicHttpBinding(CODE.Framework.Services.Client.MessageSize,System.ServiceModel.BasicHttpBinding)">
+            <summary>
+            Configures Basic HTTP Binding message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">BasicHttpBinding to configure</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceHelper.ConfigureMessageSizeOnWsHttpBinding(CODE.Framework.Services.Client.MessageSize,System.ServiceModel.WSHttpBinding)">
+            <summary>
+            Configures WS HTTP Binding message size
+            </summary>
+            <param name="messageSize">Message size to configure the binding for</param>
+            <param name="binding">BasicHttpBinding to configure</param>
+        </member>
+    </members>
+</doc>

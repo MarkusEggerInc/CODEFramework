@@ -18,7 +18,7 @@ namespace CODE.Framework.Core.Utilities
             if (Loggers == null) return;
 
             foreach (var logger in Loggers)
-                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == logger.TypeFilter))
+                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == type))
                     logger.Log(logEvent, type);
         }
 
@@ -32,7 +32,7 @@ namespace CODE.Framework.Core.Utilities
             if (Loggers == null) return;
 
             foreach (var logger in Loggers)
-                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == logger.TypeFilter))
+                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == type))
                     logger.Log(logEvent, type);
         }
 
@@ -49,7 +49,13 @@ namespace CODE.Framework.Core.Utilities
 
             foreach (var logger in Loggers)
                 if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == logger.TypeFilter))
-                    logger.Log(exceptionText, type);
+                {
+                    var exceptionLogger = logger as IExceptionLogger;
+                    if (exceptionLogger != null)
+                        exceptionLogger.Log(exception, type);
+                    else
+                        logger.Log(exceptionText, type);
+        }
         }
 
         /// <summary>
@@ -66,7 +72,13 @@ namespace CODE.Framework.Core.Utilities
 
             foreach (var logger in Loggers)
                 if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == logger.TypeFilter))
-                    logger.Log(exceptionText, type);
+                {
+                    var exceptionLogger = logger as IExceptionLogger;
+                    if (exceptionLogger != null)
+                        exceptionLogger.Log(leadingText, exception, type);
+                    else
+                        logger.Log(exceptionText, type);
+        }
         }
 
         /// <summary>
@@ -101,16 +113,12 @@ namespace CODE.Framework.Core.Utilities
     /// </remarks>
     public interface ILogger
     {
-        /// <summary>
-        /// Logs the specified event (text).
-        /// </summary>
+        /// <summary>Logs the specified event (text).</summary>
         /// <param name="logEvent">The event (text).</param>
         /// <param name="type">The event type.</param>
         void Log(string logEvent, LogEventType type);
 
-        /// <summary>
-        /// Logs the specified event (object).
-        /// </summary>
+        /// <summary>Logs the specified event (object).</summary>
         /// <param name="logEvent">The event (object).</param>
         /// <param name="type">The event type.</param>
         void Log(object logEvent, LogEventType type);
@@ -123,6 +131,27 @@ namespace CODE.Framework.Core.Utilities
         /// Only events that match the type filter will be considered by this logger.
         /// </remarks>
         LogEventType TypeFilter { get; set; }
+    }
+
+    /// <summary>
+    /// Interface for loggers that are capable of logging exceptions directly
+    /// </summary>
+    public interface IExceptionLogger
+    {
+        /// <summary>
+        /// Logs the specified event (text).
+        /// </summary>
+        /// <param name="exception">The exception that is to be logged.</param>
+        /// <param name="type">The event type.</param>
+        void Log(Exception exception, LogEventType type);
+
+        /// <summary>
+        /// Logs the specified event (text).
+        /// </summary>
+        /// <param name="leadingText">The leading text.</param>
+        /// <param name="exception">The exception that is to be logged.</param>
+        /// <param name="type">The event type.</param>
+        void Log(string leadingText, Exception exception, LogEventType type);
     }
 
     /// <summary>
