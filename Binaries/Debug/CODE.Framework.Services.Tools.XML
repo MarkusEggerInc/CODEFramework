@@ -4,6 +4,27 @@
         <name>CODE.Framework.Services.Tools</name>
     </assembly>
     <members>
+        <member name="T:CODE.Framework.Services.Tools.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Properties.Resources.CodeFramework_Logo160">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Services.Tools.Windows.ServiceTestHarness">
             <summary>
             Service test harness
@@ -53,6 +74,13 @@
             Constructor
             </summary>
         </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.BitmapToImageSource(System.Drawing.Image)">
+            <summary>
+            Retrieves an image source from the bitmap
+            </summary>
+            <param name="bitmap">The bitmap.</param>
+            <returns>ImageSource.</returns>
+        </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.ShowService(System.ServiceModel.ServiceHost,System.Int32,System.String,CODE.Framework.Services.Client.Protocol,CODE.Framework.Services.Client.MessageSize,System.Uri)">
             <summary>
             Shows the service.
@@ -71,12 +99,40 @@
             <param name="objectToSerialize">The object to serialize.</param>
             <returns></returns>
         </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.DeserializeFromRestXml(System.String,System.Type)">
+            <summary>
+            Deserializes from REST XML
+            </summary>
+            <param name="xml">The XML.</param>
+            <param name="resultType">Type of the result object.</param>
+            <returns>Deserialized object</returns>
+        </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.SerializeToRestJson(System.Object)">
             <summary>
             Serializes to REST JSON.
             </summary>
             <param name="objectToSerialize">The object to serialize.</param>
             <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.DeserializeFromRestJson(System.String,System.Type)">
+            <summary>
+            Deserializes from REST JSON.
+            </summary>
+            <param name="json">The json.</param>
+            <param name="resultType">Type of the result.</param>
+            <returns>Deserialized object</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyDown" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.OnPreviewKeyUp(System.Windows.Input.KeyEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyUp" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
         </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.InitializeComponent">
             <summary>
@@ -114,6 +170,12 @@
             Configures enum settings
             </summary>
             <param name="propertyType">Type of the property.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.DataContext">
+            <summary>
+            Gets the data context.
+            </summary>
+            <value>The data context.</value>
         </member>
         <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.Name">
             <summary>
@@ -153,6 +215,12 @@
             </summary>
             <value><c>true</c> if this instance is enum; otherwise, <c>false</c>.</value>
         </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.OperationUrl">
+            <summary>
+            URL information for the current operation (only used on root items)
+            </summary>
+            <value>The operation URL.</value>
+        </member>
         <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.NullElementVisible">
             <summary>
             Is the null element visible?
@@ -170,6 +238,12 @@
             <value>
             The value.
             </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.ByteArrayDisplayValue">
+            <summary>
+            Gets the byte array display value.
+            </summary>
+            <value>The byte array display value.</value>
         </member>
         <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.TextValue">
             <summary>
@@ -287,10 +361,45 @@
             The sub items.
             </value>
         </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.ListGenericType">
+            <summary>
+            Generic type used by the list
+            </summary>
+            <value>The type of the list's generic parameter.</value>
+        </member>
         <member name="E:CODE.Framework.Services.Tools.Windows.ParameterItem.PropertyChanged">
             <summary>
             Occurs when a property value changes.
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.ControlFocusHelper">
+            <summary>
+            Helper class used to move the focus within elements of the contract entry tree
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.ControlFocusHelper.AutoMoveCursorToNextTreeItemProperty">
+            <summary>If set to true, moves the cursor on key press events</summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ControlFocusHelper.OnAutoMoveCursorToNextTreeItemChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when AutoMoveCursorToNextTreeItem property changes
+            </summary>
+            <param name="d">The d.</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ControlFocusHelper.SetAutoMoveCursorToNextTreeItem(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            Sets the automatic move cursor to next tree item.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="value">if set to <c>true</c> [value].</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ControlFocusHelper.GetAutoMoveCursorToNextTreeItem(System.Windows.DependencyObject)">
+            <summary>
+            Gets the automatic move cursor to next tree item.
+            </summary>
+            <param name="d">The d.</param>
+            <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         </member>
         <member name="T:CODE.Framework.Services.Tools.Windows.ParameterNodeType">
             <summary>
@@ -709,7 +818,7 @@
         </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.listView1_ColumnClick(System.Object,System.Windows.Forms.ColumnClickEventArgs)">
             <summary>
-            Handles the ColumnClick event of the listView1 control.
+            Handles the ColumnClick event of the OperationsList control.
             </summary>
             <param name="sender">The source of the event.</param>
             <param name="e">The <see cref="T:System.Windows.Forms.ColumnClickEventArgs"/> instance containing the event data.</param>

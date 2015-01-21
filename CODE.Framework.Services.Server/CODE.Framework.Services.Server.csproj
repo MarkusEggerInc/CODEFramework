@@ -63,6 +63,10 @@
       <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
       <Name>CODE.Framework.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Services.Contracts\CODE.Framework.Services.Contracts.csproj">
+      <Project>{e60c861c-70ea-42b2-aa6e-49a9ff63388f}</Project>
+      <Name>CODE.Framework.Services.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

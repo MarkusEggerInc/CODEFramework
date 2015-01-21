@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -110,7 +111,7 @@ namespace CODE.Framework.Core.Utilities
                     }
 
 
-            // Now that the assembly is loaded, we can get the type of the specified class
+            // Now that the assembly is loaded, we can get the interfaceType of the specified class
             Type objectType;
             try
             {
@@ -121,10 +122,10 @@ namespace CODE.Framework.Core.Utilities
             }
             catch (Exception ex)
             {
-                throw new ObjectInstantiationException("Unable to get type " + className + ". Error: " + ex.Message, ex);
+                throw new ObjectInstantiationException("Unable to get interfaceType " + className + ". Error: " + ex.Message, ex);
             }
 
-            // Creates an instance of the specified type
+            // Creates an instance of the specified interfaceType
             try
             {
                 return Activator.CreateInstance(objectType);
@@ -294,7 +295,7 @@ namespace CODE.Framework.Core.Utilities
         /// // or
         /// XmlDocument xml = EPS.Utilities.ObjectHelper.SerializeToXmlDocument(customer);
         /// </example>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "The goal of this method is to specifically expose an object of this type. We may add IXPathNavigable later."),
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "The goal of this method is to specifically expose an object of this interfaceType. We may add IXPathNavigable later."),
         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#", Justification = "Following the rule would lead to more misleading code in this specific case.")]
         public static XmlDocument SerializeToXmlDocument(object objectToSerialize)
         {
@@ -307,7 +308,7 @@ namespace CODE.Framework.Core.Utilities
         /// Deserializes an object from its state stored in an xml stream.
         /// </summary>
         /// <param name="stateStream">The state stream.</param>
-        /// <param name="expectedType">The expected type (which will be the returned type).</param>
+        /// <param name="expectedType">The expected interfaceType (which will be the returned interfaceType).</param>
         /// <returns>Object instance.</returns>
         /// <remarks>
         /// For this to work, the XML Stream must contain a seralized object
@@ -325,7 +326,7 @@ namespace CODE.Framework.Core.Utilities
         /// Deserializes an object from its state stored in an xml stream.
         /// </summary>
         /// <param name="stateStream">The state stream.</param>
-        /// <param name="expectedType">The expected type.</param>
+        /// <param name="expectedType">The expected interfaceType.</param>
         /// <returns>Object instance</returns>
         /// <remarks>
         /// For this to work, the XML Stream must contain a seralized object
@@ -409,7 +410,7 @@ namespace CODE.Framework.Core.Utilities
         /// // or
         /// XmlDocument xml = EPS.Utilities.ObjectHelper.SerializeToSoapDocument(customer);
         /// </example>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "The goal of this method is to specifically expose an object of this type. We may add IXPathNavigable later."),
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "The goal of this method is to specifically expose an object of this interfaceType. We may add IXPathNavigable later."),
         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#", Justification = "Following the rule would lead to more misleading code in this specific case.")]
         public static XmlDocument SerializeToSoapDocument(object objectToSerialize)
         {
@@ -483,7 +484,7 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>Dynamically retrieves a property value from the specified object</summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <typeparam name="TResult">The interfaceType of the result.</typeparam>
         /// <param name="valueObject">The value object.</param>
         /// <param name="path">Name of the property.</param>
         /// <returns>Property value or default value</returns>
@@ -600,7 +601,7 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>
         /// Dynamically retrieves a property value from the specified object
         /// </summary>
-        /// <typeparam name="TValue">The type of the value that is to be set.</typeparam>
+        /// <typeparam name="TValue">The interfaceType of the value that is to be set.</typeparam>
         /// <param name="valueObject">The value object.</param>
         /// <param name="path">Name of the property.</param>
         /// <param name="value">The value that is to be set.</param>
@@ -654,7 +655,7 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>
         /// Dynamically invokes the specified method on the defined object
         /// </summary>
-        /// <typeparam name="TResult">The expected return type for the method</typeparam>
+        /// <typeparam name="TResult">The expected return interfaceType for the method</typeparam>
         /// <param name="valueObject">The value object (object that contains the method).</param>
         /// <param name="methodName">Name of the method.</param>
         /// <param name="parameters">The parameters.</param>
@@ -684,6 +685,28 @@ namespace CODE.Framework.Core.Utilities
                 return default(TResult);
             }
         }
+
+        /// <summary>
+        /// Returns all methods defined on an interface or interfaces it inherits from.
+        /// </summary>
+        /// <param name="interfaceType">The interface type.</param>
+        /// <returns>IEnumerable&lt;MethodInfo&gt;.</returns>
+        public static IEnumerable<MethodInfo> GetAllMethodsForInterface(Type interfaceType)
+        {
+            var methods = interfaceType.GetMethods(BindingFlags.Instance | BindingFlags.Public).ToList();
+            GetMethodsForInheritedInterfaces(interfaceType, methods);
+            return methods;
+        }
+        private static void GetMethodsForInheritedInterfaces(Type interfaceType, List<MethodInfo> existingMethods)
+        {
+            var interfaces = interfaceType.GetInterfaces();
+            foreach (var inheritedInterface in interfaces)
+            {
+                existingMethods.AddRange(inheritedInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public));
+                GetMethodsForInheritedInterfaces(inheritedInterface, existingMethods);
+            }
+        }
+
     }
 
     /// <summary>

@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Services.Contracts</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Services.Contracts.RestAttribute">
+             <summary>
+             Attribute used to specify REST behavior
+             </summary>
+             <example>
+             // The following method is exposed as http://....Service/Search/...
+             [OperationContract]
+             [Rest(Name = "Search")]
+             Response MethodName(Request request);
+             
+             // The following method is exposed as service root (without an explicit method name... which can be done once per HTTP method) http://....Service/...
+             [OperationContract]
+             [Rest(Name = "")]
+             Response MethodName(Request request);
+            
+             // The following method is exposed as http://....Service/Customer/Smith... and can be called with the HTTP-GET method
+             [OperationContract]
+             [Rest(Name = "Customer", Method = RestMethods.Get)]
+             Response GetCustomer(Request request);
+             
+             // The following method is also exposed as http://....Service/Customer/Smith... but can be called with the HTTP-PUT method
+             [OperationContract]
+             [Rest(Name = "Customer", Method = RestMethods.Put)]
+             Response SaveCustomer(Request request);
+             
+             // The following method is exposed as http://....Service/Smith... and can be called with the HTTP-GET method
+             [OperationContract]
+             [Rest(Name = "", Method = RestMethods.Get)]
+             Response GetCustomer(Request request);
+             
+             // The following method is also exposed as http://....Service/Smith... but can be called with the HTTP-PUT method
+             [OperationContract]
+             [Rest(Name = "", Method = RestMethods.Put)]
+             Response SaveCustomer(Request request);
+             </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Contracts.RestAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Contracts.RestAttribute"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Contracts.RestAttribute.Method">
+            <summary>
+            The HTTP method/verb used for the rest operation
+            </summary>
+            <value>The method.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Contracts.RestAttribute.Name">
+            <summary>
+            Exposed name of the method/operation
+            </summary>
+            <value>The name.</value>
+            <remarks>If the method is an empty string, it is considered to be the root (method name does not have to be specified)</remarks>
+        </member>
+        <member name="T:CODE.Framework.Services.Contracts.RestUrlParameterAttribute">
+             <summary>
+             This attribute can be used to define that the property maps to an unnamed URL parameter
+             </summary>
+             <example>
+             [DataMember, RestUrlParameter]
+             public string Name get; set;
+             // This property can now be used in a URL like this: http://..../operation/Smith 
+             // In this case, "Smith" will be mapped to the Name property
+            
+             [DataMember, RestUrlParameter(Sequence = 1)]
+             public string Name get; set;
+             [DataMember, RestUrlParameter(Sequence = 0)]
+             public string Company get; set;
+             // This property can now be used in a URL like this: http://..../operation/EPS/Smith
+             // In this case, "EPS" will be mapped to the Company property and  "Smith" will be mapped to the Name property
+             </example>
+        </member>
+        <member name="M:CODE.Framework.Services.Contracts.RestUrlParameterAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Contracts.RestUrlParameterAttribute"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Contracts.RestUrlParameterAttribute.Sequence">
+            <summary>
+            Sets the sequence of the parameter within the URL
+            </summary>
+            <value>The sequence.</value>
+            <remarks>
+            This is technically 0-based. However, it is just use for ordering, so the actual numbers don't really matter.
+            This setting is only valid for Mode=Inline parameters
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Contracts.RestUrlParameterAttribute.Mode">
+            <summary>
+            The usage mode of the parameter
+            </summary>
+            <value>The mode.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Contracts.UrlParameterMode">
+            <summary>
+            Different modes of passing parameters in a URL
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.UrlParameterMode.Named">
+            <summary>
+            Named parameter (such as ?value=1)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.UrlParameterMode.Inline">
+            <summary>
+            Inline parameter (such as .../1/...)
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Contracts.RestMethods">
+            <summary>
+            HTTP Method/Verb used for REST calls
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Post">
+            <summary>HTTP POST</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Get">
+            <summary>HTTP GET</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Put">
+            <summary>HTTP PUT</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Delete">
+            <summary>HTTP DELETE</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Head">
+            <summary>HTTP HEAD</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Trace">
+            <summary>HTTP TRACE</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Search">
+            <summary>HTTP SEARCH</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Connect">
+            <summary>HTTP CONNECT</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.PropFind">
+            <summary>HTTP PROPFIND</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.PropPatch">
+            <summary>HTTP PROPPATCH</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Patch">
+            <summary>HTTP PATCH</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Mkcol">
+            <summary>HTTP MKCOL</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Copy">
+            <summary>HTTP COPY</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Move">
+            <summary>HTTP MOVE</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Lock">
+            <summary>HTTP LOCK</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Unlock">
+            <summary>HTTP UNLOCK</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.Options">
+            <summary>HTTP OPTIONS</summary>
+        </member>
+    </members>
+</doc>

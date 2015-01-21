@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -59,7 +60,7 @@ namespace CODE.Framework.Services.Client
                     while (Count > 0)
                         CloseChannel(this[0].Channel);
                 }
-                catch (Exception)
+                catch
                 {
                     // Oh well... nothing we can do about it now, but the app should be shutting down anyway.
                 }
@@ -169,12 +170,11 @@ namespace CODE.Framework.Services.Client
             if (!AutoRetryFailedCalls) return false;
             if (AutoRetryFailedCallsForExceptions.Count == 0) return true;
 
-            foreach (var exceptionType in AutoRetryFailedCallsForExceptions)
-                if (exception.GetType() == exceptionType)
-                {
-                    if (AutoRetryDelay > 0) Thread.Sleep(AutoRetryDelay);
-                    return true;
-                }
+            if (AutoRetryFailedCallsForExceptions.Any(exceptionType => exception.GetType() == exceptionType))
+            {
+                if (AutoRetryDelay > 0) Thread.Sleep(AutoRetryDelay);
+                return true;
+            }
 
             return false;
         }
@@ -560,6 +560,15 @@ namespace CODE.Framework.Services.Client
                     break;
                 case "basichttp":
                     protocol = Protocol.BasicHttp;
+                    break;
+                case "rest":
+                case "restjson":
+                case "resthttpjson":
+                    protocol = Protocol.RestHttpJson;
+                    break;
+                case "restxml":
+                case "resthttpxml":
+                    protocol = Protocol.RestHttpXml;
                     break;
                 default:
                     protocol = Protocol.NetTcp;
@@ -2004,6 +2013,7 @@ namespace CODE.Framework.Services.Client
         /// <returns>Channel factory ready to be opened</returns>
         private static ChannelFactory GetChannelFactory(Type contract, Binding binding, EndpointAddress address)
         {
+            // TODO: This does not yet support inherited interfaces on the contract
             var factoryType = typeof(ChannelFactory<>);
             var genericFactoryType = factoryType.MakeGenericType(new []{contract});
             var factory = Activator.CreateInstance(genericFactoryType, binding, address);
@@ -2017,17 +2027,15 @@ namespace CODE.Framework.Services.Client
         /// <returns>Channel</returns>
         private static object CreateChannel(ChannelFactory factory)
         {
-            // TODO: Should see if there is a way to eliminate this. Otherwise, we should cache this and generally try to make it more efficient
-            var factoryType = factory.GetType();
-            var methods = factoryType.GetMethods();
-            foreach (var method in methods)
-                if (method.Name == "CreateChannel")
-                {
-                    var parameters = method.GetParameters();
-                    if (parameters.Length == 0)
-                        return method.Invoke(factory, null);
-                }
-            return null;
+            try
+            {
+                dynamic factory2 = factory;
+                return factory2.CreateChannel();
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
         /// <summary>

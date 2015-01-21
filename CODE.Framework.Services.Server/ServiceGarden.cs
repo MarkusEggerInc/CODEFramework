@@ -1831,7 +1831,7 @@ namespace CODE.Framework.Services.Server
             }
             var endpoint = host.AddServiceEndpoint(contractType, binding, serviceFullAddress);
             if (!string.IsNullOrEmpty(serviceNamespace) && endpoint.Contract != null && endpoint.Contract.Namespace != serviceNamespace) endpoint.Contract.Namespace = serviceNamespace;
-            endpoint.Behaviors.Add(new RestJsonHttpBehavior()); // REST-specific behavior configuration
+            endpoint.Behaviors.Add(new RestJsonHttpBehavior(serviceFullAddress, contractType)); // REST-specific behavior configuration
             if (HttpCrossDomainCallsAllowed) endpoint.Behaviors.Add(new CrossDomainScriptBehavior());
 
             var serviceKey = serviceFullAddress;

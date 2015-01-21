@@ -16,15 +16,20 @@
         /// </summary>
         public override object this[object key]
         {
-            get { return base[key]; }
+            get
+            {
+                lock (this)
+                    return base[key];
+            }
             set
             {
                 // If a null value is being assigned to the setting,
                 // we remove it (the setting) from the Memory source.
-                if (value == null)
-                    Remove(key);
-                else
-                    base[key] = value;
+                lock (this)
+                    if (value == null)
+                        Remove(key);
+                    else
+                        base[key] = value;
             }
         }
     }

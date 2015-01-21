@@ -891,7 +891,7 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return _visibility; }
             set
             {
-                _visibility = value; 
+                _visibility = value;
                 NotifyChanged("Visibility");
             }
         }

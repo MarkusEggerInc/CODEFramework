@@ -388,7 +388,7 @@ namespace BuildPackager
                 Console.WriteLine("Copying file: " + file);
                 var parts = file.Split('\\');
                 var outputFileName = outputFolder + "\\" + parts[parts.Length - 1];
-                if (!File.Exists(outputFileName) && !(outputFileName.IndexOf(".TestBench.", StringComparison.Ordinal) > -1))
+                if (!File.Exists(outputFileName) && !(outputFileName.IndexOf(".TestBench.", StringComparison.Ordinal) > -1) && !(outputFileName.IndexOf("Newtonsoft.Json.dll", StringComparison.Ordinal) > -1))
                     File.Copy(file, outputFileName);
             }
         }

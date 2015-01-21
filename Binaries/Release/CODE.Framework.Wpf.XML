@@ -566,6 +566,52 @@
             <param name="d">The border</param>
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.ContentTextDisplay">
+            <summary>
+            This control can pick up any content and attempts to turn it into text and displays it
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ContentTextDisplay.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.ContentTextDisplay"/> class.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ContentTextDisplay.ContentProperty">
+            <summary>
+            Content to be displayed
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ContentTextDisplay.MaxLineCountProperty">
+            <summary>
+            Maximum line count for the display of the content text
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ContentTextDisplay.InvalidateDisplay(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the content changes
+            </summary>
+            <param name="d">The control the content changed on</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ContentTextDisplay.MeasureOverride(System.Windows.Size)">
+            <summary>
+            Called to remeasure a control.
+            </summary>
+            <param name="constraint">The maximum size that the method can return.</param>
+            <returns>The size of the control, up to the maximum specified by <paramref name="constraint" />.</returns>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ContentTextDisplay.Content">
+            <summary>
+            Content to be displayed
+            </summary>
+            <value>The content.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ContentTextDisplay.MaxLineCount">
+            <summary>
+            Maximum line count for the display of the content text
+            </summary>
+            <value>The maximum line count.</value>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.DockHost">
             <summary>
             This content control can be used for content that can be undocked into a separate window

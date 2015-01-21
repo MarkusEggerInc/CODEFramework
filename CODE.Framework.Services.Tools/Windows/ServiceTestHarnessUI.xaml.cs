@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,10 +13,24 @@ using System.ServiceModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using CODE.Framework.Core.Utilities;
+using CODE.Framework.Core.Utilities.Extensions;
 using CODE.Framework.Services.Client;
+using CODE.Framework.Services.Server;
+using Button = System.Windows.Controls.Button;
+using Control = System.Windows.Controls.Control;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+using MessageSize = CODE.Framework.Services.Client.MessageSize;
+using Protocol = CODE.Framework.Services.Client.Protocol;
+using TextBox = System.Windows.Controls.TextBox;
+using TreeView = System.Windows.Controls.TreeView;
+using UserControl = System.Windows.Controls.UserControl;
 
 
 namespace CODE.Framework.Services.Tools.Windows
@@ -31,6 +46,27 @@ namespace CODE.Framework.Services.Tools.Windows
         public ServiceTestHarnessUI()
         {
             InitializeComponent();
+            Logo.Source = BitmapToImageSource(Properties.Resources.CodeFramework_Logo160);
+        }
+
+        /// <summary>
+        /// Retrieves an image source from the bitmap
+        /// </summary>
+        /// <param name="bitmap">The bitmap.</param>
+        /// <returns>ImageSource.</returns>
+        public static ImageSource BitmapToImageSource(System.Drawing.Image bitmap)
+        {
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                return bitmapImage;
+            }
         }
 
         private int _port = 80;
@@ -58,11 +94,22 @@ namespace CODE.Framework.Services.Tools.Windows
             _messageSize = messageSize;
             _serviceUri = serviceUri;
 
-            listView1.ItemsSource = null;
+            OperationsList.ItemsSource = null;
 
-            label2.Content = "Service URI: " + serviceUri.AbsoluteUri;
+            if (protocol == Protocol.BasicHttp || protocol == Protocol.WsHttp)
+            {
+                var brush = Resources["IconBackground"] as SolidColorBrush;
+                if (brush != null)
+                    brush.Color = Color.FromRgb(255, 153, 51);
+            }
+            else if (protocol == Protocol.NetTcp || protocol == Protocol.InProcess)
+            {
+                var brush = Resources["IconBackground"] as SolidColorBrush;
+                if (brush != null)
+                    brush.Color = Color.FromRgb(0, 153, 51);
+            }
 
-            var fieldInfo = typeof(ServiceHost).GetField("serviceType", BindingFlags.Instance | BindingFlags.NonPublic);
+            var fieldInfo = typeof (ServiceHost).GetField("serviceType", BindingFlags.Instance | BindingFlags.NonPublic);
             if (fieldInfo == null) return;
             var serviceType = fieldInfo.GetValue(host) as Type;
             if (serviceType == null) return;
@@ -72,25 +119,13 @@ namespace CODE.Framework.Services.Tools.Windows
             var serviceInterface = interfaces[0];
             _contractType = serviceInterface;
 
-            var methods = serviceInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public).OrderBy(m => m.Name);
+            var methods = ObjectHelper.GetAllMethodsForInterface(serviceInterface).OrderBy(m => m.Name).ToList();
             var methodList = new ObservableCollection<MethodItem>();
-            listView1.ItemsSource = methodList;
+            OperationsList.ItemsSource = methodList;
 
             foreach (var method in methods)
-            {
-                var isOperationContract = false;
-
-                var attributes = method.GetCustomAttributes(true);
-                foreach (var attribute in attributes)
-                    if (attribute is OperationContractAttribute)
-                    {
-                        isOperationContract = true;
-                        break;
-                    }
-
-                if (isOperationContract)
+                if (method.GetCustomAttributes(true).OfType<OperationContractAttribute>().Any())
                     methodList.Add(new MethodItem {Name = method.Name, MethodInfo = method});
-            }
         }
 
         private class MethodItem
@@ -101,16 +136,21 @@ namespace CODE.Framework.Services.Tools.Windows
 
         private void NewOperationSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (listView1.SelectedItems.Count == 0) return;
+            if (OperationsList.SelectedItems.Count == 0) return;
 
-            label1.Visibility = Visibility.Visible;
+            OperationNameLabel.Visibility = Visibility.Visible;
+            RefreshSelectedOperations();
+            RefreshJsonAndXmlFromTree();
+        }
 
-            foreach (var methodListItem in listView1.SelectedItems)
+        private void RefreshSelectedOperations(object parameterValue = null)
+        {
+            foreach (var methodListItem in OperationsList.SelectedItems)
             {
                 var methodItem = methodListItem as MethodItem;
                 if (methodItem != null)
                 {
-                    label1.Content = methodItem.Name + " Operation";
+                    OperationNameLabel.Content = methodItem.Name + " Operation";
                     _selectedOperationName = methodItem.Name;
                     var methodInfo = methodItem.MethodInfo;
                     var parameters = methodInfo.GetParameters();
@@ -118,85 +158,160 @@ namespace CODE.Framework.Services.Tools.Windows
                     {
                         var firstParameter = parameters[0];
 
-                        treeView1.DataContext = Activator.CreateInstance(firstParameter.ParameterType);
-
-                        PopulateTreeView(firstParameter.ParameterType, firstParameter.Name, methodItem.Name);
+                        RequestContractTree.DataContext = parameterValue ?? Activator.CreateInstance(firstParameter.ParameterType);
+                        PopulateTreeView(firstParameter.ParameterType, firstParameter.Name, methodItem.Name, parameterValue);
 
                         if (parameters.Length > 1)
                             MessageBox.Show("Operations should only accept a single input message (parameter)");
                     }
                 }
             }
-
         }
 
-        private void PopulateTreeView(Type parameter, string parameterName, string methodName)
+        private void PopulateTreeView(Type parameter, string parameterName, string methodName, object parameterValue = null)
         {
-            treeView1.Visibility = Visibility.Visible;
+            RequestContractTree.Visibility = Visibility.Visible;
+            _mustRefreshUrlOnDataChange = false;
 
             var parameterList = new ObservableCollection<ParameterItem>();
-            var rootParameter = new ParameterItem(treeView1.DataContext)
-                                    {
-                                        Name = parameterName, 
-                                        NodeType = ParameterNodeType.Root,
-                                        MethodName = methodName,
-                                        ContractType = parameter.ToString(),
-                                        IsRequired = false
-                                    };
+            var rootParameter = new ParameterItem(RequestContractTree.DataContext)
+            {
+                Name = parameterName,
+                NodeType = ParameterNodeType.Root,
+                MethodName = methodName,
+                ContractType = parameter.ToString(),
+                IsRequired = false
+            };
+            if (_protocol != Protocol.RestHttpJson && _protocol != Protocol.RestHttpXml)
+                rootParameter.OperationUrl = _serviceUri.AbsoluteUri;
+            else
+            {
+                _requestHttpMethod = RestHelper.GetHttpMethodFromContract(_selectedOperationName, _contractType);
+                _currentRootUrl = _serviceUri.AbsoluteUri + "/" + RestHelper.GetExposedMethodNameFromContract(methodName, _requestHttpMethod, _contractType);
+                _mustRefreshUrlOnDataChange = true;
+                rootParameter.OperationUrl = _requestHttpMethod + ": " + GetUrlForCurrentData();
+            }
             parameterList.Add(rootParameter);
+            _currentRootParameter = rootParameter;
 
-            treeView1.ItemsSource = parameterList;
+            RequestContractTree.ItemsSource = parameterList;
 
-            var valueObject = Activator.CreateInstance(parameter);
+            var valueObject = parameterValue ?? Activator.CreateInstance(parameter);
+            PopulateTreeBranch(parameter, valueObject, rootParameter, RequestContractTree.DataContext);
+        }
 
+        private string GetUrlForCurrentData()
+        {
+            return _currentRootUrl + RestHelper.SerializeToUrlParameters(RequestContractTree.DataContext, _requestHttpMethod);
+        }
+
+        private void PopulateTreeBranch(Type parameter, object valueObject, ParameterItem parentParameter, object dataContext)
+        {
             var properties = parameter.GetProperties(BindingFlags.Instance | BindingFlags.Public).ToList().OrderBy(p => p.Name);
             foreach (var property in properties)
             {
                 var attributes = property.GetCustomAttributes(true);
                 foreach (var attribute in attributes)
-                    if (attribute is DataMemberAttribute)
+                {
+                    var memberAttribute = attribute as DataMemberAttribute;
+                    if (memberAttribute == null) continue;
+                    var dataMemberAttribute = memberAttribute;
+                    var actualValue = property.GetValue(valueObject, null);
+                    var newParameter = new ParameterItem(dataContext)
                     {
-                        var dataMemberAttribute = (DataMemberAttribute)attribute;
-                        var actualValue = property.GetValue(valueObject, null);
-                        var newParameter = new ParameterItem(treeView1.DataContext)
+                        Name = property.Name,
+                        MemberType = property.PropertyType.Name.Replace("Byte[]", "Byte[]/Binary"),
+                        IsEnum = property.PropertyType.IsEnum,
+                        NodeType = ParameterNodeType.SimpleParameter,
+                        ManipulationTextBoxVisible = Visibility.Visible,
+                        TypeVisible = Visibility.Visible,
+                        Value = actualValue,
+                        IsRequired = dataMemberAttribute.IsRequired
+                    };
+                    if (newParameter.IsEnum)
+                        newParameter.ConfigureEnum(property.PropertyType);
+                    parentParameter.SubItems.Add(newParameter);
+
+                    if (_mustRefreshUrlOnDataChange)
+                        newParameter.PropertyChanged += (s, e) => _currentRootParameter.OperationUrl = _requestHttpMethod + ": " + GetUrlForCurrentData();
+
+                    if (!property.PropertyType.IsValueType && property.PropertyType != typeof(Guid) && property.PropertyType != typeof(string) && property.PropertyType != typeof(byte[]))
+                    {
+                        if (property.PropertyType.IsArray || property.PropertyType.FullName.StartsWith("System.Collections.Generic.List`1["))
+                        {
+                            newParameter.NodeType = ParameterNodeType.List;
+                            if (property.PropertyType.IsGenericType)
                             {
-                                Name = property.Name,
-                                MemberType = property.PropertyType.Name,
-                                IsEnum = property.PropertyType.IsEnum,
-                                NodeType = ParameterNodeType.SimpleParameter,
-                                ManipulationTextBoxVisible = Visibility.Visible,
-                                TypeVisible = Visibility.Visible,
-                                Value = actualValue,
-                                IsRequired = dataMemberAttribute.IsRequired
-                            };
-                        if (newParameter.IsEnum)
-                            newParameter.ConfigureEnum(property.PropertyType);
-                        rootParameter.SubItems.Add(newParameter);
-                        break;
+                                var genericTypes = property.PropertyType.GetGenericArguments();
+                                var genericTypeNames = string.Empty;
+                                foreach (var genericType in genericTypes)
+                                {
+                                    if (!string.IsNullOrEmpty(genericTypeNames)) genericTypeNames += ",";
+                                    genericTypeNames += genericType.Name;
+                                    newParameter.ListGenericType = genericType;
+                                }
+                                newParameter.MemberType = newParameter.MemberType.Replace("List`1", "List<" + genericTypeNames + ">");
+                            }
+
+                            dynamic enumerable = newParameter.Value;
+                            var itemCounter = 0;
+                            foreach (var item in enumerable)
+                            {
+                                var itemType = item.GetType();
+                                var newParameter2 = new ParameterItem(item)
+                                {
+                                    Name = itemCounter.ToString(CultureInfo.InvariantCulture),
+                                    MemberType = itemType.Name,
+                                    IsEnum = itemType.IsEnum,
+                                    NodeType = ParameterNodeType.SimpleParameter,
+                                    ManipulationTextBoxVisible = Visibility.Visible,
+                                    TypeVisible = Visibility.Visible,
+                                    Value = item,
+                                    IsRequired = dataMemberAttribute.IsRequired
+                                };
+                                if (!itemType.IsValueType && itemType != typeof(Guid) && itemType != typeof(string) && itemType != typeof(byte[]))
+                                    newParameter2.NodeType = ParameterNodeType.ComplexParameter;
+                                newParameter.SubItems.Add(newParameter2);
+                                PopulateTreeBranch(itemType, item, newParameter2, item);
+                                itemCounter++;
+                            }
+                        }
+                        else
+                        {
+                            newParameter.NodeType = ParameterNodeType.ComplexParameter;
+                            if (newParameter.Value != null) PopulateTreeBranch(property.PropertyType, newParameter.Value, newParameter, newParameter.Value);
+                        }
                     }
+
+                    break;
+                }
             }
         }
 
         private void InvokeService(object sender, RoutedEventArgs e)
         {
-            var data = treeView1.DataContext;
+            var data = RequestContractTree.DataContext;
+            if (data == null)
+            {
+                MessageBox.Show("Please select the operation you would like to invoke.");
+                return;
+            }
 
             if (_protocol != Protocol.RestHttpJson && _protocol != Protocol.RestHttpXml)
             {
                 var service = ServiceClient.GetChannel(_contractType, _port, _serviceId, _protocol, _messageSize, _serviceUri);
 
-                var methods = _contractType.GetMethods();
-                foreach (var method in methods)
-                    if (method.Name == _selectedOperationName)
+                var methods = ObjectHelper.GetAllMethodsForInterface(_contractType);
+                foreach (var method in methods.Where(method => method.Name == _selectedOperationName))
+                {
+                    var method1 = method;
+                    new Thread(() =>
                     {
-                        var method1 = method;
-                        new Thread(() =>
-                                       {
-                                           var response = method1.Invoke(service, new[] { data });
-                                           Dispatcher.Invoke(new Action<object>(ShowDataContract), response);
-                                       }).Start();
-                        break;
-                    }
+                        var response = method1.Invoke(service, new[] {data});
+                        Dispatcher.Invoke(new Action<object>(ShowDataContract), response);
+                    }).Start();
+                    break;
+                }
             }
             else
             {
@@ -204,24 +319,58 @@ namespace CODE.Framework.Services.Tools.Windows
                 if (_protocol == Protocol.RestHttpXml)
                 {
                     new Thread(() =>
+                    {
+                        var httpMethod = RestHelper.GetHttpMethodFromContract(_selectedOperationName, _contractType);
+                        var exposedMethodName = RestHelper.GetExposedMethodNameFromContract(_selectedOperationName, httpMethod, _contractType);
+                        using (var client = new WebClient())
                         {
-                            var client = new WebClient();
                             client.Headers.Add("Content-Type", "application/xml; charset=utf-8");
-                            var postData = SerializeToRestXml(data);
-                            var restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + _selectedOperationName, postData);
+                            string restResponse;
+                            switch (httpMethod)
+                            {
+                                case "POST":
+                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, SerializeToRestXml(data));
+                                    break;
+                                case "GET":
+                                    restResponse = client.DownloadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName + RestHelper.SerializeToUrlParameters(data));
+                                    break;
+                                default:
+                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, httpMethod, SerializeToRestXml(data));
+                                    break;
+                            }
                             Dispatcher.Invoke(new Action<string>(ShowRawData), restResponse);
-                        }).Start();
+                        }
+                    }).Start();
                 }
                 else
                 {
                     new Thread(() =>
+                    {
+                        var httpMethod = RestHelper.GetHttpMethodFromContract(_selectedOperationName, _contractType);
+                        var exposedMethodName = RestHelper.GetExposedMethodNameFromContract(_selectedOperationName, httpMethod, _contractType);
+                        using (var client = new WebClient())
                         {
-                            var client = new WebClient();
                             client.Headers.Add("Content-Type", "application/json; charset=utf-8");
-                            var postData = SerializeToRestJson(data);
-                            var restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + _selectedOperationName, postData);
+                            string restResponse;
+                            switch (httpMethod)
+                            {
+                                case "POST":
+                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, SerializeToRestJson(data));
+                                    break;
+                                case "GET":
+                                    MessageBox.Show("REST operations with HTTP-GET Verbs are not currently supported for self-hosted services. Please use a different HTTP Verb or host your REST service in a different host (wuch as WebApi). We are hoping to add HTTP-GET support for self-hosted services in the future.\r\n\r\nIf you have further questions, feel free to contact us: info@codemag.com", "CODE Framework");
+                                    return;
+                                    // TODO: Add support for this.
+                                    var serializedData = RestHelper.SerializeToUrlParameters(data);
+                                    restResponse = client.DownloadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName + serializedData);
+                                    break;
+                                default:
+                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, httpMethod, SerializeToRestJson(data));
+                                    break;
+                            }
                             Dispatcher.Invoke(new Action<string>(ShowRawData), restResponse);
-                        }).Start();
+                        }
+                    }).Start();
                 }
             }
         }
@@ -235,8 +384,36 @@ namespace CODE.Framework.Services.Tools.Windows
         {
             var stream = new MemoryStream();
             var serializer = new DataContractSerializer(objectToSerialize.GetType());
-            serializer.WriteObject(stream, objectToSerialize);
-            return StreamHelper.ToString(stream);
+            try
+            {
+                serializer.WriteObject(stream, objectToSerialize);
+                return StreamHelper.ToString(stream);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHelper.GetExceptionText(ex);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes from REST XML
+        /// </summary>
+        /// <param name="xml">The XML.</param>
+        /// <param name="resultType">Type of the result object.</param>
+        /// <returns>Deserialized object</returns>
+        public static object DeserializeFromRestXml(string xml, Type resultType)
+        {
+            try
+            {
+                var isUtf16 = xml.Contains("encoding=\"utf-16\"");
+                var serializer = new DataContractSerializer(resultType);
+                using (var stream = new MemoryStream(isUtf16 ? System.Text.Encoding.Unicode.GetBytes(xml) : System.Text.Encoding.ASCII.GetBytes(xml)))
+                    return serializer.ReadObject(stream);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -248,27 +425,54 @@ namespace CODE.Framework.Services.Tools.Windows
         {
             var stream = new MemoryStream();
             var serializer = new DataContractJsonSerializer(objectToSerialize.GetType());
-            serializer.WriteObject(stream, objectToSerialize);
-            return StreamHelper.ToString(stream);
+            try
+            {
+                serializer.WriteObject(stream, objectToSerialize);
+                return StreamHelper.ToString(stream);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHelper.GetExceptionText(ex);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes from REST JSON.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns>Deserialized object</returns>
+        public static object DeserializeFromRestJson(string json, Type resultType)
+        {
+            try
+            {
+                var serializer = new DataContractJsonSerializer(resultType);
+                using (var stream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes(json)))
+                    return serializer.ReadObject(stream);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void ShowRawData(string data)
         {
             var text = new TextBox
-                           {
-                               Text = data, 
-                               AcceptsReturn = true, 
-                               AcceptsTab = true, 
-                               TextWrapping = TextWrapping.Wrap, 
-                               FontFamily = new FontFamily("Consolas"),
-                               HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                               VerticalScrollBarVisibility = ScrollBarVisibility.Auto
-                           };
+            {
+                Text = data,
+                AcceptsReturn = true,
+                AcceptsTab = true,
+                TextWrapping = TextWrapping.Wrap,
+                FontFamily = new FontFamily("Consolas"),
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
             var window = new Window
-                             {
-                                 Title = "Response Data", 
-                                 Content = text
-                             };
+            {
+                Title = "Response Data",
+                Content = text
+            };
             window.Show();
         }
 
@@ -338,14 +542,253 @@ namespace CODE.Framework.Services.Tools.Windows
             }
         }
 
-        private void GetRestXmlClick(object sender, RoutedEventArgs e)
+        private void LoadByteArrayFromFile_Click(object sender, RoutedEventArgs e)
         {
-            ShowRawData(SerializeToRestXml(treeView1.DataContext));
+            var button = sender as Button;
+            if (button != null)
+            {
+                var grid = button.Parent as FrameworkElement;
+                if (grid != null)
+                {
+                    var item = grid.DataContext as ParameterItem;
+                    if (item != null)
+                    {
+                        var dlg = new OpenFileDialog {CheckFileExists = true, CheckPathExists = true, Multiselect = false, RestoreDirectory = true};
+                        if (dlg.ShowDialog() == DialogResult.OK)
+                            using (var file = File.OpenRead(dlg.FileName))
+                            {
+                                var bytes = new byte[file.Length];
+                                file.Read(bytes, 0, (int) file.Length);
+                                item.Value = bytes;
+                            }
+                    }
+                }
+            }
         }
 
-        private void GetRestJsonClick(object sender, RoutedEventArgs e)
+        private void AddItemToList(object sender, RoutedEventArgs e)
         {
-            ShowRawData(SerializeToRestJson(treeView1.DataContext));
+            var button = sender as Button;
+            if (button != null)
+            {
+                var grid = button.Parent as FrameworkElement;
+                if (grid != null)
+                {
+                    var item = grid.DataContext as ParameterItem;
+                    if (item != null && item.NodeType == ParameterNodeType.List)
+                        if (item.ListGenericType != null)
+                        {
+                            try
+                            {
+                                dynamic newItem = Activator.CreateInstance(item.ListGenericType);
+                                dynamic list = item.Value;
+                                list.Add(newItem);
+                                var parameterItem = RequestContractTree.Items[0] as ParameterItem;
+                                if (parameterItem != null) RefreshSelectedOperations(parameterItem.DataContext);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                        else
+                            MessageBox.Show("Arrays cannot be resized on the fly.");
+                }
+            }
+        }
+
+        private int _lastSelectedContractDisplayIndex;
+
+        private void HandleContractViewSwitched(object sender, SelectionChangedEventArgs e)
+        {
+            var lastIndex = _lastSelectedContractDisplayIndex;
+            if (lastIndex == ContractDisplayTab.SelectedIndex) return;
+
+            var data = RequestContractTree.DataContext;
+            if (data == null) return;
+
+            JsonContract.Background = Brushes.White;
+            XmlContract.Background = Brushes.White;
+
+            switch (lastIndex)
+            {
+                case 0: // Going from the tree to other items
+                    RefreshJsonAndXmlFromTree();
+                    _lastSelectedContractDisplayIndex = ContractDisplayTab.SelectedIndex;
+                    break;
+                case 1: // Going from JSON to something else
+                    var contractObject = DeserializeFromRestJson(JsonContract.Text, RequestContractTree.DataContext.GetType());
+                    if (contractObject != null)
+                    {
+                        RefreshSelectedOperations(contractObject);
+                        XmlContract.Text = XmlHelper.Format(SerializeToRestXml(RequestContractTree.DataContext));
+                        _lastSelectedContractDisplayIndex = ContractDisplayTab.SelectedIndex;
+                    }
+                    else
+                    {
+                        JsonContract.Background = new SolidColorBrush(Color.FromArgb(40, 255, 0, 0));
+                        MessageBox.Show("JSON is either invalid or doesn't match the current contract structure.");
+                        ContractDisplayTab.SelectedIndex = 1;
+                    }
+                    break;
+                case 2:
+                    var contractObject2 = DeserializeFromRestXml(XmlContract.Text, RequestContractTree.DataContext.GetType());
+                    if (contractObject2 != null)
+                    {
+                        RefreshSelectedOperations(contractObject2);
+                        JsonContract.Text = JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext));
+                        _lastSelectedContractDisplayIndex = ContractDisplayTab.SelectedIndex;
+                    }
+                    else
+                    {
+                        XmlContract.Background = new SolidColorBrush(Color.FromArgb(40, 255, 0, 0));
+                        MessageBox.Show("XML is either invalid or doesn't match the current contract structure.");
+                        ContractDisplayTab.SelectedIndex = 2;
+                    }
+                    break;
+            }
+        }
+
+        private void HandleSaveAs(object sender, RoutedEventArgs e)
+        {
+            var data = RequestContractTree.DataContext;
+            if (data == null)
+            {
+                MessageBox.Show("Please select an operation first.");
+                return;
+            }
+            
+            var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
+            var dlg = new SaveFileDialog {InitialDirectory = currentFolderName, DefaultExt = "json", AddExtension = true, FileName = "Request.json", RestoreDirectory = true, SupportMultiDottedExtensions = true, Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*"};
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                var path = dlg.FileName.JustPath();
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                StringHelper.ToFile(JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext)), dlg.FileName);
+            }
+        }
+
+        private void HandleLoad(object sender, RoutedEventArgs e)
+        {
+            var data = RequestContractTree.DataContext;
+            if (data == null)
+            {
+                MessageBox.Show("Please select an operation first.");
+                return;
+            }
+            var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
+            var dlg = new OpenFileDialog {InitialDirectory = currentFolderName, DefaultExt = "json", AddExtension = true, FileName = "Request.json", RestoreDirectory = true, SupportMultiDottedExtensions = true, Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*", CheckFileExists = true, CheckPathExists = true};
+            if (dlg.ShowDialog() == DialogResult.OK && File.Exists(dlg.FileName))
+            {
+                var json = StringHelper.FromFile(dlg.FileName);
+                var contractObject = DeserializeFromRestJson(json, data.GetType());
+                if (contractObject == null)
+                {
+                    MessageBox.Show("The JSON file didn't contain valid JSON, or the structure didn't match the current request contract.");
+                    return;
+                }
+                RefreshSelectedOperations(contractObject);
+                RefreshJsonAndXmlFromTree();
+            }
+        }
+
+        private void HandleQuickSave(object sender, RoutedEventArgs e)
+        {
+            var data = RequestContractTree.DataContext;
+            if (data == null)
+            {
+                MessageBox.Show("Please select an operation first.");
+                return;
+            }
+            var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
+            if (!Directory.Exists(currentFolderName)) Directory.CreateDirectory(currentFolderName);
+            var quickFileName = currentFolderName + @"\QuickSave.json";
+            StringHelper.ToFile(JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext)), quickFileName);
+            DisplayFlashMessage("Saved", Brushes.SeaGreen);
+        }
+
+        private void HandleQuickLoad(object sender, RoutedEventArgs e)
+        {
+            var data = RequestContractTree.DataContext;
+            if (data == null)
+            {
+                MessageBox.Show("Please select an operation first.");
+                return;
+            }
+            var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
+            if (!Directory.Exists(currentFolderName))
+            {
+                DisplayFlashMessage("Not found!", Brushes.Crimson);
+                return;
+            }
+            var quickFileName = currentFolderName + @"\QuickSave.json";
+            if (!File.Exists(quickFileName))
+            {
+                DisplayFlashMessage("Not found!", Brushes.Crimson);
+                return;
+            }
+            var json = StringHelper.FromFile(quickFileName);
+            var contractObject = DeserializeFromRestJson(json, data.GetType());
+            if (contractObject == null)
+            {
+                MessageBox.Show("The JSON file didn't contain valid JSON, or the structure didn't match the current request contract.");
+                return;
+            }
+            RefreshSelectedOperations(contractObject);
+            RefreshJsonAndXmlFromTree();
+            DisplayFlashMessage("Loaded", Brushes.CornflowerBlue);
+        }
+
+        private void RefreshJsonAndXmlFromTree()
+        {
+            JsonContract.Text = JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext));
+            XmlContract.Text = XmlHelper.Format(SerializeToRestXml(RequestContractTree.DataContext));
+        }
+
+        private void DisplayFlashMessage(string message, Brush color)
+        {
+            FlashLabel.Content = message;
+            FlashLabel.Foreground = color;
+            var storyboard = Resources["ShowFlashMessage"] as Storyboard;
+            if (storyboard != null) storyboard.Begin();
+        }
+
+        private string GetFullPathForCurrentRequest(Type requestType)
+        {
+            var currentDirectory = Directory.GetCurrentDirectory().JustPath();
+            if (currentDirectory.ToLower().EndsWith(@"\bin\debug")) currentDirectory = currentDirectory.Substring(0, currentDirectory.Length - 10);
+            if (currentDirectory.ToLower().EndsWith(@"\bin\release")) currentDirectory = currentDirectory.Substring(0, currentDirectory.Length - 12);
+            if (currentDirectory.ToLower().EndsWith(@"\bin")) currentDirectory = currentDirectory.Substring(0, currentDirectory.Length - 4);
+            currentDirectory += @"\Requests\" + _contractType.FullName + @"\" + requestType.FullName;
+            return currentDirectory;
+        }
+
+        private bool _ctrlDown;
+        private string _requestHttpMethod;
+        private string _currentRootUrl;
+        private bool _mustRefreshUrlOnDataChange;
+        private ParameterItem _currentRootParameter;
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyDown" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+            if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl) _ctrlDown = true;
+            if (_ctrlDown && e.Key == Key.S) HandleQuickSave(this, new RoutedEventArgs());
+            if (_ctrlDown && (e.Key == Key.L || e.Key == Key.O)) HandleQuickLoad(this, new RoutedEventArgs());
+            if (_ctrlDown && (e.Key == Key.I || e.Key == Key.Enter)) InvokeService(this, new RoutedEventArgs());
+        }
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyUp" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
+        protected override void OnPreviewKeyUp(KeyEventArgs e)
+        {
+            base.OnPreviewKeyUp(e);
+            if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl) _ctrlDown = false;
         }
     }
 
@@ -411,12 +854,21 @@ namespace CODE.Framework.Services.Tools.Windows
                         case "datetime":
                             returnTemplate = ui.FindResource("DateTime-Item") as HierarchicalDataTemplate;
                             break;
-
-                        // TODO: byte[], collections
+                        case "byte[]/binary":
+                        case "byte[]":
+                            returnTemplate = ui.FindResource("ByteArray-Item") as HierarchicalDataTemplate;
+                            break;
                     }
 
                     if (node.IsEnum) returnTemplate = ui.FindResource("Enum-Item") as HierarchicalDataTemplate;
+                    break;
 
+                case ParameterNodeType.List:
+                    returnTemplate = ui.FindResource("List-Item") as HierarchicalDataTemplate;
+                    break;
+
+                case ParameterNodeType.ComplexParameter:
+                    returnTemplate = ui.FindResource("SubObject-Item") as HierarchicalDataTemplate;
                     break;
             }
 
@@ -443,6 +895,19 @@ namespace CODE.Framework.Services.Tools.Windows
     public class ParameterItem : INotifyPropertyChanged
     {
         private readonly object _dataContext;
+
+        /// <summary>
+        /// Gets the data context.
+        /// </summary>
+        /// <value>The data context.</value>
+        public object DataContext
+        {
+            get
+            {
+                return _dataContext;
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterItem"/> class.
         /// </summary>
@@ -451,11 +916,13 @@ namespace CODE.Framework.Services.Tools.Windows
         {
             _dataContext = dataContext;
             MemberType = "String";
+            OperationUrl = string.Empty;
             SubItems = new ObservableCollection<ParameterItem>();
             ManipulationTextBoxVisible = Visibility.Collapsed;
             TypeVisible = Visibility.Collapsed;
             TextValue = string.Empty;
         }
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -463,6 +930,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The name.
         /// </value>
         public string Name { get; set; }
+
         /// <summary>
         /// Gets or sets the type of the member.
         /// </summary>
@@ -470,6 +938,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The type of the member.
         /// </value>
         public string MemberType { get; set; }
+
         /// <summary>
         /// Gets or sets the name of the method.
         /// </summary>
@@ -477,6 +946,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The name of the method.
         /// </value>
         public string MethodName { get; set; }
+
         /// <summary>
         /// Gets or sets the type of the contract.
         /// </summary>
@@ -490,6 +960,16 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </summary>
         /// <value><c>true</c> if this instance is enum; otherwise, <c>false</c>.</value>
         public bool IsEnum { get; set; }
+
+        /// <summary>
+        /// URL information for the current operation (only used on root items)
+        /// </summary>
+        /// <value>The operation URL.</value>
+        public string OperationUrl
+        {
+            get { return _operationUrl; }
+            set { _operationUrl = value; NotifyChanged(); }
+        }
 
         /// <summary>
         /// Is the null element visible?
@@ -517,6 +997,7 @@ namespace CODE.Framework.Services.Tools.Windows
         }
 
         private object _value;
+
         /// <summary>
         /// Gets or sets the value.
         /// </summary>
@@ -534,12 +1015,41 @@ namespace CODE.Framework.Services.Tools.Windows
                 {
                     var contractType = _dataContext.GetType();
                     var member = contractType.GetProperty(Name, BindingFlags.Public | BindingFlags.Instance);
-                    member.SetValue(_dataContext, value, null);
+                    if (member != null)
+                        member.SetValue(_dataContext, value, null);
                 }
 
                 NotifyChanged();
             }
         }
+
+        /// <summary>
+        /// Gets the byte array display value.
+        /// </summary>
+        /// <value>The byte array display value.</value>
+        public string ByteArrayDisplayValue
+        {
+            get
+            {
+                if (_value is byte[])
+                {
+                    var byteArray = _value as byte[];
+                    var displayText = string.Empty;
+                    foreach (var byteItem in byteArray)
+                    {
+                        displayText += byteItem.ToString(CultureInfo.InvariantCulture);
+                        if (displayText.Length > 25)
+                        {
+                            displayText += "...";
+                            break;
+                        }
+                    }
+                    return displayText;
+                }
+                return string.Empty;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the text value.
         /// </summary>
@@ -595,11 +1105,12 @@ namespace CODE.Framework.Services.Tools.Windows
 
                     NotifyChanged();
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }
         }
+
         /// <summary>
         /// Gets or sets a value indicating whether [boolean value].
         /// </summary>
@@ -608,9 +1119,10 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public bool BooleanValue
         {
-            get { return (bool)Value; }
+            get { return (bool) Value; }
             set { Value = value; }
         }
+
         /// <summary>
         /// Gets or sets the integer value.
         /// </summary>
@@ -619,9 +1131,10 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public int IntegerValue
         {
-            get { return (int)Value; }
+            get { return (int) Value; }
             set { Value = value; }
         }
+
         /// <summary>
         /// Gets or sets the decimal value.
         /// </summary>
@@ -630,9 +1143,10 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public decimal DecimalValue
         {
-            get { return (decimal)Value; }
+            get { return (decimal) Value; }
             set { Value = value; }
         }
+
         /// <summary>
         /// Gets or sets the double value.
         /// </summary>
@@ -641,9 +1155,10 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public double DoubleValue
         {
-            get { return (double)Value; }
+            get { return (double) Value; }
             set { Value = value; }
         }
+
         /// <summary>
         /// Gets or sets the float value.
         /// </summary>
@@ -652,9 +1167,10 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public float FloatValue
         {
-            get { return (float)Value; }
+            get { return (float) Value; }
             set { Value = value; }
         }
+
         /// <summary>
         /// Gets or sets the long value.
         /// </summary>
@@ -663,7 +1179,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public long LongValue
         {
-            get { return (long)Value; }
+            get { return (long) Value; }
             set { Value = value; }
         }
 
@@ -676,6 +1192,7 @@ namespace CODE.Framework.Services.Tools.Windows
             get { return Value.ToString(); }
             set { Value = Enum.Parse(_enumType, value); }
         }
+
         /// <summary>
         /// Gets or sets the decimal value.
         /// </summary>
@@ -684,7 +1201,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </value>
         public string DateTimeValue
         {
-            get { return ((DateTime)Value).ToString(CultureInfo.CurrentUICulture); }
+            get { return ((DateTime) Value).ToString(CultureInfo.CurrentUICulture); }
             set
             {
                 DateTime newDate;
@@ -706,6 +1223,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// 	<c>true</c> if this instance is required; otherwise, <c>false</c>.
         /// </value>
         public bool IsRequired { get; set; }
+
         /// <summary>
         /// Gets or sets the manipulation text box visible.
         /// </summary>
@@ -713,6 +1231,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The manipulation text box visible.
         /// </value>
         public Visibility ManipulationTextBoxVisible { get; set; }
+
         /// <summary>
         /// Gets or sets the type visible.
         /// </summary>
@@ -720,6 +1239,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The type visible.
         /// </value>
         public Visibility TypeVisible { get; set; }
+
         /// <summary>
         /// Gets or sets the type of the node.
         /// </summary>
@@ -727,6 +1247,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The type of the node.
         /// </value>
         public ParameterNodeType NodeType { get; set; }
+
         /// <summary>
         /// Gets or sets the sub items.
         /// </summary>
@@ -734,6 +1255,12 @@ namespace CODE.Framework.Services.Tools.Windows
         /// The sub items.
         /// </value>
         public ObservableCollection<ParameterItem> SubItems { get; set; }
+
+        /// <summary>
+        /// Generic type used by the list
+        /// </summary>
+        /// <value>The type of the list's generic parameter.</value>
+        public Type ListGenericType { get; set; }
 
         private void NotifyChanged()
         {
@@ -762,6 +1289,69 @@ namespace CODE.Framework.Services.Tools.Windows
         }
 
         private Type _enumType;
+        private string _operationUrl;
+    }
+
+    /// <summary>
+    /// Helper class used to move the focus within elements of the contract entry tree
+    /// </summary>
+    public class ControlFocusHelper : DependencyObject
+    {
+        /// <summary>If set to true, moves the cursor on key press events</summary>
+        public static readonly DependencyProperty AutoMoveCursorToNextTreeItemProperty = DependencyProperty.RegisterAttached("AutoMoveCursorToNextTreeItem", typeof(bool), typeof(ControlFocusHelper), new PropertyMetadata(false, OnAutoMoveCursorToNextTreeItemChanged));
+
+        /// <summary>
+        /// Fires when AutoMoveCursorToNextTreeItem property changes
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="args">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnAutoMoveCursorToNextTreeItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            if (!(bool) args.NewValue) return;
+            var control = d as Control;
+            if (control == null) return;
+            control.PreviewKeyDown += (s, e) =>
+            {
+                if (e.Key == Key.Tab)
+                {
+                    var element = s as UIElement;
+                    if (element == null) return;
+                    var treeViewItem = GetParent<TreeViewItem>(element);
+                    if (treeViewItem == null) return;
+                    // TODO: This is not currently working
+                }
+            };
+        }
+
+        private static T GetParent<T>(DependencyObject element) where T : class
+        {
+            while (true)
+            {
+                element = VisualTreeHelper.GetParent(element);
+                if (element == null) return null;
+                if (element is T) return element as T;
+            }
+        }
+
+        /// <summary>
+        /// Sets the automatic move cursor to next tree item.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="value">if set to <c>true</c> [value].</param>
+        public static void SetAutoMoveCursorToNextTreeItem(DependencyObject d, bool value)
+        {
+            d.SetValue(AutoMoveCursorToNextTreeItemProperty, value);
+        }
+        /// <summary>
+        /// Gets the automatic move cursor to next tree item.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public static bool GetAutoMoveCursorToNextTreeItem(DependencyObject d)
+        {
+            return (bool)d.GetValue(AutoMoveCursorToNextTreeItemProperty);
+        }
+
     }
 
     /// <summary>
@@ -773,14 +1363,17 @@ namespace CODE.Framework.Services.Tools.Windows
         /// Root element
         /// </summary>
         Root,
+
         /// <summary>
         /// Simple parameter
         /// </summary>
         SimpleParameter,
+
         /// <summary>
         /// Complex parameter
         /// </summary>
         ComplexParameter,
+
         /// <summary>
         /// List paramete
         /// </summary>

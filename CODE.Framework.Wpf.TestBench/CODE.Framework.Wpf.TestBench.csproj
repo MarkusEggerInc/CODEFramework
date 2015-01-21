@@ -79,11 +79,17 @@
     <Compile Include="EditFormTest.xaml.cs">
       <DependentUpon>EditFormTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExampleListInRibbon.xaml.cs">
+      <DependentUpon>ExampleListInRibbon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FlowDocumentReaderTest.xaml.cs">
       <DependentUpon>FlowDocumentReaderTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="FlowFormTest.xaml.cs">
       <DependentUpon>FlowFormTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FontControls.xaml.cs">
+      <DependentUpon>FontControls.xaml</DependentUpon>
     </Compile>
     <Compile Include="LazyList.xaml.cs">
       <DependentUpon>LazyList.xaml</DependentUpon>
@@ -115,8 +121,14 @@
     <Compile Include="PropertySheetTest.xaml.cs">
       <DependentUpon>PropertySheetTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RibbonTest.xaml.cs">
+      <DependentUpon>RibbonTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScaleSliderTest.xaml.cs">
       <DependentUpon>ScaleSliderTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsTest.xaml.cs">
+      <DependentUpon>SettingsTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="SizeAwareContentTest.xaml.cs">
       <DependentUpon>SizeAwareContentTest.xaml</DependentUpon>
@@ -132,6 +144,9 @@
     </Compile>
     <Compile Include="StickyNoteTest.xaml.cs">
       <DependentUpon>StickyNoteTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SyncCollectionTest.xaml.cs">
+      <DependentUpon>SyncCollectionTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="TextBlockExTest.xaml.cs">
       <DependentUpon>TextBlockExTest.xaml</DependentUpon>
@@ -182,6 +197,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ExampleListInRibbon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FileIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -195,6 +214,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="FolderIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FontControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -256,7 +279,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="RibbonTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ScaleSliderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -277,6 +308,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StickyNoteTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SyncCollectionTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

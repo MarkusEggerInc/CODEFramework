@@ -6,6 +6,14 @@
     internal class MemorySettings : ConfigurationSource
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="MemorySettings"/> class.
+        /// </summary>
+        public MemorySettings()
+        {
+            InternalSettings.RemoveSettingWhenSetToNull = true;
+        }
+
+        /// <summary>
         /// Source's Friendly Name.
         /// </summary>
         public override string FriendlyName
@@ -55,23 +63,5 @@
         {
             return false;
         }
-
-        /// <summary>
-        /// Exposes the Settings member. We're shadowing that member here mostly because
-        /// the Memory object is very specialized, designed to override temporarily whatever
-        /// other sources might have the same setting. In order to give that special behavior,
-        /// a new collection class has been created for it. 
-        /// Notice that we still type the member as a ConfigurationSourceSettings class, 
-        /// and the only difference is that we instantiate the ConfigurationSourceSettings class instead.
-        /// </summary>
-        public override ConfigurationSourceSettings Settings
-        {
-            get { return _settings ?? (_settings = new ConfigurationSourceMemorySettings(this)); }
-        }
-
-        /// <summary>
-        /// Keeps an internal instance of the ConfigurationSourceSettings class.
-        /// </summary>
-        private ConfigurationSourceSettings _settings;
     }
 }

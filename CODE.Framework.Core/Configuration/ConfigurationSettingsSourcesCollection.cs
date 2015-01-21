@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CODE.Framework.Core.Configuration
@@ -10,24 +10,8 @@ namespace CODE.Framework.Core.Configuration
     /// exposes an interface for getting to ConfigurationSettingsSourcesCollection in sources that were added to the 
     /// ConfigurationSettings class.
     /// </summary>
-    public class ConfigurationSettingsSourcesCollection : IEnumerable
+    public class ConfigurationSettingsSourcesCollection : Dictionary<string, IConfigurationSource>
     {
-        /// <summary>
-        /// For internal use only
-        /// </summary>
-        private readonly SourcesCollection _sources = new SourcesCollection();
-
-        /// <summary>
-        /// Indexer that allows a source to be accessed by its name. 
-        /// </summary>
-        public IConfigurationSource this[string sourceName]
-        {
-            get
-            {
-                return _sources.Cast<IConfigurationSource>().FirstOrDefault(source => source.FriendlyName == sourceName);
-            }
-        }
-
         /// <summary>
         /// Indexer that allows a source to be accessed by its index. 
         /// </summary>
@@ -35,19 +19,12 @@ namespace CODE.Framework.Core.Configuration
         {
             get
             {
-                if (((index >= 0) && (index <= _sources.Count))) return _sources.Item(index);
+                lock (Values)
+                    if (((index >= 0) && (index <= Count)))
+                        return Values.Skip(index - 1).Take(1).FirstOrDefault();
                 throw new ArgumentOutOfRangeException(Properties.Resources.IndexNotInSources);
             }
         }
-
-        /// <summary>
-        /// Indicates how many sources exist in the collection.
-        /// </summary>
-        public int Count
-        {
-            get { return _sources.Count; }
-        }
-
 
         /// <summary>
         /// Add sources to the collection.
@@ -55,79 +32,22 @@ namespace CODE.Framework.Core.Configuration
         /// <param name="configurationSource">The source.</param>
         public void Add(IConfigurationSource configurationSource)
         {
-            _sources.Add(configurationSource);
+            lock (this)
+                Add(configurationSource.FriendlyName, configurationSource);
+            configurationSource.Read();
         }
 
         /// <summary>
-        /// Implements IEnumerator.GetEnumerator.
+        /// Returns a copy of all sources in a thread-safe way
         /// </summary>
-        /// <returns></returns>
-        public IEnumerator GetEnumerator()
+        /// <returns>Array of configuration sources.</returns>
+        public IConfigurationSource[] GetAllSources()
         {
-            return new SourceEnumerator(_sources);
-        }
-
-        /// <summary>
-        /// Source enumerator class (for internal use only)
-        /// </summary>
-        private class SourceEnumerator : IEnumerator
-        {
-            /// <summary>
-            /// For internal use only
-            /// </summary>
-            private int _intPosition = -1;
-
-            /// <summary>
-            /// For internal use only
-            /// </summary>
-            private readonly int _intInitialCount;
-
-            /// <summary>
-            /// For internal use only
-            /// </summary>
-            private readonly SourcesCollection _sources;
-
-            public SourceEnumerator(SourcesCollection sourcesCollection)
+            lock (Values)
             {
-                _sources = sourcesCollection;
-                _intInitialCount = sourcesCollection.Count;
-            }
-
-            /// <summary>
-            /// Reset the enumeration
-            /// </summary>
-            public void Reset()
-            {
-                _intPosition = -1;
-            }
-
-            /// <summary>
-            /// Current item
-            /// </summary>
-            public object Current
-            {
-                get
-                {
-                    if (_intInitialCount != _sources.Count)
-                        throw new InvalidOperationException(Properties.Resources.EnumSourceChanged);
-                    if (_intPosition >= _sources.Count)
-                        throw new InvalidOperationException(Properties.Resources.EnumerationValueInvalid);
-                    return _sources.Item(_intPosition);
-                }
-            }
-
-            /// <summary>
-            /// Move to next item
-            /// </summary>
-            /// <returns></returns>
-            public bool MoveNext()
-            {
-                if (_intInitialCount == _sources.Count)
-                {
-                    _intPosition++;
-                    return _intPosition < _sources.Count;
-                }
-                throw new InvalidOperationException(Properties.Resources.EnumSourceChanged);
+                var allSources = new IConfigurationSource[Values.Count];
+                Values.CopyTo(allSources, 0);
+                return allSources;
             }
         }
     }

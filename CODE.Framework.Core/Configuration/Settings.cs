@@ -17,38 +17,25 @@ namespace CODE.Framework.Core.Configuration
         {
             set
             {
-                // Indicates if setting is supported.
-
                 // Look for the setting through all sources.
-                foreach (IConfigurationSource source in ConfigurationSettings.Sources)
-                    if (source.IsActive)
-                        // Check if setting is supported.
-                        if (source.IsSettingSupported(setting))
-                        {
-                            // Check if source is readonly.
-                            if (source.IsReadOnly) throw new SettingReadOnlyException();
-                            // If setting is supported and not readonly, write new value to it.
-                            source.Settings[setting] = value;
-
-                            // We've found what we want, so just stop iterating through sources.
-                            // By the specs, we go for the order sources were added.
-                            break;
-                        }
+                var source = ConfigurationSettings.Sources.Values.FirstOrDefault(s => s.IsActive && !s.IsReadOnly && s.IsSettingSupported(setting));
+                if (source != null)
+                {
+                    source.Settings[setting] = value;
+                    return;
+                }
 
                 // If the system is configured to have an in-memory source, we dynamically set the value in memory
-                foreach (IConfigurationSource source in ConfigurationSettings.Sources)
-                    if (source is MemorySettings)
-                        source.Settings.Add(setting, value);
+                var inMemorySetting = ConfigurationSettings.Sources.Values.OfType<MemorySettings>().FirstOrDefault();
+                if (inMemorySetting != null && !inMemorySetting.Settings.ContainsKey(setting))
+                    inMemorySetting.Settings.Add(setting, value);
             }
 
             get
             {
                 // Look for the setting through all sources.
-                foreach (IConfigurationSource source in ConfigurationSettings.Sources)
-                    if (source.IsActive)
-                        if (source.IsSettingSupported(setting))
-                            return source.Settings[setting].ToString();
-                return string.Empty;
+                var source = ConfigurationSettings.Sources.Values.FirstOrDefault(s => s.IsActive && s.IsSettingSupported(setting));
+                return source != null ? source.Settings[setting].ToString() : string.Empty;
             }
         }
 
@@ -59,8 +46,7 @@ namespace CODE.Framework.Core.Configuration
         /// <returns>True/False, indicating whether the setting is supported or not.</returns>
         public bool IsSettingSupported(string setting)
         {
-            // Look for the setting through all sources.
-            return ConfigurationSettings.Sources.Cast<IConfigurationSource>().Where(source => source.IsActive).Any(source => source.IsSettingSupported(setting));
+            return ConfigurationSettings.Sources.Values.Any(s => s.IsActive && s.IsSettingSupported(setting));
         }
     }
 

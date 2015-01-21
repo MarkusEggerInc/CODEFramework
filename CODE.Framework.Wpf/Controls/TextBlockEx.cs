@@ -39,6 +39,7 @@ namespace CODE.Framework.Wpf.Controls
                 }
 
                 Inlines.Clear();
+                if (string.IsNullOrWhiteSpace(value)) return;
                 var split = Regex.Split(value, RegularExpression, RegexOptions.IgnoreCase);
                 foreach (var str in split)
                 {

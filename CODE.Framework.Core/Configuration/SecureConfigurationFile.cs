@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using CODE.Framework.Core.Utilities;
@@ -12,27 +13,14 @@ namespace CODE.Framework.Core.Configuration
     public class SecureConfigurationFile : ConfigurationSource
     {
         /// <summary>
-        /// Default Constructor.
-        /// </summary>
-        public SecureConfigurationFile()
-        {
-            Read();
-        }
-
-        /// <summary>
         /// Key used to encrypt and decrypt configuration settings
         /// </summary>
-        public static byte[] EncryptionKey { get; set; }
-
-        static SecureConfigurationFile()
-        {
-            ConfigurationFileName = string.Empty;
-        }
+        public byte[] EncryptionKey { get; set; }
 
         /// <summary>
         /// File name for the secure configuration file (if left empty, 'App.sconfig' will be used in the same directory as core.dll)
         /// </summary>
-        public static string ConfigurationFileName { get; set; }
+        public string ConfigurationFileName { get; set; }
 
         /// <summary>
         /// Indicates source's Friendly Name.
@@ -63,7 +51,7 @@ namespace CODE.Framework.Core.Configuration
         /// Generates a standard file name to be used for the configuration file
         /// </summary>
         /// <returns></returns>
-        private static string GetConfigurationFileName()
+        private string GetConfigurationFileName()
         {
             if (string.IsNullOrEmpty(ConfigurationFileName))
                 return StringHelper.AddBS(StringHelper.JustPath(System.Reflection.Assembly.GetExecutingAssembly().Location)) + "App.sconfig";
@@ -73,34 +61,39 @@ namespace CODE.Framework.Core.Configuration
         /// <summary>
         /// Read settings from native .NET object and feed settings into our own object.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("EPS.MilosBusinessObjects", "EPS0016:OnlyMilosConfigurationSystemShouldBeUsed", Justification = "Not here, as this is the class that implements the Milos configuration system.")]
         public override void Read()
         {
-            string fileName = GetConfigurationFileName();
+            var fileName = GetConfigurationFileName();
             if (!File.Exists(fileName))
             {
-                Settings.Clear();
+                lock (this)
+                    Settings.Clear();
                 return;
             }
 
-            string encryptedFileContents = StringHelper.FromFile(fileName);
+            var encryptedFileContents = StringHelper.FromFile(fileName);
             if (EncryptionKey == null) throw new Exception("SecureConfigurationFile.EncryptionKey must be set!");
-            string fileContents = SecurityHelper.DecryptString(encryptedFileContents, EncryptionKey);
+            var fileContents = SecurityHelper.DecryptString(encryptedFileContents, EncryptionKey);
             var xml = new XmlDocument();
             xml.LoadXml(fileContents);
 
             var pairs = xml.SelectNodes("*/*");
-            if (pairs != null)
-                foreach (XmlNode pair in pairs)
-                {
-                    var name = pair.SelectSingleNode("@name");
-                    var value = pair.SelectSingleNode("@value");
-                    if (name != null && value != null)
-                        if (Settings.ContainsKey(name.Value))
-                            Settings[name.Value] = value.Value;
-                        else
-                            Settings.Add(name.Value, value.Value);
-                }
+            if (pairs == null) return;
+            var dictionary = new Dictionary<string, string>();
+            foreach (XmlNode pair in pairs)
+            {
+                var name = pair.SelectSingleNode("@name");
+                var value = pair.SelectSingleNode("@value");
+                if (name != null && !string.IsNullOrEmpty(name.Value) && value != null && !string.IsNullOrEmpty(value.Value))
+                    dictionary.Add(name.Value, value.Value);
+            }
+
+            lock (Settings)
+            {
+                Settings.Clear();
+                foreach (var key in dictionary.Keys)
+                    Settings.Add(key, dictionary[key]);
+            }
         }
 
         /// <summary>
@@ -118,27 +111,29 @@ namespace CODE.Framework.Core.Configuration
         /// </summary>
         public override void Write()
         {
-            string fileName = GetConfigurationFileName();
+            var fileName = GetConfigurationFileName();
 
             var xml = new XmlDocument();
             xml.LoadXml("<?xml version=\"1.0\"?><settings />");
             var root = xml.SelectSingleNode("*");
+            if (root == null) return;
 
-            if (root != null)
-                foreach (var key in Settings.Keys)
-                {
-                    var newNode = xml.CreateElement("setting");
+            var allSettings = Settings.GetAllKeysAndValues();
 
-                    var nameAttribute = xml.CreateAttribute("name");
-                    nameAttribute.Value = key.ToString();
-                    newNode.Attributes.Append(nameAttribute);
+            foreach (var key in allSettings.Keys)
+            {
+                var newNode = xml.CreateElement("setting");
 
-                    var valueAttribute = xml.CreateAttribute("value");
-                    valueAttribute.Value = Settings[key].ToString();
-                    newNode.Attributes.Append(valueAttribute);
+                var nameAttribute = xml.CreateAttribute("name");
+                nameAttribute.Value = key;
+                newNode.Attributes.Append(nameAttribute);
 
-                    root.AppendChild(newNode);
-                }
+                var valueAttribute = xml.CreateAttribute("value");
+                valueAttribute.Value = Settings[key].ToString();
+                newNode.Attributes.Append(valueAttribute);
+
+                root.AppendChild(newNode);
+            }
 
             using (var stream = new MemoryStream())
             {

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Services.Server.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Services.Server.WebApi.ServiceHostController`1">
+            <summary>
+            WebApi controller class used to host CODE Framework services
+            </summary>
+            <typeparam name="TServiceImplementation">The implementation type of the service.</typeparam>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.WebApi.ServiceHostController`1"/> class.
+            </summary>
+            <exception cref="T:System.NotSupportedException">The hosted service contract must implement a service interface</exception>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.ExecuteAsync(System.Web.Http.Controllers.HttpControllerContext,System.Threading.CancellationToken)">
+            <summary>
+            execute as an asynchronous operation.
+            </summary>
+            <param name="controllerContext">The controller context for a single HTTP operation.</param>
+            <param name="cancellationToken">The cancellation token assigned for the HTTP operation.</param>
+            <returns>The newly started task.</returns>
+        </member>
+    </members>
+</doc>

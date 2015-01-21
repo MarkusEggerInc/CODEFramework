@@ -194,11 +194,6 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="controller">Controller the action is to be triggered on</param>
         /// <param name="view">Name of the view that is to be found</param>
         /// <returns>Request context (can be ignored except for special cases)</returns>
-        /// <example>
-        /// Controller.Action("Customer", "List"); // Invokes CustomerController.List
-        /// var context = Controller.Action("Customer", "List"); // Invokes CustomerController.List and retrieves the context
-        /// Controller.Action("Customer", "Detail", new {id = x}); // Invokes CustomerController.Detail(id) and passes a parameter called "id")
-        /// </example>
         public static RequestContext ViewOnly(string controller = "Home", string view = "Index")
         {
             if (!controller.EndsWith("Controller")) controller += "Controller";

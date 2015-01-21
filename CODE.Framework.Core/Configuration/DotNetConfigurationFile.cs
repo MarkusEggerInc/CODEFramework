@@ -1,4 +1,6 @@
-﻿namespace CODE.Framework.Core.Configuration
+﻿using System.Configuration;
+
+namespace CODE.Framework.Core.Configuration
 {
     /// <summary>
     /// This class wraps up the functionality available natively in .NET for reading 
@@ -6,14 +8,6 @@
     /// </summary>
     public class DotNetConfigurationFile : ConfigurationSource
     {
-        /// <summary>
-        /// Default Constructor.
-        /// </summary>
-        public DotNetConfigurationFile()
-        {
-            Read();
-        }
-
         /// <summary>
         /// Indicates source's Friendly Name.
         /// </summary>
@@ -47,8 +41,9 @@
         public override void Read()
         {
             // We read the native AppSettings and feed our own class.
-            foreach (string setting in System.Configuration.ConfigurationSettings.AppSettings.Keys)
-                Settings.Add(setting, System.Configuration.ConfigurationSettings.AppSettings[setting]);
+            lock (Settings)
+                foreach (var key in ConfigurationManager.AppSettings.AllKeys)
+                    Settings.Add(key, ConfigurationManager.AppSettings[key]);
         }
 
         /// <summary>

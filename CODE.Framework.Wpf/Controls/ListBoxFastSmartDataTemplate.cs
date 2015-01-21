@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using CODE.Framework.Core.Utilities;
 using CODE.Framework.Core.Utilities.Extensions;
 
 namespace CODE.Framework.Wpf.Controls
@@ -173,9 +174,12 @@ namespace CODE.Framework.Wpf.Controls
             var height = Math.Max(ActualHeight, 30);
             foreach (var column in Columns.Where(c => c.Visibility == Visibility.Visible))
             {
-                // TODO: Get the actual value, rather than displaying the binding path
-                var ft = new FormattedText(column.BindingPath, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 12d, Brushes.Black) {MaxTextWidth = column.Width.Value, MaxTextHeight = height};
-                dc.DrawText(ft, new Point(currentLeft, 0d));
+                if (!string.IsNullOrEmpty(column.BindingPath) && DataContext != null)
+                {
+                    var currentValue = DataContext.GetPropertyValue<object>(column.BindingPath).ToString();
+                    var ft = new FormattedText(currentValue, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 12d, Brushes.Black) {MaxTextWidth = column.Width.Value, MaxTextHeight = height};
+                    dc.DrawText(ft, new Point(currentLeft, 0d));
+                }
                 currentLeft += column.Width.Value;
             }
         }
@@ -383,8 +387,6 @@ namespace CODE.Framework.Wpf.Controls
         /// <value>The scroll owner.</value>
         public ScrollViewer ScrollOwner { get; set; }
 
-        private double _lastAvailableWidth = -1;
-
         /// <summary>
         /// When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
         /// </summary>
@@ -392,8 +394,6 @@ namespace CODE.Framework.Wpf.Controls
         /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            _lastAvailableWidth = availableSize.Width;
-
             if (Columns == null) return new Size(1,30);
 
             base.MeasureOverride(availableSize);
@@ -416,8 +416,6 @@ namespace CODE.Framework.Wpf.Controls
         /// <param name="availableSize">Size of the available.</param>
         public void MeasureForScroll(Size availableSize)
         {
-            _lastAvailableWidth = availableSize.Width;
-
             if (Columns == null) return;
 
             var totalWidth = Columns.Where(c => c.Visibility == Visibility.Visible).Sum(column => column.Width.Value);

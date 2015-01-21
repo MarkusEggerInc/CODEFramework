@@ -93,6 +93,106 @@
             <param name="reply">The reply message. This value is null if the operation is one way.</param>
             <param name="correlationState">The correlation object returned from the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)"/> method.</param>
         </member>
+        <member name="T:CODE.Framework.Services.Server.RestHelper">
+            <summary>
+            Helper functionality needed for REST operations
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetHttpMethodFromOperationDescription(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Gets the HTTP method/verb from operation description.
+            </summary>
+            <param name="operationDescription">The operation description.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetExposedMethodNameFromContract(System.String,System.String,System.Type)">
+            <summary>
+            Inspects the specified method in the contract for special configuration to see what the REST-exposed method name is supposed to be
+            </summary>
+            <param name="actualMethodName">Actual name of the method.</param>
+            <param name="httpMethod">The HTTP method.</param>
+            <param name="contractType">Service contract type.</param>
+            <returns>REST-exposed name of the method</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetHttpMethodFromContract(System.String,System.Type)">
+            <summary>
+            Returns the exposed HTTP-method/verb for the provided method
+            </summary>
+            <param name="methodName">Name of the method.</param>
+            <param name="contractType">Service contract type.</param>
+            <returns>HTTP Method/Verb</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetMethodNameFromUrlFragmentAndContract(System.String,System.String,System.Type)">
+            <summary>
+            Extracts the name of the method a REST call was aimed at based on the provided url "fragment" (URL minus the root URL part),
+            the HTTP method (get, post, put, ...) and the contract type
+            </summary>
+            <param name="urlFragment">The URL fragment.</param>
+            <param name="httpMethod">The HTTP method.</param>
+            <param name="contractType">Service contract type.</param>
+            <returns>Method picked as a match within the contract (or null if no matching method was found)</returns>
+            <remarks>
+            Methods are picked based on a number of parameters for each fragment and HTTP method.
+            
+            Example URL Fragment: /CustomerSearch/Smith (HTTP-GET)
+            
+            In this case, the "CustomerSearch" part of the fragment is considered a good candidate for a method name match.
+            The method thus looks at the contract definition and searches for methods of the same name (case insensitive!)
+            as well as the Rest(Name="xxx") attribute on each method to see if there is a match. If a match is found, the HTTP-Method is also
+            compared and has to be a match (there could be two methods of the same exposed name, but differing HTTP methods/verbs).
+            
+            If no matching method is found, "CustomerSearch" is considered to be a parameter rather than a method name, and therefore, the method
+            name is assumed to be empty (the default method). Therefore, a method with a [Rest(Name="")] with a matching HTTP method is searched for.
+            For a complete match, the method in question would thus have to have the following attribute declared: [Rest(Name="", Method=RestMethods.Get)]
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetRestAttribute(System.Reflection.MethodInfo)">
+            <summary>
+            Extracts the RestAttribute from a method's attributes
+            </summary>
+            <param name="method">The method to be inspected</param>
+            <returns>The applied RestAttribute or a default RestAttribute.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetRestUrlParameterAttribute(System.Reflection.PropertyInfo)">
+            <summary>
+            Extracts the RestUrlParameterAttribute from a property's attributes
+            </summary>
+            <param name="property">The property.</param>
+            <returns>The applied RestUrlParameterAttribute or a default RestUrlParameterAttribute</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetOrderedInlinePropertyList(System.Type)">
+            <summary>
+            Gets a list of all properties that are to be used as inline parameters, sorted by their sequence
+            </summary>
+            <param name="contractType">Contract type</param>
+            <returns>List of properties to be used as inline URL parameters</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetNamedPropertyList(System.Type)">
+            <summary>
+            Returns a list of all properties of the provided object that are NOT flagged to be used as inline URL parameters
+            </summary>
+            <param name="contractType">Contract type</param>
+            <returns>List of named properties</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.SerializeToUrlParameters(System.Object,System.String)">
+            <summary>
+            Serializes an object to URL parameters
+            </summary>
+            <param name="objectToSerialize">The object to serialize.</param>
+            <param name="httpMethod">The HTTP method.</param>
+            <returns>System.String.</returns>
+            <remarks>This is used for REST GET operatoins</remarks>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestHelper.GetUrlParametersFromUrlFragmentAndContract(System.String,System.String,System.Type)">
+            <summary>
+            Inspects the URL fragment, trims the method name (if appropriate) and returns the remaining parameters as a dictionary
+            of correlating property names and their values
+            </summary>
+            <param name="urlFragment">The URL fragment.</param>
+            <param name="httpMethod">The HTTP method.</param>
+            <param name="contractType">Service contract types.</param>
+            <returns>Dictionary of property values</returns>
+        </member>
         <member name="T:CODE.Framework.Services.Server.RestXmlHttpBehavior">
             <summary>
             Endpoint behavior configuration specific to XML formatted REST calls
@@ -117,19 +217,72 @@
             Endpoint behavior configuration specific to XML formatted REST calls
             </summary>
         </member>
+        <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.#ctor(System.String,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestJsonHttpBehavior"/> class.
+            </summary>
+            <param name="rootUrl">The root URL.</param>
+            <param name="contractType">Type of the contract.</param>
+        </member>
         <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.GetReplyDispatchFormatter(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Description.ServiceEndpoint)">
             <summary>Handles REST JSON formatting behavior</summary>
             <param name="operationDescription"></param>
             <param name="endpoint"></param>
             <returns></returns>
         </member>
-        <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.GetBehavior``1(System.ServiceModel.Description.OperationDescription)">
+        <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
             <summary>
-            Tries to find a behavior attribute of a certain type and returns it
+            Implements the <see cref="M:System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)" /> method to support modification or extension of the client across an endpoint.
             </summary>
-            <typeparam name="T">Type of behavior we are looking for</typeparam>
-            <param name="operationDescription">Operation description</param>
-            <returns>Behavior or null</returns>
+            <param name="endpoint">The endpoint that exposes the contract.</param>
+            <param name="endpointDispatcher">The endpoint dispatcher to which the behavior is applied.</param>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.RestJsonOperationSelector">
+            <summary>
+            This selector can match URL parameters on JSON requests to methods on a service
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestJsonOperationSelector.#ctor(System.String,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestJsonOperationSelector"/> class.
+            </summary>
+            <param name="rootUrl">The root URL.</param>
+            <param name="contractType">Type of the hosted service contract.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestJsonOperationSelector.SelectOperation(System.ServiceModel.Channels.Message@)">
+            <summary>
+            Associates a local operation with the incoming method.
+            </summary>
+            <param name="message">The incoming <see cref="T:System.ServiceModel.Channels.Message" /> to be associated with an operation.</param>
+            <returns>The name of the operation to be associated with the <paramref name="message" />.</returns>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.RestDispatchMessageInspector">
+            <summary>
+            Message inspector for REST messages
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestDispatchMessageInspector.#ctor(System.String,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestDispatchMessageInspector"/> class.
+            </summary>
+            <param name="rootUrl">The root URL.</param>
+            <param name="contractType">Type of the contract.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)">
+            <summary>
+            Called after an inbound message has been received but before the message is dispatched to the intended operation.
+            </summary>
+            <param name="request">The request message.</param>
+            <param name="channel">The incoming channel.</param>
+            <param name="instanceContext">The current service instance.</param>
+            <returns>The object used to correlate state. This object is passed back in the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)" /> method.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestDispatchMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)">
+            <summary>
+            Called after the operation has returned but before the reply message is sent.
+            </summary>
+            <param name="reply">The reply message. This value is null if the operation is one way.</param>
+            <param name="correlationState">The correlation object returned from the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)" /> method.</param>
         </member>
         <member name="T:CODE.Framework.Services.Server.ServiceGarden">
             <summary>

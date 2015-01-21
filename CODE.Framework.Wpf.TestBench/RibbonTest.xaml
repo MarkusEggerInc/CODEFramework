@@ -1,0 +1,27 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.RibbonTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+        Title="RibbonTest" Height="300" Width="700">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/ThemeRoot.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <mvvm:ViewActionRibbon FirstPageIsSpecial="False" x:Name="ribbon">
+            <mvvm:ViewActionRibbon.Resources>
+                <Style TargetType="mvvm:RibbonPageLayoutPanel" BasedOn="{StaticResource {x:Type mvvm:RibbonPageLayoutPanel}}">
+                    <Setter Property="GroupTitleForegroundBrush" Value="CornflowerBlue"/>
+                </Style>
+            </mvvm:ViewActionRibbon.Resources>
+        </mvvm:ViewActionRibbon>
+    </Grid>
+</Window>

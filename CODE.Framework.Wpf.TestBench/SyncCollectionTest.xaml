@@ -1,0 +1,36 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.SyncCollectionTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sync Collection Test" Height="500" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="3"/>
+                    <Setter Property="Padding" Value="8,2"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Click="AddItem">Add Item</Button>
+            <Button Click="RemoveItem">Remove Item</Button>
+            <Button Click="ResetCollection">Reset Collection</Button>
+            <Button Click="Sync1" Margin="12,3,3,3">Sync Target 1</Button>
+            <Button Click="Unsync1">Un-Sync Target 1</Button>
+            <Button Click="Sync2" Margin="12,3,3,3">Sync Target 2</Button>
+            <Button Click="Unsync2">Un-Sync Target 2</Button>
+        </StackPanel>
+
+        <ListBox ItemsSource="{Binding Customers}" DisplayMemberPath="Display" Grid.Row="1" Margin="3"/>
+        <ListBox ItemsSource="{Binding Target1}" DisplayMemberPath="Display" Grid.Row="1" Grid.Column="1" Margin="3"/>
+        <ListBox ItemsSource="{Binding Target2}" DisplayMemberPath="Display" Grid.Row="1" Grid.Column="2" Margin="3"/>
+    </Grid>
+</Window>

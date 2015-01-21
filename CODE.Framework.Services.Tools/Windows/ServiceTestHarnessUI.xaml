@@ -1,15 +1,15 @@
 ﻿<UserControl x:Class="CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI" 
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ServiceTools="clr-namespace:CODE.Framework.Services.Tools.Windows">
+             xmlns:t="clr-namespace:CODE.Framework.Services.Tools.Windows">
     <Grid>
         <Grid.Resources>
-            <ServiceTools:EditContractTemplateSelector x:Key="editorSelector" />
+            <t:EditContractTemplateSelector x:Key="EditorTemplateSelector" />
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -17,223 +17,324 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <Label FontFamily="Calibri" FontSize="16" Grid.Row="1" VerticalAlignment="Top" Content="Operations" />
-        <ListBox x:Name="listView1" Grid.Row="1" Margin="8,30,0,8" SelectionChanged="NewOperationSelected">
+        <Image Name="Logo" Margin="5" Height="35" HorizontalAlignment="Left" />
+        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5" TextElement.FontSize="13.333">
+            <Button Content="Invoke Operation" FontWeight="Bold" Click="InvokeService" ToolTip="Invoke the current operation (CTRL-I or CTRL-ENTER)" Padding="15,5" Margin="0,0,40,0" />
+            <Button Margin="0,0,5,0" Content="Quick Save" ToolTip="Quick-Save the current message (CTRL-S)" Padding="5" Click="HandleQuickSave"/>
+            <Button Margin="0,0,5,0" Content="Save As..." ToolTip="Save the current message" Padding="5" Click="HandleSaveAs"/>
+            <Button Margin="5,0,5,0" Content="Quick Load" ToolTip="Quick-Load the last quick-saved message (CTRL-L or CTRL-O)" Padding="5" Click="HandleQuickLoad"/>
+            <Button Margin="0,0,5,0" Content="Load..." ToolTip="Load an input message" Padding="5" Click="HandleLoad"/>
+        </StackPanel>
+
+        <Label FontFamily="Segoe UI Light" FontSize="22" Foreground="Black" Margin="8,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Operations" />
+        <ListBox x:Name="OperationsList" Grid.Row="2" Margin="8,0,0,8" SelectionChanged="NewOperationSelected">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <Rectangle Fill="{DynamicResource MethodIcon}"  Height="16" Width="16" Margin="0,0,3,0" Grid.Column="0" />
+                        <Rectangle Fill="{DynamicResource MethodIcon}"  Height="16" Width="16" Margin="0,0,3,0" />
                         <TextBlock Text="{Binding Name}" Margin="3,1,0,1" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
-        <GridSplitter Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-        <Label x:Name="label1" FontFamily="Calibri" FontSize="16" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" />
-        <TreeView x:Name="treeView1" Grid.Row="1" Grid.Column="2" Margin="0,30,8,8" ItemTemplateSelector="{StaticResource editorSelector}" Grid.IsSharedSizeScope="True">
-            <TreeView.ItemContainerStyle>
-                <Style>
-                    <Setter Property="TreeViewItem.IsExpanded" Value="True" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.Resources>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Root-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="25" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource DataContractImage}" Height="48" Width="48" Margin="0,0,3,0" Grid.Column="0" />
-                        <StackPanel Grid.Column="1">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding MethodName}" FontSize="16" FontFamily="Calibri" />
-                                <TextBlock Text=" (" FontSize="16" FontFamily="Calibri" />
-                                <TextBlock Text="{Binding Name}" FontSize="16" FontFamily="Calibri" FontWeight="Bold" />
-                                <TextBlock Text=")" FontSize="16" FontFamily="Calibri" />
-                            </StackPanel>
-                            <TextBlock Text="Input Parameter/Message sent to service operation" FontFamily="Calibri" />
-                            <TextBlock Text="{Binding ContractType}" FontFamily="Calibri" Margin="0,0,0,10" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Top">
-                            <Button Content="Invoke" FontWeight="Bold" Click="InvokeService" Padding="15,5" />
-                            <Button Margin="20,0,0,0" Content="Get XML" Click="GetRestXmlClick" Padding="5" />
-                            <Button Margin="5,0,0,0" Content="Get JSON" Click="GetRestJsonClick" Padding="5" />
-                        </StackPanel>
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Generic-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
-                        <Rectangle Fill="{DynamicResource StringPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding TextValue}" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" MaxWidth="500" MinWidth="100" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                        <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Guid-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
-                        <Rectangle Fill="{DynamicResource GuidPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}">
-                            <TextBox Text="{Binding TextValue, Mode=TwoWay}" Width="230" />
-                            <Button Width="20" Margin="5,0,0,0" ToolTip="Insert Empty GUID" Click="EmptyGuid_Click">E</Button>
-                            <Button Width="20" Margin="5,0,5,0" ToolTip="Generate Random GUID" Click="RandomGuid_Click">R</Button>
-                        </StackPanel>
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                        <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Boolean-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource BooleanPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <CheckBox IsChecked="{Binding BooleanValue}" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" VerticalAlignment="Center" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Integer-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding TextValue}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericNoDecimalKeyDown" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Long-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding LongValue}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericNoDecimalKeyDown" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Decimal-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding TextValue}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericWithDecimalKeyDown" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Float-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding FloatValue}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericWithDecimalKeyDown" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Double-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding DoubleValue}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericWithDecimalKeyDown" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Enum-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource EnumPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <ComboBox SelectedValue="{Binding EnumValue}" ItemsSource="{Binding EnumValues}" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="DateTime-Item">
-                    <Grid MinHeight="23">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{DynamicResource DateTimePropertyIcon}" Height="16" Width="16" Grid.Column="0" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                        <TextBox Text="{Binding DateTimeValue}" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
-                    </Grid>
-                </HierarchicalDataTemplate>
-            </TreeView.Resources>
-        </TreeView>
+        <GridSplitter Grid.Column="1" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-        <Label x:Name="label2" FontFamily="Calibri" Grid.Row="2" Grid.ColumnSpan="3" />
-            
-      </Grid>
-    
+        <Label x:Name="OperationNameLabel" FontFamily="Segoe UI Light" FontSize="22" Foreground="Black" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" />
+        <TabControl x:Name="ContractDisplayTab" Grid.Row="2" Grid.Column="2" Margin="0,0,8,8" TabStripPlacement="Bottom" SelectionChanged="HandleContractViewSwitched">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Height="16" Width="16" Margin="2" VerticalAlignment="Center" Fill="{DynamicResource ContractViewIcon}"/>
+                        <Label Content="Contract" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TreeView x:Name="RequestContractTree" ItemTemplateSelector="{StaticResource EditorTemplateSelector}" Grid.IsSharedSizeScope="True" BorderThickness="0">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="True" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                        <Style TargetType="TextElement">
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="MinWidth" Value="100"/>
+                        </Style>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Root-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="25" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource MethodIcon}" Height="36" Width="36" Margin="0,3,3,3" Grid.Column="0" />
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Margin="0,8,0,0"><Run Text="{Binding MethodName}" FontSize="18" /><Run Text=" (" FontSize="14" /><Run Text="{Binding Name}" FontSize="14" FontWeight="Bold" /><Run Text=" is a " FontSize="14" /><Run Text="{Binding ContractType}" FontSize="14" FontWeight="Bold" /><Run Text=")" FontSize="14" /></TextBlock>
+                                    <TextBox Text="{Binding OperationUrl}" Margin="0,4,0,10" IsReadOnly="True" BorderThickness="0" Background="{x:Null}" FontSize="14" />
+                                </StackPanel>
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="SubObject-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
+                                <Rectangle Fill="{DynamicResource ObjectPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                                <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="List-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
+                                <Rectangle Fill="{DynamicResource CollectionPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <Button Content="+" Margin="0,1,0,1" ToolTip="Add item to list" Width="22" Grid.Column="3" HorizontalAlignment="Left"  Click="AddItemToList" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                                <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Generic-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
+                                <Rectangle Fill="{DynamicResource StringPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" MaxWidth="500" MinWidth="100" t:ControlFocusHelper.AutoMoveCursorToNextTreeItem="true" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                                <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Guid-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
+                                <Rectangle Fill="{DynamicResource GuidPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}">
+                                    <TextBox Text="{Binding TextValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="230" />
+                                    <Button Width="20" Margin="5,0,0,0" ToolTip="Insert Empty GUID" Click="EmptyGuid_Click">E</Button>
+                                    <Button Width="20" Margin="5,0,5,0" ToolTip="Generate Random GUID" Click="RandomGuid_Click">R</Button>
+                                </StackPanel>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                                <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Boolean-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource BooleanPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <CheckBox IsChecked="{Binding BooleanValue, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" VerticalAlignment="Center" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Integer-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericNoDecimalKeyDown" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Long-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding LongValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericNoDecimalKeyDown" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Decimal-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericWithDecimalKeyDown" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Float-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding FloatValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericWithDecimalKeyDown" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Double-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource NumberPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding DoubleValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="100" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" PreviewKeyDown="NumericWithDecimalKeyDown" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="Enum-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource EnumPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <ComboBox SelectedValue="{Binding EnumValue, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding EnumValues}" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="DateTime-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource DateTimePropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <TextBox Text="{Binding DateTimeValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubItems}" x:Key="ByteArray-Item">
+                            <Grid MinHeight="23">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MemberName"  />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ValueEntryControl" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="{DynamicResource ByteArrayPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,1,5,1" Grid.Column="3" Visibility="{Binding ManipulationTextBoxVisible}">
+                                    <TextBox Text="{Binding ByteArrayDisplayValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" HorizontalAlignment="Left" Margin="0,1,5,1" />
+                                    <Button Width="25" Margin="5,0,0,0" ToolTip="Load from File" Click="LoadByteArrayFromFile_Click">...</Button>
+                                </StackPanel>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Height="16" Width="16" Margin="2" VerticalAlignment="Center" Fill="{DynamicResource JsonViewIcon}"/>
+                        <Label Content="JSON" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TextBox FontFamily="Consolas" FontSize="12" x:Name="JsonContract" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0"/>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Height="16" Width="16" Margin="2" VerticalAlignment="Center" Fill="{DynamicResource XmlViewIcon}"/>
+                        <Label Content="XML" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TextBox FontFamily="Consolas" FontSize="12" x:Name="XmlContract" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0"/>
+            </TabItem>
+        </TabControl>
+        <Label x:Name="FlashLabel" Content="Saved!" Foreground="#FF530A0A" Grid.Row="2" Grid.Column="2" Margin="0,0,8,8" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed" RenderTransformOrigin="0.5,0.5">
+        	<Label.RenderTransform>
+        		<TransformGroup>
+        			<ScaleTransform/>
+        			<SkewTransform/>
+        			<RotateTransform/>
+        			<TranslateTransform/>
+        		</TransformGroup>
+        	</Label.RenderTransform>
+        </Label>
+    </Grid>
+
     <UserControl.Resources>
         <Pen x:Key="Pen1" Brush="#35000000" Thickness="4.520" StartLineCap="Round" EndLineCap="Round" DashCap="Round" LineJoin="Round" MiterLimit="4" ></Pen>
+        <SolidColorBrush x:Key="IconBackground" Color="CornflowerBlue" />
+        <SolidColorBrush x:Key="IconForeground" Color="White" />
         <DrawingBrush Stretch="Uniform" x:Key="DataContractImage">
             <DrawingBrush.Drawing>
                 <DrawingGroup>
@@ -562,77 +663,58 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="#FFF999FA" Geometry="F1 M 10.9443,2.98974L 14.9799,6.96248L 11.9978,9.96496L 7.9622,5.99223L 10.9443,2.98974 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FFCF88CF"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF9C3C9D" Geometry="F1 M 12.5031,10.8785L 15.2188,8.1439L 15.2188,11.2029L 12.5031,13.9375L 12.5031,10.8785 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF7E2E7E"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5.8251,11.8507L 1.38552,8.17989L 5.8251,4.51739L 6.85218,5.53822L 3.51885,8.16739L 6.85218,10.8299L 5.8251,11.8507 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.3834,4.51739L 14.7188,8.17989L 10.3834,11.8507L 9.38552,10.8299L 12.5855,8.19447L 9.38552,5.53822L 10.3834,4.51739 Z "/>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <DrawingBrush x:Key="ContractViewIcon" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FFD56FD5" Geometry="F1 M 7.73438,7.17188L 11.5,10.8831L 11.5,13.9959L 7.73438,10.2847L 7.73438,7.17188 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FFA952AA"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 13.8289,1.97181C 13.9288,1.97181 14.0241,1.9893 14.1146,2.02429C 14.2051,2.05928 14.2835,2.10816 14.3495,2.17092C 14.4156,2.23367 14.4676,2.30587 14.5053,2.38752C 14.5431,2.46916 14.562,2.55719 14.562,2.6516L 14.562,9.93439C 14.562,10.0288 14.5431,10.1171 14.5053,10.1993C 14.4676,10.2815 14.4156,10.3529 14.3495,10.4134C 14.2835,10.4739 14.2051,10.5217 14.1146,10.5567C 14.0241,10.5917 13.9288,10.6092 13.8289,10.6092L 12.0211,10.6092L 12.0211,14.6763L 7.95066,10.6092L 2.07744,10.6092C 1.97636,10.6092 1.88167,10.5917 1.79336,10.5567C 1.70506,10.5217 1.62786,10.4739 1.56177,10.4134C 1.49567,10.3529 1.44347,10.2815 1.40515,10.1993C 1.36682,10.1171 1.34766,10.0288 1.34766,9.93439L 1.34766,2.6516C 1.34766,2.55719 1.36682,2.46916 1.40515,2.38752C 1.44347,2.30587 1.49567,2.23367 1.56177,2.17092C 1.62786,2.10816 1.70506,2.05928 1.79336,2.02429C 1.88167,1.9893 1.97636,1.97181 2.07744,1.97181L 13.8289,1.97181 Z "/>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        <DrawingBrush x:Key="JsonViewIcon" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Geometry="F1 M 2.5,5.98437L 6.5,5.98437">
-                            <GeometryDrawing.Pen>
-                                <Pen LineJoin="Round">
-                                    <Pen.Brush>
-                                        <LinearGradientBrush StartPoint="-0.0354422,0.500002" EndPoint="1.03544,0.500002">
-                                            <LinearGradientBrush.GradientStops>
-                                                <GradientStop Color="#FFF7F0AB" Offset="0"/>
-                                                <GradientStop Color="#FF8A99AE" Offset="1"/>
-                                            </LinearGradientBrush.GradientStops>
-                                        </LinearGradientBrush>
-                                    </Pen.Brush>
-                                </Pen>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 6.04177,14.2507C 5.1501,14.2507 4.48447,14.0337 4.04489,13.5997C 3.60531,13.1657 3.38552,12.4771 3.38552,11.5341L 3.38552,9.87156C 3.38552,9.42294 3.28413,9.0851 3.08135,8.85801C 2.87857,8.63093 2.54107,8.51739 2.06885,8.51739L 1.65218,8.51739L 1.65218,7.31739L 2.06885,7.31739C 2.30774,7.31739 2.51086,7.29274 2.67823,7.24343C 2.84559,7.19412 2.98204,7.11808 3.0876,7.0153C 3.19316,6.91253 3.2692,6.78128 3.31573,6.62155C 3.36225,6.46183 3.38552,6.27017 3.38552,6.04656L 3.38552,4.91947C 3.38552,4.47919 3.43621,4.09204 3.5376,3.75801C 3.63899,3.42399 3.79732,3.14586 4.0126,2.92364C 4.22788,2.70142 4.50253,2.53371 4.83656,2.42051C 5.17059,2.30732 5.57232,2.25072 6.04177,2.25072L 6.58552,2.25072L 6.58552,3.45072L 6.1876,3.45072C 5.98482,3.45072 5.80218,3.47538 5.63968,3.52468C 5.47718,3.57399 5.33691,3.65419 5.21885,3.76531C 5.10079,3.87642 5.01017,4.02294 4.94697,4.20489C 4.88378,4.38683 4.85218,4.61253 4.85218,4.88197L 4.85218,6.00281C 4.85218,6.32364 4.8251,6.5976 4.77093,6.82468C 4.71677,7.05176 4.63343,7.241 4.52093,7.39239C 4.40843,7.54378 4.26538,7.66114 4.09177,7.74447C 3.91816,7.82781 3.71399,7.88683 3.47927,7.92156C 3.94316,7.97433 4.28795,8.15697 4.51364,8.46947C 4.73934,8.78197 4.85218,9.26183 4.85218,9.90905L 4.85218,11.5757C 4.85218,11.8591 4.88378,12.0948 4.94697,12.283C 5.01017,12.4712 5.10079,12.6222 5.21885,12.7361C 5.33691,12.85 5.47718,12.9309 5.63968,12.9788C 5.80218,13.0268 5.98482,13.0507 6.1876,13.0507L 6.58552,13.0507L 6.58552,14.2507L 6.04177,14.2507 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.0605,2.25072C 10.955,2.25072 11.6216,2.46357 12.0605,2.88926C 12.4994,3.31496 12.7188,3.99169 12.7188,4.91947L 12.7188,5.99656C 12.7188,6.43683 12.8192,6.76704 13.0199,6.98718C 13.2206,7.20732 13.557,7.31739 14.0293,7.31739L 14.4522,7.31739L 14.4522,8.51739L 14.0293,8.51739C 13.7904,8.51739 13.5873,8.54239 13.4199,8.59239C 13.2525,8.64239 13.1171,8.71982 13.0136,8.82468C 12.9102,8.92954 12.8352,9.06392 12.7886,9.2278C 12.7421,9.39169 12.7188,9.58683 12.7188,9.81322L 12.7188,11.5341C 12.7188,11.9841 12.6682,12.3782 12.5668,12.7163C 12.4654,13.0545 12.3074,13.3368 12.0928,13.5632C 11.8782,13.7896 11.6032,13.9608 11.2678,14.0768C 10.9324,14.1927 10.53,14.2507 10.0605,14.2507L 9.51885,14.2507L 9.51885,13.0507L 9.92302,13.0507C 10.1244,13.0507 10.306,13.0268 10.4678,12.9788C 10.6296,12.9309 10.7692,12.849 10.8866,12.733C 11.0039,12.617 11.0942,12.466 11.1574,12.2799C 11.2206,12.0938 11.2522,11.8632 11.2522,11.5882L 11.2522,9.88197C 11.2522,9.55419 11.2793,9.27329 11.3334,9.03926C 11.3876,8.80523 11.4699,8.61079 11.5803,8.45593C 11.6907,8.30107 11.8327,8.18197 12.0063,8.09864C 12.18,8.0153 12.3841,7.95628 12.6188,7.92156C 12.1536,7.866 11.8095,7.68544 11.5866,7.37989C 11.3636,7.07433 11.2522,6.60489 11.2522,5.97156L 11.2522,4.90072C 11.2522,4.62294 11.2206,4.391 11.1574,4.20489C 11.0942,4.01878 11.0039,3.87017 10.8866,3.75906C 10.7692,3.64794 10.6296,3.56878 10.4678,3.52156C 10.306,3.47433 10.1244,3.45072 9.92302,3.45072L 9.51885,3.45072L 9.51885,2.25072L 10.0605,2.25072 Z "/>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        <DrawingBrush x:Key="XmlViewIcon" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Geometry="F1 M 0.546874,8.00625L 6.49375,8.00625">
-                            <GeometryDrawing.Pen>
-                                <Pen LineJoin="Round">
-                                    <Pen.Brush>
-                                        <LinearGradientBrush StartPoint="-0.0729569,0.5" EndPoint="1.07296,0.5">
-                                            <LinearGradientBrush.GradientStops>
-                                                <GradientStop Color="#FFF7F0AB" Offset="0"/>
-                                                <GradientStop Color="#FF8A99AE" Offset="1"/>
-                                            </LinearGradientBrush.GradientStops>
-                                        </LinearGradientBrush>
-                                    </Pen.Brush>
-                                </Pen>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Geometry="F1 M 1.51562,10.0156L 6.50469,10.0156">
-                            <GeometryDrawing.Pen>
-                                <Pen LineJoin="Round">
-                                    <Pen.Brush>
-                                        <LinearGradientBrush StartPoint="-0.0575486,0.5" EndPoint="1.05755,0.5">
-                                            <LinearGradientBrush.GradientStops>
-                                                <GradientStop Color="#FFF7F0AB" Offset="0"/>
-                                                <GradientStop Color="#FF8A99AE" Offset="1"/>
-                                            </LinearGradientBrush.GradientStops>
-                                        </LinearGradientBrush>
-                                    </Pen.Brush>
-                                </Pen>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Geometry="F1 M 0.546874,8.00625L 6.49375,8.00625">
-                            <GeometryDrawing.Pen>
-                                <Pen LineJoin="Round">
-                                    <Pen.Brush>
-                                        <LinearGradientBrush StartPoint="-0.0729569,0.5" EndPoint="1.07296,0.5">
-                                            <LinearGradientBrush.GradientStops>
-                                                <GradientStop Color="#FFF7F0AB" Offset="0"/>
-                                                <GradientStop Color="#FF8A99AE" Offset="1"/>
-                                            </LinearGradientBrush.GradientStops>
-                                        </LinearGradientBrush>
-                                    </Pen.Brush>
-                                </Pen>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5.8251,11.8507L 1.38552,8.17989L 5.8251,4.51739L 6.85218,5.53822L 3.51885,8.16739L 6.85218,10.8299L 5.8251,11.8507 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.3834,4.51739L 14.7188,8.17989L 10.3834,11.8507L 9.38552,10.8299L 12.5855,8.19447L 9.38552,5.53822L 10.3834,4.51739 Z "/>
                     </DrawingGroup.Children>
                 </DrawingGroup>
             </DrawingBrush.Drawing>
@@ -642,19 +724,14 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Geometry="F1 M 2.5,0.499999L 13.5,0.499999C 14.6046,0.499999 15.5,1.39543 15.5,2.5L 15.5,13.5C 15.5,14.6046 14.6046,15.5 13.5,15.5L 2.5,15.5C 1.39543,15.5 0.499999,14.6046 0.499999,13.5L 0.499999,2.5C 0.499999,1.39543 1.39543,0.499999 2.5,0.499999 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF000000"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF230FD2" Geometry="F1 M 2.41667,0.499996L 13.5833,0.499996C 14.6419,0.499996 15.5,1.35812 15.5,2.41666L 15.5,2.41666C 15.5,3.47521 14.6419,4.33333 13.5833,4.33333L 2.41667,4.33333C 1.35812,4.33333 0.500001,3.47521 0.500001,2.41666L 0.500001,2.41666C 0.500001,1.35812 1.35812,0.499996 2.41667,0.499996 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF230FD2"/>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 5.69175,13.3476L 4.39175,13.3476L 4.39175,12.7017L 4.37414,12.7017C 4.08074,13.1901 3.6465,13.4343 3.07143,13.4343C 2.64713,13.4343 2.31333,13.3158 2.07003,13.0788C 1.82673,12.8419 1.70508,12.5257 1.70508,12.1302C 1.70508,11.2952 2.20748,10.8131 3.21227,10.684L 4.39987,10.5283C 4.39987,10.0967 4.14123,9.88096 3.62393,9.88096C 3.10303,9.88096 2.60786,10.0254 2.13841,10.3143L 2.13841,9.29597C 2.32709,9.19847 2.58551,9.1127 2.91367,9.03867C 3.24183,8.96465 3.54043,8.92763 3.80946,8.92763C 5.06432,8.92763 5.69175,9.54152 5.69175,10.7693L 5.69175,13.3476 Z M 4.39987,11.5913L 4.39987,11.3083L 3.59008,11.4071C 3.1423,11.4613 2.91841,11.6513 2.91841,11.9772C 2.91841,12.1244 2.97281,12.2451 3.08159,12.3395C 3.19038,12.4338 3.33775,12.481 3.52373,12.481C 3.78282,12.481 3.99362,12.397 4.15612,12.2291C 4.31862,12.0612 4.39987,11.8486 4.39987,11.5913 Z "/>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 7.44268,12.8087L 7.42508,12.8087L 7.42508,13.3476L 6.12508,13.3476L 6.12508,6.9343L 7.42508,6.9343L 7.42508,9.70086L 7.44268,9.70086C 7.77671,9.18538 8.25157,8.92763 8.86727,8.92763C 9.43241,8.92763 9.86777,9.11789 10.1734,9.49841C 10.479,9.87893 10.6317,10.3992 10.6317,11.0591C 10.6317,11.775 10.4534,12.3498 10.0969,12.7836C 9.74025,13.2174 9.26359,13.4343 8.66685,13.4343C 8.12699,13.4343 7.71893,13.2258 7.44268,12.8087 Z M 7.40477,11.0212L 7.40477,11.4518C 7.40477,11.7235 7.48602,11.9486 7.64852,12.1269C 7.81102,12.3051 8.01956,12.3943 8.27414,12.3943C 8.58199,12.3943 8.82078,12.2799 8.9905,12.051C 9.16022,11.8222 9.24508,11.4978 9.24508,11.078C 9.24508,10.7296 9.16744,10.4574 9.01216,10.2615C 8.85689,10.0656 8.6348,9.96763 8.34591,9.96763C 8.07508,9.96763 7.85051,10.0649 7.67222,10.2595C 7.49392,10.454 7.40477,10.7079 7.40477,11.0212 Z "/>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 14.0984,13.1621C 13.8032,13.3436 13.3766,13.4343 12.8187,13.4343C 12.1669,13.4343 11.6395,13.2343 11.2364,12.8344C 10.8333,12.4345 10.6317,11.9181 10.6317,11.2852C 10.6317,10.5558 10.8477,9.9805 11.2797,9.55935C 11.7117,9.1382 12.2897,8.92763 13.0137,8.92763C 13.513,8.92763 13.8745,8.99805 14.0984,9.13888L 14.0984,10.3143C 13.8321,10.0832 13.5351,9.96763 13.2074,9.96763C 12.8417,9.96763 12.5522,10.0766 12.3387,10.2947C 12.1252,10.5127 12.0184,10.8135 12.0184,11.1972C 12.0184,11.5701 12.1204,11.8628 12.3245,12.0754C 12.5285,12.288 12.8092,12.3943 13.1667,12.3943C 13.4845,12.3943 13.7951,12.2787 14.0984,12.0476L 14.0984,13.1621 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5.69175,13.3476L 4.39175,13.3476L 4.39175,12.7017L 4.37414,12.7017C 4.08074,13.1901 3.6465,13.4343 3.07143,13.4343C 2.64713,13.4343 2.31333,13.3158 2.07003,13.0788C 1.82673,12.8419 1.70508,12.5257 1.70508,12.1302C 1.70508,11.2952 2.20748,10.8131 3.21227,10.684L 4.39987,10.5283C 4.39987,10.0967 4.14123,9.88096 3.62393,9.88096C 3.10303,9.88096 2.60786,10.0254 2.13841,10.3143L 2.13841,9.29597C 2.32709,9.19847 2.58551,9.1127 2.91367,9.03867C 3.24183,8.96465 3.54043,8.92763 3.80946,8.92763C 5.06432,8.92763 5.69175,9.54152 5.69175,10.7693L 5.69175,13.3476 Z M 4.39987,11.5913L 4.39987,11.3083L 3.59008,11.4071C 3.1423,11.4613 2.91841,11.6513 2.91841,11.9772C 2.91841,12.1244 2.97281,12.2451 3.08159,12.3395C 3.19038,12.4338 3.33775,12.481 3.52373,12.481C 3.78282,12.481 3.99362,12.397 4.15612,12.2291C 4.31862,12.0612 4.39987,11.8486 4.39987,11.5913 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 7.44268,12.8087L 7.42508,12.8087L 7.42508,13.3476L 6.12508,13.3476L 6.12508,6.9343L 7.42508,6.9343L 7.42508,9.70086L 7.44268,9.70086C 7.77671,9.18538 8.25157,8.92763 8.86727,8.92763C 9.43241,8.92763 9.86777,9.11789 10.1734,9.49841C 10.479,9.87893 10.6317,10.3992 10.6317,11.0591C 10.6317,11.775 10.4534,12.3498 10.0969,12.7836C 9.74025,13.2174 9.26359,13.4343 8.66685,13.4343C 8.12699,13.4343 7.71893,13.2258 7.44268,12.8087 Z M 7.40477,11.0212L 7.40477,11.4518C 7.40477,11.7235 7.48602,11.9486 7.64852,12.1269C 7.81102,12.3051 8.01956,12.3943 8.27414,12.3943C 8.58199,12.3943 8.82078,12.2799 8.9905,12.051C 9.16022,11.8222 9.24508,11.4978 9.24508,11.078C 9.24508,10.7296 9.16744,10.4574 9.01216,10.2615C 8.85689,10.0656 8.6348,9.96763 8.34591,9.96763C 8.07508,9.96763 7.85051,10.0649 7.67222,10.2595C 7.49392,10.454 7.40477,10.7079 7.40477,11.0212 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 14.0984,13.1621C 13.8032,13.3436 13.3766,13.4343 12.8187,13.4343C 12.1669,13.4343 11.6395,13.2343 11.2364,12.8344C 10.8333,12.4345 10.6317,11.9181 10.6317,11.2852C 10.6317,10.5558 10.8477,9.9805 11.2797,9.55935C 11.7117,9.1382 12.2897,8.92763 13.0137,8.92763C 13.513,8.92763 13.8745,8.99805 14.0984,9.13888L 14.0984,10.3143C 13.8321,10.0832 13.5351,9.96763 13.2074,9.96763C 12.8417,9.96763 12.5522,10.0766 12.3387,10.2947C 12.1252,10.5127 12.0184,10.8135 12.0184,11.1972C 12.0184,11.5701 12.1204,11.8628 12.3245,12.0754C 12.5285,12.288 12.8092,12.3943 13.1667,12.3943C 13.4845,12.3943 13.7951,12.2787 14.0984,12.0476L 14.0984,13.1621 Z "/>
                     </DrawingGroup.Children>
                 </DrawingGroup>
             </DrawingBrush.Drawing>
@@ -663,28 +740,23 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Geometry="F1 M 2.5,0.499999L 13.5,0.499999C 14.6046,0.499999 15.5,1.39543 15.5,2.5L 15.5,13.5C 15.5,14.6046 14.6046,15.5 13.5,15.5L 2.5,15.5C 1.39543,15.5 0.499999,14.6046 0.499999,13.5L 0.499999,2.5C 0.499999,1.39543 1.39543,0.499999 2.5,0.499999 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF000000"/>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF230FD2" Geometry="F1 M 2.41667,0.499996L 13.5833,0.499996C 14.6419,0.499996 15.5,1.35812 15.5,2.41666L 15.5,2.41666C 15.5,3.47521 14.6419,4.33333 13.5833,4.33333L 2.41667,4.33333C 1.35812,4.33333 0.500001,3.47521 0.500001,2.41666L 0.500001,2.41666C 0.500001,1.35812 1.35812,0.499996 2.41667,0.499996 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF230FD2"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
                         <DrawingGroup>
                             <DrawingGroup.Children>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 5,6L 7,6L 7,8L 5,8L 5,6 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 8,6L 10,6L 10,8L 8,8L 8,6 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 11,6L 13,6L 13,8L 11,8L 11,6 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 1.987,9L 3.987,9L 3.987,11L 1.987,11L 1.987,9 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 4.987,9L 6.987,9L 6.987,11L 4.987,11L 4.987,9 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 7.987,9L 9.987,9L 9.987,11L 7.987,11L 7.987,9 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 10.987,9L 12.987,9L 12.987,11L 10.987,11L 10.987,9 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 1.9875,12L 3.9875,12L 3.9875,14L 1.9875,14L 1.9875,12 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 4.9875,12L 6.9875,12L 6.9875,14L 4.9875,14L 4.9875,12 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 7.9875,12L 9.9875,12L 9.9875,14L 7.9875,14L 7.9875,12 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5,6L 7,6L 7,8L 5,8L 5,6 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 8,6L 10,6L 10,8L 8,8L 8,6 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 11,6L 13,6L 13,8L 11,8L 11,6 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 1.987,9L 3.987,9L 3.987,11L 1.987,11L 1.987,9 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 4.987,9L 6.987,9L 6.987,11L 4.987,11L 4.987,9 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 7.987,9L 9.987,9L 9.987,11L 7.987,11L 7.987,9 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.987,9L 12.987,9L 12.987,11L 10.987,11L 10.987,9 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 1.9875,12L 3.9875,12L 3.9875,14L 1.9875,14L 1.9875,12 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 4.9875,12L 6.9875,12L 6.9875,14L 4.9875,14L 4.9875,12 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 7.9875,12L 9.9875,12L 9.9875,14L 7.9875,14L 7.9875,12 Z "/>
                             </DrawingGroup.Children>
                         </DrawingGroup>
                     </DrawingGroup.Children>
@@ -695,24 +767,19 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Geometry="F1 M 2.5,0.499999L 13.5,0.499999C 14.6046,0.499999 15.5,1.39543 15.5,2.5L 15.5,13.5C 15.5,14.6046 14.6046,15.5 13.5,15.5L 2.5,15.5C 1.39543,15.5 0.499999,14.6046 0.499999,13.5L 0.499999,2.5C 0.499999,1.39543 1.39543,0.499999 2.5,0.499999 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF000000"/>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF230FD2" Geometry="F1 M 2.41667,0.499996L 13.5833,0.499996C 14.6419,0.499996 15.5,1.35812 15.5,2.41666L 15.5,2.41666C 15.5,3.47521 14.6419,4.33333 13.5833,4.33333L 2.41667,4.33333C 1.35812,4.33333 0.500001,3.47521 0.500001,2.41666L 0.500001,2.41666C 0.500001,1.35812 1.35812,0.499996 2.41667,0.499996 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF230FD2"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
                         <DrawingGroup>
                             <DrawingGroup.Children>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 2,6L 4,6L 4,8L 2,8L 2,6 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 4.9875,6L 13,6L 13,8L 4.9875,8L 4.9875,6 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 1.987,9L 3.987,9L 3.987,11L 1.987,11L 1.987,9 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 4.987,9L 12.9875,9L 12.9875,11L 4.987,11L 4.987,9 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 1.9875,12L 3.9875,12L 3.9875,14L 1.9875,14L 1.9875,12 Z "/>
-                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M 4.9875,12L 12.9875,12L 12.9875,14L 4.9875,14L 4.9875,12 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 2,6L 4,6L 4,8L 2,8L 2,6 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 4.9875,6L 13,6L 13,8L 4.9875,8L 4.9875,6 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 1.987,9L 3.987,9L 3.987,11L 1.987,11L 1.987,9 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 4.987,9L 12.9875,9L 12.9875,11L 4.987,11L 4.987,9 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 1.9875,12L 3.9875,12L 3.9875,14L 1.9875,14L 1.9875,12 Z "/>
+                                <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 4.9875,12L 12.9875,12L 12.9875,14L 4.9875,14L 4.9875,12 Z "/>
                             </DrawingGroup.Children>
                         </DrawingGroup>
                     </DrawingGroup.Children>
@@ -723,17 +790,12 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Geometry="F1 M 2.5,0.499999L 13.5,0.499999C 14.6046,0.499999 15.5,1.39543 15.5,2.5L 15.5,13.5C 15.5,14.6046 14.6046,15.5 13.5,15.5L 2.5,15.5C 1.39543,15.5 0.499999,14.6046 0.499999,13.5L 0.499999,2.5C 0.499999,1.39543 1.39543,0.499999 2.5,0.499999 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF000000"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF230FD2" Geometry="F1 M 2.41667,0.499996L 13.5833,0.499996C 14.6419,0.499996 15.5,1.35812 15.5,2.41666L 15.5,2.41666C 15.5,3.47521 14.6419,4.33333 13.5833,4.33333L 2.41667,4.33333C 1.35812,4.33333 0.500001,3.47521 0.500001,2.41666L 0.500001,2.41666C 0.500001,1.35812 1.35812,0.499996 2.41667,0.499996 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF230FD2"/>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF006432" Geometry="F1 M 12.6808,5.1283L 12.9222,5.47698C 11.9357,6.22352 10.8394,7.37275 9.63317,8.92468C 8.42695,10.4766 7.5057,11.9268 6.86943,13.2754L 6.35758,13.6241C 5.9344,13.9206 5.64681,14.1404 5.49482,14.2834C 5.43522,14.0659 5.30409,13.709 5.10144,13.2128L 4.90698,12.7613C 4.63131,12.1116 4.37464,11.6314 4.13698,11.3207C 3.89931,11.0101 3.63295,10.8041 3.33791,10.7027C 3.8356,10.1335 4.29157,9.84891 4.70582,9.84891C 5.06046,9.84891 5.45459,10.3481 5.8882,11.3464L 6.10278,11.8494C 6.8806,10.5291 7.88008,9.24579 9.10121,7.99933C 10.3223,6.75287 11.5155,5.79586 12.6808,5.1283 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 12.6808,5.1283L 12.9222,5.47698C 11.9357,6.22352 10.8394,7.37275 9.63317,8.92468C 8.42695,10.4766 7.5057,11.9268 6.86943,13.2754L 6.35758,13.6241C 5.9344,13.9206 5.64681,14.1404 5.49482,14.2834C 5.43522,14.0659 5.30409,13.709 5.10144,13.2128L 4.90698,12.7613C 4.63131,12.1116 4.37464,11.6314 4.13698,11.3207C 3.89931,11.0101 3.63295,10.8041 3.33791,10.7027C 3.8356,10.1335 4.29157,9.84891 4.70582,9.84891C 5.06046,9.84891 5.45459,10.3481 5.8882,11.3464L 6.10278,11.8494C 6.8806,10.5291 7.88008,9.24579 9.10121,7.99933C 10.3223,6.75287 11.5155,5.79586 12.6808,5.1283 Z "/>
                     </DrawingGroup.Children>
                 </DrawingGroup>
             </DrawingBrush.Drawing>
@@ -742,19 +804,14 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Geometry="F1 M 2.5,0.5L 13.5,0.5C 14.6046,0.5 15.5,1.39545 15.5,2.5L 15.5,13.5C 15.5,14.6046 14.6046,15.5 13.5,15.5L 2.5,15.5C 1.39543,15.5 0.5,14.6046 0.5,13.5L 0.5,2.5C 0.5,1.39545 1.39543,0.5 2.5,0.5 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF000000"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF230FD2" Geometry="F1 M 2.41667,0.5L 13.5833,0.5C 14.6419,0.5 15.5,1.35809 15.5,2.41669L 15.5,2.41669C 15.5,3.47522 14.6419,4.33331 13.5833,4.33331L 2.41667,4.33331C 1.35812,4.33331 0.500002,3.47522 0.500002,2.41669L 0.500002,2.41669C 0.500002,1.35809 1.35812,0.5 2.41667,0.5 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF230FD2"/>
-                            </GeometryDrawing.Pen>
-                        </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 5.62373,12.9199L 1.71134,12.9199L 1.71134,11.8529L 3.04511,11.8529L 3.04511,7.94055L 1.71134,8.20728L 1.71134,7.14026L 4.37888,6.60675L 4.37888,11.8529L 5.62373,11.8529L 5.62373,12.9199 Z "/>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 7.19507,11.7376L 7.19507,11.764L 9.80286,11.764L 9.80286,12.9199L 5.62372,12.9199L 5.62372,11.8334L 7.46182,10.1232C 7.83231,9.78046 8.09281,9.4931 8.24332,9.26111C 8.39383,9.02905 8.46909,8.78522 8.46909,8.5296C 8.46909,7.95905 8.1463,7.67377 7.50072,7.67377C 6.93943,7.67377 6.40268,7.88123 5.89047,8.2962L 5.89047,7.08887C 6.45177,6.76746 7.08484,6.60675 7.7897,6.60675C 8.4501,6.60675 8.96555,6.76514 9.33604,7.08191C 9.70653,7.39868 9.89178,7.8266 9.89178,8.36566C 9.89178,9.08533 9.43792,9.8291 8.53022,10.5969L 7.19507,11.7376 Z "/>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 9.98069,12.6948L 9.98069,11.4973C 10.3984,11.7936 10.8861,11.9418 11.4437,11.9418C 11.7956,11.9418 12.0696,11.868 12.2655,11.7202C 12.4614,11.5725 12.5593,11.3671 12.5593,11.1041C 12.5593,10.8317 12.4361,10.6217 12.1897,10.474C 11.9434,10.3262 11.6048,10.2524 11.1741,10.2524L 10.6031,10.2524L 10.6031,9.18536L 11.1338,9.18536C 11.9656,9.18536 12.3815,8.9256 12.3815,8.40594C 12.3815,7.91785 12.0726,7.67377 11.4548,7.67377C 11.0408,7.67377 10.6383,7.82196 10.2474,8.11835L 10.2474,6.95129C 10.6855,6.72162 11.1964,6.60675 11.7799,6.60675C 12.4181,6.60675 12.915,6.74872 13.2706,7.03259C 13.6263,7.31647 13.8042,7.68488 13.8042,8.13782C 13.8042,8.9436 13.3841,9.44843 12.544,9.65222L 12.544,9.67444C 12.9886,9.72906 13.3394,9.88837 13.5964,10.1523C 13.8535,10.4163 13.982,10.7405 13.982,11.1249C 13.982,11.7056 13.7676,12.1648 13.3387,12.5024C 12.9099,12.84 12.3176,13.0089 11.5618,13.0089C 10.9134,13.0089 10.3864,12.9042 9.98069,12.6948 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5.62373,12.9199L 1.71134,12.9199L 1.71134,11.8529L 3.04511,11.8529L 3.04511,7.94055L 1.71134,8.20728L 1.71134,7.14026L 4.37888,6.60675L 4.37888,11.8529L 5.62373,11.8529L 5.62373,12.9199 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 7.19507,11.7376L 7.19507,11.764L 9.80286,11.764L 9.80286,12.9199L 5.62372,12.9199L 5.62372,11.8334L 7.46182,10.1232C 7.83231,9.78046 8.09281,9.4931 8.24332,9.26111C 8.39383,9.02905 8.46909,8.78522 8.46909,8.5296C 8.46909,7.95905 8.1463,7.67377 7.50072,7.67377C 6.93943,7.67377 6.40268,7.88123 5.89047,8.2962L 5.89047,7.08887C 6.45177,6.76746 7.08484,6.60675 7.7897,6.60675C 8.4501,6.60675 8.96555,6.76514 9.33604,7.08191C 9.70653,7.39868 9.89178,7.8266 9.89178,8.36566C 9.89178,9.08533 9.43792,9.8291 8.53022,10.5969L 7.19507,11.7376 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 9.98069,12.6948L 9.98069,11.4973C 10.3984,11.7936 10.8861,11.9418 11.4437,11.9418C 11.7956,11.9418 12.0696,11.868 12.2655,11.7202C 12.4614,11.5725 12.5593,11.3671 12.5593,11.1041C 12.5593,10.8317 12.4361,10.6217 12.1897,10.474C 11.9434,10.3262 11.6048,10.2524 11.1741,10.2524L 10.6031,10.2524L 10.6031,9.18536L 11.1338,9.18536C 11.9656,9.18536 12.3815,8.9256 12.3815,8.40594C 12.3815,7.91785 12.0726,7.67377 11.4548,7.67377C 11.0408,7.67377 10.6383,7.82196 10.2474,8.11835L 10.2474,6.95129C 10.6855,6.72162 11.1964,6.60675 11.7799,6.60675C 12.4181,6.60675 12.915,6.74872 13.2706,7.03259C 13.6263,7.31647 13.8042,7.68488 13.8042,8.13782C 13.8042,8.9436 13.3841,9.44843 12.544,9.65222L 12.544,9.67444C 12.9886,9.72906 13.3394,9.88837 13.5964,10.1523C 13.8535,10.4163 13.982,10.7405 13.982,11.1249C 13.982,11.7056 13.7676,12.1648 13.3387,12.5024C 12.9099,12.84 12.3176,13.0089 11.5618,13.0089C 10.9134,13.0089 10.3864,12.9042 9.98069,12.6948 Z "/>
                     </DrawingGroup.Children>
                 </DrawingGroup>
             </DrawingBrush.Drawing>
@@ -763,18 +820,62 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Geometry="F1 M 2.5,0.5L 13.5,0.5C 14.6046,0.5 15.5,1.39545 15.5,2.5L 15.5,13.5C 15.5,14.6046 14.6046,15.5 13.5,15.5L 2.5,15.5C 1.39543,15.5 0.5,14.6046 0.5,13.5L 0.5,2.5C 0.5,1.39545 1.39543,0.5 2.5,0.5 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF000000"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF230FD2" Geometry="F1 M 2.41667,0.5L 13.5833,0.5C 14.6419,0.5 15.5,1.35809 15.5,2.41669L 15.5,2.41669C 15.5,3.47522 14.6419,4.33331 13.5833,4.33331L 2.41667,4.33331C 1.35812,4.33331 0.500002,3.47522 0.500002,2.41669L 0.500002,2.41669C 0.500002,1.35809 1.35812,0.5 2.41667,0.5 Z ">
-                            <GeometryDrawing.Pen>
-                                <Pen MiterLimit="2.75" Brush="#FF230FD2"/>
-                            </GeometryDrawing.Pen>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5.38455,7.27948C 5.10803,7.27948 4.88155,7.19299 4.7051,7.02002C 4.52866,6.84705 4.44044,6.6344 4.44044,6.3822C 4.44044,6.12421 4.52866,5.91302 4.7051,5.74878C 4.88155,5.58447 5.10803,5.50232 5.38455,5.50232C 5.66454,5.50232 5.89189,5.58447 6.06659,5.74878C 6.2413,5.91302 6.32865,6.12421 6.32865,6.3822C 6.32865,6.64484 6.2413,6.86005 6.06659,7.02783C 5.89189,7.19556 5.66454,7.27948 5.38455,7.27948 Z M 6.21758,13.7216L 4.55151,13.7216L 4.55151,8.16803L 6.21758,8.16803L 6.21758,13.7216 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 11.8822,13.7216L 10.1051,13.7216L 10.1051,12.9111L 10.0842,12.9111C 9.69896,13.5255 9.13319,13.8326 8.38693,13.8326C 7.70199,13.8326 7.15069,13.5897 6.73301,13.1038C 6.31534,12.6178 6.1065,11.9392 6.1065,11.068C 6.1065,10.1575 6.33674,9.42798 6.79723,8.87958C 7.25771,8.33118 7.8605,8.05695 8.6056,8.05695C 9.31252,8.05695 9.8054,8.32074 10.0842,8.84833L 10.1051,8.84833L 10.1051,5.50232L 11.8822,5.50232L 11.8822,13.7216 Z M 10.138,11.0194L 10.138,10.6133C 10.138,10.2616 10.0371,9.96973 9.83519,9.73779C 9.6333,9.5058 9.37095,9.38983 9.04815,9.38983C 8.68254,9.38983 8.39705,9.53473 8.19169,9.82452C 7.98632,10.1144 7.88364,10.5126 7.88364,11.0194C 7.88364,11.4938 7.98285,11.8591 8.18128,12.1154C 8.3797,12.3716 8.6542,12.4998 9.00476,12.4998C 9.33913,12.4998 9.61161,12.3644 9.82218,12.0937C 10.0328,11.8229 10.138,11.4648 10.138,11.0194 Z "/>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        <DrawingBrush x:Key="ByteArrayPropertyIcon" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
                         </GeometryDrawing>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 5.38455,7.27948C 5.10803,7.27948 4.88155,7.19299 4.7051,7.02002C 4.52866,6.84705 4.44044,6.6344 4.44044,6.3822C 4.44044,6.12421 4.52866,5.91302 4.7051,5.74878C 4.88155,5.58447 5.10803,5.50232 5.38455,5.50232C 5.66454,5.50232 5.89189,5.58447 6.06659,5.74878C 6.2413,5.91302 6.32865,6.12421 6.32865,6.3822C 6.32865,6.64484 6.2413,6.86005 6.06659,7.02783C 5.89189,7.19556 5.66454,7.27948 5.38455,7.27948 Z M 6.21758,13.7216L 4.55151,13.7216L 4.55151,8.16803L 6.21758,8.16803L 6.21758,13.7216 Z "/>
-                        <GeometryDrawing Brush="#FF000000" Geometry="F1 M 11.8822,13.7216L 10.1051,13.7216L 10.1051,12.9111L 10.0842,12.9111C 9.69896,13.5255 9.13319,13.8326 8.38693,13.8326C 7.70199,13.8326 7.15069,13.5897 6.73301,13.1038C 6.31534,12.6178 6.1065,11.9392 6.1065,11.068C 6.1065,10.1575 6.33674,9.42798 6.79723,8.87958C 7.25771,8.33118 7.8605,8.05695 8.6056,8.05695C 9.31252,8.05695 9.8054,8.32074 10.0842,8.84833L 10.1051,8.84833L 10.1051,5.50232L 11.8822,5.50232L 11.8822,13.7216 Z M 10.138,11.0194L 10.138,10.6133C 10.138,10.2616 10.0371,9.96973 9.83519,9.73779C 9.6333,9.5058 9.37095,9.38983 9.04815,9.38983C 8.68254,9.38983 8.39705,9.53473 8.19169,9.82452C 7.98632,10.1144 7.88364,10.5126 7.88364,11.0194C 7.88364,11.4938 7.98285,11.8591 8.18128,12.1154C 8.3797,12.3716 8.6542,12.4998 9.00476,12.4998C 9.33913,12.4998 9.61161,12.3644 9.82218,12.0937C 10.0328,11.8229 10.138,11.4648 10.138,11.0194 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 5.61519,6.0892C 5.61519,6.50837 5.56936,6.88337 5.47769,7.2142C 5.38602,7.54503 5.25207,7.82441 5.07582,8.05232C 4.89957,8.28024 4.68457,8.45399 4.43082,8.57357C 4.17707,8.69316 3.88686,8.75295 3.56019,8.75295C 3.27769,8.75295 3.01748,8.70358 2.77957,8.60482C 2.54165,8.50607 2.33644,8.35045 2.16394,8.13795C 1.99144,7.92545 1.85686,7.65399 1.76019,7.32358C 1.66353,6.99316 1.61519,6.59753 1.61519,6.1367C 1.61519,5.71753 1.66165,5.34253 1.75457,5.0117C 1.84748,4.68087 1.98144,4.40149 2.15644,4.17357C 2.33144,3.94566 2.54707,3.77191 2.80332,3.65233C 3.05957,3.53274 3.34978,3.47295 3.67394,3.47295C 3.95644,3.47295 4.21665,3.52232 4.45457,3.62108C 4.69248,3.71982 4.89707,3.87483 5.06832,4.08607C 5.23957,4.29732 5.37353,4.56816 5.47019,4.89857C 5.56686,5.22899 5.61519,5.62587 5.61519,6.0892 Z M 2.57519,6.0992C 2.57519,6.14587 2.57519,6.18941 2.58269,6.35295L 4.51519,4.99295C 4.42353,4.74795 4.30207,4.5667 4.15082,4.4492C 3.99957,4.3317 3.82144,4.27295 3.61644,4.27295C 3.46894,4.27295 3.33207,4.30941 3.20582,4.38233C 3.07957,4.45524 2.96978,4.56732 2.87644,4.71858C 2.78311,4.86982 2.70957,5.05962 2.65582,5.28795C 2.60207,5.51628 2.57519,5.7867 2.57519,6.0992 Z M 4.64769,5.87295L 2.72769,7.23295C 2.81186,7.47712 2.93019,7.65816 3.08269,7.77607C 3.23519,7.89399 3.41269,7.95295 3.61519,7.95295C 3.76186,7.95295 3.89894,7.91566 4.02644,7.84107C 4.15394,7.76649 4.26436,7.65357 4.35769,7.50232C 4.45103,7.35108 4.52394,7.16003 4.57644,6.9292C 4.62894,6.69837 4.65519,6.42712 4.65519,6.11545 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 6.41519,8.67295L 6.41519,7.79295L 7.69519,7.79295L 7.69519,4.54045L 6.56644,5.15295L 6.25519,4.35295L 7.87019,3.55295L 8.65519,3.55295L 8.65519,7.79295L 9.77519,7.79295L 9.77519,8.67295L 6.41519,8.67295 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 14.4152,6.0892C 14.4152,6.50837 14.3694,6.88337 14.2777,7.2142C 14.186,7.54503 14.0521,7.82441 13.8758,8.05232C 13.6996,8.28024 13.4846,8.45399 13.2308,8.57357C 12.9771,8.69316 12.6869,8.75295 12.3602,8.75295C 12.0777,8.75295 11.8175,8.70358 11.5796,8.60482C 11.3417,8.50607 11.1364,8.35045 10.9639,8.13795C 10.7914,7.92545 10.6569,7.65399 10.5602,7.32358C 10.4635,6.99316 10.4152,6.59753 10.4152,6.1367C 10.4152,5.71753 10.4616,5.34253 10.5546,5.0117C 10.6475,4.68087 10.7814,4.40149 10.9564,4.17357C 11.1314,3.94566 11.3471,3.77191 11.6033,3.65233C 11.8596,3.53274 12.1498,3.47295 12.4739,3.47295C 12.7564,3.47295 13.0167,3.52232 13.2546,3.62108C 13.4925,3.71982 13.6971,3.87483 13.8683,4.08607C 14.0396,4.29732 14.1735,4.56816 14.2702,4.89857C 14.3669,5.22899 14.4152,5.62587 14.4152,6.0892 Z M 11.3752,6.0992C 11.3752,6.14587 11.3752,6.18941 11.3827,6.35295L 13.3152,4.99295C 13.2235,4.74795 13.1021,4.5667 12.9508,4.4492C 12.7996,4.3317 12.6214,4.27295 12.4164,4.27295C 12.2689,4.27295 12.1321,4.30941 12.0058,4.38233C 11.8796,4.45524 11.7698,4.56732 11.6764,4.71858C 11.5831,4.86982 11.5096,5.05962 11.4558,5.28795C 11.4021,5.51628 11.3752,5.7867 11.3752,6.0992 Z M 13.4477,5.87295L 11.5277,7.23295C 11.6119,7.47712 11.7302,7.65816 11.8827,7.77607C 12.0352,7.89399 12.2127,7.95295 12.4152,7.95295C 12.5619,7.95295 12.6989,7.91566 12.8264,7.84107C 12.9539,7.76649 13.0644,7.65357 13.1577,7.50232C 13.251,7.35108 13.3239,7.16003 13.3764,6.9292C 13.4289,6.69837 13.4552,6.42712 13.4552,6.11545 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 2.01519,14.8428L 2.01519,13.9628L 3.29519,13.9628L 3.29519,10.7103L 2.16644,11.3228L 1.85519,10.5228L 3.47019,9.72282L 4.25519,9.72282L 4.25519,13.9628L 5.37519,13.9628L 5.37519,14.8428L 2.01519,14.8428 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.0152,12.2591C 10.0152,12.6782 9.96936,13.0532 9.87769,13.3841C 9.78603,13.7149 9.65207,13.9943 9.47582,14.2222C 9.29957,14.4501 9.08457,14.6239 8.83082,14.7434C 8.57707,14.863 8.28686,14.9228 7.96019,14.9228C 7.67769,14.9228 7.41748,14.8734 7.17957,14.7747C 6.94165,14.6759 6.73644,14.5203 6.56394,14.3078C 6.39144,14.0953 6.25686,13.8239 6.16019,13.4934C 6.06353,13.163 6.01519,12.7674 6.01519,12.3066C 6.01519,11.8874 6.06165,11.5124 6.15457,11.1816C 6.24748,10.8507 6.38144,10.5714 6.55644,10.3434C 6.73144,10.1155 6.94707,9.94178 7.20332,9.8222C 7.45957,9.70262 7.74978,9.64282 8.07394,9.64282C 8.35644,9.64282 8.61665,9.6922 8.85457,9.79095C 9.09248,9.8897 9.29707,10.0447 9.46832,10.2559C 9.63957,10.4672 9.77353,10.738 9.87019,11.0684C 9.96686,11.3989 10.0152,11.7957 10.0152,12.2591 Z M 6.97519,12.2691C 6.97519,12.3157 6.97519,12.3593 6.98269,12.5228L 8.91519,11.1628C 8.82353,10.9178 8.70207,10.7366 8.55082,10.6191C 8.39957,10.5016 8.22144,10.4428 8.01644,10.4428C 7.86894,10.4428 7.73207,10.4793 7.60582,10.5522C 7.47957,10.6251 7.36978,10.7372 7.27644,10.8884C 7.18311,11.0397 7.10957,11.2295 7.05582,11.4578C 7.00207,11.6862 6.97519,11.9566 6.97519,12.2691 Z M 9.04769,12.0428L 7.12769,13.4028C 7.21186,13.647 7.33019,13.828 7.48269,13.9459C 7.63519,14.0639 7.81269,14.1228 8.01519,14.1228C 8.16186,14.1228 8.29894,14.0855 8.42644,14.0109C 8.55394,13.9364 8.66436,13.8234 8.75769,13.6722C 8.85103,13.5209 8.92394,13.3299 8.97644,13.0991C 9.02894,12.8682 9.05519,12.597 9.05519,12.2853 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.8152,14.8428L 10.8152,13.9628L 12.0952,13.9628L 12.0952,10.7103L 10.9664,11.3228L 10.6552,10.5228L 12.2702,9.72282L 13.0552,9.72282L 13.0552,13.9628L 14.1752,13.9628L 14.1752,14.8428L 10.8152,14.8428 Z "/>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        <DrawingBrush x:Key="ObjectPropertyIcon" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 6.04177,14.2507C 5.1501,14.2507 4.48447,14.0337 4.04489,13.5997C 3.60531,13.1657 3.38552,12.4771 3.38552,11.5341L 3.38552,9.87156C 3.38552,9.42294 3.28413,9.0851 3.08135,8.85801C 2.87857,8.63093 2.54107,8.51739 2.06885,8.51739L 1.65218,8.51739L 1.65218,7.31739L 2.06885,7.31739C 2.30774,7.31739 2.51086,7.29274 2.67823,7.24343C 2.84559,7.19412 2.98204,7.11808 3.0876,7.0153C 3.19316,6.91253 3.2692,6.78128 3.31573,6.62155C 3.36225,6.46183 3.38552,6.27017 3.38552,6.04656L 3.38552,4.91947C 3.38552,4.47919 3.43621,4.09204 3.5376,3.75801C 3.63899,3.42399 3.79732,3.14586 4.0126,2.92364C 4.22788,2.70142 4.50253,2.53371 4.83656,2.42051C 5.17059,2.30732 5.57232,2.25072 6.04177,2.25072L 6.58552,2.25072L 6.58552,3.45072L 6.1876,3.45072C 5.98482,3.45072 5.80218,3.47538 5.63968,3.52468C 5.47718,3.57399 5.33691,3.65419 5.21885,3.76531C 5.10079,3.87642 5.01017,4.02294 4.94697,4.20489C 4.88378,4.38683 4.85218,4.61253 4.85218,4.88197L 4.85218,6.00281C 4.85218,6.32364 4.8251,6.5976 4.77093,6.82468C 4.71677,7.05176 4.63343,7.241 4.52093,7.39239C 4.40843,7.54378 4.26538,7.66114 4.09177,7.74447C 3.91816,7.82781 3.71399,7.88683 3.47927,7.92156C 3.94316,7.97433 4.28795,8.15697 4.51364,8.46947C 4.73934,8.78197 4.85218,9.26183 4.85218,9.90905L 4.85218,11.5757C 4.85218,11.8591 4.88378,12.0948 4.94697,12.283C 5.01017,12.4712 5.10079,12.6222 5.21885,12.7361C 5.33691,12.85 5.47718,12.9309 5.63968,12.9788C 5.80218,13.0268 5.98482,13.0507 6.1876,13.0507L 6.58552,13.0507L 6.58552,14.2507L 6.04177,14.2507 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 10.0605,2.25072C 10.955,2.25072 11.6216,2.46357 12.0605,2.88926C 12.4994,3.31496 12.7188,3.99169 12.7188,4.91947L 12.7188,5.99656C 12.7188,6.43683 12.8192,6.76704 13.0199,6.98718C 13.2206,7.20732 13.557,7.31739 14.0293,7.31739L 14.4522,7.31739L 14.4522,8.51739L 14.0293,8.51739C 13.7904,8.51739 13.5873,8.54239 13.4199,8.59239C 13.2525,8.64239 13.1171,8.71982 13.0136,8.82468C 12.9102,8.92954 12.8352,9.06392 12.7886,9.2278C 12.7421,9.39169 12.7188,9.58683 12.7188,9.81322L 12.7188,11.5341C 12.7188,11.9841 12.6682,12.3782 12.5668,12.7163C 12.4654,13.0545 12.3074,13.3368 12.0928,13.5632C 11.8782,13.7896 11.6032,13.9608 11.2678,14.0768C 10.9324,14.1927 10.53,14.2507 10.0605,14.2507L 9.51885,14.2507L 9.51885,13.0507L 9.92302,13.0507C 10.1244,13.0507 10.306,13.0268 10.4678,12.9788C 10.6296,12.9309 10.7692,12.849 10.8866,12.733C 11.0039,12.617 11.0942,12.466 11.1574,12.2799C 11.2206,12.0938 11.2522,11.8632 11.2522,11.5882L 11.2522,9.88197C 11.2522,9.55419 11.2793,9.27329 11.3334,9.03926C 11.3876,8.80523 11.4699,8.61079 11.5803,8.45593C 11.6907,8.30107 11.8327,8.18197 12.0063,8.09864C 12.18,8.0153 12.3841,7.95628 12.6188,7.92156C 12.1536,7.866 11.8095,7.68544 11.5866,7.37989C 11.3636,7.07433 11.2522,6.60489 11.2522,5.97156L 11.2522,4.90072C 11.2522,4.62294 11.2206,4.391 11.1574,4.20489C 11.0942,4.01878 11.0039,3.87017 10.8866,3.75906C 10.7692,3.64794 10.6296,3.56878 10.4678,3.52156C 10.306,3.47433 10.1244,3.45072 9.92302,3.45072L 9.51885,3.45072L 9.51885,2.25072L 10.0605,2.25072 Z "/>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        <DrawingBrush x:Key="CollectionPropertyIcon" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="{StaticResource IconBackground}">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 2.71885,14.2507L 2.71885,2.25072L 6.18552,2.25072L 6.18552,3.45072L 4.18552,3.45072L 4.18552,13.0507L 6.18552,13.0507L 6.18552,14.2507L 2.71885,14.2507 Z "/>
+                        <GeometryDrawing Brush="{StaticResource IconForeground}" Geometry="F1 M 9.65218,14.2507L 9.65218,13.0507L 11.6522,13.0507L 11.6522,3.45072L 9.65218,3.45072L 9.65218,2.25072L 13.1188,2.25072L 13.1188,14.2507L 9.65218,14.2507 Z "/>
                     </DrawingGroup.Children>
                 </DrawingGroup>
             </DrawingBrush.Drawing>
@@ -847,5 +948,26 @@
                 </DrawingGroup>
             </DrawingBrush.Drawing>
         </DrawingBrush>
+        
+        <Storyboard x:Key="ShowFlashMessage">
+        	<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FlashLabel">
+        		<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+        		<DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Visible}"/>
+        		<DiscreteObjectKeyFrame KeyTime="0:0:0.6" Value="{x:Static Visibility.Collapsed}"/>
+        	</ObjectAnimationUsingKeyFrames>
+        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="FlashLabel">
+        		<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+        		<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="30"/>
+        	</DoubleAnimationUsingKeyFrames>
+        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="FlashLabel">
+        		<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+        		<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="30"/>
+        	</DoubleAnimationUsingKeyFrames>
+        	<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="FlashLabel">
+        		<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+        		<EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.99"/>
+        		<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+        	</DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </UserControl.Resources>
 </UserControl>

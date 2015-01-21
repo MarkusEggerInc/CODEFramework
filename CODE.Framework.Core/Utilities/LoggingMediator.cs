@@ -48,7 +48,7 @@ namespace CODE.Framework.Core.Utilities
             var exceptionText = ExceptionHelper.GetExceptionText(exception);
 
             foreach (var logger in Loggers)
-                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == logger.TypeFilter))
+                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == type))
                 {
                     var exceptionLogger = logger as IExceptionLogger;
                     if (exceptionLogger != null)
@@ -71,7 +71,7 @@ namespace CODE.Framework.Core.Utilities
             var exceptionText = leadingText + "\r\n\r\n" + ExceptionHelper.GetExceptionText(exception);
 
             foreach (var logger in Loggers)
-                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == logger.TypeFilter))
+                if (logger.TypeFilter == LogEventType.Undefined || ((logger.TypeFilter & type) == type))
                 {
                     var exceptionLogger = logger as IExceptionLogger;
                     if (exceptionLogger != null)

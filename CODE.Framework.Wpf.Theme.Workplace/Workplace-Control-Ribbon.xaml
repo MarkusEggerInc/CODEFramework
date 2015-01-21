@@ -5,6 +5,12 @@
                     xmlns:classes="clr-namespace:CODE.Framework.Wpf.Theme.Workplace.Classes">
 
     <Style TargetType="mvvm:ViewActionRibbon">
+        <Style.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="{x:Null}"/>
+            </Style>
+        </Style.Resources>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabControl">
@@ -31,6 +37,10 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="FrameworkElement" x:Key="CODE.Framework-Ribbon-CustomControlContainerStyle">
+        <Setter Property="Margin" Value="0,0,5,2" />
     </Style>
 
     <Style TargetType="mvvm:RibbonPage">
@@ -176,11 +186,12 @@
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush2}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
                         <Rectangle Height="32" Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
-                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3,0" Grid.Row="1" />
+                        <controls:ContentTextDisplay Content="{TemplateBinding Content}" Margin="3,0" Grid.Row="1" MaxLineCount="2" MinWidth="36" MaxWidth="200" />
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0" x:Name="AccessKey" Grid.Row="1"
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
                                    Text="{TemplateBinding AccessKey}"
                                    FontSize="{DynamicResource FontSize-Normal}" FontFamily="{DynamicResource DefaultFont}" />
+                        <Rectangle Grid.RowSpan="2" Fill="White" Opacity=".85" Visibility="Collapsed" x:Name="disabledIndicator" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
@@ -195,6 +206,9 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter Property="Visibility" TargetName="checkedIndicator" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Visibility" TargetName="disabledIndicator" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -221,6 +235,7 @@
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
                                    Text="{TemplateBinding AccessKey}"
                                    FontSize="{DynamicResource FontSize-Normal}" FontFamily="{DynamicResource DefaultFont}" />
+                        <Rectangle Grid.ColumnSpan="2" Fill="White" Opacity=".85" Visibility="Collapsed" x:Name="disabledIndicator" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
@@ -235,6 +250,9 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter Property="Visibility" TargetName="checkedIndicator" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Visibility" TargetName="disabledIndicator" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

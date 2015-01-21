@@ -2009,6 +2009,13 @@
             The ConfigurationSettings class is the main point of access to an application settings
             </summary>
         </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSettings.GetAllKeys">
+            <summary>
+            Returns a complete collection of all keys across all sources
+            </summary>
+            <returns>List&lt;System.String&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
         <member name="P:CODE.Framework.Core.Configuration.ConfigurationSettings.Settings">
             <summary>
             Exposes access to the Settings.
@@ -2027,72 +2034,21 @@
             ConfigurationSettings class.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection._sources">
-            <summary>
-            For internal use only
-            </summary>
-        </member>
         <member name="M:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.Add(CODE.Framework.Core.Configuration.IConfigurationSource)">
             <summary>
             Add sources to the collection.
             </summary>
             <param name="configurationSource">The source.</param>
         </member>
-        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.GetEnumerator">
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.GetAllSources">
             <summary>
-            Implements IEnumerator.GetEnumerator.
+            Returns a copy of all sources in a thread-safe way
             </summary>
-            <returns></returns>
-        </member>
-        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.Item(System.String)">
-            <summary>
-            Indexer that allows a source to be accessed by its name. 
-            </summary>
+            <returns>Array of configuration sources.</returns>
         </member>
         <member name="P:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.Item(System.Int32)">
             <summary>
             Indexer that allows a source to be accessed by its index. 
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.Count">
-            <summary>
-            Indicates how many sources exist in the collection.
-            </summary>
-        </member>
-        <member name="T:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator">
-            <summary>
-            Source enumerator class (for internal use only)
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator._intPosition">
-            <summary>
-            For internal use only
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator._intInitialCount">
-            <summary>
-            For internal use only
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator._sources">
-            <summary>
-            For internal use only
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator.Reset">
-            <summary>
-            Reset the enumeration
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator.MoveNext">
-            <summary>
-            Move to next item
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSettingsSourcesCollection.SourceEnumerator.Current">
-            <summary>
-            Current item
             </summary>
         </member>
         <member name="T:CODE.Framework.Core.Configuration.ConfigurationSource">
@@ -2163,6 +2119,11 @@
             the last time it's been populated.
             </summary>
         </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSource.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Configuration.ConfigurationSource"/> class.
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Core.Configuration.ConfigurationSource.MarkDirty">
             <summary>
             Used to mark the source as dirty.
@@ -2198,24 +2159,12 @@
             <summary>
             Checks whether a given Source Type is supported.
             </summary>
-            <param name="sourceType">The type of source being checked, according to enum
-            EPS.Configuration.ConfigurationSourceTypes.
-            </param>
+            <param name="sourceType">The type of source being checked, according to enum EPS.Configuration.ConfigurationSourceTypes.</param>
             <returns>True or False, indicating whether or not the source type is supported.</returns>
         </member>
         <member name="M:CODE.Framework.Core.Configuration.ConfigurationSource.Write">
             <summary>
             Persists settings, taking it from memory to the storage being used.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Configuration.ConfigurationSource._settings">
-            <summary>
-            Keeps an internal instance of the ConfigurationSourceSettings class.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSource.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Configuration.ConfigurationSource"/> class.
             </summary>
         </member>
         <member name="P:CODE.Framework.Core.Configuration.ConfigurationSource.FriendlyName">
@@ -2234,11 +2183,9 @@
             </summary>
         </member>
         <member name="P:CODE.Framework.Core.Configuration.ConfigurationSource.Settings">
-            <summary>
-            Exposes the Settings member.
-            </summary>
+            <summary>Exposes the Settings member.</summary>
             <example>
-            string sSetting = ConfigurationSettings.Settings["MySetting"]
+            var setting = ConfigurationSettings.Settings["MySetting"]
             </example>
         </member>
         <member name="P:CODE.Framework.Core.Configuration.ConfigurationSource.IsActive">
@@ -2252,20 +2199,17 @@
             the last time it's been populated.
             </summary>
         </member>
-        <member name="T:CODE.Framework.Core.Configuration.ConfigurationSourceMemorySettings">
-            <summary>
-            Hashtable that keeps a Name-Value list of settings. This class is mainly used by the MemorySettings class.
-            </summary>
-        </member>
         <member name="T:CODE.Framework.Core.Configuration.ConfigurationSourceSettings">
             <summary>
             Hashtable that keeps a Name-Value list of settings. This class is mainly used by the ConfigurationSource class.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Core.Configuration.ConfigurationSourceSettings._parentConfigSource">
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.#ctor(CODE.Framework.Core.Configuration.IConfigurationSource,System.TimeSpan)">
             <summary>
-            Keeps a reference to the config source that hosts the settings collection.
+            Constructor.
             </summary>
+            <param name="parent">The parent configuration source that hosts this settings collection.</param>
+            <param name="maxSettingsCacheDuration">Maximum duration of the settings cache.</param>
         </member>
         <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.#ctor(CODE.Framework.Core.Configuration.IConfigurationSource)">
             <summary>
@@ -2273,7 +2217,48 @@
             </summary>
             <param name="parent">The parent configuration source that hosts this settings collection.</param>
         </member>
-        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.Item(System.Object)">
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.ApplyCurrentReadTimestamp">
+            <summary>
+            Applies the current date/time as the last read timestamp
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.GetAllKeys">
+            <summary>
+            Returns a copied list of all keys in a thread-safe way.
+            </summary>
+            <returns>List of all keys</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.GetAllKeysAndValues">
+            <summary>
+            Returns a copied list of all keys and values in a thread-safe way
+            </summary>
+            <returns>List of all keys and values</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.ContainsKey(System.String)">
+            <summary>
+            Determines whether the specified key is contained in the settings collection.
+            </summary>
+            <param name="key">The key.</param>
+            <returns><c>true</c> if the specified key is contained in the collection; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.Add(System.String,System.String)">
+            <summary>
+            Adds the specified setting
+            </summary>
+            <param name="key">The key/setting name.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.Clear">
+            <summary>
+            Clears the settings.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.RemoveSettingWhenSetToNull">
+            <summary>
+            Defines whether null values are automatically removed from the settings collection
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSourceSettings.Item(System.String)">
             <summary>
             Indexer.
             </summary>
@@ -2282,26 +2267,10 @@
             flag as "dirty" the config source that hosts the settings.
             </remarks>
         </member>
-        <member name="M:CODE.Framework.Core.Configuration.ConfigurationSourceMemorySettings.#ctor(CODE.Framework.Core.Configuration.IConfigurationSource)">
-            <summary>
-            Constructor.
-            </summary>
-            <param name="parent">Collection this source belongs to</param>
-        </member>
-        <member name="P:CODE.Framework.Core.Configuration.ConfigurationSourceMemorySettings.Item(System.Object)">
-            <summary>
-            Indexer.
-            </summary>
-        </member>
         <member name="T:CODE.Framework.Core.Configuration.DotNetConfigurationFile">
             <summary>
             This class wraps up the functionality available natively in .NET for reading 
             the default settings (AppSettings) available in the config files.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.DotNetConfigurationFile.#ctor">
-            <summary>
-            Default Constructor.
             </summary>
         </member>
         <member name="M:CODE.Framework.Core.Configuration.DotNetConfigurationFile.Read">
@@ -2342,6 +2311,11 @@
             summary description for specialconfiguration.
             </summary>
         </member>
+        <member name="M:CODE.Framework.Core.Configuration.MemorySettings.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Configuration.MemorySettings"/> class.
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Core.Configuration.MemorySettings.Read">
             <summary>
             Read settings from file.
@@ -2359,11 +2333,6 @@
             <param name="sourceType"></param>
             <returns></returns>
         </member>
-        <member name="F:CODE.Framework.Core.Configuration.MemorySettings._settings">
-            <summary>
-            Keeps an internal instance of the ConfigurationSourceSettings class.
-            </summary>
-        </member>
         <member name="P:CODE.Framework.Core.Configuration.MemorySettings.FriendlyName">
             <summary>
             Source's Friendly Name.
@@ -2379,25 +2348,10 @@
             Indicates if this source is read-only.
             </summary>
         </member>
-        <member name="P:CODE.Framework.Core.Configuration.MemorySettings.Settings">
-            <summary>
-            Exposes the Settings member. We're shadowing that member here mostly because
-            the Memory object is very specialized, designed to override temporarily whatever
-            other sources might have the same setting. In order to give that special behavior,
-            a new collection class has been created for it. 
-            Notice that we still type the member as a ConfigurationSourceSettings class, 
-            and the only difference is that we instantiate the ConfigurationSourceSettings class instead.
-            </summary>
-        </member>
         <member name="T:CODE.Framework.Core.Configuration.SecureConfigurationFile">
             <summary>
             This class wraps up the functionality available natively in .NET for reading 
             the default settings (AppSettings) available in the config files.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.SecureConfigurationFile.#ctor">
-            <summary>
-            Default Constructor.
             </summary>
         </member>
         <member name="M:CODE.Framework.Core.Configuration.SecureConfigurationFile.GetConfigurationFileName">
@@ -2562,32 +2516,6 @@
         </member>
         <member name="F:CODE.Framework.Core.Configuration.SecurityType.NonSecure">
             <summary>Non-Secure</summary>
-        </member>
-        <member name="T:CODE.Framework.Core.Configuration.SourcesCollection">
-            <summary>
-            The SourcesCollection class is a typed-collection that contains objects that implement
-            the IConfigurationSource interface. 
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.SourcesCollection.Add(CODE.Framework.Core.Configuration.IConfigurationSource)">
-            <summary>
-            The Add method only accepts objects that implement the IConfigurationSource interface.
-            </summary>
-            <param name="configurationSource">A Configuration Source.</param>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.SourcesCollection.Remove(System.Int32)">
-            <summary>
-            Removes a Configuration Source from the collection.
-            </summary>
-            <param name="index">Index of the source that must be removed.</param>
-        </member>
-        <member name="M:CODE.Framework.Core.Configuration.SourcesCollection.Item(System.Int32)">
-            <summary>
-            Item returns a reference to a specific source.
-            The item will always be retrieved as IConfigurationSource.
-            </summary>
-            <param name="index">Index of the item that's being accessed.</param>
-            <returns>Reference to the item needed.</returns>
         </member>
         <member name="T:CODE.Framework.Core.Exceptions.IndexOutOfBoundsException">
             <summary>
@@ -3235,6 +3163,27 @@
             <returns></returns>
             <example>Guid valueGuid = "xxx".TryGuidParse();</example>
         </member>
+        <member name="T:CODE.Framework.Core.Utilities.HttpHelper">
+            <summary>
+            This class provides useful methods for dealing with HTTP
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.HttpHelper.UrlDecode(System.String)">
+            <summary>
+            Decodes a URL string/value into clear text
+            </summary>
+            <param name="encodedValue">The encoded value.</param>
+            <returns>Clear text version of the string</returns>
+            <remarks>This implementation is identical to the one provided by the .NET Framework in the WebUtility class, but it is provided here without dependencies on any server components.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.HttpHelper.UrlEncode(System.String)">
+            <summary>
+            Encodes the string for use in a URL
+            </summary>
+            <param name="value">The clear-text encodedValue</param>
+            <returns>URL encoded string</returns>
+            <remarks>This implementation is identical to the one provided by the .NET Framework in the WebUtility class, but it is provided here without dependencies on any server components.</remarks>
+        </member>
         <member name="T:CODE.Framework.Core.Utilities.If">
             <summary>
             Static class providing convenience methods for common tasks
@@ -3279,6 +3228,18 @@
             <param name="instance3">Object instance to check</param>
             <param name="instance4">Object instance to check</param>
             <param name="action">The action to execute if the instances are not null</param>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.JsonHelper">
+            <summary>
+            This class provides useful helper functionality to deal with JSON strings
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.JsonHelper.Format(System.String)">
+            <summary>
+            Formats the provided JSON string (adds line feeds, indents, ...)
+            </summary>
+            <param name="json">The original JSON string.</param>
+            <returns>Formatted JSON string</returns>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.Logger">
             <summary>
@@ -4053,7 +4014,7 @@
             Deserializes an object from its state stored in an xml stream.
             </summary>
             <param name="stateStream">The state stream.</param>
-            <param name="expectedType">The expected type (which will be the returned type).</param>
+            <param name="expectedType">The expected interfaceType (which will be the returned interfaceType).</param>
             <returns>Object instance.</returns>
             <remarks>
             For this to work, the XML Stream must contain a seralized object
@@ -4067,7 +4028,7 @@
             Deserializes an object from its state stored in an xml stream.
             </summary>
             <param name="stateStream">The state stream.</param>
-            <param name="expectedType">The expected type.</param>
+            <param name="expectedType">The expected interfaceType.</param>
             <returns>Object instance</returns>
             <remarks>
             For this to work, the XML Stream must contain a seralized object
@@ -4160,7 +4121,7 @@
         </member>
         <member name="M:CODE.Framework.Core.Utilities.ObjectHelper.GetPropertyValue``1(System.Object,System.String)">
             <summary>Dynamically retrieves a property value from the specified object</summary>
-            <typeparam name="TResult">The type of the result.</typeparam>
+            <typeparam name="TResult">The interfaceType of the result.</typeparam>
             <param name="valueObject">The value object.</param>
             <param name="path">Name of the property.</param>
             <returns>Property value or default value</returns>
@@ -4188,7 +4149,7 @@
             <summary>
             Dynamically retrieves a property value from the specified object
             </summary>
-            <typeparam name="TValue">The type of the value that is to be set.</typeparam>
+            <typeparam name="TValue">The interfaceType of the value that is to be set.</typeparam>
             <param name="valueObject">The value object.</param>
             <param name="path">Name of the property.</param>
             <param name="value">The value that is to be set.</param>
@@ -4208,7 +4169,7 @@
             <summary>
             Dynamically invokes the specified method on the defined object
             </summary>
-            <typeparam name="TResult">The expected return type for the method</typeparam>
+            <typeparam name="TResult">The expected return interfaceType for the method</typeparam>
             <param name="valueObject">The value object (object that contains the method).</param>
             <param name="methodName">Name of the method.</param>
             <param name="parameters">The parameters.</param>
@@ -4224,6 +4185,13 @@
             object[] parameters = { "John", "M.", "Smith" };
             string fullName = customer.InvokeMethod&lt;string&gt;("GetFullName", parameters);
             </example>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ObjectHelper.GetAllMethodsForInterface(System.Type)">
+            <summary>
+            Returns all methods defined on an interface or interfaces it inherits from.
+            </summary>
+            <param name="interfaceType">The interface type.</param>
+            <returns>IEnumerable&lt;MethodInfo&gt;.</returns>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.ObjectInstantiationException">
             <summary>
@@ -4695,6 +4663,25 @@
             string value = "xxx";
             bool valueBool = StringHelper.TryBoolParse(value);
             </example>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.XmlHelper">
+            <summary>
+            Provides useful XML helper functionality
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.XmlHelper.Format(System.String)">
+            <summary>
+            Returns a formatted version of the XML string (line breaks, indentations, ...)
+            </summary>
+            <param name="xml">The raw XML.</param>
+            <returns>Formatted XML string</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.XmlHelper.Format(System.Xml.XmlDocument)">
+            <summary>
+            Returns a formatted version of the XML string (line breaks, indentations, ...)
+            </summary>
+            <param name="xml">The original XML Document.</param>
+            <returns>Formatted XML string</returns>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.ZipFile">
             <summary>

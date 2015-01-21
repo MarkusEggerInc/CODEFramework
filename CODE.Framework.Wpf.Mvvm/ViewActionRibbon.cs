@@ -11,7 +11,9 @@ using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Mvvm
 {
-    /// <summary>Special menu object that can be bound to a collection of view actions to automatically and dynamically populate the menu.</summary>
+    /// <summary>
+    /// Special menu object that can be bound to a collection of view actions to automatically and dynamically populate the menu.
+    /// </summary>
     public class ViewActionRibbon : TabControl
     {
         /// <summary>
@@ -267,15 +269,20 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             var ribbon = d as ViewActionRibbon;
             if (ribbon == null) return;
-            var actionsContainer = e.NewValue as IHaveActions;
+            ribbon.RepopulateRibbon(e.NewValue);
+        }
+
+        private void RepopulateRibbon(object model)
+        {
+            var actionsContainer = model as IHaveActions;
             if (actionsContainer != null && actionsContainer.Actions != null)
             {
-                actionsContainer.Actions.CollectionChanged += (s, e2) => ribbon.PopulateRibbon(actionsContainer);
-                ribbon.Visibility = Visibility.Visible;
-                ribbon.PopulateRibbon(actionsContainer);
+                actionsContainer.Actions.CollectionChanged += (s, e2) => PopulateRibbon(actionsContainer);
+                Visibility = Visibility.Visible;
+                PopulateRibbon(actionsContainer);
             }
             else
-                ribbon.Visibility = Visibility.Collapsed;
+                Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -334,6 +341,29 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             var ribbon = d as ViewActionRibbon;
             if (ribbon != null) ribbon.PopulateRibbon(ribbon.Model as IHaveActions);
+        }
+        
+        /// <summary>
+        /// Attached property used to reference the command/action on any custom ribbon item
+        /// </summary>
+        public static readonly DependencyProperty RibbonItemCommandProperty = DependencyProperty.RegisterAttached("RibbonItemCommand", typeof(ICommand), typeof(ViewActionRibbon), new PropertyMetadata(null));
+        /// <summary>
+        /// Attached property used to reference the command/action on any custom ribbon item
+        /// </summary>
+        /// <param name="d">The dependency object the item is set on</param>
+        /// <returns>ICommand.</returns>
+        public static ICommand GetRibbonItemCommand(DependencyObject d)
+        {
+            return (ICommand) d.GetValue(RibbonItemCommandProperty);
+        }
+        /// <summary>
+        /// Attached property used to reference the command/action on any custom ribbon item
+        /// </summary>
+        /// <param name="d">The dependency object the item is set on</param>
+        /// <param name="value">The value.</param>
+        public static void SetRibbonItemCommand(DependencyObject d, ICommand value)
+        {
+            d.SetValue(RibbonItemCommandProperty, value);
         }
 
         /// <summary>
@@ -472,7 +502,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 if (matchingAction.Categories != null && matchingAction.Categories.Count > indentLevel + 1 && !populatedCategories.Contains(matchingAction.Categories[indentLevel].Id)) // This is further down in a sub-category even
                 {
                     populatedCategories.Add(matchingAction.Categories[indentLevel].Id);
-                    var newRibbonButton = new RibbonButtonLarge { Content = matchingAction.Categories[indentLevel].Caption };
+                    var newRibbonButton = new RibbonButtonLarge {Content = matchingAction.Categories[indentLevel].Caption, Visibility = matchingAction.Visibility};
                     CreateMenuItemBinding(matchingAction, newRibbonButton);
                     if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = newRibbonButton});
                     PopulateSubCategories(parentPanel, matchingAction.Categories[indentLevel], viewActions, indentLevel + 1);
@@ -486,31 +516,96 @@ namespace CODE.Framework.Wpf.Mvvm
                     Brush iconBrush = Brushes.Transparent;
                     if (realAction != null) iconBrush = realAction.Brush;
 
-                    RibbonButton newRibbonButton;
-                    if (matchingAction.Significance == ViewActionSignificance.AboveNormal || matchingAction.Significance == ViewActionSignificance.Highest)
-                        newRibbonButton = new RibbonButtonLarge
+                    if (matchingAction.ActionView != null)
+                    {
+                        if (matchingAction.ActionViewModel != null && matchingAction.ActionView.DataContext == null) matchingAction.ActionView.DataContext = matchingAction.ActionViewModel;
+                        var command = GetRibbonItemCommand(matchingAction.ActionView);
+                        if (command == null) SetRibbonItemCommand(matchingAction.ActionView, matchingAction);
+                        if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = matchingAction.ActionView});
+                        var existingParent = VisualTreeHelper.GetParent(matchingAction.ActionView);
+                        if (existingParent != null) // For some reason, this object is already parented somewhere else (perhaps we switched from a different theme), so we have to remove it
+                        {
+                            var contentControl = existingParent as ContentControl;
+                            if (contentControl != null) contentControl.Content = null;
+                            else
                             {
-                                Content = matchingAction.Caption, 
-                                Command = matchingAction,
-                                Icon = iconBrush
-                            };
+                                var itemsControl = existingParent as ItemsControl;
+                                if (itemsControl != null) itemsControl.Items.Remove(matchingAction.ActionView);
+                                else
+                                {
+                                    var childControl = existingParent as Panel;
+                                    if (childControl != null) childControl.Children.Remove(matchingAction.ActionView);
+                                    else throw new NotSupportedException("Can't remove custom ribbon view from current parent control of type " + existingParent.GetType());
+                                }
+                            }
+                        }
+                        if (matchingAction.ActionView.Style == null)
+                        {
+                            var resource = TryFindResource("CODE.Framework-Ribbon-CustomControlContainerStyle");
+                            if (resource != null)
+                            {
+                                var genericStyle = resource as Style;
+                                if (genericStyle != null)
+                                    matchingAction.ActionView.Style = genericStyle;
+                            }
+                        }
+                        matchingAction.ActionView.IsVisibleChanged += (s, e) => InvalidateAll();
+                        parentPanel.Children.Add(matchingAction.ActionView);
+                    }
                     else
-                        newRibbonButton = new RibbonButtonSmall
+                    {
+                        RibbonButton newRibbonButton;
+                        if (matchingAction.Significance == ViewActionSignificance.AboveNormal || matchingAction.Significance == ViewActionSignificance.Highest)
+                            newRibbonButton = new RibbonButtonLarge
                             {
-                                Content = matchingAction.Caption, 
+                                Content = matchingAction.Caption,
                                 Command = matchingAction,
-                                Icon = iconBrush
+                                Icon = iconBrush,
+                                Visibility = matchingAction.Visibility
                             };
-                    CreateMenuItemBinding(matchingAction, newRibbonButton);
-                    if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") { Source = newRibbonButton });
-                    if (matchingAction.ViewActionType == ViewActionTypes.Toggle) newRibbonButton.SetBinding(RibbonButton.IsCheckedProperty, new Binding("IsChecked") { Source = matchingAction });
-                    if (matchingAction.AccessKey != ' ') newRibbonButton.AccessKey = matchingAction.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper();
-                    parentPanel.Children.Add(newRibbonButton);
-                    HandleRibbonShortcutKey(newRibbonButton, matchingAction, ribbonPage);
+                        else
+                            newRibbonButton = new RibbonButtonSmall
+                            {
+                                Content = matchingAction.Caption,
+                                Command = matchingAction,
+                                Icon = iconBrush,
+                                Visibility = matchingAction.Visibility
+                            };
+                        newRibbonButton.IsVisibleChanged += (s, e) => InvalidateAll();
+                        newRibbonButton.SetBinding(ContentControl.ContentProperty, new Binding("Caption") { Source = matchingAction, Mode = BindingMode.OneWay });
+                        CreateMenuItemBinding(matchingAction, newRibbonButton);
+                        if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = newRibbonButton});
+                        if (matchingAction.ViewActionType == ViewActionTypes.Toggle) newRibbonButton.SetBinding(RibbonButton.IsCheckedProperty, new Binding("IsChecked") {Source = matchingAction});
+                        if (matchingAction.AccessKey != ' ') newRibbonButton.AccessKey = matchingAction.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper();
+                        parentPanel.Children.Add(newRibbonButton);
+                        HandleRibbonShortcutKey(newRibbonButton, matchingAction, ribbonPage);
+                    }
                     addedMenuItems++;
                 }
             }
             if (addedMenuItems > 0) parentPanel.Children.Add(new RibbonSeparator());
+        }
+
+        private void InvalidateAll()
+        {
+            InvalidateMeasure();
+            InvalidateArrange();
+            InvalidateVisual();
+
+            foreach (var tab in Items)
+            {
+                var tabItem = tab as TabItem;
+                if (tabItem == null) continue;
+                tabItem.InvalidateMeasure();
+                tabItem.InvalidateArrange();
+                tabItem.InvalidateVisual();
+                if (tabItem.Content == null) continue;
+                var tabContent = tabItem.Content as FrameworkElement;
+                if (tabContent == null) continue;
+                tabContent.InvalidateMeasure();
+                tabContent.InvalidateArrange();
+                tabContent.InvalidateVisual();
+            }
         }
 
         /// <summary>
@@ -571,7 +666,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="ribbonButton">The ribbon button.</param>
         private void CreateMenuItemBinding(IViewAction action, FrameworkElement ribbonButton)
         {
-            var binding = new MultiBinding {Converter = new MaximumVisibilityMultiConverter()};
+            var binding = new MultiBinding {Converter = new MinimumVisibilityMultiConverter()};
             binding.Bindings.Add(new Binding("Availability") {Source = action, Converter = new AvailabilityToVisibleConverter()});
             binding.Bindings.Add(new Binding("Visibility") {Source = action});
             ribbonButton.SetBinding(VisibilityProperty, binding);
@@ -703,6 +798,13 @@ namespace CODE.Framework.Wpf.Mvvm
     /// </summary>
     public class RibbonSeparator : Control
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RibbonSeparator"/> class.
+        /// </summary>
+        public RibbonSeparator()
+        {
+            Focusable = false;
+        }
     }
 
     /// <summary>
@@ -762,19 +864,25 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
+            var availableWitdh = availableSize.Width;
+            var availableHeight = availableSize.Height;
+            if (double.IsInfinity(availableSize.Height))
+                availableHeight = Height > 0 ? Height : 70;
+            else
+                availableHeight -= 18;
+            var availableSizeForControls = new Size(availableWitdh, availableHeight);
+
             foreach (UIElement child in Children)
-                child.Measure(availableSize);
+                if (child is RibbonSeparator)
+                    child.Measure(availableSize);
+                else
+                    child.Measure(availableSizeForControls);
 
             var left = 0d;
             var top = 0d;
             var lastLargestWidth = 0d;
             var lastElementWasFullHeight = true;
 
-            var availableHeight = availableSize.Height;
-            if (double.IsInfinity(availableSize.Height))
-                availableHeight = Height > 0 ? Height : 70;
-            else
-                availableHeight -= 18;
 
             foreach (UIElement child in Children)
             {
@@ -814,6 +922,32 @@ namespace CODE.Framework.Wpf.Mvvm
                     left += lastLargestWidth;
                     lastElementWasFullHeight = true;
                     lastLargestWidth = separator.DesiredSize.Width;
+                }
+                else if (child != null)
+                {
+                    if (lastElementWasFullHeight)
+                    {
+                        left += lastLargestWidth;
+                        lastLargestWidth = 0d;
+                        top = 0d;
+                    }
+
+                    var childHeight = child.DesiredSize.Height;
+                    if (childHeight >= availableHeight)
+                    {
+                        childHeight = availableHeight;
+                        lastElementWasFullHeight = true;
+                    }
+                    else
+                        lastElementWasFullHeight = false;
+                    if (top + childHeight > availableHeight)
+                    {
+                        left += lastLargestWidth;
+                        lastLargestWidth = 0d;
+                        top = 0d;
+                    }
+                    lastLargestWidth = Math.Max(lastLargestWidth, child.DesiredSize.Width);
+                    top += childHeight;
                 }
             }
 
@@ -863,12 +997,19 @@ namespace CODE.Framework.Wpf.Mvvm
                 {
                     currentGroupLeft = left;
                     currentRenderInfo = new GroupTitleRenderInfo();
-                    RibbonButton groupStartButton = null;
-                    if (largeButton != null) groupStartButton = largeButton;
-                    else if (smallButton != null) groupStartButton = smallButton;
-                    if (groupStartButton != null && groupStartButton.Command != null)
+                    if (largeButton != null && largeButton.Command != null)
                     {
-                        var action = groupStartButton.Command as IViewAction;
+                        var action = largeButton.Command as IViewAction;
+                        if (action != null) currentRenderInfo.GroupTitle = action.GroupTitle;
+                    }
+                    else if (smallButton != null && smallButton.Command != null)
+                    {
+                        var action = smallButton.Command as IViewAction;
+                        if (action != null) currentRenderInfo.GroupTitle = action.GroupTitle;
+                    }
+                    else if (child != null)
+                    {
+                        var action = ViewActionRibbon.GetRibbonItemCommand(child) as IViewAction;
                         if (action != null) currentRenderInfo.GroupTitle = action.GroupTitle;
                     }
                     _groupTitles.Add(currentRenderInfo);
@@ -880,8 +1021,8 @@ namespace CODE.Framework.Wpf.Mvvm
                     top = 0d;
                     left += lastLargestWidth;
                     lastElementWasFullHeight = true;
-                    lastLargestWidth = largeButton.DesiredSize.Width;
-                    largeButton.Arrange(new Rect(left, top, largeButton.DesiredSize.Width, largeButton.DesiredSize.Height));
+                    lastLargestWidth = largeButton.IsVisible ? largeButton.DesiredSize.Width : 0d;
+                    if (largeButton.IsVisible) largeButton.Arrange(new Rect(left, top, largeButton.DesiredSize.Width, largeButton.DesiredSize.Height));
                 }
                 else if (smallButton != null)
                 {
@@ -898,8 +1039,8 @@ namespace CODE.Framework.Wpf.Mvvm
                         top = 0d;
                     }
                     lastElementWasFullHeight = false;
-                    smallButton.Arrange(new Rect(left, top, smallButton.DesiredSize.Width, smallButton.DesiredSize.Height));
-                    lastLargestWidth = Math.Max(lastLargestWidth, smallButton.DesiredSize.Width);
+                    if (smallButton.IsVisible) smallButton.Arrange(new Rect(left, top, smallButton.DesiredSize.Width, smallButton.DesiredSize.Height));
+                    lastLargestWidth = Math.Max(lastLargestWidth, smallButton.IsVisible ? smallButton.DesiredSize.Width : 0d);
                     top += smallButton.DesiredSize.Height;
                 }
                 else if (separator != null)
@@ -913,6 +1054,32 @@ namespace CODE.Framework.Wpf.Mvvm
                     separator.Arrange(new Rect(left, top, separator.DesiredSize.Width, separator.DesiredSize.Height));
                     lastElementWasFullHeight = true;
                     lastLargestWidth = separator.DesiredSize.Width;
+                }
+                else if (child != null)
+                {
+                    if (lastElementWasFullHeight)
+                    {
+                        left += lastLargestWidth;
+                        lastLargestWidth = 0d;
+                        top = 0d;
+                    }
+                    var childHeight = child.DesiredSize.Height;
+                    if (childHeight >= availableHeight)
+                    {
+                        childHeight = availableHeight;
+                        lastElementWasFullHeight = true;
+                    }
+                    else
+                        lastElementWasFullHeight = false;
+                    if (top + childHeight > availableHeight)
+                    {
+                        left += lastLargestWidth;
+                        lastLargestWidth = 0d;
+                        top = 0d;
+                    }
+                    if (child.IsVisible) child.Arrange(new Rect(left, top, child.DesiredSize.Width, childHeight));
+                    lastLargestWidth = Math.Max(lastLargestWidth, child.IsVisible ? child.DesiredSize.Width : 0d);
+                    top += childHeight;
                 }
             }
 
@@ -939,22 +1106,21 @@ namespace CODE.Framework.Wpf.Mvvm
 
             foreach (var title in _groupTitles)
             {
-                if (!string.IsNullOrEmpty(title.GroupTitle))
+                if (string.IsNullOrEmpty(title.GroupTitle)) continue;
+                if (title.RenderRect.Width < 20) continue;
+                var format = new FormattedText(title.GroupTitle, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeFace, GroupTitleFontSize, brush)
                 {
-                    var format = new FormattedText(title.GroupTitle, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeFace, GroupTitleFontSize, brush)
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            MaxLineCount = 1,
-                            Trimming = TextTrimming.CharacterEllipsis,
-                            MaxTextWidth = title.RenderRect.Width,
-                            MaxTextHeight = title.RenderRect.Height,
-                        };
+                    TextAlignment = TextAlignment.Center,
+                    MaxLineCount = 1,
+                    Trimming = TextTrimming.CharacterEllipsis,
+                    MaxTextWidth = title.RenderRect.Width - 10,
+                    MaxTextHeight = title.RenderRect.Height,
+                };
 
-                    var yOffset = title.RenderRect.Height - format.Height + 1;
-                    dc.PushTransform(new TranslateTransform(title.RenderRect.X, yOffset));
-                    dc.DrawText(format, new Point(0d, 0d));
-                    dc.Pop();
-                }
+                var yOffset = title.RenderRect.Height - format.Height + 1;
+                dc.PushTransform(new TranslateTransform(title.RenderRect.X, yOffset));
+                dc.DrawText(format, new Point(10d, 0d));
+                dc.Pop();
             }
             base.OnRender(dc);
         }
@@ -1198,9 +1364,52 @@ namespace CODE.Framework.Wpf.Mvvm
     }
 
     /// <summary>
-    /// Looks at multiple Visibility values and returns the lowest visibility level
+    /// Looks at multiple Visibility values and returns the highest visibility level
     /// </summary>
     public class MaximumVisibilityMultiConverter : IMultiValueConverter
+    {
+        /// <summary>
+        /// Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
+        /// </summary>
+        /// <param name="values">The array of values that the source bindings in the <see cref="T:System.Windows.Data.MultiBinding" /> produces. The value <see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the source binding has no value to provide for conversion.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value.If the method returns null, the valid null value is used.A return value of <see cref="T:System.Windows.DependencyProperty" />.<see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the converter did not produce a value, and that the binding will use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> if it is available, or else will use the default value.A return value of <see cref="T:System.Windows.Data.Binding" />.<see cref="F:System.Windows.Data.Binding.DoNothing" /> indicates that the binding does not transfer the value or use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> or the default value.</returns>
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var result = Visibility.Collapsed;
+            foreach (var value in values)
+            {
+                var visibility = (Visibility)value;
+
+                if (result == Visibility.Collapsed && (visibility == Visibility.Hidden || visibility == Visibility.Visible)) result = visibility;
+                else if (result == Visibility.Hidden && visibility == Visibility.Visible) return Visibility.Visible; // It can't be more than visible, so we can simply return this
+
+                if (result == Visibility.Visible) return Visibility.Visible;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Converts a binding target value to the source binding values.
+        /// </summary>
+        /// <param name="value">The value that the binding target produces.</param>
+        /// <param name="targetTypes">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>An array of values that have been converted from the target value back to the source values.</returns>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            // Not needed
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Looks at multiple Visibility values and returns the lowest visibility level
+    /// </summary>
+    public class MinimumVisibilityMultiConverter : IMultiValueConverter
     {
         /// <summary>
         /// Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
@@ -1216,8 +1425,8 @@ namespace CODE.Framework.Wpf.Mvvm
             foreach (var value in values)
             {
                 var visibility = (Visibility)value;
-                if (visibility == Visibility.Collapsed) return Visibility.Collapsed; // No point in going further
-                if (visibility == Visibility.Hidden && result == Visibility.Visible) result = Visibility.Hidden;
+                if (visibility == Visibility.Collapsed) return Visibility.Collapsed;
+                if (result == Visibility.Visible && visibility == Visibility.Hidden) result = Visibility.Hidden;
             }
             return result;
         }

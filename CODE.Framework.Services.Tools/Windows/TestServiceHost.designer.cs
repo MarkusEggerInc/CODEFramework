@@ -172,9 +172,10 @@
             // 
             this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
             this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList2.Images.SetKeyName(0, "Web.bmp");
-            this.imageList2.Images.SetKeyName(1, "Xml.bmp");
-            this.imageList2.Images.SetKeyName(2, "TcpIp.bmp");
+            this.imageList2.Images.SetKeyName(0, "Globe.png");
+            this.imageList2.Images.SetKeyName(1, "JSON.png");
+            this.imageList2.Images.SetKeyName(2, "XML.png");
+            this.imageList2.Images.SetKeyName(3, "Xml2.png");
             // 
             // splitContainer1
             // 
@@ -223,7 +224,7 @@
             this.listView2.GridLines = true;
             this.listView2.Location = new System.Drawing.Point(0, 18);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(795, 145);
+            this.listView2.Size = new System.Drawing.Size(795, 141);
             this.listView2.SmallImageList = this.imageList1;
             this.listView2.TabIndex = 0;
             this.listView2.UseCompatibleStateImageBehavior = false;
@@ -249,13 +250,14 @@
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "eventlog.ico");
-            this.imageList1.Images.SetKeyName(1, "error.ico");
-            this.imageList1.Images.SetKeyName(2, "INFO.ICO");
-            this.imageList1.Images.SetKeyName(3, "question.ico");
-            this.imageList1.Images.SetKeyName(4, "warning.ico");
-            this.imageList1.Images.SetKeyName(5, "propertiesORoptions.ico");
-            this.imageList1.Images.SetKeyName(6, "disconnect2.ico");
+            this.imageList1.Images.SetKeyName(0, "EventLog.png");
+            this.imageList1.Images.SetKeyName(1, "Error.png");
+            this.imageList1.Images.SetKeyName(2, "Info.png");
+            this.imageList1.Images.SetKeyName(3, "Question.png");
+            this.imageList1.Images.SetKeyName(4, "Warning.png");
+            this.imageList1.Images.SetKeyName(5, "Properties.png");
+            this.imageList1.Images.SetKeyName(6, "Exception.png");
+            this.imageList1.Images.SetKeyName(7, "Disconnect.png");
             // 
             // TestServiceHost
             // 

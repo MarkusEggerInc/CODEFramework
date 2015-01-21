@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -8,7 +9,6 @@ using System.ServiceModel;
 using System.Windows.Forms;
 using CODE.Framework.Core.Configuration;
 using CODE.Framework.Core.Utilities;
-using System.Collections;
 using CODE.Framework.Services.Server;
 
 namespace CODE.Framework.Services.Tools.Windows
@@ -92,10 +92,10 @@ namespace CODE.Framework.Services.Tools.Windows
         {
             if (_handleCreated)
                 worker.BeginInvoke(ar =>
-                    {
-                        var result = worker.EndInvoke(ar);
-                        BeginInvoke(completeMethod, result);
-                    }, null);
+                {
+                    var result = worker.EndInvoke(ar);
+                    BeginInvoke(completeMethod, result);
+                }, null);
             else
                 lock (_queuedExecutions)
                     _queuedExecutions.Enqueue(new Tuple<Func<string>, Action<string>>(worker, completeMethod));
@@ -406,22 +406,21 @@ namespace CODE.Framework.Services.Tools.Windows
             if (contractType == null)
             {
                 var interfaces = serviceType.GetInterfaces();
-                if (interfaces.Length == 1) contractType = interfaces[0];
-                else contractType = serviceType; // This isn't great, but it will do for the purpose of showing something
+                contractType = interfaces.Length == 1 ? interfaces[0] : serviceType;
             }
 
             var uri = !string.IsNullOrEmpty(url) ? new Uri(url) : null;
             var port = uri != null ? uri.Port : 0;
             var info = new ServiceInfoWrapper
-                           {
-                               ServiceContract = contractType,
-                               ServiceType = serviceType,
-                               Url = url,
-                               Host = host,
-                               Protocol = binding,
-                               WsdlExposed = "No",
-                               Port = port
-                           };
+            {
+                ServiceContract = contractType,
+                ServiceType = serviceType,
+                Url = url,
+                Host = host,
+                Protocol = binding,
+                WsdlExposed = "No",
+                Port = port
+            };
 
             long messageSize = 0;
             if (host != null)
@@ -450,20 +449,22 @@ namespace CODE.Framework.Services.Tools.Windows
                     }
                 }
 
-            var item = new ListViewItem(new[] { contractType.Name + " (" + serviceType.Name + ")", (!string.IsNullOrEmpty(url) ? "Started" : "Failed"), url, binding, info.MessageSize, info.WsdlExposed }) { Tag = info };
+            var item = new ListViewItem(new[] {contractType.Name + " (" + serviceType.Name + ")", (!string.IsNullOrEmpty(url) ? "Started" : "Failed"), url, binding, info.MessageSize, info.WsdlExposed}) {Tag = info};
             switch (binding.ToLower())
             {
                 case "rest http (xml)":
+                    item.ImageIndex = 2;
+                    break;
                 case "rest http (json)":
                 case "http-get":
-                    item.ImageIndex = 0;
+                    item.ImageIndex = 1;
                     break;
                 case "basic http":
                 case "ws http":
-                    item.ImageIndex = 1;
+                    item.ImageIndex = 3;
                     break;
                 case "net.tcp":
-                    item.ImageIndex = 2;
+                    item.ImageIndex = 0;
                     break;
                 default:
                     item.ImageIndex = 0;
@@ -526,7 +527,7 @@ namespace CODE.Framework.Services.Tools.Windows
             var domain = string.Empty;
             if (ConfigurationSettings.Settings.IsSettingSupported("ServiceBaseUrl"))
                 domain = ConfigurationSettings.Settings["ServiceBaseUrl"];
-            if (!domain.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
+            if (!domain.ToLower(CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
             AllowSilverlightCrossDomainCalls(new Uri(domain), null);
         }
 
@@ -551,8 +552,8 @@ namespace CODE.Framework.Services.Tools.Windows
             var domain = string.Empty;
             if (ConfigurationSettings.Settings.IsSettingSupported("ServiceBaseUrl"))
                 domain = ConfigurationSettings.Settings["ServiceBaseUrl"];
-            if (!domain.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
-            AllowSilverlightCrossDomainCalls(new Uri(domain), new[] { allowedCaller });
+            if (!domain.ToLower(CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
+            AllowSilverlightCrossDomainCalls(new Uri(domain), new[] {allowedCaller});
         }
 
         /// <summary>
@@ -576,7 +577,7 @@ namespace CODE.Framework.Services.Tools.Windows
             var domain = string.Empty;
             if (ConfigurationSettings.Settings.IsSettingSupported("ServiceBaseUrl"))
                 domain = ConfigurationSettings.Settings["ServiceBaseUrl"];
-            if (!domain.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
+            if (!domain.ToLower(CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
             AllowSilverlightCrossDomainCalls(new Uri(domain), allowedCallers);
         }
 
@@ -595,7 +596,7 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </example>
         public void AllowSilverlightCrossDomainCalls(string domain)
         {
-            if (!domain.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
+            if (!domain.ToLower(CultureInfo.InvariantCulture).StartsWith("http://")) domain = "http://" + domain;
             AllowSilverlightCrossDomainCalls(new Uri(domain), null);
         }
 
@@ -624,21 +625,21 @@ namespace CODE.Framework.Services.Tools.Windows
         {
             var policyUrl = ServiceGarden.AllowSilverlightCrossDomainCalls(domain, allowedCallers);
             listView1.Items.Add(new ListViewItem(new[] {"Cross-Domain Access Policy", "Started", policyUrl, "HTTP-GET", "n/a", "n/a"})
+            {
+                ImageIndex = 0,
+                Tag = new ServiceInfoWrapper
                 {
-                    ImageIndex = 0,
-                    Tag = new ServiceInfoWrapper
-                        {
-                            Protocol = "HTTP-GET",
-                            Url = policyUrl,
-                            Port = 80
-                        }
-                });
+                    Protocol = "HTTP-GET",
+                    Url = policyUrl,
+                    Port = 80
+                }
+            });
         }
 
         private readonly ListViewColumnSorter _sorter = new ListViewColumnSorter();
 
         /// <summary>
-        /// Handles the ColumnClick event of the listView1 control.
+        /// Handles the ColumnClick event of the OperationsList control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.Windows.Forms.ColumnClickEventArgs"/> instance containing the event data.</param>
@@ -690,8 +691,8 @@ namespace CODE.Framework.Services.Tools.Windows
                 if (SortColumn == -1) return 0;
 
                 // Cast the objects to be compared to ListViewItem objects
-                var listviewX = (ListViewItem)x;
-                var listviewY = (ListViewItem)y;
+                var listviewX = (ListViewItem) x;
+                var listviewY = (ListViewItem) y;
 
                 // Compare the two items
                 var compareResult = _objectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
@@ -724,48 +725,48 @@ namespace CODE.Framework.Services.Tools.Windows
             if (logEvent.StartsWith("Successfully started ") && type == LogEventType.Information) return; // We are already showing service start information in the main area
 
             BeginInvoke(new Action(() =>
+            {
+                var logItem = new ListViewItem();
+                switch (type)
                 {
-                    var logItem = new ListViewItem();
-                    switch (type)
-                    {
-                        case LogEventType.Critical:
-                            logItem.ImageIndex = 1;
-                            logItem.Text = "Critical";
-                            break;
-                        case LogEventType.Error:
-                            logItem.ImageIndex = 1;
-                            logItem.Text = "Error";
-                            break;
-                        case LogEventType.Exception:
-                            logItem.ImageIndex = 6;
-                            logItem.Text = "Exception";
-                            break;
-                        case LogEventType.Information:
-                            logItem.ImageIndex = 2;
-                            logItem.Text = "Information";
-                            break;
-                        case LogEventType.Success:
-                            logItem.ImageIndex = 5;
-                            logItem.Text = "Success";
-                            break;
-                        case LogEventType.Undefined:
-                            logItem.ImageIndex = 0;
-                            logItem.Text = "Undefined";
-                            break;
-                        case LogEventType.Warning:
-                            logItem.ImageIndex = 4;
-                            logItem.Text = "Critical";
-                            break;
-                    }
-                    logItem.SubItems.Add(DateTime.Now.ToLongTimeString());
-                    logItem.SubItems.Add(logEvent);
-                    lock (listView2)
-                    {
-                        listView2.Items.Add(logItem);
-                        listView2.EnsureVisible(listView2.Items.Count - 1);
-                    }
-                    Application.DoEvents();
-                }));
+                    case LogEventType.Critical:
+                        logItem.ImageIndex = 1;
+                        logItem.Text = "Critical";
+                        break;
+                    case LogEventType.Error:
+                        logItem.ImageIndex = 1;
+                        logItem.Text = "Error";
+                        break;
+                    case LogEventType.Exception:
+                        logItem.ImageIndex = 6;
+                        logItem.Text = "Exception";
+                        break;
+                    case LogEventType.Information:
+                        logItem.ImageIndex = 2;
+                        logItem.Text = "Information";
+                        break;
+                    case LogEventType.Success:
+                        logItem.ImageIndex = 5;
+                        logItem.Text = "Success";
+                        break;
+                    case LogEventType.Undefined:
+                        logItem.ImageIndex = 0;
+                        logItem.Text = "Undefined";
+                        break;
+                    case LogEventType.Warning:
+                        logItem.ImageIndex = 4;
+                        logItem.Text = "Critical";
+                        break;
+                }
+                logItem.SubItems.Add(DateTime.Now.ToLongTimeString());
+                logItem.SubItems.Add(logEvent);
+                lock (listView2)
+                {
+                    listView2.Items.Add(logItem);
+                    listView2.EnsureVisible(listView2.Items.Count - 1);
+                }
+                Application.DoEvents();
+            }));
         }
 
         /// <summary>
@@ -845,16 +846,26 @@ namespace CODE.Framework.Services.Tools.Windows
         {
             var window = new Form {Text = "Log Detail", Width = 750, Height = 650};
             var textbox = new TextBox
+            {
+                Multiline = true,
+                AcceptsReturn = true,
+                AcceptsTab = true,
+                ReadOnly = true,
+                Dock = DockStyle.Fill,
+                Text = text,
+                BackColor = Color.White,
+                ScrollBars = ScrollBars.Both,
+                Font = new Font(new FontFamily("Consolas"), 11),
+                WordWrap = false
+            };
+            textbox.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
                 {
-                    Multiline = true,
-                    AcceptsReturn = true,
-                    AcceptsTab = true,
-                    ReadOnly = true,
-                    Dock = DockStyle.Fill,
-                    Text = text,
-                    BackColor = Color.White,
-                    ScrollBars = ScrollBars.Both
-                };
+                    e.Handled = true;
+                    textbox.SelectAll();
+                }
+            };
             window.Controls.Add(textbox);
             textbox.SelectionStart = 0;
             textbox.SelectionLength = 0;
@@ -882,33 +893,40 @@ namespace CODE.Framework.Services.Tools.Windows
         /// </summary>
         /// <value>The type of the service.</value>
         public Type ServiceType { get; set; }
+
         /// <summary>
         /// Gets or sets the service contract.
         /// </summary>
         /// <value>The service contract.</value>
         public Type ServiceContract { get; set; }
+
         /// <summary>
         /// Gets or sets the URL.
         /// </summary>
         /// <value>The URL.</value>
         public string Url { get; set; }
+
         /// <summary>
         /// Gets or sets the Protocol.
         /// </summary>
         /// <value>The Protocol.</value>
         public string Protocol { get; set; }
+
         /// <summary>
         /// Actual service host
         /// </summary>
         public ServiceHost Host { get; set; }
+
         /// <summary>
         /// Supported Message Size
         /// </summary>
         public string MessageSize { get; set; }
+
         /// <summary>
         /// Information about whether a WSDL file is exposed or not
         /// </summary>
         public string WsdlExposed { get; set; }
+
         /// <summary>
         /// Service Port
         /// </summary>

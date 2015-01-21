@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System;
 using CODE.Framework.Core.Utilities;
@@ -11,16 +13,17 @@ namespace CODE.Framework.Wpf.Mvvm
     public class ApplicationEx : Application
     {
         private bool _startupEventFired = false;
+
         /// <summary>
         /// Constructor
         /// </summary>
         public ApplicationEx()
         {
             Startup += (s, e) =>
-                           {
-                               _startupEventFired = true;
-                               LoadTheme();
-                           };
+            {
+                _startupEventFired = true;
+                LoadTheme();
+            };
         }
 
         private string _theme = "";
@@ -95,7 +98,7 @@ namespace CODE.Framework.Wpf.Mvvm
                     Resources.MergedDictionaries.Add(new ResourceDictionary {Source = new Uri("pack://application:,,,/CODE.Framework.Wpf.Theme.Workplace;component/ThemeRoot.xaml", UriKind.Absolute)});
                     break;
                 case "wildcat":
-                    Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/CODE.Framework.Wpf.Theme.Wildcat;component/ThemeRoot.xaml", UriKind.Absolute) });
+                    Resources.MergedDictionaries.Add(new ResourceDictionary {Source = new Uri("pack://application:,,,/CODE.Framework.Wpf.Theme.Wildcat;component/ThemeRoot.xaml", UriKind.Absolute)});
                     break;
             }
 
@@ -148,7 +151,9 @@ namespace CODE.Framework.Wpf.Mvvm
                     return true;
                 }
             }
-            catch { }
+            catch
+            {
+            }
             return false;
         }
 
@@ -196,6 +201,34 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             public bool ThemeFeaturesFound { get; set; }
             public IThemeStandardFeatures StandardFeatures { get; set; }
+        }
+
+        /// <summary>
+        /// List of secondary assemblies the current app references.
+        /// </summary>
+        public static Dictionary<string, Assembly> SecondaryAssemblies = new Dictionary<string, Assembly>();
+
+        /// <summary>
+        /// Registers a secondary assembly so the elements within that assembly are found as if they were in the local assembly
+        /// </summary>
+        /// <param name="assemblyString">The assembly string (assembly name).</param>
+        public static void RegisterSecondaryAssembly(string assemblyString)
+        {
+            try
+            {
+                // We simply make sure the secondary assembly is being loaded into the current app domain.
+                // Note that just adding a reference to the assembly is not enough, since likely, no types are referenced
+                // from that assembly, and hence it would not get loaded due to optimizations .NET applies
+                var existingAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == assemblyString);
+                if (existingAssembly == null)
+                    SecondaryAssemblies.Add(assemblyString, AppDomain.CurrentDomain.Load(assemblyString));
+                else if (!SecondaryAssemblies.ContainsKey(assemblyString))
+                    SecondaryAssemblies.Add(assemblyString, existingAssembly);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to reference secondary assembly '" + assemblyString + "'. Make sure you specify a valid assembly name (compatible with AppDomain.Load(assemblyString).", ex);
+            }
         }
     }
 }

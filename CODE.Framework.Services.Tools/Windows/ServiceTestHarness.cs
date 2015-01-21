@@ -31,14 +31,17 @@ namespace CODE.Framework.Services.Tools.Windows
         public void ShowService(ServiceInfoWrapper serviceInfo)
         {
             var fieldInfo = typeof(ServiceHost).GetField("serviceType", BindingFlags.Instance | BindingFlags.NonPublic);
-            var serviceType = fieldInfo.GetValue(serviceInfo.Host) as Type;
-            if (serviceType == null) return;
+            if (fieldInfo != null)
+            {
+                var serviceType = fieldInfo.GetValue(serviceInfo.Host) as Type;
+                if (serviceType == null) return;
 
-            var interfaces = serviceType.GetInterfaces();
-            if (interfaces.Length < 1) return;
-            var serviceInterface = interfaces[0];
+                var interfaces = serviceType.GetInterfaces();
+                if (interfaces.Length < 1) return;
+                var serviceInterface = interfaces[0];
 
-            Text = serviceInterface.Name + " - WCF Service Test Harness";
+                Text = serviceInterface.Name + " - WCF Service Test Harness";
+            }
 
             var protocol = Protocol.NetTcp;
             switch (serviceInfo.Protocol.ToLower())
@@ -46,20 +49,29 @@ namespace CODE.Framework.Services.Tools.Windows
                 case "basic http":
                 case "basichttp":
                     protocol = Protocol.BasicHttp;
+                    Text = Text.Replace(" - WCF Service Test Harness", " - Basic HTTP - WCF Service Test Harness");
                     break;
                 case "ws http":
                 case "wshttp":
                     protocol = Protocol.WsHttp;
+                    Text = Text.Replace(" - WCF Service Test Harness", " - WsHTTP - WCF Service Test Harness");
                     break;
                 case "in process":
                 case "inprocess":
                     protocol = Protocol.InProcess;
+                    Text = Text.Replace(" - WCF Service Test Harness", " - In Process - WCF Service Test Harness");
                     break;
                 case "rest http (xml)":
                     protocol = Protocol.RestHttpXml;
+                    Text = Text.Replace(" - WCF Service Test Harness", " - REST XML - WCF Service Test Harness");
                     break;
                 case "rest http (json)":
                     protocol = Protocol.RestHttpJson;
+                    Text = Text.Replace(" - WCF Service Test Harness", " - REST JSON - WCF Service Test Harness");
+                    break;
+                case "net.tcp":
+                case "nettcp":
+                    Text = Text.Replace(" - WCF Service Test Harness", " - TCP/IP - WCF Service Test Harness");
                     break;
             }
 

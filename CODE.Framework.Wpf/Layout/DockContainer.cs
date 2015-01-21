@@ -1653,11 +1653,13 @@ namespace CODE.Framework.Wpf.Layout
 
             MouseDown += (sender, args) =>
             {
+                if (args.LeftButton != MouseButtonState.Pressed) return;
                 var downPosition = args.GetPosition(Parent);
                 Mouse.Capture(Parent);
 
                 Parent.MouseDownAndMoveOverride = e =>
                 {
+                    if (e.LeftButton != MouseButtonState.Pressed) return;
                     var currentPosition = e.GetPosition(Parent);
                     if (currentPosition.X < downPosition.X - 20d || currentPosition.X > downPosition.X + 20d ||
                         currentPosition.Y < downPosition.Y - 20d || currentPosition.Y > downPosition.Y + 20d)

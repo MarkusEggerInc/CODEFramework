@@ -96,7 +96,7 @@ namespace CODE.Framework.Wpf.Layout
                 foreach (UIElement child in Children)
                 {
                     var columnIndex = Math.Min(GetColumn(child), totalColumns);
-                    if (ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
+                    if (ColumnDefinitions.Count > 0 && ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
                     {
                         child.Measure(infinity);
                         maxHeight = Math.Max(maxHeight, child.DesiredSize.Height);
@@ -130,7 +130,7 @@ namespace CODE.Framework.Wpf.Layout
             {
                 if (child == null) continue;
                 var columnIndex = Math.Min(GetColumn(child), totalColumns);
-                if (ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
+                if (ColumnDefinitions != null && ColumnDefinitions.Count > 0 && ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
                 {
                     if (ColumnDefinitions[columnIndex].AutoShowChildElement)
                         child.Visibility = Visibility.Visible;

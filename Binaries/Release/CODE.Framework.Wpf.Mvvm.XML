@@ -844,6 +844,17 @@
             <summary>Returns a theme feature object for internal use</summary>
             <returns>IThemeStandardFeatures implementation specific to the provided theme</returns>
         </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ApplicationEx.SecondaryAssemblies">
+            <summary>
+            List of secondary assemblies the current app references.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.RegisterSecondaryAssembly(System.String)">
+            <summary>
+            Registers a secondary assembly so the elements within that assembly are found as if they were in the local assembly
+            </summary>
+            <param name="assemblyString">The assembly string (assembly name).</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ApplicationEx.Theme">
             <summary>Attached property to set application theme</summary>
             <remarks>
@@ -1099,11 +1110,6 @@
             <param name="controller">Controller the action is to be triggered on</param>
             <param name="view">Name of the view that is to be found</param>
             <returns>Request context (can be ignored except for special cases)</returns>
-            <example>
-            Controller.Action("Customer", "List"); // Invokes CustomerController.List
-            var context = Controller.Action("Customer", "List"); // Invokes CustomerController.List and retrieves the context
-            Controller.Action("Customer", "Detail", new {id = x}); // Invokes CustomerController.Detail(id) and passes a parameter called "id")
-            </example>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Controller.CloseViewForModel(System.Object)">
             <summary>Closes the view associated with the provided model.</summary>
@@ -2449,6 +2455,15 @@
             Synchronizes the items of two different observable collections of different item types
             </summary>
             <remarks>The types of both collections must be castable (TSource must be a TTarget)</remarks>
+            <typeparam name="TSource">The type of the t source.</typeparam>
+            <typeparam name="TTarget">The type of the t target.</typeparam>
+            <param name="sourceCollection">The source collection.</param>
+            <param name="targetCollection">The target collection.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ObservableCollectionHelper.RemoveSync``2(System.Collections.ObjectModel.ObservableCollection{``0},System.Collections.ObjectModel.ObservableCollection{``1})">
+            <summary>
+            Removes a previously configured sync between collections
+            </summary>
             <typeparam name="TSource">The type of the t source.</typeparam>
             <typeparam name="TTarget">The type of the t target.</typeparam>
             <param name="sourceCollection">The source collection.</param>
@@ -4086,7 +4101,9 @@
             <param name="action">The category.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionRibbon">
-            <summary>Special menu object that can be bound to a collection of view actions to automatically and dynamically populate the menu.</summary>
+            <summary>
+            Special menu object that can be bound to a collection of view actions to automatically and dynamically populate the menu.
+            </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.#ctor">
             <summary>
@@ -4185,6 +4202,25 @@
             <summary>
             If set to true, the top level menu items will be forced to be upper case
             </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.RibbonItemCommandProperty">
+            <summary>
+            Attached property used to reference the command/action on any custom ribbon item
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.GetRibbonItemCommand(System.Windows.DependencyObject)">
+            <summary>
+            Attached property used to reference the command/action on any custom ribbon item
+            </summary>
+            <param name="d">The dependency object the item is set on</param>
+            <returns>ICommand.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.SetRibbonItemCommand(System.Windows.DependencyObject,System.Windows.Input.ICommand)">
+            <summary>
+            Attached property used to reference the command/action on any custom ribbon item
+            </summary>
+            <param name="d">The dependency object the item is set on</param>
+            <param name="value">The value.</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.PopulateRibbon(CODE.Framework.Wpf.Mvvm.IHaveActions,CODE.Framework.Wpf.Mvvm.IHaveActions,System.String)">
             <summary>
@@ -4378,6 +4414,11 @@
             Separator element used in ribbons
             </summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.RibbonSeparator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.RibbonSeparator"/> class.
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.RibbonPageLayoutPanel">
             <summary>
             This panel is used to lay out items within a ribbon page
@@ -4553,7 +4594,7 @@
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.MaximumVisibilityMultiConverter">
             <summary>
-            Looks at multiple Visibility values and returns the lowest visibility level
+            Looks at multiple Visibility values and returns the highest visibility level
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.MaximumVisibilityMultiConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
@@ -4567,6 +4608,31 @@
             <returns>A converted value.If the method returns null, the valid null value is used.A return value of <see cref="T:System.Windows.DependencyProperty" />.<see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the converter did not produce a value, and that the binding will use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> if it is available, or else will use the default value.A return value of <see cref="T:System.Windows.Data.Binding" />.<see cref="F:System.Windows.Data.Binding.DoNothing" /> indicates that the binding does not transfer the value or use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> or the default value.</returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.MaximumVisibilityMultiConverter.ConvertBack(System.Object,System.Type[],System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a binding target value to the source binding values.
+            </summary>
+            <param name="value">The value that the binding target produces.</param>
+            <param name="targetTypes">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>An array of values that have been converted from the target value back to the source values.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.MinimumVisibilityMultiConverter">
+            <summary>
+            Looks at multiple Visibility values and returns the lowest visibility level
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.MinimumVisibilityMultiConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
+            </summary>
+            <param name="values">The array of values that the source bindings in the <see cref="T:System.Windows.Data.MultiBinding" /> produces. The value <see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the source binding has no value to provide for conversion.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value.If the method returns null, the valid null value is used.A return value of <see cref="T:System.Windows.DependencyProperty" />.<see cref="F:System.Windows.DependencyProperty.UnsetValue" /> indicates that the converter did not produce a value, and that the binding will use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> if it is available, or else will use the default value.A return value of <see cref="T:System.Windows.Data.Binding" />.<see cref="F:System.Windows.Data.Binding.DoNothing" /> indicates that the binding does not transfer the value or use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue" /> or the default value.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.MinimumVisibilityMultiConverter.ConvertBack(System.Object,System.Type[],System.Object,System.Globalization.CultureInfo)">
             <summary>
             Converts a binding target value to the source binding values.
             </summary>
@@ -4659,12 +4725,22 @@
             <param name="d">The dependency object that triggered this change.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel.PopulateStack(CODE.Framework.Wpf.Mvvm.IHaveActions,CODE.Framework.Wpf.Mvvm.IHaveActions)">
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel.ActionFilterProperty">
+            <summary>
+            Defines which view actions are to be displayed in this stack panel
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel.OnActionFilterChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the action filter changes
+            </summary>
+            <param name="d">The object the filter was changed on</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel.PopulateStack">
             <summary>
             Populates the current ribbon with items based on the actions collection
             </summary>
-            <param name="actions">List of primary actions</param>
-            <param name="actions2">List of view specific actions</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel.Model">
             <summary>
@@ -4676,9 +4752,30 @@
             Selected view used as the data context
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel.ActionFilter">
+            <summary>
+            Defines which view actions are to be displayed in this stack panel
+            </summary>
+            <value>The action filter.</value>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionStackPanelButton">
             <summary>
             Button class used by the ViewActionStackPanel class
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionStackPanelActionFilter">
+            <summary>
+            Defines which view actions to show in a view action stack panel
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionStackPanelActionFilter.ShowAll">
+            <summary>
+            Shows all available and visible view actions
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionStackPanelActionFilter.ShowPinned">
+            <summary>
+            Shows view actions that are available, visible, and pinned
             </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionTabPanel">
@@ -5096,7 +5193,7 @@
             Tries the get the document.
             </summary>
             <param name="searchPath">The search path.</param>
-            <returns></returns>
+            <returns>ViewEngineResult.</returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.LooseXamlViewEngine.TryAttachingLayoutResources(System.Windows.FrameworkElement,System.String)">
             <summary>

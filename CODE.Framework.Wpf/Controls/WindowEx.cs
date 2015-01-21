@@ -38,6 +38,7 @@ namespace CODE.Framework.Wpf.Controls
         /// <param name="mouseButtonEventArgs">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
         private static void WindowDragHandler(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
+            if (mouseButtonEventArgs.LeftButton != MouseButtonState.Pressed) return;
             var window = sender as Window;
             if (window == null) return;
             var position = mouseButtonEventArgs.GetPosition(window);

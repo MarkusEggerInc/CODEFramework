@@ -66,6 +66,7 @@
     <Compile Include="BindingConverters\TransparentColorConverter.cs" />
     <Compile Include="Controls\AutoComplete.cs" />
     <Compile Include="Controls\BorderEx.cs" />
+    <Compile Include="Controls\ContentTextDisplay.cs" />
     <Compile Include="Controls\DockHost.cs" />
     <Compile Include="Controls\Ex.cs" />
     <Compile Include="Controls\ListBoxEx.cs" />

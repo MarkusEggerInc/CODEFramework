@@ -334,19 +334,6 @@ namespace CODE.Framework.Wpf.Controls
             textBoxBase.ContextMenu.Items.Insert(menuItemIndex, ignoreAll);
             menuItemIndex++;
 
-            if (textBoxBase is TextBox)
-            {
-                var textBox = textBoxBase as TextBox;
-                textBox.Text.Substring(textBox.GetSpellingErrorStart(textBox.CaretIndex), textBox.GetSpellingErrorLength(textBox.CaretIndex));
-            }
-            else if (textBoxBase is RichTextBox)
-            {
-                var richTextBox = textBoxBase as RichTextBox;
-                var range = richTextBox.GetSpellingErrorRange(richTextBox.CaretPosition);
-                if (range != null);
-            }
-
-            var usingCustomDictionaries = textBoxBase.SpellCheck.CustomDictionaries.Count > 0;
             var addToDictionary = new MenuItem
             {
                 Header = "Add to Dictionary",

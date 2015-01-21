@@ -60,6 +60,11 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ServiceTestHarness.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +89,10 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Windows\ServiceTestHarness.resx">
       <DependentUpon>ServiceTestHarness.cs</DependentUpon>
     </EmbeddedResource>
@@ -95,6 +104,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CODE.Framework.Core.Utilities\CODE.Framework.Core.Utilities.csproj">
+      <Project>{049507b3-c1de-4f0a-a4c8-72add78fdce9}</Project>
+      <Name>CODE.Framework.Core.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CODE.Framework.Core\CODE.Framework.Core.csproj">
       <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
       <Name>CODE.Framework.Core</Name>
@@ -102,6 +115,10 @@
     <ProjectReference Include="..\CODE.Framework.Services.Client\CODE.Framework.Services.Client.csproj">
       <Project>{EBAB101C-8E38-454B-893C-83DD79197FFD}</Project>
       <Name>CODE.Framework.Services.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Services.Contracts\CODE.Framework.Services.Contracts.csproj">
+      <Project>{e60c861c-70ea-42b2-aa6e-49a9ff63388f}</Project>
+      <Name>CODE.Framework.Services.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\CODE.Framework.Services.Server\CODE.Framework.Services.Server.csproj">
       <Project>{BA915BFD-1786-4BBB-A9D9-13F7F248BE84}</Project>
@@ -113,6 +130,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CodeFramework_Logo160.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

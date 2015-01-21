@@ -7,6 +7,14 @@
     public abstract class ConfigurationSource : IConfigurationSource
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigurationSource"/> class.
+        /// </summary>
+        protected ConfigurationSource()
+        {
+            InternalSettings = new ConfigurationSourceSettings(this);
+        }
+
+        /// <summary>
         /// Used to mark the source as dirty.
         /// </summary>
         internal void MarkDirty()
@@ -47,7 +55,8 @@
         /// </example>
         public virtual bool IsSettingSupported(string settingName)
         {
-            return Settings.Contains(settingName);
+            lock (Settings)
+                return Settings.ContainsKey(settingName);
         }
 
         /// <summary>
@@ -58,9 +67,7 @@
         /// <summary>
         /// Checks whether a given Source Type is supported.
         /// </summary>
-        /// <param name="sourceType">The type of source being checked, according to enum
-        /// EPS.Configuration.ConfigurationSourceTypes.
-        /// </param>
+        /// <param name="sourceType">The type of source being checked, according to enum EPS.Configuration.ConfigurationSourceTypes.</param>
         /// <returns>True or False, indicating whether or not the source type is supported.</returns>
         public abstract bool SupportsType(ConfigurationSourceTypes sourceType);
 
@@ -79,39 +86,36 @@
         /// </summary>
         public abstract bool IsReadOnly { get; }
 
-        /// <summary>
-        /// Exposes the Settings member.
-        /// </summary>
+        /// <summary>Exposes the Settings member.</summary>
         /// <example>
-        /// string sSetting = ConfigurationSettings.Settings["MySetting"]
+        /// var setting = ConfigurationSettings.Settings["MySetting"]
         /// </example>
         public virtual ConfigurationSourceSettings Settings
         {
-            get { return _settings ?? (_settings = new ConfigurationSourceSettings(this)); }
+            get { return InternalSettings; }
         }
 
         /// <summary>
         /// Indicates whether the source is active (enabled)
         /// </summary>
-        public bool IsActive { get; set; }
+        public bool IsActive
+        {
+            get { lock (this) return _isActive; }
+            set { lock (this) _isActive = value; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether the source has changed since
         /// the last time it's been populated.
         /// </summary>
-        public bool IsDirty { get; private set; }
-
-        /// <summary>
-        /// Keeps an internal instance of the ConfigurationSourceSettings class.
-        /// </summary>
-        private ConfigurationSourceSettings _settings;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigurationSource"/> class.
-        /// </summary>
-        protected ConfigurationSource()
+        public bool IsDirty
         {
-            IsActive = true;
+            get { lock (this) return _isDirty; }
+            private set { lock (this) _isDirty = value; }
         }
+
+        protected ConfigurationSourceSettings InternalSettings;
+        private bool _isActive = true;
+        private bool _isDirty;
     }
 }

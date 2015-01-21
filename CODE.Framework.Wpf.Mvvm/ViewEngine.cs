@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using CODE.Framework.Core.Utilities;
 using CODE.Framework.Wpf.Interfaces;
 
 namespace CODE.Framework.Wpf.Mvvm
@@ -245,6 +246,21 @@ namespace CODE.Framework.Wpf.Mvvm
             if (viewResult != null) return viewResult;
             failureResult.LocationsSearched.Add(searchPath);
 
+            foreach (var assemblyName in ApplicationEx.SecondaryAssemblies.Keys)
+            {
+                var secondaryAssembly = ApplicationEx.SecondaryAssemblies[assemblyName];
+
+                searchPath = "/" + secondaryAssembly.GetName().Name + ";component/views/" + controllerName + "/" + viewName + ".xaml";
+                viewResult = TryGetView(searchPath);
+                if (viewResult != null) return viewResult;
+                failureResult.LocationsSearched.Add(searchPath);
+
+                searchPath = "/" + secondaryAssembly.GetName().Name + ";component/views/shared/" + viewName + ".xaml";
+                viewResult = TryGetView(searchPath);
+                if (viewResult != null) return viewResult;
+                failureResult.LocationsSearched.Add(searchPath);
+            }
+
             return failureResult;
         }
 
@@ -280,12 +296,13 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Tries the get the document.
         /// </summary>
         /// <param name="searchPath">The search path.</param>
-        /// <returns></returns>
+        /// <returns>ViewEngineResult.</returns>
         protected virtual ViewEngineResult TryGetView(string searchPath)
         {
             try
             {
-                var view = Application.LoadComponent(new Uri(searchPath, UriKind.Relative)) as FrameworkElement;
+                var uri = searchPath.StartsWith("pack://") ? new Uri(searchPath) : new Uri(searchPath, UriKind.Relative);
+                var view = Application.LoadComponent(uri) as FrameworkElement;
                 if (view != null)
                 {
                     var viewInfo = view as IViewInformation;
@@ -472,6 +489,26 @@ namespace CODE.Framework.Wpf.Mvvm
             if (documentResult != null) return documentResult;
             failureResult.LocationsSearched.Add(searchPath);
 
+            foreach (var assemblyName in ApplicationEx.SecondaryAssemblies.Keys)
+            {
+                var secondaryAssembly = ApplicationEx.SecondaryAssemblies[assemblyName];
+
+                searchPath = "/" + secondaryAssembly.GetName().Name + ";component/views/" + controllerName + "/" + documentName + ".xaml";
+                documentResult = TryGetDocument(searchPath);
+                if (documentResult != null) return documentResult;
+                failureResult.LocationsSearched.Add(searchPath);
+
+                searchPath = "/" + secondaryAssembly.GetName().Name + ";component/views/shared/" + documentName + ".xaml";
+                documentResult = TryGetDocument(searchPath);
+                if (documentResult != null) return documentResult;
+                failureResult.LocationsSearched.Add(searchPath);
+
+                searchPath = "/" + secondaryAssembly.GetName().Name + ";component/views/shareddocuments/" + documentName + ".xaml";
+                documentResult = TryGetDocument(searchPath);
+                if (documentResult != null) return documentResult;
+                failureResult.LocationsSearched.Add(searchPath);
+            }
+            
             return failureResult;
         }
 
