@@ -99,16 +99,16 @@
                     <Grid SnapsToDevicePixels="True" Margin="10,10,10,0" ClipToBounds="False" controls:GridEx.RowHeights="48,Auto" mvvm:ViewActionAndOpenViewSelector.TriggerItem="{Binding}">
                         <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="36" Width="36" Margin="0" ClipToBounds="False" x:Name="placementGrid">
                             <classes:SelfCenteringPopup IsDisplayed="{Binding MenuOpen, Mode=OneWay}" Placement="Top" VerticalOffset="-10" StaysOpen="False" PopupAnimation="Slide" PlacementTarget="{Binding ElementName=placementGrid}">
-                                <ItemsControl ItemsSource="{Binding MenuItems}" Background="#464549" BorderBrush="{x:Null}" BorderThickness="0" Margin="0">
+                                <ItemsControl ItemsSource="{Binding MenuItems}" Background="{DynamicResource CODE.Framework-Menu-BackgroundBrush}" BorderBrush="{x:Null}" BorderThickness="0" Margin="0">
                                     <ItemsControl.Resources>
                                         <Style TargetType="mvvm:ButtonWithIcon">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="mvvm:ButtonWithIcon">
                                                         <Grid controls:GridEx.ColumnWidths="Auto,*" Cursor="Hand" Margin="2">
-                                                            <Rectangle Fill="#222325" Grid.ColumnSpan="2" Visibility="Collapsed" x:Name="highlight"/>
+                                                            <Rectangle Fill="{DynamicResource CODE.Framework-Menu-SelectionBrush}" Grid.ColumnSpan="2" Visibility="Collapsed" x:Name="highlight"/>
                                                             <Rectangle Height="18" Width="18" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8,2,5,2" Fill="{TemplateBinding IconBrush}" />
-                                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Content="{TemplateBinding Content}" Grid.Column="2" TextElement.Foreground="White" Margin="2,2,14,2"/>
+                                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Content="{TemplateBinding Content}" Grid.Column="2" TextElement.Foreground="{DynamicResource CODE.Framework-Menu-ForegroundBrush}" Margin="2,2,14,2"/>
                                                         </Grid>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">

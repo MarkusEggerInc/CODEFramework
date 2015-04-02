@@ -190,8 +190,9 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="category">The category.</param>
         /// <param name="indentLevel">The indent level.</param>
         /// <param name="emptyCategory">The empty category.</param>
+        /// <param name="orderByGroupTitle">If true, then the result set is first ordered by group title.</param>
         /// <returns>IEnumerable{IViewAction}.</returns>
-        public static IEnumerable<IViewAction> GetAllActionsForCategory(IEnumerable<IViewAction> actions, ViewActionCategory category, int indentLevel = 0, string emptyCategory = "File")
+        public static IEnumerable<IViewAction> GetAllActionsForCategory(IEnumerable<IViewAction> actions, ViewActionCategory category, int indentLevel = 0, string emptyCategory = "File", bool orderByGroupTitle = true)
         {
             var result = new List<IViewAction>();
 
@@ -205,7 +206,9 @@ namespace CODE.Framework.Wpf.Mvvm
                     result.Add(action);
             }
 
-            return result.OrderBy(a => a.GroupTitle + ":::" + a.Order.ToString("0000000000")).ToList();
+            if (orderByGroupTitle)
+                return result.OrderBy(a => a.GroupTitle + ":::" + a.Order.ToString("0000000000")).ToList();
+            return result.OrderBy(a => a.Order).ToList();
         }
     }
 

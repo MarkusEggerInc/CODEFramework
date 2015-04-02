@@ -3,13 +3,21 @@
                     xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
                     xmlns:mc="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Controls"
                     xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
-                    xmlns:classes="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Classes">
+                    xmlns:classes="clr-namespace:CODE.Framework.Wpf.Theme.Metro.Classes"
+                    xmlns:layout="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf">
 
     <Style TargetType="{x:Type mvvm:Shell}" x:Key="CODE.Framework.Wpf.Mvvm.Shell-Style">
-        <Setter Property="Background" Value="Black" />
+        <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush3}" />
         <Setter Property="TopLevelViewLaunchMode" Value="InPlace" />
-        <Setter Property="c:WindowEx.IsBorderless" Value="False" />
+        <Setter Property="c:WindowEx.DynamicIcon" Value="/Images/Application.png" />
+        <Setter Property="c:WindowEx.IsBorderless" Value="True" />
+        <Setter Property="c:WindowEx.HeaderHeight" Value="26" />
+        <Setter Property="c:WindowEx.AutoWindowDragEnabled" Value="True" />
+        <Setter Property="c:WindowEx.AutoWindowMaximizeEnabled" Value="True" />
+        <Setter Property="c:WindowEx.AutoWindowResizingEnabled" Value="True"/>
+        <Setter Property="WindowState" Value="Maximized" />
         <Setter Property="Template" Value="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-Template}" />
+        <Setter Property="c:TouchEx.UpdatePointingDeviceInputMode" Value="True" />
     </Style>
 
     <ControlTemplate TargetType="{x:Type mvvm:Shell}" x:Key="CODE.Framework.Wpf.Mvvm.Shell-Template">
@@ -27,36 +35,60 @@
     			</DoubleAnimationUsingKeyFrames>
     		</Storyboard>
     	</ControlTemplate.Resources>
-        <Grid c:GridEx.RowHeights="*,Auto">
-            <Grid.Background>
+        <Grid c:GridEx.RowHeights="30,*,Auto" Background="{TemplateBinding Background}">
+            <!-- Enable the following line if an image background is desired -->
+            <!--<Grid.Background>
                 <ImageBrush ImageSource="/Images/ShellBackground.jpg" Stretch="Fill" />
-            </Grid.Background>
-            <Image Source="/Images/ShellLogo.png" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" />
-            <mc:ShellTabControl HomeTitle="Start"
+            </Grid.Background>-->
+            <Border BorderBrush="{DynamicResource CODE.Framework-Application-BackgroundBrush1}" BorderThickness="1" Grid.RowSpan="3" Panel.ZIndex="10001" />
+            <Grid c:GridEx.ColumnWidths="Auto,*,Auto" HorizontalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{TemplateBinding Icon}" Stretch="Uniform" Height="22" Width="22" Margin="8,4"/>
+                    <mvvm:ViewActionStackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                                               Model="{Binding}" SelectedView="{Binding Path=SelectedItem, ElementName=OpenViews, Mode=OneWay}" />
+                </StackPanel>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
+                           x:Name="windowTitle" Text="{TemplateBinding Title}" Grid.Column="1" Margin="20,5"
+                           FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}"
+                           Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush2}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Height="22" Margin="0,3,1,0" Grid.Column="2">
+                    <c:MinimizeButton/>
+                    <c:ToggleMaximizeButton/>
+                    <c:CloseButton/>
+                </StackPanel>
+            </Grid>
+            <Image Source="/Images/ShellLogo.png" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" Grid.Row="1" />
+            <mc:ShellTabControl HomeTitle="Start" Grid.Row="1"
                                 ItemsSource="{TemplateBinding NormalViews}"
                                 SelectedIndex="{Binding SelectedNormalView, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                 Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-NormalViewsHost}"
                                 HomePageVisible="true"
                                 x:Name="normalViewHost">
                 <mc:ShellTabControl.HomePage>
-                    <ScrollViewer Margin="0,50,0,0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <mc:ShellMetroTiles VerticalAlignment="Stretch" HorizontalAlignment="Left" />
-                    </ScrollViewer>
+                    <mvvm:ViewActionItemsControl VerticalAlignment="Stretch" HorizontalAlignment="Left" Model="{Binding .}">
+                        <mvvm:ViewActionItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <layout:MetroTiles HeaderForegroundBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" 
+                                                   RenderHeaders="True" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                                   Margin="0,30,40,0"/>
+                            </ItemsPanelTemplate>
+                        </mvvm:ViewActionItemsControl.ItemsPanel>
+                    </mvvm:ViewActionItemsControl>
                 </mc:ShellTabControl.HomePage>
             </mc:ShellTabControl>
-            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}"/>
-            <mvvm:TopLevelViewHostTabControl x:Name="tabControl" ItemsSource="{TemplateBinding TopLevelViews}" 
+            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Grid.Row="1"/>
+            <mvvm:TopLevelViewHostTabControl x:Name="tabControl" ItemsSource="{TemplateBinding TopLevelViews}" Grid.Row="1"
                                              SelectedIndex="{TemplateBinding SelectedTopLevelView}" 
                                              Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-TopLevelViewsHost}" 
                                              NormalViewHost="{Binding ElementName=normalViewHost}"/>
-            <Grid VerticalAlignment="Bottom" Height="Auto" Grid.Row="1"
+            <Grid VerticalAlignment="Bottom" Height="Auto" Grid.Row="2"
 			      Background="{DynamicResource CODE.Framework-Metro-StatusReadyBackgroundBrush}" 
 				  Visibility="Collapsed" x:Name="statusGrid" Opacity="0">
                 <ContentControl Content="{TemplateBinding CurrentStatusView}" Margin="5,2,5,3" x:Name="statusContent"
                                 FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Large}" FontWeight="Light" 
                                 Foreground="{DynamicResource CODE.Framework-Metro-StatusReadyForegroundBrush}"/>
             </Grid>
-            <ItemsControl VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Width="310" HorizontalContentAlignment="Right"
+            <ItemsControl VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Width="310" HorizontalContentAlignment="Right" Grid.Row="1"
                           ItemsSource="{TemplateBinding CurrentNotifications}" ItemTemplate="{DynamicResource NotificationItemTemplate}" />
         </Grid>
         <ControlTemplate.Triggers>
@@ -80,7 +112,6 @@
             </EventTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-
 
     <Style TargetType="mc:ShellTabControl" x:Key="CODE.Framework.Wpf.Mvvm.Shell-NormalViewsHost" >
         <Setter Property="Background" Value="{x:Null}"/>
@@ -110,9 +141,9 @@
                                                 Style="{DynamicResource Metro-Control-AppBarButtonStyle}"
                                                 Content="{Binding Caption}" Command="{Binding}" 
                                                 IsDefault="{Binding IsDefault, Mode=OneWay}" IsCancel="{Binding IsCancel, Mode=OneWay}">
-                                            <Button.Resources>
+                                            <!--<Button.Resources>
                                                 <SolidColorBrush x:Key="CODE.Framework-Metro-IconForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
-                                            </Button.Resources>
+                                            </Button.Resources>-->
                                         </Button>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding BeginGroup}" Value="True">
@@ -489,5 +520,101 @@
             <ContentControl HorizontalContentAlignment="Right" Content="{Binding View}" Foreground="{DynamicResource CODE.Framework-Metro-NotificationForegroundBrush}" />
         </c:GridEx>
     </DataTemplate>
+
+    <Style TargetType="c:CloseButton">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Margin" Value="1,0,0,0"/>
+        <Setter Property="Cursor" Value="Arrow"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:CloseButton">
+                    <Grid>
+                        <Rectangle x:Name="bg" Fill="Transparent" IsHitTestVisible="True" />
+                        <Border Width="12" Height="2" BorderThickness="1" RenderTransformOrigin=".5,.5"
+                                                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                        BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}">
+                            <Border.RenderTransform>
+                                <RotateTransform Angle="45" />
+                            </Border.RenderTransform>
+                        </Border>
+                        <Border Width="12" Height="2" BorderThickness="1" RenderTransformOrigin=".5,.5"
+                                                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                        BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}">
+                            <Border.RenderTransform>
+                                <RotateTransform Angle="-45" />
+                            </Border.RenderTransform>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="bg" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="c:ToggleMaximizeButton">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Margin" Value="1,0,0,0"/>
+        <Setter Property="Cursor" Value="Arrow"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:ToggleMaximizeButton">
+                    <Grid>
+                        <Rectangle x:Name="bg" Fill="Transparent" IsHitTestVisible="True" />
+                        <Border Width="10" Height="10" BorderThickness="1,3,1,1" x:Name="norm"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" Background="White"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+                        <Border Width="8" Height="8" BorderThickness="1,2,1,1" Margin="4,0,0,4" x:Name="max2"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"
+                                Background="White"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+                        <Border Width="8" Height="8" BorderThickness="1,2,1,1" Margin="0,2,2,0" x:Name="max1"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"
+                                Background="White"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="bg" />
+                        </Trigger>
+                        <Trigger Property="IsMaximized" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="norm"/>
+                            <Setter Property="Visibility" Value="Visible" TargetName="max1"/>
+                            <Setter Property="Visibility" Value="Visible" TargetName="max2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="c:MinimizeButton">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Margin" Value="1,0,0,0"/>
+        <Setter Property="Cursor" Value="Arrow"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:MinimizeButton">
+                    <Grid>
+                        <Rectangle x:Name="bg" Fill="Transparent" IsHitTestVisible="True" />
+                        <Border Width="10" Height="8" BorderThickness="0,0,0,2"
+                                VerticalAlignment="Center" HorizontalAlignment="Center"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="bg" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

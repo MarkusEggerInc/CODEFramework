@@ -28,6 +28,10 @@
 
     <Color x:Key="CODE.Framework-Tab-UnselectedHeaderColor">#4E4E4E</Color>
 
+    <Color x:Key="CODE.Framework-Menu-BackgroundColor">#464549</Color>
+    <Color x:Key="CODE.Framework-Menu-SelectionColor">#222325</Color>
+    <Color x:Key="CODE.Framework-Menu-ForegroundColor">White</Color>
+
     <!-- Application status bar -->
     <Color x:Key="CODE.Framework-Wildcat-StatusBackgroundColor">Transparent</Color>
     <Color x:Key="CODE.Framework-Wildcat-StatusForegroundColor">White</Color>
@@ -59,6 +63,10 @@
     <SolidColorBrush x:Key="CODE.Framework-Application-ViewBorderBrush3" Color="{DynamicResource CODE.Framework-Application-ViewBorderColor3}" />
 
     <SolidColorBrush x:Key="CODE.Framework-Tab-UnselectedHeaderBrush" Color="{DynamicResource CODE.Framework-Tab-UnselectedHeaderColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Menu-BackgroundBrush" Color="{DynamicResource CODE.Framework-Menu-BackgroundColor}"/>
+    <SolidColorBrush x:Key="CODE.Framework-Menu-SelectionBrush" Color="{DynamicResource CODE.Framework-Menu-SelectionColor}"/>
+    <SolidColorBrush x:Key="CODE.Framework-Menu-ForegroundBrush" Color="{DynamicResource CODE.Framework-Menu-ForegroundColor}"/>
 
     <!-- Application status bar -->
     <SolidColorBrush x:Key="CODE.Framework-Wildcat-StatusForegroundBrush" Color="{DynamicResource CODE.Framework-Wildcat-StatusForegroundColor}" />

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 using CODE.Framework.Wpf.Layout;
 using CODE.Framework.Wpf.Mvvm;
 using CODE.Framework.Wpf.Theme.Metro.Classes;
@@ -27,30 +24,30 @@ namespace CODE.Framework.Wpf.Theme.Metro.Controls
             RenderHeaders = true;
 
             DataContextChanged += (s, e) =>
-                                      {
-                                          var actionsHost = DataContext as IHaveActions;
-                                          if (actionsHost == null) return;
-                                          actionsHost.ActionsChanged += (s2, e2) =>
-                                                                            {
-                                                                                LoadTiles();
-                                                                                if (e2.NewItems == null) return;
-                                                                                foreach (var action in e2.NewItems)
-                                                                                {
-                                                                                    var viewAction = action as ViewAction;
-                                                                                    if (viewAction != null)
-                                                                                        viewAction.PropertyChanged += (s3, e3) =>
-                                                                                                                          {
-                                                                                                                              if (e3.PropertyName == "Availability" || string.IsNullOrEmpty(e3.PropertyName))
-                                                                                                                              {
-                                                                                                                                  InvalidateMeasure();
-                                                                                                                                  InvalidateArrange();
-                                                                                                                              }
-                                                                                                                          };
-                                                                                }
-                                                                            };
+            {
+                var actionsHost = DataContext as IHaveActions;
+                if (actionsHost == null) return;
+                actionsHost.ActionsChanged += (s2, e2) =>
+                {
+                    LoadTiles();
+                    if (e2.NewItems == null) return;
+                    foreach (var action in e2.NewItems)
+                    {
+                        var viewAction = action as ViewAction;
+                        if (viewAction != null)
+                            viewAction.PropertyChanged += (s3, e3) =>
+                            {
+                                if (e3.PropertyName == "Availability" || string.IsNullOrEmpty(e3.PropertyName))
+                                {
+                                    InvalidateMeasure();
+                                    InvalidateArrange();
+                                }
+                            };
+                    }
+                };
 
-                                          LoadTiles();
-                                      };
+                LoadTiles();
+            };
         }
 
         private void LoadTiles()
@@ -94,21 +91,60 @@ namespace CODE.Framework.Wpf.Theme.Metro.Controls
                             if (realAction != null && !realAction.HasBrush && !realAction.HasExecuteDelegate && string.IsNullOrEmpty(action.Caption))
                                 continue; // Not adding this since is has no brush and no execute and no caption
 
-                            var isNormalWidth = action.Significance == ViewActionSignificance.Normal || action.Significance == ViewActionSignificance.BelowNormal || action.Significance == ViewActionSignificance.Lowest;
-                            var view = isNormalWidth ? Controller.LoadView("CODEFrameworkStandardViewTileNarrow") : Controller.LoadView("CODEFrameworkStandardViewTileWide");
-                            button.Content = view;
-                            view.DataContext = action.ActionViewModel ?? action;
-                            action.ActionView = view; // No need to re-load this later...
+                            switch (action.Significance)
+                            {
+                                case ViewActionSignificance.Highest:
+                                    var view = Controller.LoadView("CODEFrameworkStandardViewTileWideSquare");
+                                    button.Content = view;
+                                    view.DataContext = action.ActionViewModel ?? action;
+                                    //action.ActionView = view; // No need to re-load this later...
+                                    SetTileWidthMode(button, TileWidthModes.DoubleSquare);
+                                    break;
+                                case ViewActionSignificance.AboveNormal:
+                                    var view2 = Controller.LoadView("CODEFrameworkStandardViewTileWide");
+                                    button.Content = view2;
+                                    view2.DataContext = action.ActionViewModel ?? action;
+                                    //action.ActionView = view2; // No need to re-load this later...
+                                    SetTileWidthMode(button, TileWidthModes.Double);
+                                    break;
+                                case ViewActionSignificance.Normal:
+                                case ViewActionSignificance.BelowNormal:
+                                    var view3 = Controller.LoadView("CODEFrameworkStandardViewTileNarrow");
+                                    button.Content = view3;
+                                    view3.DataContext = action.ActionViewModel ?? action;
+                                    //action.ActionView = view3; // No need to re-load this later...
+                                    SetTileWidthMode(button, TileWidthModes.Normal);
+                                    break;
+                                case ViewActionSignificance.Lowest:
+                                    var view4 = Controller.LoadView("CODEFrameworkStandardViewTileTiny");
+                                    button.Content = view4;
+                                    view4.DataContext = action.ActionViewModel ?? action;
+                                    //action.ActionView = view4; // No need to re-load this later...
+                                    SetTileWidthMode(button, TileWidthModes.Tiny);
+                                    break;
+                            }
                         }
                         else
                         {
                             button.Content = action.ActionView;
-                            if (action.ActionView.DataContext == null)
-                                action.ActionView.DataContext = action.ActionViewModel ?? action;
+                            if (action.ActionView.DataContext == null) action.ActionView.DataContext = action.ActionViewModel ?? action;
+                            switch (action.Significance)
+                            {
+                                case ViewActionSignificance.Highest:
+                                    SetTileWidthMode(button, TileWidthModes.DoubleSquare);
+                                    break;
+                                case ViewActionSignificance.AboveNormal:
+                                    SetTileWidthMode(button, TileWidthModes.Double);
+                                    break;
+                                case ViewActionSignificance.Normal:
+                                case ViewActionSignificance.BelowNormal:
+                                    SetTileWidthMode(button, TileWidthModes.Normal);
+                                    break;
+                                case ViewActionSignificance.Lowest:
+                                    SetTileWidthMode(button, TileWidthModes.Tiny);
+                                    break;
+                            }
                         }
-
-                        if (action.Significance == ViewActionSignificance.AboveNormal || action.Significance == ViewActionSignificance.Highest)
-                            SetTileWidthMode(button, TileWidthModes.Double);
 
                         if (action.Categories.Count > 0)
                         {

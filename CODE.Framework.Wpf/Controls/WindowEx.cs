@@ -359,7 +359,7 @@ namespace CODE.Framework.Wpf.Controls
             {
                 case 0x0024: /* WM_GETMINMAXINFO */
                     WindowGetMinMaxInfo(hwnd, lParam);
-                    handled = true;
+                    //handled = true;
                     break;
             }
 

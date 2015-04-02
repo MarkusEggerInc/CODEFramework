@@ -64,4 +64,7 @@
     <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusWarningForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor3}" />
     <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusErrorForegroundBrush" Color="#B7442C" />
 
+    <SolidColorBrush x:Key="CODE.Framework-Vapor-IconForegroundBrush" Color="#C5C5C5" />
+    <SolidColorBrush x:Key="CODE.Framework-Vapor-IconForegroundBrush2" Color="#6D6F71" />
+
 </ResourceDictionary>

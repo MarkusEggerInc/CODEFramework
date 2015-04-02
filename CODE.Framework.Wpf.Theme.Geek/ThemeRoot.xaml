@@ -35,6 +35,7 @@
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
         <ResourceDictionary Source="Geek-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Geek-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Geek-Layout-MultiPanel.xaml"/>
         <ResourceDictionary Source="Geek-Layout-OneToManyPanel.xaml"/>
         <ResourceDictionary Source="Geek-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Geek-Layout-SimpleForm.xaml"/>

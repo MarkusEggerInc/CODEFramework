@@ -18,6 +18,7 @@
         <ResourceDictionary Source="Workplace-Control-FloatingDockWindow.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Label.xaml"/>
         <ResourceDictionary Source="Workplace-Control-ListBox.xaml"/>
+        <ResourceDictionary Source="Workplace-Control-Menu.xaml"/>
         <ResourceDictionary Source="Workplace-Control-PasswordBox.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Ribbon.xaml"/>
         <ResourceDictionary Source="Workplace-Control-ScrollBar.xaml"/>
@@ -28,6 +29,7 @@
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
         <ResourceDictionary Source="Workplace-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Workplace-Layout-MultiPanel.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-OneToManyPanel.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-PropertySheet.xaml"/>

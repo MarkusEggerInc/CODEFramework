@@ -16,6 +16,14 @@
             </summary>
             <exception cref="T:System.NotSupportedException">The hosted service contract must implement a service interface</exception>
         </member>
+        <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.GetContractInterface">
+            <summary>
+            Returns the first contract (interface) implemented by TServiceImplementation.
+            Override this method to specify a different interface.
+            </summary>
+            <returns>The interface to be exposed by the ApiController.</returns>
+            <exception cref="T:System.NotSupportedException">The hosted service contract must implement a service interface</exception>
+        </member>
         <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.ExecuteAsync(System.Web.Http.Controllers.HttpControllerContext,System.Threading.CancellationToken)">
             <summary>
             execute as an asynchronous operation.

@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using CODE.Framework.Core.Exceptions;
 using CODE.Framework.Core.Utilities;
+using CODE.Framework.Wpf.Layout;
 using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Mvvm
@@ -47,7 +48,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 foreach (var action in this)
                     if (action.Id == id)
                         return action;
-                
+
                 var id2 = id.Replace(" ", "");
                 foreach (var action in this)
                     if (action.Id.Replace(" ", "") == id2)
@@ -71,30 +72,37 @@ namespace CODE.Framework.Wpf.Mvvm
         /// String identifier to identify an action independent of its caption (and independent of the locale)
         /// </summary>
         string Id { get; set; }
+
         /// <summary>
         /// Caption (can be used to display in the UI)
         /// </summary>
         string Caption { get; set; }
+
         /// <summary>
         /// Indicates whether this action starts a new group
         /// </summary>
         bool BeginGroup { get; set; }
+
         /// <summary>
         /// Indicates the group title for items that start a new group
         /// </summary>
         string GroupTitle { get; set; }
+
         /// <summary>
         /// Is this the default action?
         /// </summary>
         bool IsDefault { get; set; }
+
         /// <summary>
         /// Is this the cancel action?
         /// </summary>
         bool IsCancel { get; set; }
+
         /// <summary>
         /// Indicates whether an action is pinned (which is used for different things in different themes)
         /// </summary>
         bool IsPinned { get; set; }
+
         /// <summary>
         /// Indicates whether the action is to be considered "checked"
         /// </summary>
@@ -103,27 +111,33 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Most themes will only respect this property when ViewActionType = Toggle
         /// </remarks>
         bool IsChecked { get; set; }
+
         /// <summary>
         /// Indicates the type of the view action
         /// </summary>
         ViewActionTypes ViewActionType { get; set; }
+
         /// <summary>
         /// Indicates that this view action is selected by default if the theme supports pre-selecting actions in some way (such as showing the page of the ribbon the action is in, or triggering the action in a special Office-style file menu).
         /// </summary>
         /// <remarks>If more than one action is flagged as the default selection, then the last one (in instantiation order) 'wins'</remarks>
         bool IsDefaultSelection { get; set; }
+
         /// <summary>
         /// Indicates whether or not this action is at all available (often translates directly to being visible or invisible)
         /// </summary>
         ViewActionAvailabilities Availability { get; }
+
         /// <summary>
         /// Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
         /// </summary>
         Visibility Visibility { get; set; }
+
         /// <summary>
         /// Significance of the action
         /// </summary>
         ViewActionSignificance Significance { get; set; }
+
         /// <summary>
         /// Logical list of categories
         /// </summary>
@@ -132,7 +146,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Sort order for the category
         /// </summary>
-        int CategoryOrder { get;  }
+        int CategoryOrder { get; }
 
         /// <summary>
         /// Sort order for the action (within a group)
@@ -193,6 +207,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Standard (triggers an action)
         /// </summary>
         Standard,
+
         /// <summary>
         /// Toggle (triggers actions that can be considered to 'toggle' something - these types of actions respect the IsChecked flag)
         /// </summary>
@@ -208,10 +223,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Document action availability is unknown (has not yet een evaluated)
         /// </summary>
         Unknown,
+
         /// <summary>
         /// Document action is available
         /// </summary>
         Available,
+
         /// <summary>
         /// Document action is currently not available
         /// </summary>
@@ -288,18 +305,22 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Normal
         /// </summary>
         Normal,
+
         /// <summary>
         /// Higher than normal
         /// </summary>
         AboveNormal,
+
         /// <summary>
         /// Lower than normal
         /// </summary>
         BelowNormal,
+
         /// <summary>
         /// Highest
         /// </summary>
         Highest,
+
         /// <summary>
         /// Lowest
         /// </summary>
@@ -360,12 +381,12 @@ namespace CODE.Framework.Wpf.Mvvm
         {
 
             PropertyChanged += (s, e) =>
-                                   {
-                                       if (_inBrushUpdating) return;
-                                       if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.StartsWith("Image") || e.PropertyName.StartsWith("Logo"))
-                                           CheckAllBrushesForResources();
-                                   };
-            
+            {
+                if (_inBrushUpdating) return;
+                if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.StartsWith("Image") || e.PropertyName.StartsWith("Logo"))
+                    CheckAllBrushesForResources();
+            };
+
             Caption = caption;
             Id = string.IsNullOrEmpty(id) ? caption : id;
 
@@ -431,6 +452,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 NotifyChanged("Text1");
             }
         }
+
         private string _caption;
 
         /// <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
@@ -448,6 +470,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 NotifyChanged("PopulatedVisual");
             }
         }
+
         private string _visualResourceKey;
 
         /// <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
@@ -466,6 +489,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 NotifyChanged("Image1");
             }
         }
+
         private string _brushResourceKey;
 
         /// <summary>Key of a visual XAML resource for Logo1 associated with this action (such as an icon)</summary>
@@ -480,6 +504,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 NotifyChanged("Logo1");
             }
         }
+
         private string _logoBrushResourceKey;
 
         /// <summary>Indicates whether this is a new group of actions</summary>
@@ -524,11 +549,11 @@ namespace CODE.Framework.Wpf.Mvvm
                         return (Visual) Application.Current.FindResource(VisualResourceKey);
                     if (!string.IsNullOrEmpty(BrushResourceKey))
                         return new Rectangle
-                                   {
-                                       Fill = Application.Current.FindResource(BrushResourceKey) as Brush,
-                                       MinHeight = 16,
-                                       MinWidth = 16
-                                   };
+                        {
+                            Fill = Application.Current.FindResource(BrushResourceKey) as Brush,
+                            MinHeight = 16,
+                            MinWidth = 16
+                        };
                     return null;
                 }
                 catch
@@ -551,11 +576,11 @@ namespace CODE.Framework.Wpf.Mvvm
                     if (visual == null)
                     {
                         var rectangle = new Rectangle
-                                            {
-                                                MinHeight = 16,
-                                                MinWidth = 16, 
-                                                Fill = Application.Current.FindResource("CODE.Framework-Icon-More") as Brush
-                                            };
+                        {
+                            MinHeight = 16,
+                            MinWidth = 16,
+                            Fill = Application.Current.FindResource("CODE.Framework-Icon-More") as Brush
+                        };
 
                         visual = rectangle;
                     }
@@ -627,7 +652,7 @@ namespace CODE.Framework.Wpf.Mvvm
                         var icon = resourceSearchContext != null ? resourceSearchContext.FindResource(BrushResourceKey) as Brush : Application.Current.FindResource(BrushResourceKey) as Brush;
 
                         if (brushResources.Count > 0) // We may have some resources we need to replace
-                                If.Real<DrawingBrush>(icon, drawing => ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources));
+                            If.Real<DrawingBrush>(icon, drawing => ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources));
 
                         _latestBrush = icon;
                         NotifyChanged();
@@ -683,9 +708,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 NotifyChanged("PopulatedBrush");
             }
         }
+
         private FrameworkElement _resourceContextObject;
 
         private Func<IViewAction, object, bool> _canExecuteDelegate;
+
         /// <summary>
         /// Indicates whether the current action can execute (belongs to the ICommand interface)
         /// </summary>
@@ -740,11 +767,11 @@ namespace CODE.Framework.Wpf.Mvvm
             {
                 lock (_executionQueue)
                     _executionQueue.Enqueue(new ExecutionQueueItem
-                                                {
-                                                    Execute = _executeDelegate,
-                                                    Parameter = parameter,
-                                                    Source = this
-                                                });
+                    {
+                        Execute = _executeDelegate,
+                        Parameter = parameter,
+                        Source = this
+                    });
 
                 if (Availability == ViewActionAvailabilities.Available)
                     ExecuteQueue();
@@ -772,7 +799,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
         private class ExecutionQueueItem
         {
-            public Action<IViewAction, object> Execute { get; set; } 
+            public Action<IViewAction, object> Execute { get; set; }
             public object Parameter { get; set; }
             public ViewAction Source { get; set; }
         }
@@ -781,6 +808,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Is this the default action?
         /// </summary>
         public bool IsDefault { get; set; }
+
         /// <summary>
         /// Is this the cancel action?
         /// </summary>
@@ -839,7 +867,7 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return _viewActionType; }
             set
             {
-                _viewActionType = value; 
+                _viewActionType = value;
                 NotifyChanged("ViewActionType");
             }
         }
@@ -875,7 +903,6 @@ namespace CODE.Framework.Wpf.Mvvm
                             NotifyChanged("Availability");
                         });
                     }
-                    //NotifyChanged("Availability");
                 }
                 lock (this)
                     return _availability;
@@ -902,6 +929,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Significance of the action
         /// </summary>
         public ViewActionSignificance Significance { get; set; }
+
         /// <summary>
         /// Logical list of categories
         /// </summary>
@@ -910,7 +938,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Sort order for the category
         /// </summary>
-        public int CategoryOrder { get; set;  }
+        public int CategoryOrder { get; set; }
 
         /// <summary>
         /// Sort order for the action (within a group)
@@ -955,6 +983,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Occurs when a property value changes.</summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// Notifies the changed.
         /// </summary>
@@ -1014,11 +1043,14 @@ namespace CODE.Framework.Wpf.Mvvm
         ///<summary>The text to display on the tool tip when this item is hovered over with the mouse</summary>
         public string ToolTipText { get; set; }
 
+        private Brush _image1;
+
         /// <summary>Image Element 1</summary>
         public Brush Image1
         {
             get
             {
+                if (_image1 != null) return _image1;
                 var brush = Brush;
                 if (brush == null && !string.IsNullOrEmpty(VisualResourceKey))
                 {
@@ -1028,7 +1060,10 @@ namespace CODE.Framework.Wpf.Mvvm
                 }
                 return brush;
             }
-            set { /* Nothing to do*/ }
+            set
+            {
+                _image1 = value;
+            }
         }
 
         /// <summary>Image Element 2</summary>
@@ -1075,7 +1110,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
                         if (resourceSearchContext == null && ResourceContextObject != null)
                         {
-                            resourceSearchContext = (FrameworkElement)ResourceContextObject;
+                            resourceSearchContext = (FrameworkElement) ResourceContextObject;
                             ResourceHelper.GetBrushResources(resourceSearchContext, brushResources);
                         }
 
@@ -1093,7 +1128,10 @@ namespace CODE.Framework.Wpf.Mvvm
                 }
                 return _latestLogoBrush;
             }
-            set { /* Nothing to do*/ }
+            set
+            {
+                /* Nothing to do*/
+            }
         }
 
         /// <summary>Logo Element 2</summary>
@@ -1116,42 +1154,991 @@ namespace CODE.Framework.Wpf.Mvvm
             _inBrushUpdating = true;
 
             If.Real<DrawingBrush>(Image1, drawing =>
-                                              {
-                                                  ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                  NotifyChanged("Image1");
-                                              });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Image1");
+            });
             If.Real<DrawingBrush>(Image2, drawing =>
-                                              {
-                                                  ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                  NotifyChanged("Image2");
-                                              });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Image2");
+            });
             If.Real<DrawingBrush>(Image3, drawing =>
-                                              {
-                                                  ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                  NotifyChanged("Image3");
-                                              });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Image3");
+            });
             If.Real<DrawingBrush>(Image4, drawing =>
-                                              {
-                                                  ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                  NotifyChanged("Image4");
-                                              });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Image4");
+            });
             If.Real<DrawingBrush>(Image5, drawing =>
-                                              {
-                                                  ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                  NotifyChanged("Image5");
-                                              });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Image5");
+            });
             If.Real<DrawingBrush>(Logo1, drawing =>
-                                             {
-                                                 ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                 NotifyChanged("Logo1");
-                                             });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Logo1");
+            });
             If.Real<DrawingBrush>(Logo2, drawing =>
-                                             {
-                                                 ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                 NotifyChanged("Logo2");
-                                             });
+            {
+                ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                NotifyChanged("Logo2");
+            });
 
             _inBrushUpdating = false;
+        }
+    }
+
+    /// <summary>
+    /// View action wrapper based on a DependencyObject (and thus can be used for better binding)
+    /// </summary>
+    public class DependencyViewActionWrapper : DependencyObject, IViewAction, INotifyPropertyChanged, IStandardViewModel
+    {
+        /// <summary>
+        /// Wrapped action
+        /// </summary>
+        private readonly IViewAction _wrappedAction;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="wrappedAction">Real action that has been wrapped</param>
+        public DependencyViewActionWrapper(IViewAction wrappedAction)
+        {
+            _wrappedAction = wrappedAction;
+
+            var inpf = wrappedAction as INotifyPropertyChanged;
+            if (inpf != null)
+                inpf.PropertyChanged += (s, e) =>
+                {
+                    if (PropertyChanged != null)
+                        PropertyChanged(s, e);
+                    PopulateLocalPropertiesFromRealViewAction(e.PropertyName);
+                };
+            _wrappedAction.CanExecuteChanged += (s, e) =>
+            {
+                if (CanExecuteChanged != null)
+                    CanExecuteChanged(s, e);
+            };
+            PopulateLocalPropertiesFromRealViewAction();
+        }
+
+        private bool _inLocalUpdate;
+        private bool _inOriginalUpdate;
+
+        /// <summary>
+        /// Populates the local properties from the real view action.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        private void PopulateLocalPropertiesFromRealViewAction(string propertyName = "")
+        {
+            if (_inOriginalUpdate) return;
+
+            _inLocalUpdate = true;
+            var standardViewModel = _wrappedAction as IStandardViewModel;
+            if (standardViewModel != null)
+            {
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text1") Text1 = standardViewModel.Text1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text2") Text2 = standardViewModel.Text2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text3") Text3 = standardViewModel.Text3;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text4") Text4 = standardViewModel.Text4;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text5") Text5 = standardViewModel.Text5;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text6") Text6 = standardViewModel.Text6;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text7") Text7 = standardViewModel.Text7;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text8") Text8 = standardViewModel.Text8;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text9") Text9 = standardViewModel.Text9;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text10") Text10 = standardViewModel.Text10;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Identifier1") Identifier1 = standardViewModel.Identifier1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Identifier2") Identifier2 = standardViewModel.Identifier2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Number1") Number1 = standardViewModel.Number1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Number2") Number2 = standardViewModel.Number2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "ToolTipText") ToolTipText = standardViewModel.ToolTipText;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image1") Image1 = standardViewModel.Image1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image2") Image2 = standardViewModel.Image2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image3") Image3 = standardViewModel.Image3;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image4") Image4 = standardViewModel.Image4;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image5") Image5 = standardViewModel.Image5;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Logo1") Logo1 = standardViewModel.Logo1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Logo2") Logo2 = standardViewModel.Logo2;
+            }
+            var action = _wrappedAction as ViewAction;
+            if (action != null)
+            {
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "IsLocalAction") IsLocalAction = action.IsLocalAction;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "IsChecked_Visible") IsChecked_Visible = action.IsChecked_Visible;
+            }
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Id") Id = _wrappedAction.Id;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Caption") Caption = _wrappedAction.Caption;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "BeginGroup") BeginGroup = _wrappedAction.BeginGroup;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "GroupTitle") GroupTitle = _wrappedAction.GroupTitle;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsCancel") IsCancel = _wrappedAction.IsCancel;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsChecked") IsChecked = _wrappedAction.IsChecked;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsDefault") IsDefault = _wrappedAction.IsDefault;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsDefaultSelection") IsDefaultSelection = _wrappedAction.IsDefaultSelection;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsPinned") IsPinned = _wrappedAction.IsPinned;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ViewActionType") ViewActionType = _wrappedAction.ViewActionType;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Availability") Availability = _wrappedAction.Availability;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Visibility") Visibility = _wrappedAction.Visibility;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Significance")
+            {
+                Significance = _wrappedAction.Significance;
+                switch (Significance)
+                {
+                    case ViewActionSignificance.Normal:
+                        MetroTiles.SetTileWidthMode(this, TileWidthModes.Default);
+                        break;
+                    case ViewActionSignificance.Lowest:
+                    case ViewActionSignificance.BelowNormal:
+                        MetroTiles.SetTileWidthMode(this, TileWidthModes.Tiny);
+                        break;
+                    case ViewActionSignificance.AboveNormal:
+                        MetroTiles.SetTileWidthMode(this, TileWidthModes.Double);
+                        break;
+                    case ViewActionSignificance.Highest:
+                        MetroTiles.SetTileWidthMode(this, TileWidthModes.DoubleSquare);
+                        break;
+                }
+            }
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Categories") Categories = _wrappedAction.Categories;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "CategoryOrder") CategoryOrder = _wrappedAction.CategoryOrder;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Order") Order = _wrappedAction.Order;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "FirstCategoryId") FirstCategoryId = _wrappedAction.FirstCategoryId;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ActionViewModel") ActionViewModel = _wrappedAction.ActionViewModel;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ActionView") ActionView = _wrappedAction.ActionView;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "UserRoles") UserRoles = _wrappedAction.UserRoles;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "AccessKey") AccessKey = _wrappedAction.AccessKey;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ShortcutKey") ShortcutKey = _wrappedAction.ShortcutKey;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ShortcutModifiers") ShortcutModifiers = _wrappedAction.ShortcutModifiers;
+            _inLocalUpdate = false;
+        }
+
+        /// <summary>
+        /// Updates the view action from local properties.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        private static void UpdateViewActionFromLocalProperties(DependencyObject o, string propertyName = "")
+        {
+            var wrapper = o as DependencyViewActionWrapper;
+            if (wrapper == null) return;
+            wrapper.UpdateViewActionFromLocalProperties(propertyName);
+        }
+
+        /// <summary>
+        /// Updates the view action from local properties.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        private void UpdateViewActionFromLocalProperties(string propertyName = "")
+        {
+            if (_inLocalUpdate) return;
+
+            _inOriginalUpdate = true;
+            var standardViewModel = _wrappedAction as IStandardViewModel;
+            if (standardViewModel != null)
+            {
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text1") standardViewModel.Text1 = Text1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text2") standardViewModel.Text2 = Text2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text3") standardViewModel.Text3 = Text3;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text4") standardViewModel.Text4 = Text4;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text5") standardViewModel.Text5 = Text5;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text6") standardViewModel.Text6 = Text6;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text7") standardViewModel.Text7 = Text7;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text8") standardViewModel.Text8 = Text8;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text9") standardViewModel.Text9 = Text9;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Text10") standardViewModel.Text10 = Text10;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Identifier1") standardViewModel.Identifier1 = Identifier1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Identifier2") standardViewModel.Identifier2 = Identifier2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Number1") standardViewModel.Number1 = Number1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Number2") standardViewModel.Number2 = Number2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "ToolTipText") standardViewModel.ToolTipText = ToolTipText;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image1") standardViewModel.Image1 = Image1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image2") standardViewModel.Image2 = Image2;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image3") standardViewModel.Image3 = Image3;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image4") standardViewModel.Image4 = Image4;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Image5") standardViewModel.Image5 = Image5;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Logo1") standardViewModel.Logo1 = Logo1;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Logo2") standardViewModel.Logo2 = Logo2;
+            }
+            var action = _wrappedAction as ViewAction;
+            if (action != null)
+            {
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "IsLocalAction") action.IsLocalAction = IsLocalAction;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "IsChecked_Visible") action.IsChecked_Visible = IsChecked_Visible;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "CategoryOrder") action.CategoryOrder = CategoryOrder;
+                if (string.IsNullOrEmpty(propertyName) || propertyName == "Order") action.Order = Order;
+            }
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Id") _wrappedAction.Id = Id;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Caption") _wrappedAction.Caption = Caption;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "BeginGroup") _wrappedAction.BeginGroup = BeginGroup;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "GroupTitle") _wrappedAction.GroupTitle = GroupTitle;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsCancel") _wrappedAction.IsCancel = IsCancel;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsChecked") _wrappedAction.IsChecked = IsChecked;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsDefault") _wrappedAction.IsDefault = IsDefault;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsDefaultSelection") _wrappedAction.IsDefaultSelection = IsDefaultSelection;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "IsPinned") _wrappedAction.IsPinned = IsPinned;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ViewActionType") _wrappedAction.ViewActionType = ViewActionType;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Visibility") _wrappedAction.Visibility = Visibility;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Significance") _wrappedAction.Significance = Significance;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "Categories") _wrappedAction.Categories = Categories;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ActionViewModel") _wrappedAction.ActionViewModel = ActionViewModel;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ActionView") _wrappedAction.ActionView = ActionView;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "UserRoles") _wrappedAction.UserRoles = UserRoles;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "AccessKey") _wrappedAction.AccessKey = AccessKey;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ShortcutKey") _wrappedAction.ShortcutKey = ShortcutKey;
+            if (string.IsNullOrEmpty(propertyName) || propertyName == "ShortcutModifiers") _wrappedAction.ShortcutModifiers = ShortcutModifiers;
+            _inOriginalUpdate = false;
+        }
+
+        /// <summary>
+        /// Property changed event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Text Element 1
+        /// </summary>
+        /// <value>The text1.</value>
+        public string Text1
+        {
+            get { return (string) GetValue(Text1Property); }
+            set { SetValue(Text1Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 1
+        /// </summary>
+        public static readonly DependencyProperty Text1Property = DependencyProperty.Register("Text1", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text1")));
+
+        /// <summary>
+        /// Text Element 2
+        /// </summary>
+        /// <value>The text2.</value>
+        public string Text2
+        {
+            get { return (string) GetValue(Text2Property); }
+            set { SetValue(Text2Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 2
+        /// </summary>
+        public static readonly DependencyProperty Text2Property = DependencyProperty.Register("Text2", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text2")));
+
+        /// <summary>
+        /// Text Element 3
+        /// </summary>
+        /// <value>The text3.</value>
+        public string Text3
+        {
+            get { return (string) GetValue(Text3Property); }
+            set { SetValue(Text3Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 3
+        /// </summary>
+        public static readonly DependencyProperty Text3Property = DependencyProperty.Register("Text3", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text3")));
+
+        /// <summary>
+        /// Text Element 4
+        /// </summary>
+        /// <value>The text4.</value>
+        public string Text4
+        {
+            get { return (string) GetValue(Text4Property); }
+            set { SetValue(Text4Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 4
+        /// </summary>
+        public static readonly DependencyProperty Text4Property = DependencyProperty.Register("Text4", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text4")));
+
+        /// <summary>
+        /// Text Element 5
+        /// </summary>
+        /// <value>The text5.</value>
+        public string Text5
+        {
+            get { return (string) GetValue(Text5Property); }
+            set { SetValue(Text5Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 5
+        /// </summary>
+        public static readonly DependencyProperty Text5Property = DependencyProperty.Register("Text5", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text5")));
+
+        /// <summary>
+        /// Text Element 6
+        /// </summary>
+        /// <value>The text6.</value>
+        public string Text6
+        {
+            get { return (string) GetValue(Text6Property); }
+            set { SetValue(Text6Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 6
+        /// </summary>
+        public static readonly DependencyProperty Text6Property = DependencyProperty.Register("Text6", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text6")));
+
+        /// <summary>
+        /// Text Element 7
+        /// </summary>
+        /// <value>The text7.</value>
+        public string Text7
+        {
+            get { return (string) GetValue(Text7Property); }
+            set { SetValue(Text7Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 7
+        /// </summary>
+        public static readonly DependencyProperty Text7Property = DependencyProperty.Register("Text7", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text7")));
+
+        /// <summary>
+        /// Text Element 8
+        /// </summary>
+        /// <value>The text8.</value>
+        public string Text8
+        {
+            get { return (string) GetValue(Text8Property); }
+            set { SetValue(Text8Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 8
+        /// </summary>
+        public static readonly DependencyProperty Text8Property = DependencyProperty.Register("Text8", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text8")));
+
+        /// <summary>
+        /// Text Element 9
+        /// </summary>
+        /// <value>The text9.</value>
+        public string Text9
+        {
+            get { return (string) GetValue(Text9Property); }
+            set { SetValue(Text9Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 9
+        /// </summary>
+        public static readonly DependencyProperty Text9Property = DependencyProperty.Register("Text9", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text9")));
+
+        /// <summary>
+        /// Text Element 10
+        /// </summary>
+        /// <value>The text10.</value>
+        public string Text10
+        {
+            get { return (string) GetValue(Text10Property); }
+            set { SetValue(Text10Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element 10
+        /// </summary>
+        public static readonly DependencyProperty Text10Property = DependencyProperty.Register("Text10", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Text10")));
+
+        /// <summary>
+        /// Identifier Text Element 1
+        /// </summary>
+        /// <value>The identifier1.</value>
+        public string Identifier1
+        {
+            get { return (string) GetValue(Identifier1Property); }
+            set { SetValue(Identifier1Property, value); }
+        }
+
+        /// <summary>
+        /// Identifier Text Element 1
+        /// </summary>
+        public static readonly DependencyProperty Identifier1Property = DependencyProperty.Register("Identifier1", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Identifier1")));
+
+        /// <summary>
+        /// Identifier Text Element 2
+        /// </summary>
+        /// <value>The identifier2.</value>
+        public string Identifier2
+        {
+            get { return (string) GetValue(Identifier2Property); }
+            set { SetValue(Identifier2Property, value); }
+        }
+
+        /// <summary>
+        /// Identifier Text Element 2
+        /// </summary>
+        public static readonly DependencyProperty Identifier2Property = DependencyProperty.Register("Identifier2", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Identifier2")));
+
+        /// <summary>
+        /// Text Element representing a number (such as an item count)
+        /// </summary>
+        /// <value>The number1.</value>
+        public string Number1
+        {
+            get { return (string) GetValue(Number1Property); }
+            set { SetValue(Number1Property, value); }
+        }
+
+        /// <summary>
+        /// Text Element representing a number (such as an item count)
+        /// </summary>
+        public static readonly DependencyProperty Number1Property = DependencyProperty.Register("Number1", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Number1")));
+
+        /// <summary>
+        /// Second Text Element representing a number (such as an item count)
+        /// </summary>
+        /// <value>The number2.</value>
+        public string Number2
+        {
+            get { return (string) GetValue(Number2Property); }
+            set { SetValue(Number2Property, value); }
+        }
+
+        /// <summary>
+        /// Second Text Element representing a number (such as an item count)
+        /// </summary>
+        public static readonly DependencyProperty Number2Property = DependencyProperty.Register("Number2", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Number2")));
+
+        /// <summary>
+        /// The text to display on the tool tip when this item is hovered over with the mouse
+        /// </summary>
+        /// <value>The tool tip text.</value>
+        public string ToolTipText
+        {
+            get { return (string) GetValue(ToolTipTextProperty); }
+            set { SetValue(ToolTipTextProperty, value); }
+        }
+
+        /// <summary>
+        /// The text to display on the tool tip when this item is hovered over with the mouse
+        /// </summary>
+        public static readonly DependencyProperty ToolTipTextProperty = DependencyProperty.Register("ToolTipText", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "ToolTipText")));
+
+        /// <summary>
+        /// Image Element 1
+        /// </summary>
+        /// <value>The image1.</value>
+        public Brush Image1
+        {
+            get { return (Brush) GetValue(Image1Property); }
+            set { SetValue(Image1Property, value); }
+        }
+
+        /// <summary>
+        /// Image Element 1
+        /// </summary>
+        public static readonly DependencyProperty Image1Property = DependencyProperty.Register("Image1", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Image1")));
+
+        /// <summary>
+        /// Image Element 2
+        /// </summary>
+        /// <value>The image2.</value>
+        public Brush Image2
+        {
+            get { return (Brush) GetValue(Image2Property); }
+            set { SetValue(Image2Property, value); }
+        }
+
+        /// <summary>
+        /// Image Element 2
+        /// </summary>
+        public static readonly DependencyProperty Image2Property = DependencyProperty.Register("Image2", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Image2")));
+
+        /// <summary>
+        /// Image Element 3
+        /// </summary>
+        /// <value>The image3.</value>
+        public Brush Image3
+        {
+            get { return (Brush) GetValue(Image3Property); }
+            set { SetValue(Image3Property, value); }
+        }
+
+        /// <summary>
+        /// Image Element 3
+        /// </summary>
+        public static readonly DependencyProperty Image3Property = DependencyProperty.Register("Image3", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Image3")));
+
+        /// <summary>
+        /// Image Element 4
+        /// </summary>
+        /// <value>The image4.</value>
+        public Brush Image4
+        {
+            get { return (Brush) GetValue(Image4Property); }
+            set { SetValue(Image4Property, value); }
+        }
+
+        /// <summary>
+        /// Image Element 4
+        /// </summary>
+        public static readonly DependencyProperty Image4Property = DependencyProperty.Register("Image4", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Image4")));
+
+        /// <summary>
+        /// Image Element 5
+        /// </summary>
+        /// <value>The image5.</value>
+        public Brush Image5
+        {
+            get { return (Brush) GetValue(Image5Property); }
+            set { SetValue(Image5Property, value); }
+        }
+
+        /// <summary>
+        /// Image Element 5
+        /// </summary>
+        public static readonly DependencyProperty Image5Property = DependencyProperty.Register("Image5", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Image5")));
+
+        /// <summary>
+        /// Logo Element 1
+        /// </summary>
+        /// <value>The logo1.</value>
+        public Brush Logo1
+        {
+            get { return (Brush) GetValue(Logo1Property); }
+            set { SetValue(Logo1Property, value); }
+        }
+
+        /// <summary>
+        /// Logo Element 1
+        /// </summary>
+        public static readonly DependencyProperty Logo1Property = DependencyProperty.Register("Logo1", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Logo1")));
+
+        /// <summary>
+        /// Logo Element 2
+        /// </summary>
+        /// <value>The logo2.</value>
+        public Brush Logo2
+        {
+            get { return (Brush) GetValue(Logo2Property); }
+            set { SetValue(Logo2Property, value); }
+        }
+
+        /// <summary>
+        /// Logo Element 2
+        /// </summary>
+        public static readonly DependencyProperty Logo2Property = DependencyProperty.Register("Logo2", typeof (Brush), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Logo2")));
+
+        /// <summary>
+        /// String identifier to identify an action independent of its caption (and independent of the locale)
+        /// </summary>
+        /// <value>The identifier.</value>
+        public string Id
+        {
+            get { return (string) GetValue(IdProperty); }
+            set { SetValue(IdProperty, value); }
+        }
+
+        /// <summary>
+        /// String identifier to identify an action independent of its caption (and independent of the locale)
+        /// </summary>
+        public static readonly DependencyProperty IdProperty = DependencyProperty.Register("Id", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Id")));
+
+        /// <summary>
+        /// Caption (can be used to display in the UI)
+        /// </summary>
+        /// <value>The caption.</value>
+        public string Caption
+        {
+            get { return (string) GetValue(CaptionProperty); }
+            set { SetValue(CaptionProperty, value); }
+        }
+
+        /// <summary>
+        /// Caption (can be used to display in the UI)
+        /// </summary>
+        public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register("Caption", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "Caption")));
+
+        /// <summary>
+        /// Indicates whether this action starts a new group
+        /// </summary>
+        /// <value><c>true</c> if [begin group]; otherwise, <c>false</c>.</value>
+        public bool BeginGroup
+        {
+            get { return (bool) GetValue(BeginGroupProperty); }
+            set { SetValue(BeginGroupProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates whether this action starts a new group
+        /// </summary>
+        public static readonly DependencyProperty BeginGroupProperty = DependencyProperty.Register("BeginGroup", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "BeginGroup")));
+
+        /// <summary>
+        /// Indicates the group title for items that start a new group
+        /// </summary>
+        /// <value>The group title.</value>
+        public string GroupTitle
+        {
+            get { return (string) GetValue(GroupTitleProperty); }
+            set { SetValue(GroupTitleProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates the group title for items that start a new group
+        /// </summary>
+        public static readonly DependencyProperty GroupTitleProperty = DependencyProperty.Register("GroupTitle", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata("", (o, args) => UpdateViewActionFromLocalProperties(o, "GroupTitle")));
+
+        /// <summary>
+        /// Is this the default action?
+        /// </summary>
+        /// <value><c>true</c> if this instance is default; otherwise, <c>false</c>.</value>
+        public bool IsDefault
+        {
+            get { return (bool) GetValue(IsDefaultProperty); }
+            set { SetValue(IsDefaultProperty, value); }
+        }
+
+        /// <summary>
+        /// Is this the default action?
+        /// </summary>
+        public static readonly DependencyProperty IsDefaultProperty = DependencyProperty.Register("IsDefault", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "IsDefault")));
+
+        /// <summary>
+        /// Is this the cancel action?
+        /// </summary>
+        /// <value><c>true</c> if this instance is cancel; otherwise, <c>false</c>.</value>
+        public bool IsCancel
+        {
+            get { return (bool) GetValue(IsCancelProperty); }
+            set { SetValue(IsCancelProperty, value); }
+        }
+
+        /// <summary>
+        /// Is this the cancel action?
+        /// </summary>
+        public static readonly DependencyProperty IsCancelProperty = DependencyProperty.Register("IsCancel", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "IsCancel")));
+
+        /// <summary>
+        /// Indicates whether an action is pinned (which is used for different things in different themes)
+        /// </summary>
+        /// <value><c>true</c> if this instance is pinned; otherwise, <c>false</c>.</value>
+        public bool IsPinned
+        {
+            get { return (bool) GetValue(IsPinnedProperty); }
+            set { SetValue(IsPinnedProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates whether an action is pinned (which is used for different things in different themes)
+        /// </summary>
+        public static readonly DependencyProperty IsPinnedProperty = DependencyProperty.Register("IsPinnedl", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "IsPinned")));
+
+        /// <summary>
+        /// Indicates whether the action is to be considered "checked"
+        /// </summary>
+        /// <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+        /// <remarks>Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+        /// Most themes will only respect this property when ViewActionType = Toggle</remarks>
+        public bool IsChecked
+        {
+            get { return (bool) GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates whether the action is to be considered "checked"
+        /// </summary>
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "IsChecked")));
+
+        /// <summary>
+        /// Indicates that this view action is selected by default if the theme supports pre-selecting actions in some way (such as showing the page of the ribbon the action is in, or triggering the action in a special Office-style file menu).
+        /// </summary>
+        /// <value><c>true</c> if this instance is default selection; otherwise, <c>false</c>.</value>
+        /// <remarks>If more than one action is flagged as the default selection, then the last one (in instantiation order) 'wins'</remarks>
+        public bool IsDefaultSelection
+        {
+            get { return (bool) GetValue(IsDefaultSelectionProperty); }
+            set { SetValue(IsDefaultSelectionProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates that this view action is selected by default if the theme supports pre-selecting actions in some way (such as showing the page of the ribbon the action is in, or triggering the action in a special Office-style file menu).
+        /// </summary>
+        public static readonly DependencyProperty IsDefaultSelectionProperty = DependencyProperty.Register("IsDefaultSelection", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "IsDefaultSelection")));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is local action.
+        /// </summary>
+        /// <value><c>true</c> if this instance is local action; otherwise, <c>false</c>.</value>
+        public bool IsLocalAction
+        {
+            get { return (bool) GetValue(IsLocalActionProperty); }
+            set { SetValue(IsLocalActionProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is local action.
+        /// </summary>
+        public static readonly DependencyProperty IsLocalActionProperty = DependencyProperty.Register("IsLocalAction", typeof (bool), typeof (DependencyViewActionWrapper), new PropertyMetadata(false, (o, args) => UpdateViewActionFromLocalProperties(o, "IsLocalAction")));
+
+        /// <summary>
+        /// Indicates the type of the view action
+        /// </summary>
+        /// <value>The type of the view action.</value>
+        public ViewActionTypes ViewActionType
+        {
+            get { return (ViewActionTypes) GetValue(ViewActionTypeProperty); }
+            set { SetValue(ViewActionTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates the type of the view action
+        /// </summary>
+        public static readonly DependencyProperty ViewActionTypeProperty = DependencyProperty.Register("ViewActionType", typeof(ViewActionTypes), typeof(DependencyViewActionWrapper), new PropertyMetadata(ViewActionTypes.Standard, (o, args) => UpdateViewActionFromLocalProperties(o, "ViewActionType")));
+
+        /// <summary>
+        /// Indicates whether or not this action is at all available (often translates directly to being visible or invisible)
+        /// </summary>
+        /// <value>The availability.</value>
+        public ViewActionAvailabilities Availability
+        {
+            get { return (ViewActionAvailabilities) GetValue(AvailabilityProperty); }
+            set { SetValue(AvailabilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates whether or not this action is at all available (often translates directly to being visible or invisible)
+        /// </summary>
+        public static readonly DependencyProperty AvailabilityProperty = DependencyProperty.Register("Availability", typeof(ViewActionAvailabilities), typeof(DependencyViewActionWrapper), new PropertyMetadata(ViewActionAvailabilities.Unknown, (o, args) => UpdateViewActionFromLocalProperties(o, "Availability")));
+
+        /// <summary>
+        /// Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
+        /// </summary>
+        /// <value>The visibility.</value>
+        public Visibility Visibility
+        {
+            get { return (Visibility) GetValue(VisibilityProperty); }
+            set { SetValue(VisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines view action visibility (collapsed or hidden items are may be removed from menus or ribbons independent of their availability or can-execute state)
+        /// </summary>
+        public static readonly DependencyProperty VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(DependencyViewActionWrapper), new PropertyMetadata(Visibility.Visible, (o, args) => UpdateViewActionFromLocalProperties(o, "Visibility")));
+
+        /// <summary>
+        /// Visible if IsChecked = true
+        /// </summary>
+        /// <value>The IsChecked visibility.</value>
+        public Visibility IsChecked_Visible
+        {
+            get { return (Visibility)GetValue(IsChecked_VisibleProperty); }
+            set { SetValue(IsChecked_VisibleProperty, value); }
+        }
+        /// <summary>
+        /// Visible if IsChecked = true
+        /// </summary>
+        public static readonly DependencyProperty IsChecked_VisibleProperty = DependencyProperty.Register("IsChecked_Visible", typeof(Visibility), typeof(DependencyViewActionWrapper), new PropertyMetadata(Visibility.Collapsed));
+        
+        /// <summary>
+        /// Significance of the action
+        /// </summary>
+        /// <value>The significance.</value>
+        public ViewActionSignificance Significance
+        {
+            get { return (ViewActionSignificance) GetValue(SignificanceProperty); }
+            set { SetValue(SignificanceProperty, value); }
+        }
+
+        /// <summary>
+        /// Significance of the action
+        /// </summary>
+        public static readonly DependencyProperty SignificanceProperty = DependencyProperty.Register("Significance", typeof(ViewActionSignificance), typeof(DependencyViewActionWrapper), new PropertyMetadata(ViewActionSignificance.Normal, (o, args) => UpdateViewActionFromLocalProperties(o, "Significance")));
+
+        /// <summary>
+        /// Logical list of categories
+        /// </summary>
+        /// <value>The categories.</value>
+        public List<ViewActionCategory> Categories
+        {
+            get { return (List<ViewActionCategory>) GetValue(CategoriesProperty); }
+            set { SetValue(CategoriesProperty, value); }
+        }
+
+        /// <summary>
+        /// Logical list of categories
+        /// </summary>
+        public static readonly DependencyProperty CategoriesProperty = DependencyProperty.Register("Categories", typeof (List<ViewActionCategory>), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "Categories")));
+
+        /// <summary>
+        /// Sort order for the category
+        /// </summary>
+        /// <value>The category order.</value>
+        public int CategoryOrder
+        {
+            get { return (int) GetValue(CategoryOrderProperty); }
+            set { SetValue(CategoryOrderProperty, value); }
+        }
+
+        /// <summary>
+        /// Sort order for the category
+        /// </summary>
+        public static readonly DependencyProperty CategoryOrderProperty = DependencyProperty.Register("CategoryOrder", typeof (int), typeof (DependencyViewActionWrapper), new PropertyMetadata(0, (o, args) => UpdateViewActionFromLocalProperties(o, "CategoryOrder")));
+
+        /// <summary>
+        /// Sort order for the action (within a group)
+        /// </summary>
+        /// <value>The order.</value>
+        public int Order
+        {
+            get { return (int) GetValue(OrderProperty); }
+            set { SetValue(OrderProperty, value); }
+        }
+
+        /// <summary>
+        /// Sort order for the action (within a group)
+        /// </summary>
+        public static readonly DependencyProperty OrderProperty = DependencyProperty.Register("Order", typeof (int), typeof (DependencyViewActionWrapper), new PropertyMetadata(0, (o, args) => UpdateViewActionFromLocalProperties(o, "Order")));
+
+        /// <summary>
+        /// Returns the ID of the first category or an empty string if no categories have been added
+        /// </summary>
+        /// <value>The first category identifier.</value>
+        public string FirstCategoryId
+        {
+            get { return (string) GetValue(FirstCategoryIdProperty); }
+            set { SetValue(FirstCategoryIdProperty, value); }
+        }
+
+        /// <summary>
+        /// Returns the ID of the first category or an empty string if no categories have been added
+        /// </summary>
+        public static readonly DependencyProperty FirstCategoryIdProperty = DependencyProperty.Register("FirstCategoryId", typeof (string), typeof (DependencyViewActionWrapper), new PropertyMetadata(string.Empty, (o, args) => UpdateViewActionFromLocalProperties(o, "FirstCategoryId")));
+
+        /// <summary>
+        /// A view model dedicated to this action
+        /// </summary>
+        /// <value>The action view model.</value>
+        public object ActionViewModel
+        {
+            get { return GetValue(ActionViewModelProperty); }
+            set { SetValue(ActionViewModelProperty, value); }
+        }
+
+        /// <summary>
+        /// A view model dedicated to this action
+        /// </summary>
+        public static readonly DependencyProperty ActionViewModelProperty = DependencyProperty.Register("ActionViewModel", typeof (object), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "ActionViewModel")));
+
+        /// <summary>
+        /// A view specific to this action
+        /// </summary>
+        /// <value>The action view.</value>
+        public FrameworkElement ActionView
+        {
+            get { return (FrameworkElement) GetValue(ActionViewProperty); }
+            set { SetValue(ActionViewProperty, value); }
+        }
+
+        /// <summary>
+        /// A view specific to this action
+        /// </summary>
+        public static readonly DependencyProperty ActionViewProperty = DependencyProperty.Register("ActionView", typeof (FrameworkElement), typeof (DependencyViewActionWrapper), new PropertyMetadata(null, (o, args) => UpdateViewActionFromLocalProperties(o, "ActionView")));
+
+        /// <summary>
+        /// List of roles with access to this action
+        /// </summary>
+        /// <value>The user roles.</value>
+        public string[] UserRoles
+        {
+            get { return (string[]) GetValue(UserRolesProperty); }
+            set { SetValue(UserRolesProperty, value); }
+        }
+
+        /// <summary>
+        /// List of roles with access to this action
+        /// </summary>
+        public static readonly DependencyProperty UserRolesProperty = DependencyProperty.Register("UserRoles", typeof (string[]), typeof (DependencyViewActionWrapper), new PropertyMetadata(new string[0], (o, args) => UpdateViewActionFromLocalProperties(o, "UserRoles")));
+
+        /// <summary>
+        /// Defines the access key of the action (such as the underlined key in the menu)
+        /// </summary>
+        /// <value>The access key.</value>
+        /// <remarks>Not all themes will pick this setting up</remarks>
+        public char AccessKey
+        {
+            get { return (char) GetValue(AccessKeyProperty); }
+            set { SetValue(AccessKeyProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the access key of the action (such as the underlined key in the menu)
+        /// </summary>
+        public static readonly DependencyProperty AccessKeyProperty = DependencyProperty.Register("AccessKey", typeof (char), typeof (DependencyViewActionWrapper), new PropertyMetadata(' ', (o, args) => UpdateViewActionFromLocalProperties(o, "AccessKey")));
+
+        /// <summary>
+        /// Shortcut key
+        /// </summary>
+        /// <value>The shortcut key.</value>
+        /// <remarks>Not all themes will pick this setting up</remarks>
+        public Key ShortcutKey
+        {
+            get { return (Key) GetValue(ShortcutKeyProperty); }
+            set { SetValue(ShortcutKeyProperty, value); }
+        }
+
+        /// <summary>
+        /// Shortcut key
+        /// </summary>
+        public static readonly DependencyProperty ShortcutKeyProperty = DependencyProperty.Register("ShortcutKey", typeof (Key), typeof (DependencyViewActionWrapper), new PropertyMetadata((Key)0, (o, args) => UpdateViewActionFromLocalProperties(o, "ShortcutKey")));
+
+        /// <summary>
+        /// Modifier for the shortcut key
+        /// </summary>
+        /// <value>The shortcut modifier keys.</value>
+        /// <remarks>Not all themes will pick this setting up</remarks>
+        public ModifierKeys ShortcutModifiers
+        {
+            get { return (ModifierKeys) GetValue(ShortcutModifiersProperty); }
+            set { SetValue(ShortcutModifiersProperty, value); }
+        }
+
+        /// <summary>
+        /// Modifier for the shortcut key
+        /// </summary>
+        public static readonly DependencyProperty ShortcutModifiersProperty = DependencyProperty.Register("ShortcutModifiers", typeof (ModifierKeys), typeof (DependencyViewActionWrapper), new PropertyMetadata((ModifierKeys)0, (o, args) => UpdateViewActionFromLocalProperties(o, "ShortcutModifiers")));
+
+        /// <summary>
+        /// Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
+        /// </summary>
+        /// <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
+        public void InvalidateCanExecute()
+        {
+            _wrappedAction.InvalidateCanExecute();
+        }
+
+        /// <summary>
+        /// Defines the method that determines whether the command can execute in its current state.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+        /// <returns>true if this command can be executed; otherwise, false.</returns>
+        public bool CanExecute(object parameter)
+        {
+            return _wrappedAction.CanExecute(parameter);
+        }
+
+        /// <summary>
+        /// Occurs when changes occur that affect whether or not the command should execute.
+        /// </summary>
+        public event EventHandler CanExecuteChanged;
+
+        /// <summary>
+        /// Defines the method to be called when the command is invoked.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+        public void Execute(object parameter)
+        {
+            _wrappedAction.Execute(parameter);
         }
     }
 
@@ -1160,11 +2147,13 @@ namespace CODE.Framework.Wpf.Mvvm
     {
         /// <summary>Occurs when the object is closing (has not closed yet)</summary>
         event EventHandler Closing;
+
         /// <summary>Occurs when the object has closed (has finished closing)</summary>
         event EventHandler Closed;
 
         /// <summary>This method can be used to raise the closing event</summary>
         void RaiseClosingEvent();
+
         /// <summary>This method can be used to raise the closed event</summary>
         void RaiseClosedEvent();
     }
@@ -1174,11 +2163,13 @@ namespace CODE.Framework.Wpf.Mvvm
     {
         /// <summary>Occurs when the object is opening (has not opened yet)</summary>
         event EventHandler Opening;
+
         /// <summary>Occurs when the object has opened (has finished opening)</summary>
         event EventHandler Opened;
 
         /// <summary>This method can be used to raise the opening event</summary>
         void RaiseOpeningEvent();
+
         /// <summary>This method can be used to raise the open event</summary>
         void RaiseOpenedEvent();
     }
@@ -1208,13 +2199,13 @@ namespace CODE.Framework.Wpf.Mvvm
             bool isDefault = false, bool isCancel = false,
             ViewActionSignificance significance = ViewActionSignificance.Normal,
             string[] userRoles = null) :
-            base(caption, beginGroup, execute, canExecute, visualResourceKey, category, categoryCaption, categoryOrder, isDefault, isCancel, significance, userRoles)
+                base(caption, beginGroup, execute, canExecute, visualResourceKey, category, categoryCaption, categoryOrder, isDefault, isCancel, significance, userRoles)
         {
         }
 
         /// <summary>
         /// Reference to the utilized message box view model
         /// </summary>
-        public MessageBoxViewModel  Model { get; set; }
+        public MessageBoxViewModel Model { get; set; }
     }
 }

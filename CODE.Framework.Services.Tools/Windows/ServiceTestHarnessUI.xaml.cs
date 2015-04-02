@@ -28,6 +28,7 @@ using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using MessageSize = CODE.Framework.Services.Client.MessageSize;
 using Protocol = CODE.Framework.Services.Client.Protocol;
+using RestHelper = CODE.Framework.Services.Server.RestHelper;
 using TextBox = System.Windows.Controls.TextBox;
 using TreeView = System.Windows.Controls.TreeView;
 using UserControl = System.Windows.Controls.UserControl;

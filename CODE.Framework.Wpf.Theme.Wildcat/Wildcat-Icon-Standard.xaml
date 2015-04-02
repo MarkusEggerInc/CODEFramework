@@ -1,7 +1,141 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="IconHighlightBrush" Color="#CE8A34" />
+    <SolidColorBrush x:Key="CODE.Framework-Wildcat-IconForegroundBrush1" Color="White"/>
+    <SolidColorBrush x:Key="CODE.Framework-Wildcat-IconForegroundBrush2" Color="#81FFFFFF"/>
+    <SolidColorBrush x:Key="CODE.Framework-Wildcat-IconForegroundBrush3" Color="#71FFFFFF"/>
+    <SolidColorBrush x:Key="CODE.Framework-Wildcat-IconForegroundBrush4" Color="#4EFFFFFF"/>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush1" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#E38C2D" Offset="0"/>
+            <GradientStop Color="#C07519" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush2" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#5F91BD" Offset="0"/>
+            <GradientStop Color="#305B87" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush3" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#B1A541" Offset="0"/>
+            <GradientStop Color="#69620A" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush4" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#D06860" Offset="0"/>
+            <GradientStop Color="#924B45" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush5" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#D1CD92" Offset="0"/>
+            <GradientStop Color="#676037" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush6" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#137582" Offset="0"/>
+            <GradientStop Color="#003941" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CODE.Framework-Wildcat-IconThemeBrush7" StartPoint="0,0" EndPoint="0,1">
+        <GradientStopCollection>
+            <GradientStop Color="#8940C8" Offset="0"/>
+            <GradientStop Color="#4F1D74" Offset="1"/>
+        </GradientStopCollection>
+    </LinearGradientBrush>
+
+    <DrawingBrush x:Key="CODE.Framework-Icon-Money" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush5}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 18.5957,25.7116L 18.5957,27.9792L 17.0542,27.9792L 17.0542,25.777C 15.5563,25.7701 14.1616,25.441 12.8701,24.7895L 12.8701,21.8131C 13.299,22.1756 13.9373,22.5116 14.7849,22.8213C 15.6325,23.131 16.3889,23.3088 17.0542,23.3546L 17.0542,19.291C 15.3567,18.6693 14.1983,17.9949 13.5789,17.2677C 12.9595,16.5406 12.6499,15.6551 12.6499,14.6114C 12.6499,13.4874 13.0524,12.5302 13.8576,11.74C 14.6628,10.9497 15.7283,10.4904 17.0542,10.3619L 17.0542,8.37998L 18.5957,8.37998L 18.5957,10.3172C 20.0707,10.3883 21.1718,10.628 21.8989,11.0363L 21.8989,13.8854C 20.9194,13.2844 19.8183,12.9173 18.5957,12.7843L 18.5957,16.9787C 20.167,17.5407 21.2939,18.1836 21.9763,18.9073C 22.6588,19.631 23,20.5056 23,21.531C 23,22.7146 22.6198,23.6683 21.8594,24.3921C 21.0989,25.1158 20.011,25.5556 18.5957,25.7116 Z M 17.0542,16.3456L 17.0542,12.829C 16.0265,13.0148 15.5127,13.5505 15.5127,14.4359C 15.5127,15.1998 16.0265,15.8363 17.0542,16.3456 Z M 18.5957,19.9069L 18.5957,23.3134C 19.6234,23.1482 20.1372,22.6126 20.1372,21.7065C 20.1372,20.9724 19.6234,20.3726 18.5957,19.9069 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowLeft" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 31.5427,8.74257L 31.5427,13.9658L 9.58798,13.9658L 18.3305,22.6887L 11.3444,22.6887L -9.53674e-007,11.3444L 11.3444,4.76837e-006L 18.3305,4.76837e-006L 9.58798,8.74257L 31.5427,8.74257 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowRight" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 4.22866,22.5705L 4.22866,17.3473L 26.1834,17.3473L 17.4408,8.6244L 24.427,8.6244L 35.7713,19.9688L 24.427,31.3131L 17.4408,31.3131L 26.1834,22.5705L 4.22866,22.5705 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowDown" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 17.4008,4.19555L 22.6241,4.19555L 22.6241,26.1503L 31.3469,17.4077L 31.3469,24.3939L 20.0026,35.7382L 8.65824,24.3939L 8.65824,17.4077L 17.4008,26.1503L 17.4008,4.19555 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowUp" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 22.6018,35.7401L 17.3785,35.7401L 17.3785,13.7854L 8.65563,22.528L 8.65563,15.5418L 20,4.19741L 31.3443,15.5418L 31.3443,22.528L 22.6018,13.7854L 22.6018,35.7401 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowDownLeft" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 29.3177,6.97445L 33.0111,10.6678L 17.4868,26.1922L 29.8368,26.1783L 24.8968,31.1182L 8.85345,31.1182L 8.85345,15.0749L 13.7934,10.1349L 13.7934,22.4988L 29.3177,6.97445 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowDownRight" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 7.01371,10.6539L 10.7071,6.96054L 26.2314,22.4849L 26.2175,10.1349L 31.1575,15.0749L 31.1575,31.1182L 15.1142,31.1182L 10.1742,26.1783L 22.538,26.1783L 7.01371,10.6539 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowUpLeft" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 32.9972,29.2785L 29.3038,32.9719L 13.7795,17.4476L 13.7934,29.7975L 8.85345,24.8575L 8.85345,8.81419L 24.8968,8.81419L 29.8368,13.7542L 17.4729,13.7542L 32.9972,29.2785 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-ArrowUpRight" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 10.6932,32.958L 6.9998,29.2646L 22.5241,13.7403L 10.1742,13.7542L 15.1142,8.81419L 31.1575,8.81419L 31.1575,24.8575L 26.2175,29.7975L 26.2175,17.4337L 10.6932,32.958 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
 
     <DrawingBrush x:Key="CODE.Framework-Icon-Home" Stretch="Uniform">
         <DrawingBrush.Drawing>
@@ -17,18 +151,35 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
+    <DrawingBrush x:Key="CODE.Framework-Icon-User" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush2}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 18,6.47917C 19.933,6.47917 21.5,8.04617 21.5,9.97917C 21.5,11.9122 19.933,13.4792 18,13.4792C 16.067,13.4792 14.5,11.9122 14.5,9.97917C 14.5,8.04617 16.067,6.47917 18,6.47917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 12,14.9792L 17,14.9792L 16,25.9792L 20,25.9792L 19,14.9792L 24,14.9792L 25,15.9792L 25,28.9792L 23,28.9792L 23,20.9792L 22,20.9792L 22,29.9792L 14,29.9792L 14,20.9792L 13,20.9792L 13,28.9792L 11,28.9792L 11,15.9792L 12,14.9792 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
     <DrawingBrush x:Key="CODE.Framework-Icon-Contact" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconHighlightBrush}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
                     <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
                         <GeometryDrawing.Pen>
-                            <Pen Thickness="2" LineJoin="Round" Brush="#FFFFFFFF"/>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
                         </GeometryDrawing.Pen>
                     </GeometryDrawing>
-                    <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 18,6.47917C 19.933,6.47917 21.5,8.04617 21.5,9.97917C 21.5,11.9122 19.933,13.4792 18,13.4792C 16.067,13.4792 14.5,11.9122 14.5,9.97917C 14.5,8.04617 16.067,6.47917 18,6.47917 Z "/>
-                    <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 12,14.9792L 17,14.9792L 16,25.9792L 20,25.9792L 19,14.9792L 24,14.9792L 25,15.9792L 25,28.9792L 23,28.9792L 23,20.9792L 22,20.9792L 22,29.9792L 14,29.9792L 14,20.9792L 13,20.9792L 13,28.9792L 11,28.9792L 11,15.9792L 12,14.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 18,6.47917C 19.933,6.47917 21.5,8.04617 21.5,9.97917C 21.5,11.9122 19.933,13.4792 18,13.4792C 16.067,13.4792 14.5,11.9122 14.5,9.97917C 14.5,8.04617 16.067,6.47917 18,6.47917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 12,14.9792L 17,14.9792L 16,25.9792L 20,25.9792L 19,14.9792L 24,14.9792L 25,15.9792L 25,28.9792L 23,28.9792L 23,20.9792L 22,20.9792L 22,29.9792L 14,29.9792L 14,20.9792L 13,20.9792L 13,28.9792L 11,28.9792L 11,15.9792L 12,14.9792 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -38,24 +189,82 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconHighlightBrush}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
                     <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
                         <GeometryDrawing.Pen>
-                            <Pen Thickness="2" LineJoin="Round" Brush="#FFFFFFFF"/>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
                         </GeometryDrawing.Pen>
                     </GeometryDrawing>
-                    <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 10,13.9792L 21,9.97917L 21,28.9792L 10,28.9792L 10,13.9792 Z "/>
-                    <GeometryDrawing Brush="#80FFFFFF" Geometry="F1 M 22,10.9792L 26,13.9792L 26,28.9792L 22,28.9792L 22,10.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 10,13.9792L 21,9.97917L 21,28.9792L 10,28.9792L 10,13.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 22,10.9792L 26,13.9792L 26,28.9792L 22,28.9792L 22,10.9792 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
+    <DrawingBrush x:Key="CODE.Framework-Icon-Data" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush2}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 10,13.9792L 21,9.97917L 21,28.9792L 10,28.9792L 10,13.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 22,10.9792L 26,13.9792L 26,28.9792L 22,28.9792L 22,10.9792 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-Data2" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush6}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 10,13.9792L 21,9.97917L 21,17L 10,17.9792L 10,13.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 22,10.9792L 26,13.9792L 26,17.9792L 22,17L 22,10.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush3}" Geometry="F1 M 10,18.5417L 21,17.4792L 21,22.5L 10,23.5"/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush4}" Geometry="F1 M 22,17.3792L 26,18.4417L 26,23.4L 22,22.4L 22,17.3792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 10,24L 21,23L 21,28.9792L 10,28.9792L 10,24 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 22,23L 26,24L 26,28.9792L 22,28.9792L 22,23 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-Data3" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush3}" Geometry="F1 M 8,10.9792L 19,6.97917L 19,14L 8,14.9792L 8,10.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush4}" Geometry="F1 M 20,7.97917L 24,10.9792L 24,14.9792L 20,14L 20,7.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 8,15.5417L 19,14.4792L 19,19.5L 8,20.5"/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 8,21L 19,20L 19,25.9792L 8,25.9792L 8,21 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush4}" Geometry="F1 M 20,14.3792L 24,15.4417L 24,20.4L 20,19.4L 20,14.3792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 23.5213,13.8006C 24.7698,13.8006 25.7819,14.8127 25.7819,16.0612C 25.7819,17.3097 24.7698,18.3219 23.5213,18.3219C 22.2728,18.3219 21.2606,17.3097 21.2606,16.0612C 21.2606,14.8127 22.2728,13.8006 23.5213,13.8006 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 19.6459,19.2907L 27.3967,19.2907L 28.0426,19.9366L 28.0426,28.3333L 26.7508,28.3333L 26.7508,23.1661L 26.1049,23.1661L 26.1049,28.9792L 20.9377,28.9792L 20.9377,23.1661L 20.2918,23.1661L 20.2918,28.3333L 19,28.3333L 19,19.9366L 19.6459,19.2907 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 23,19.0417L 22,24L 23.5,26.5417L 25,24L 24,19.0417L 23,19.0417 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
     <DrawingBrush x:Key="CODE.Framework-Icon-MissingIcon" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconHighlightBrush}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
                     <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
                         <GeometryDrawing.Pen>
                             <Pen Thickness="2" LineJoin="Round" Brush="#FFFFFFFF"/>
@@ -70,7 +279,7 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconHighlightBrush}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
                     <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
                         <GeometryDrawing.Pen>
                             <Pen Thickness="2" LineJoin="Round" Brush="#FFFFFFFF"/>
@@ -143,12 +352,17 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 18.6906,3.05176e-005C 18.8677,3.05176e-005 19.0261,0.0260315 19.1656,0.0781555C 19.3052,0.130219 19.4255,0.199982 19.5266,0.287506C 19.6276,0.375031 19.7042,0.472382 19.7562,0.579681C 19.8083,0.686981 19.8344,0.796906 19.8344,0.909393L 19.8344,14.0906C 19.8344,14.4302 19.7318,14.7057 19.5266,14.9172C 19.3214,15.1286 19.0427,15.2344 18.6906,15.2344L 0.909393,15.2344C 0.790619,15.2344 0.676025,15.2068 0.565643,15.1516C 0.4552,15.0963 0.359375,15.0182 0.278137,14.9172C 0.196869,14.8161 0.130219,14.6958 0.078125,14.5562C 0.026062,14.4167 0,14.2614 0,14.0906L 0,0.909393C 0,0.796906 0.026062,0.686981 0.078125,0.579681C 0.130219,0.472382 0.196869,0.375031 0.278137,0.287506C 0.359375,0.199982 0.4552,0.130219 0.565643,0.0781555C 0.676025,0.0260315 0.790619,3.05176e-005 0.909393,3.05176e-005L 18.6906,3.05176e-005 Z M 2.28439,2.08127L 9.69687,7.85001L 17.3156,2.08127L 2.28439,2.08127 Z M 17.7531,13.1531L 17.7531,4.15939L 10.3719,9.93124C 10.2531,10.0479 10.1401,10.1162 10.0328,10.136C 9.92551,10.1557 9.81354,10.1656 9.69687,10.1656C 9.5802,10.1656 9.46301,10.1557 9.34531,10.136C 9.2276,10.1162 9.11041,10.0479 8.99374,9.93124L 2.08127,4.39377L 2.08127,13.1531L 17.7531,13.1531 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 17.8791,23.1295L 5.19885,18.8755L 5.0057,18.2863C 4.97654,18.1973 4.97463,18.1022 5,18.0009C 5.02536,17.8996 5.11359,17.8242 5.26468,17.7747L 25.2357,11.2281C 25.3885,11.178 25.505,11.1863 25.5854,11.2529C 25.6658,11.3195 25.7214,11.3998 25.7523,11.4938L 25.9429,12.0755L 18.2417,23.0106L 17.8791,23.1295 Z M 10.3024,33.1427C 10.2117,33.1668 10.1164,33.1678 10.0162,33.1458C 9.91601,33.1238 9.84089,33.0364 9.79081,32.8837L 6.06557,21.5195L 17.5286,25.361L 17.6302,25.403C 17.6958,25.4243 17.7863,25.4425 17.9019,25.4576C 18.0175,25.4727 18.1522,25.4768 18.3062,25.4701C 18.4601,25.4633 18.6269,25.4305 18.8065,25.3716C 18.9895,25.3116 19.1455,25.2386 19.2744,25.1527C 19.4033,25.0667 19.5111,24.983 19.5978,24.9016C 19.6846,24.8202 19.7492,24.7479 19.7917,24.6847C 19.8341,24.6215 19.8596,24.583 19.8681,24.569L 26.8097,14.7195L 30.5349,26.0837C 30.585,26.2364 30.5749,26.3531 30.5047,26.4338C 30.4344,26.5144 30.3548,26.5694 30.2658,26.5985L 10.3024,33.1427 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
-
     <DrawingBrush x:Key="CODE.Framework-Icon-Download" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
@@ -184,12 +398,15 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBlueBrush}" Geometry="F1 M 16.5031,9.49374L 16.2,11.1063L 18.3687,12.725L 16.7563,15.45L 14.3344,14.3375L 12.9688,15.45L 13.2219,17.8719L 10.2437,18.6844L 9.43121,16.5063L 7.56876,16.25L 5.95624,18.175L 3.23123,16.5063L 4.34375,14.3375L 3.23123,13.0281L 0.809357,13.2813L 0,10.05L 2.42188,9.24063L 2.42188,7.57813L 0.506256,5.95938L 2.16559,3.28125L 4.58746,4.34689L 5.65311,3.28125L 5.39996,0.8125L 8.37811,0L 9.43121,2.17813L 11.1031,2.48126L 12.9688,0.559387L 15.3906,2.17813L 14.5875,4.34689L 15.3906,5.70313L 18.1156,5.45938L 18.925,8.42813L 16.5031,9.49374 Z M 4.95938,9.375C 4.95938,9.98126 5.07343,10.5495 5.30154,11.0797C 5.52969,11.6099 5.84219,12.0739 6.23904,12.4719C 6.63593,12.8698 7.10001,13.1823 7.63126,13.4094C 8.16251,13.6364 8.73022,13.75 9.33438,13.75C 9.94061,13.75 10.5104,13.6364 11.0437,13.4094C 11.5771,13.1823 12.0406,12.8698 12.4344,12.4719C 12.8281,12.0739 13.1406,11.6099 13.3719,11.0797C 13.6031,10.5495 13.7188,9.98126 13.7188,9.375C 13.7188,8.77084 13.6031,8.20157 13.3719,7.66721C 13.1406,7.13281 12.8281,6.66876 12.4344,6.27499C 12.0406,5.88126 11.5771,5.56876 11.0437,5.33749C 10.5104,5.10626 9.94061,4.99063 9.33438,4.99063C 8.73022,4.99063 8.16251,5.10626 7.63126,5.33749C 7.10001,5.56876 6.63593,5.88126 6.23904,6.27499C 5.84219,6.66876 5.52969,7.13281 5.30154,7.66721C 5.07343,8.20157 4.95938,8.77084 4.95938,9.375 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush7}" Geometry="F1 M 4.18752,10.4419L 12.3008,10.4419C 7.63802,6.9914 12.9536,3.82067 12.9536,3.82067C 13.824,3.57199 14.6944,3.32331 15.7047,3.50982C 16.715,3.69633 17.8652,4.31804 18.4402,5.25061C 19.0153,6.18318 19.0153,7.4266 18.8599,8.34363C 18.7045,9.26065 18.3936,9.85127 18.0828,10.4419L 25.45,10.4419L 25.45,17.9024C 26.8489,17.3429 28.2477,16.7833 29.3668,16.9854C 30.4859,17.1875 31.3252,18.1511 31.7138,19.1769C 32.1024,20.2028 32.0402,21.2908 31.807,22.2233C 31.5739,23.1559 31.1698,23.933 30.2528,24.1195C 29.3357,24.3061 27.9058,23.9019 27.0199,23.7621C 26.1339,23.6222 25.792,23.7465 25.45,23.8709L 25.45,32.4505C 25.45,32.4505 17.2435,32.637 16.7772,32.4505C 16.0632,32.1649 17.3367,29.9325 17.3367,29.9325C 18.0023,28.7536 18.6678,27.5747 18.7784,26.4575C 18.8889,25.3403 18.4445,24.2847 17.2501,23.8264C 16.0556,23.3681 14.1112,23.5069 12.8349,24.3599C 11.5586,25.2129 10.9506,26.7801 10.9574,27.8279C 10.9642,28.8756 11.5859,29.4041 11.9278,30.088C 12.2698,30.7719 12.3319,31.6112 12.3941,32.4505L 7.73127,32.4505C 6.89196,31.9531 6.05265,31.4557 5.46203,30.6786C 4.8714,29.9015 4.52946,28.8445 4.18752,27.7876L 4.18752,21.9125C 4.90279,22.3514 5.61812,22.7903 6.57297,22.9542C 7.52782,23.118 8.72225,23.0069 9.65281,22.6736C 10.5834,22.3403 11.25,21.7847 11.7873,21.2323C 12.3245,20.6798 12.7323,20.1304 12.641,19.1874C 12.5495,18.2444 11.9589,16.9077 10.9486,16.2238C 9.93835,15.5399 8.50841,15.5088 7.46704,15.9596C 6.42568,16.4103 5.77288,17.3429 5.29106,17.8247C 4.80923,18.3065 4.49837,18.3376 4.18752,18.3687L 4.18752,10.4419 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
-
     <DrawingBrush x:Key="CODE.Framework-Icon-Photo" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
@@ -240,7 +457,7 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
-    <DrawingBrush x:Key="Code.Framework-Icon-Pause" Stretch="Uniform">
+    <DrawingBrush x:Key="CODE.Framework-Icon-Pause" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
@@ -393,9 +610,41 @@
     <DrawingBrush x:Key="CODE.Framework-Icon-Help" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconGreenBrush}" Geometry="F1 M 3.0375,15.2562C 2.99167,15.1312 2.9474,14.9906 2.90469,14.8344C 2.86198,14.6781 2.825,14.5021 2.79375,14.3063C 2.76041,14.1125 2.73594,13.9208 2.72031,13.7312C 2.70469,13.5416 2.69688,13.3531 2.69688,13.1656C 2.69688,12.5927 2.81667,12.0583 3.05625,11.5625C 3.30417,11.075 3.60729,10.6292 3.96563,10.225C 4.15313,10.0166 4.3448,9.81145 4.54063,9.60936C 4.73646,9.40727 4.93855,9.21251 5.14687,9.02501C 5.36146,8.82915 5.56667,8.63698 5.7625,8.44841C 5.95834,8.25987 6.14687,8.07396 6.32813,7.89061C 6.68645,7.53227 6.98959,7.14479 7.2375,6.72813C 7.48334,6.32603 7.60625,5.88332 7.60625,5.40001C 7.60625,4.96458 7.51563,4.58751 7.33437,4.26872C 7.14479,3.94374 6.89687,3.66978 6.59063,3.44688C 6.44271,3.33644 6.2776,3.24217 6.09531,3.16405C 5.91302,3.08592 5.72083,3.0208 5.51875,2.96873C 5.32291,2.91664 5.11614,2.87758 4.89844,2.85155C 4.68073,2.82549 4.45729,2.81248 4.22813,2.81248C 2.73854,2.81248 1.32917,3.45415 0,4.73747L 0,1.39687C 0.814583,0.928116 1.64323,0.57811 2.48594,0.346848C 3.32864,0.115616 4.18958,-1.52588e-005 5.06875,-1.52588e-005C 5.88333,-1.52588e-005 6.64167,0.100998 7.34375,0.303116C 8.07291,0.511459 8.70104,0.811447 9.22813,1.20311C 9.76145,1.59892 10.1844,2.09059 10.4969,2.67812C 10.8031,3.26979 10.9562,3.95622 10.9562,4.73747C 10.9562,5.46666 10.826,6.12706 10.5656,6.71873C 10.4365,7.01247 10.2906,7.29112 10.1281,7.55467C 9.96563,7.81822 9.78646,8.07396 9.59063,8.32188C 9.3948,8.56145 9.19114,8.79063 8.97968,9.00938C 8.76823,9.22813 8.54896,9.43126 8.32188,9.61876C 8.09271,9.80833 7.87396,9.99583 7.66563,10.1813C 7.4573,10.3666 7.25521,10.5541 7.05938,10.7438C 6.66979,11.1145 6.3448,11.5052 6.08437,11.9156C 5.82396,12.3197 5.69375,12.7687 5.69375,13.2625C 5.69375,13.6979 5.74583,14.076 5.85,14.3969C 5.90833,14.5656 5.9651,14.7213 6.02032,14.864C 6.07552,15.0068 6.12917,15.1375 6.18125,15.2562L 3.0375,15.2562 Z M 4.76563,21.925C 4.26354,21.925 3.81458,21.7333 3.41875,21.35C 3.04166,20.9916 2.85313,20.5489 2.85313,20.0219C 2.85313,19.7468 2.9,19.4989 2.99375,19.2781C 3.0875,19.0573 3.22604,18.8552 3.40937,18.6719C 3.80521,18.2948 4.25729,18.1062 4.76563,18.1062C 5.26771,18.1062 5.71354,18.2948 6.10313,18.6719C 6.48021,19.0364 6.66875,19.4864 6.66875,20.0219C 6.66875,20.5489 6.48021,20.9948 6.10313,21.3594C 5.70729,21.7364 5.26146,21.925 4.76563,21.925 Z "/>
-                </DrawingGroup.Children>
+                <DrawingGroup>
+                    <DrawingGroup Transform="0.93844199180603,0,0,0.938679993152618,1.56407499313354,1.63390600681305">
+                        <GeometryDrawing Geometry="F1M45.785,23.826A21.876,21.876,0.000,1,1,2.033,23.826A21.876,21.876,0.000,1,1,45.785,23.826z">
+                            <GeometryDrawing.Brush>
+                                <RadialGradientBrush Center="26.544,28.459" RadiusX="22.376" RadiusY="22.376" GradientOrigin="26.544,28.459" MappingMode="Absolute" Transform="1.23834204673767,0.00595484627410769,-0.00650776224210858,1.35127198696136,-6.99251317977905,-9.74484157562256">
+                                    <GradientStop Color="#FF9CBCDE" Offset="0" ></GradientStop>
+                                    <GradientStop Color="#FF204A87" Offset="1" ></GradientStop>
+                                </RadialGradientBrush>
+                            </GeometryDrawing.Brush>
+                            <GeometryDrawing.Pen>
+                                <Pen Brush="#FF204A87" Thickness="1" MiterLimit="4" ></Pen>
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                    <DrawingGroup Transform="0.855103015899658,0,0,0.855212986469269,3.55528807640076,3.62501907348633">
+                        <GeometryDrawing Geometry="F1M45.785,23.826A21.876,21.876,0.000,1,1,2.033,23.826A21.876,21.876,0.000,1,1,45.785,23.826z">
+                            <GeometryDrawing.Pen>
+                                <Pen Brush="#F5FFFFFF" Thickness="3.031" MiterLimit="4" ></Pen>
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                    <DrawingGroup Transform="0.849895000457764,0,0,0.835205018520355,41.729808807373,8.54832744598389">
+                        <GeometryDrawing Geometry="F1M-20.250,5.875C-21.309,5.875 -22.398,5.998 -23.531,6.219 -24.664,6.439 -25.911,6.756 -27.281,7.219 -27.292,7.218 -27.302,7.218 -27.313,7.219 -27.325,7.227 -27.335,7.238 -27.344,7.250 -27.356,7.259 -27.366,7.269 -27.375,7.281 -27.376,7.292 -27.376,7.302 -27.375,7.313 -27.376,7.323 -27.376,7.333 -27.375,7.344L-27.375,12.500C-27.376,12.510 -27.376,12.521 -27.375,12.531 -27.376,12.542 -27.376,12.552 -27.375,12.563 -27.366,12.575 -27.356,12.585 -27.344,12.594 -27.335,12.606 -27.325,12.616 -27.313,12.625 -27.302,12.626 -27.292,12.626 -27.281,12.625 -27.271,12.626 -27.260,12.626 -27.250,12.625 -27.240,12.626 -27.229,12.626 -27.219,12.625 -27.208,12.626 -27.198,12.626 -27.188,12.625 -26.045,11.906 -24.954,11.358 -23.906,11.000 -22.858,10.631 -21.863,10.438 -20.969,10.438 -20.020,10.438 -19.324,10.648 -18.813,11.063 -18.304,11.465 -18.031,12.046 -18.031,12.781 -18.031,13.262 -18.175,13.733 -18.469,14.219 -18.752,14.706 -19.209,15.249 -19.844,15.813L-20.938,16.750C-22.139,17.830 -22.927,18.741 -23.313,19.469 -23.696,20.180 -23.875,20.988 -23.875,21.906L-23.875,22.719C-23.876,22.729 -23.876,22.740 -23.875,22.750 -23.876,22.760 -23.876,22.771 -23.875,22.781 -23.866,22.793 -23.856,22.804 -23.844,22.813 -23.835,22.825 -23.825,22.835 -23.813,22.844 -23.802,22.845 -23.792,22.845 -23.781,22.844 -23.771,22.845 -23.760,22.845 -23.750,22.844L-17.656,22.844C-17.646,22.845 -17.635,22.845 -17.625,22.844 -17.615,22.845 -17.604,22.845 -17.594,22.844 -17.582,22.835 -17.571,22.825 -17.563,22.813 -17.550,22.804 -17.540,22.793 -17.531,22.781 -17.530,22.771 -17.530,22.760 -17.531,22.750 -17.530,22.740 -17.530,22.729 -17.531,22.719L-17.531,21.969C-17.531,21.501 -17.383,21.076 -17.156,20.688 -16.934,20.296 -16.448,19.737 -15.688,19.063L-14.625,18.125C-13.558,17.143 -12.794,16.240 -12.344,15.375 -11.894,14.501 -11.656,13.502 -11.656,12.406 -11.656,10.280 -12.400,8.672 -13.875,7.563 -15.350,6.441 -17.481,5.875 -20.250,5.875z M-23.813,25.031C-23.825,25.040 -23.835,25.050 -23.844,25.063 -23.856,25.071 -23.866,25.082 -23.875,25.094 -23.876,25.104 -23.876,25.115 -23.875,25.125 -23.876,25.135 -23.876,25.146 -23.875,25.156L-23.875,31.000C-23.876,31.010 -23.876,31.021 -23.875,31.031 -23.876,31.042 -23.876,31.052 -23.875,31.063 -23.866,31.075 -23.856,31.085 -23.844,31.094 -23.835,31.106 -23.825,31.116 -23.813,31.125 -23.802,31.126 -23.792,31.126 -23.781,31.125 -23.771,31.126 -23.760,31.126 -23.750,31.125L-17.656,31.125C-17.646,31.126 -17.635,31.126 -17.625,31.125 -17.615,31.126 -17.604,31.126 -17.594,31.125 -17.582,31.116 -17.571,31.106 -17.563,31.094 -17.550,31.085 -17.540,31.075 -17.531,31.063 -17.530,31.052 -17.530,31.042 -17.531,31.031 -17.530,31.021 -17.530,31.010 -17.531,31.000L-17.531,25.156C-17.530,25.146 -17.530,25.135 -17.531,25.125 -17.530,25.115 -17.530,25.104 -17.531,25.094 -17.540,25.082 -17.550,25.071 -17.563,25.063 -17.571,25.050 -17.582,25.040 -17.594,25.031 -17.604,25.030 -17.615,25.030 -17.625,25.031 -17.635,25.030 -17.646,25.030 -17.656,25.031L-23.750,25.031C-23.760,25.030 -23.771,25.030 -23.781,25.031 -23.792,25.030 -23.802,25.030 -23.813,25.031z">
+                            <GeometryDrawing.Brush>
+                                <RadialGradientBrush Center="-19.516,16.856" RadiusX="8.754" RadiusY="8.754" GradientOrigin="-19.516,16.856" MappingMode="Absolute" Transform="4.44599103927612,-8.85259914740801E-16,1.36721695010773E-15,6.86649990081787,67.2507095336914,-104.667900085449">
+                                    <GradientStop Color="White" Offset="0" ></GradientStop>
+                                    <GradientStop Color="#FFB8B8B8" Offset="1" ></GradientStop>
+                                </RadialGradientBrush>
+                            </GeometryDrawing.Brush>
+                            <GeometryDrawing.Pen>
+                                <Pen Brush="#C8FFFFFF" Thickness="1.099" MiterLimit="4" ></Pen>
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingGroup>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
@@ -446,7 +695,33 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 9.52188,-2.00272e-005C 10.401,-2.00272e-005 11.2474,0.113566 12.0609,0.340617C 12.8745,0.567729 13.6344,0.888041 14.3406,1.30155C 15.0469,1.71513 15.6896,2.21354 16.2687,2.79685C 16.8479,3.38023 17.3443,4.025 17.7578,4.73124C 18.1714,5.43748 18.4922,6.19584 18.7203,7.00627C 18.9484,7.81669 19.0625,8.66148 19.0625,9.54063C 19.0625,10.4198 18.9484,11.2646 18.7203,12.075C 18.4922,12.8854 18.1714,13.6438 17.7578,14.35C 17.3443,15.0563 16.8479,15.699 16.2687,16.2781C 15.6896,16.8573 15.0469,17.3536 14.3406,17.7672C 13.6344,18.1808 12.8745,18.5016 12.0609,18.7297C 11.2474,18.9578 10.401,19.0719 9.52188,19.0719C 8.64271,19.0719 7.79792,18.9578 6.9875,18.7297C 6.17708,18.5016 5.42032,18.1808 4.71719,17.7672C 4.01407,17.3536 3.37291,16.8573 2.79375,16.2781C 2.21458,15.699 1.71823,15.0563 1.30469,14.35C 0.891144,13.6438 0.570313,12.8854 0.342194,12.075C 0.114059,11.2646 0,10.4198 0,9.54063C 0,8.66148 0.114059,7.81669 0.342194,7.00627C 0.570313,6.19584 0.891144,5.43748 1.30469,4.73124C 1.71823,4.025 2.21458,3.38023 2.79375,2.79685C 3.37291,2.21354 4.01407,1.71513 4.71719,1.30155C 5.42032,0.888041 6.17865,0.567729 6.99219,0.340617C 7.80573,0.113566 8.64896,-2.00272e-005 9.52188,-2.00272e-005 Z M 9.52188,17.1562C 10.224,17.1562 10.899,17.0651 11.5469,16.8828C 12.1948,16.7005 12.8021,16.4438 13.3688,16.1125C 13.9354,15.7812 14.4516,15.3844 14.9172,14.9219C 15.3828,14.4594 15.7818,13.9464 16.1141,13.3828C 16.4464,12.8193 16.7036,12.212 16.8859,11.561C 17.0682,10.9099 17.1594,10.2364 17.1594,9.54063C 17.1594,8.48643 16.9588,7.49687 16.5578,6.57188C 16.1568,5.64689 15.6099,4.8375 14.9172,4.14378C 14.2245,3.44999 13.4156,2.90312 12.4906,2.50315C 11.5656,2.10313 10.576,1.90312 9.52188,1.90312C 8.82396,1.90312 8.15156,1.99424 7.50468,2.17655C 6.85782,2.35887 6.25105,2.61619 5.68437,2.94847C 5.11771,3.28074 4.60313,3.67967 4.14063,4.1453C 3.67813,4.61094 3.28073,5.12657 2.94843,5.69218C 2.61615,6.25779 2.35886,6.8646 2.17656,7.51249C 1.99427,8.16044 1.90312,8.83647 1.90312,9.54063C 1.90312,10.2427 1.99427,10.9177 2.17656,11.5657C 2.35886,12.2135 2.61615,12.8193 2.94843,13.3828C 3.28073,13.9464 3.67813,14.4594 4.14063,14.9219C 4.60313,15.3844 5.11771,15.7812 5.68437,16.1125C 6.25105,16.4438 6.85782,16.7005 7.50468,16.8828C 8.15156,17.0651 8.82396,17.1562 9.52188,17.1562 Z M 14.375,10.9375C 14.5125,11.0083 14.6151,11.1042 14.6828,11.225C 14.7505,11.3458 14.7844,11.4812 14.7844,11.6313C 14.7844,11.8063 14.7427,11.975 14.6594,12.1375C 14.5677,12.3125 14.45,12.4521 14.3063,12.5563C 14.1625,12.6604 14.0094,12.7125 13.8469,12.7125C 13.749,12.7125 13.6417,12.6865 13.525,12.6344L 9.02188,10.3813C 8.91771,10.3292 8.83177,10.2573 8.76407,10.1656C 8.69636,10.074 8.64583,9.97294 8.6125,9.86253C 8.5875,9.80418 8.575,9.72917 8.575,9.63749L 8.575,4.60935C 8.575,4.374 8.66771,4.18333 8.85313,4.03752C 9.03854,3.8917 9.26459,3.81877 9.53125,3.81877C 9.79166,3.81877 10.0146,3.8917 10.2,4.03752C 10.3854,4.18333 10.4781,4.374 10.4781,4.60935L 10.4781,8.98435L 14.375,10.9375 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush4}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,9.97917C 7.64888,9.9961 10.2978,10.013 13.2978,11.1033C 16.2978,12.1936 19.6489,14.3572 21.9633,16.8487C 24.2778,19.3403 25.5556,22.1597 26.1111,24.9306C 26.6667,27.7014 26.5,30.4236 26.3333,33.1458L 5,33.1458L 5,9.97917 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 5,9.97917C 7.64888,9.9961 10.2978,10.013 13.2978,11.1033C 16.2978,12.1936 19.6489,14.3572 21.9633,16.8487C 24.2778,19.3403 25.5556,22.1597 26.1111,24.9306C 26.6667,27.7014 26.5,30.4236 26.3333,33.1458L 5,33.1458L 5,9.97917 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 5,12.1458C 7.40114,12.1612 9.80228,12.1765 12.5217,13.1648C 15.2411,14.1531 18.2788,16.1144 20.3768,18.3729C 22.4748,20.6314 23.6331,23.1872 24.1367,25.6989C 24.6403,28.2106 24.4892,30.6782 24.3381,33.1458L 5,33.1458L 5,12.1458 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 20.4807,11.5292L 25.45,16.4984L 23.5193,18.4291L 18.55,13.4599L 20.4807,11.5292 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 22.2576,7.66326L 29.3409,14.7466L 26.5888,17.4987L 19.5054,10.4154L 22.2576,7.66326 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush4}" Geometry="F1 M 18.0607,18.2114L 18.7678,18.9185L 15.9393,21.7469L 15.2322,21.0398L 18.0607,18.2114 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush4}" Geometry="F1 M 22.3471,24.9394L 22.7368,25.8604L 19.0529,27.4189L 18.6632,26.498L 22.3471,24.9394 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush4}" Geometry="F1 M 11.1022,13.9792L 12,14.4196L 10.2384,18.0108L 9.34058,17.5704L 11.1022,13.9792 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush4}" Geometry="F1 M 7.12361,29.008C 8.60639,27.1563 12.8032,24.9434 17,22.7306C 14.0344,26.434 11.0689,30.1374 8.97047,31.2438C 6.87207,32.3502 5.64082,30.8597 7.12361,29.008 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -595,7 +870,13 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconRedBrush}" Geometry="F1 M 14.5313,0C 14.7333,0 14.9047,0.0698242 15.0453,0.209412C 15.1859,0.348938 15.2563,0.518738 15.2563,0.71875L 15.2563,16.15L 12.3844,19L 0.712494,19C 0.518738,19 0.351563,18.9302 0.210938,18.7906C 0.0703125,18.6511 0,18.4813 0,18.2813L 0,2.85004L 2.8625,0L 14.5313,0 Z M 12.3844,9.52502L 11.4375,9.52502L 11.4375,7.60938C 11.4375,7.04901 11.338,6.53595 11.1391,6.07031C 10.9401,5.60468 10.6667,5.20264 10.3188,4.86407C 9.97083,4.52557 9.56563,4.26355 9.10312,4.07813C 8.64063,3.89276 8.14583,3.79999 7.61874,3.79999C 7.09167,3.79999 6.59843,3.89276 6.13907,4.07813C 5.67969,4.26355 5.2776,4.52557 4.93282,4.86407C 4.58801,5.20264 4.31615,5.60468 4.11719,6.07031C 3.91823,6.53595 3.81876,7.04901 3.81876,7.60938L 3.81876,9.52502L 2.8625,9.52502L 2.8625,16.1938L 12.3844,16.1938L 12.3844,9.52502 Z M 7.61874,5.15002C 7.97083,5.15002 8.30313,5.20831 8.61563,5.32501C 8.92813,5.44171 9.19791,5.6073 9.425,5.8219C 9.65208,6.03644 9.83229,6.29535 9.96562,6.59845C 10.099,6.90155 10.1656,7.23859 10.1656,7.60938L 10.1656,9.52502L 5.08749,9.52502L 5.08749,7.60938C 5.08749,7.23859 5.15469,6.90155 5.28906,6.59845C 5.42343,6.29535 5.60416,6.03644 5.83125,5.8219C 6.05833,5.6073 6.325,5.44171 6.63126,5.32501C 6.9375,5.20831 7.26666,5.15002 7.61874,5.15002 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush4}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 22.9926,18.8394L 22.9926,25.9792L 13,25.9792L 13,18.8394L 13.7191,18.8394L 13.7191,16.6971C 13.7191,16.1085 13.8308,15.5536 14.0542,15.0324C 14.2775,14.5111 14.5832,14.0569 14.9711,13.6697C 15.359,13.2825 15.8125,12.9769 16.3316,12.7528C 16.8507,12.5287 17.4067,12.4167 17.9995,12.4167C 18.3938,12.4167 18.7739,12.4677 19.1398,12.5698C 19.5057,12.672 19.8472,12.8159 20.1642,13.0017C 20.4812,13.1875 20.7695,13.4112 21.029,13.6729C 21.2886,13.9346 21.5112,14.2239 21.697,14.5409C 21.8828,14.8579 22.0268,15.198 22.1289,15.561C 22.231,15.9241 22.2821,16.3028 22.2821,16.6971L 22.2821,18.8394L 22.9926,18.8394 Z M 15.1487,18.8394L 20.8524,18.8394L 20.8524,16.6971C 20.8524,16.3028 20.7783,15.933 20.6301,15.5876C 20.4819,15.2423 20.2791,14.9398 20.0217,14.6803C 19.7642,14.4207 19.4614,14.2168 19.1132,14.0686C 18.765,13.9204 18.3938,13.8463 17.9995,13.8463C 17.6052,13.8463 17.2354,13.9204 16.89,14.0686C 16.5447,14.2168 16.2422,14.4207 15.9827,14.6803C 15.7231,14.9398 15.5193,15.2423 15.371,15.5876C 15.2228,15.933 15.1487,16.3028 15.1487,16.6971L 15.1487,18.8394 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -605,7 +886,42 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 4.72812,0.953125C 4.72812,0.686462 4.81926,0.460938 5.00156,0.27655C 5.18384,0.0922241 5.40833,0 5.67499,0L 12.3469,0L 12.3469,7.59686L 19.9844,7.59686L 19.9844,18.0469C 19.9844,18.1761 19.9599,18.2974 19.9109,18.4109C 19.862,18.5245 19.7932,18.625 19.7047,18.7125C 19.6161,18.8 19.5135,18.8698 19.3969,18.9219C 19.2802,18.9739 19.1563,19 19.025,19L 5.67499,19C 5.54582,19 5.42239,18.9739 5.30469,18.9219C 5.18698,18.8698 5.08594,18.8 5.00156,18.7125C 4.91718,18.625 4.85051,18.5245 4.80154,18.4109C 4.75259,18.2974 4.72812,18.1761 4.72812,18.0469L 4.72812,0.953125 Z M 14.2594,5.72504L 14.2594,0C 14.3635,0.0396118 14.4646,0.0869751 14.5625,0.142212C 14.6604,0.197449 14.75,0.2547 14.8312,0.314087C 14.9125,0.373474 14.9859,0.430725 15.0516,0.485962C 15.1172,0.541199 15.1687,0.587524 15.2062,0.625L 19.3594,4.77814C 19.3969,4.81561 19.4432,4.86719 19.4984,4.9328C 19.5536,4.99847 19.6109,5.0719 19.6703,5.15314C 19.7297,5.23438 19.787,5.32397 19.8422,5.42188C 19.8974,5.51984 19.9448,5.62085 19.9844,5.72504L 14.2594,5.72504 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush5}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31,33.1458L 5,33.1458L 5,2.97917 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 10,9.97917L 20,9.97917">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 10,13.9792L 20,13.9792">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 10,17.9792L 26,17.9792">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 10,21.9792L 26,21.9792">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 10,25.9792L 26,25.9792">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1 M 24,2.97917L 24,9.97917L 31,9.97917">
+                        <GeometryDrawing.Pen>
+                            <Pen StartLineCap="Round" EndLineCap="Round" LineJoin="Round" Brush="#FFFFFFFF"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -615,12 +931,31 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 11.4344,0.959351C 11.9177,1.43439 12.3969,1.90936 12.8719,2.3844C 13.3469,2.85938 13.825,3.33752 14.3063,3.81873C 14.5417,4.06042 14.7245,4.29999 14.8547,4.53748C 14.9849,4.77502 15.0792,5.01251 15.1375,5.25C 15.1958,5.48749 15.2297,5.72498 15.2391,5.96252C 15.2484,6.20001 15.2531,6.43646 15.2531,6.67188L 15.2531,18.1156C 15.2531,18.2469 15.2286,18.3693 15.1797,18.4828C 15.1307,18.5964 15.0625,18.6974 14.975,18.7859C 14.8875,18.8745 14.787,18.9448 14.6734,18.9969C 14.5599,19.049 14.4375,19.075 14.3063,19.075L 0.956253,19.075C 0.827087,19.075 0.703644,19.049 0.585938,18.9969C 0.468231,18.9448 0.365631,18.8745 0.278122,18.7859C 0.190628,18.6974 0.122406,18.5964 0.0734406,18.4828C 0.0244751,18.3693 0,18.2469 0,18.1156L 0,0.959351C 0,0.692749 0.0927124,0.466187 0.278122,0.279663C 0.463547,0.0932617 0.689575,0 0.956253,0L 8.58438,0C 8.82396,0 9.06302,0.00524902 9.30156,0.015625C 9.5401,0.026062 9.77812,0.0604248 10.0156,0.118774C 10.2531,0.177124 10.4906,0.271362 10.7281,0.40155C 10.9656,0.531738 11.201,0.717712 11.4344,0.959351 Z M 9.54063,5.72498L 13.35,5.72498C 13.35,5.48962 13.324,5.28229 13.2719,5.10315C 13.2198,4.92395 13.1646,4.77606 13.1062,4.65936C 13.0333,4.52185 12.9552,4.40106 12.8719,4.29688L 10.9656,2.47186C 10.8615,2.36768 10.7417,2.27295 10.6062,2.1875C 10.4875,2.1167 10.3391,2.05212 10.1609,1.99377C 9.98282,1.93542 9.77605,1.90625 9.54063,1.90625L 9.54063,5.72498 Z M 13.35,7.62811L 7.62811,7.62811L 7.62811,1.90625L 1.91251,1.90625L 1.91251,17.1594L 13.35,17.1594L 13.35,7.62811 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush6}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 9,8.5L 12,8.5L 12,11.5L 9,11.5L 9,8.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 9,13.5L 12,13.5L 12,16.5L 9,16.5L 9,13.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 9,18.5L 12,18.5L 12,21.5L 9,21.5L 9,18.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 9,23.5L 12,23.5L 12,26.5L 9,26.5L 9,23.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 14,8.5L 17,8.5L 17,11.5L 14,11.5L 14,8.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 14,13.5L 17,13.5L 17,16.5L 14,16.5L 14,13.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 14,18.5L 17,18.5L 17,21.5L 14,21.5L 14,18.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 14,23.5L 17,23.5L 17,26.5L 14,26.5L 14,23.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 19,8.5L 22,8.5L 22,11.5L 19,11.5L 19,8.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush2}" Geometry="F1 M 19,13.5L 22,13.5L 22,16.5L 19,16.5L 19,13.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 19,18.5L 22,18.5L 22,21.5L 19,21.5L 19,18.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 19,23.5L 22,23.5L 22,26.5L 19,26.5L 19,23.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 24,13.5L 27,13.5L 27,16.5L 24,16.5L 24,13.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 24,18.5L 27,18.5L 27,21.5L 24,21.5L 24,18.5 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 24,23.5L 27,23.5L 27,26.5L 24,26.5L 24,23.5 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
-
     <DrawingBrush x:Key="CODE.Framework-Icon-Bullets" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
@@ -645,7 +980,7 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 8.33125,7.44997L 0,1.24062L 0,0.743733C 0,0.49587 0.0604172,0.309896 0.181244,0.185933C 0.302086,0.0619707 0.495834,2.00272e-005 0.762505,2.00272e-005L 16.3781,2.00272e-005C 16.8927,2.00272e-005 17.15,0.247945 17.15,0.743733L 17.15,1.24062L 8.81875,7.44997L 8.33125,7.44997 Z M 8.56562,9.7969C 8.68229,9.7969 8.78802,9.78542 8.88282,9.76247C 8.97761,9.73958 9.05729,9.71145 9.12188,9.67812C 9.19271,9.64687 9.2573,9.60524 9.31562,9.55312L 17.15,3.71248L 17.15,13.2437C 17.15,13.3667 17.1224,13.487 17.0672,13.6047C 17.012,13.7224 16.9401,13.825 16.8516,13.9125C 16.763,14 16.662,14.0698 16.5484,14.1218C 16.4349,14.174 16.3198,14.2 16.2031,14.2L 0.946869,14.2C 0.823959,14.2 0.705734,14.174 0.592186,14.1218C 0.478653,14.0698 0.377609,14 0.289063,13.9125C 0.200523,13.825 0.130211,13.7224 0.078125,13.6047C 0.0260468,13.487 0,13.3667 0,13.2437L 0,3.71248L 7.83125,9.55312C 7.88334,9.60524 7.94584,9.64687 8.01875,9.67812C 8.08334,9.71145 8.16146,9.73958 8.25312,9.76247C 8.3448,9.78542 8.44895,9.7969 8.56562,9.7969 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 8.33125,7.44997L 0,1.24062L 0,0.743733C 0,0.49587 0.0604172,0.309896 0.181244,0.185933C 0.302086,0.0619707 0.495834,2.00272e-005 0.762505,2.00272e-005L 16.3781,2.00272e-005C 16.8927,2.00272e-005 17.15,0.247945 17.15,0.743733L 17.15,1.24062L 8.81875,7.44997L 8.33125,7.44997 Z M 8.56562,9.7969C 8.68229,9.7969 8.78802,9.78542 8.88282,9.76247C 8.97761,9.73958 9.05729,9.71145 9.12188,9.67812C 9.19271,9.64687 9.2573,9.60524 9.31562,9.55312L 17.15,3.71248L 17.15,13.2437C 17.15,13.3667 17.1224,13.487 17.0672,13.6047C 17.012,13.7224 16.9401,13.825 16.8516,13.9125C 16.763,14 16.662,14.0698 16.5484,14.1218C 16.4349,14.174 16.3198,14.2 16.2031,14.2L 0.946869,14.2C 0.823959,14.2 0.705734,14.174 0.592186,14.1218C 0.478653,14.0698 0.377609,14 0.289063,13.9125C 0.200523,13.825 0.130211,13.7224 0.078125,13.6047C 0.0260468,13.487 0,13.3667 0,13.2437L 0,3.71248L 7.83125,9.55312C 7.88334,9.60524 7.94584,9.64687 8.01875,9.67812C 8.08334,9.71145 8.16146,9.73958 8.25312,9.76247C 8.3448,9.78542 8.44895,9.7969 8.56562,9.7969 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -1009,7 +1344,13 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBlueBrush}" Geometry="F1 M 18.6344,0C 18.9656,0 19.2766,0.0515747 19.5672,0.154724C 19.8578,0.257813 20.1089,0.403137 20.3203,0.590637C 20.5318,0.778137 20.6979,1.00629 20.8187,1.27502C 20.9396,1.54376 21,1.84271 21,2.17188L 21,12.0375C 21,12.3688 20.9489,12.6683 20.8469,12.936C 20.7448,13.2037 20.5969,13.4313 20.4031,13.6188C 20.2094,13.8063 19.9776,13.95 19.7078,14.05C 19.438,14.15 19.1354,14.2 18.8,14.2L 13.9406,14.2L 15.6812,20L 7.95313,14.2L 2.21249,14.2C 1.89583,14.2 1.6026,14.15 1.33281,14.05C 1.06302,13.95 0.829163,13.8063 0.631241,13.6188C 0.433319,13.4313 0.278641,13.2037 0.167175,12.936C 0.0557251,12.6683 0,12.3688 0,12.0375L 0,2.17188C 0,1.84271 0.0505066,1.54376 0.15155,1.27502C 0.252594,1.00629 0.397919,0.77655 0.587494,0.585938C 0.777069,0.395325 1.00677,0.25 1.27655,0.150024C 1.54636,0.0499878 1.85104,0 2.19061,0L 18.6344,0 Z M 7.78749,9.83752C 7.95833,9.75421 8.06979,9.66461 8.12187,9.56879C 8.17395,9.47296 8.2,9.38647 8.2,9.30939C 8.2,9.22607 8.17395,9.13647 8.12187,9.04065C 8.06979,8.94482 7.95833,8.85211 7.78749,8.76251C 7.54999,8.65417 7.28436,8.60004 6.99062,8.60004C 6.68228,8.60004 6.42291,8.65417 6.21249,8.76251C 6.04166,8.85211 5.93021,8.94482 5.87811,9.04065C 5.82603,9.13647 5.79999,9.22607 5.79999,9.30939C 5.79999,9.38647 5.82603,9.47296 5.87811,9.56879C 5.93021,9.66461 6.04166,9.75732 6.21249,9.84686C 6.42291,9.94897 6.68228,10 6.99062,10C 7.30521,10 7.57083,9.94586 7.78749,9.83752 Z M 7.78749,5.4469C 7.95833,5.35938 8.06979,5.26776 8.12187,5.17188C 8.17395,5.07605 8.2,4.99066 8.2,4.91565C 8.2,4.83234 8.17395,4.74115 8.12187,4.64221C 8.06979,4.54327 7.95833,4.45313 7.78749,4.37189C 7.67499,4.31982 7.55156,4.27814 7.41718,4.24689C 7.28281,4.21564 7.14063,4.20001 6.99062,4.20001C 6.83853,4.20001 6.69739,4.21564 6.56718,4.24689C 6.43698,4.27814 6.31874,4.31982 6.21249,4.37189C 6.04166,4.45313 5.93021,4.54327 5.87811,4.64221C 5.82603,4.74115 5.79999,4.83234 5.79999,4.91565C 5.79999,4.99066 5.82603,5.07605 5.87811,5.17188C 5.93021,5.26776 6.04166,5.35938 6.21249,5.4469C 6.42291,5.54901 6.68228,5.60004 6.99062,5.60004C 7.30521,5.60004 7.57083,5.54901 7.78749,5.4469 Z M 12.4,6.60004L 9.59999,6.60004L 9.59999,7.60004L 12.4,7.60004L 12.4,6.60004 Z M 14.2,11.4C 14.4562,11.1125 14.7057,10.7792 14.9484,10.4C 15.1911,10.0208 15.4047,9.63544 15.5891,9.24377C 15.7734,8.85211 15.9214,8.46875 16.0328,8.09375C 16.1443,7.71875 16.2,7.38751 16.2,7.10004C 16.2,6.8125 16.1443,6.48126 16.0328,6.10626C 15.9214,5.73126 15.7734,5.34589 15.5891,4.95001C 15.4047,4.5542 15.1911,4.16876 14.9484,3.79376C 14.7057,3.41876 14.4562,3.08752 14.2,2.79999L 13.2,2.79999C 13.7271,3.40625 14.1255,4.0589 14.3953,4.75781C 14.6651,5.45679 14.8,6.23749 14.8,7.10004C 14.8,7.95624 14.6651,8.73334 14.3953,9.43127C 14.1255,10.1292 13.7271,10.7855 13.2,11.4L 14.2,11.4 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush2}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 24.1379,13.2365C 24.3987,13.2365 24.6434,13.2771 24.8722,13.3583C 25.1009,13.4395 25.2986,13.5538 25.465,13.7014C 25.6314,13.849 25.7622,14.0286 25.8573,14.2401C 25.9524,14.4517 26,14.687 26,14.9461L 26,22.7116C 26,22.9724 25.9598,23.2081 25.8795,23.4188C 25.7991,23.6295 25.6827,23.8087 25.5302,23.9563C 25.3777,24.1039 25.1952,24.217 24.9829,24.2957C 24.7705,24.3744 24.5323,24.4138 24.2683,24.4138L 20.4433,24.4138L 21.8134,28.9792L 15.7304,24.4138L 11.2118,24.4138C 10.9625,24.4138 10.7317,24.3744 10.5193,24.2957C 10.307,24.217 10.1229,24.1039 9.96711,23.9563C 9.81132,23.8087 9.68956,23.6295 9.60183,23.4188C 9.5141,23.2081 9.47023,22.9724 9.47023,22.7116L 9.47023,14.9461C 9.47023,14.687 9.51,14.4517 9.58953,14.2401C 9.66906,14.0286 9.78344,13.8478 9.93267,13.6977C 10.0819,13.5477 10.2627,13.4333 10.4751,13.3546C 10.6874,13.2759 10.9272,13.2365 11.1945,13.2365L 24.1379,13.2365 Z M 15.6,20.9799C 15.7345,20.9143 15.8222,20.8438 15.8632,20.7684C 15.9042,20.693 15.9247,20.6249 15.9247,20.5642C 15.9247,20.4986 15.9042,20.4281 15.8632,20.3527C 15.8222,20.2773 15.7345,20.2043 15.6,20.1338C 15.4131,20.0485 15.204,20.0059 14.9728,20.0059C 14.7301,20.0059 14.5259,20.0485 14.3603,20.1338C 14.2258,20.2043 14.1381,20.2773 14.0971,20.3527C 14.0561,20.4281 14.0356,20.4986 14.0356,20.5642C 14.0356,20.6249 14.0561,20.693 14.0971,20.7684C 14.1381,20.8438 14.2258,20.9168 14.3603,20.9873C 14.5259,21.0677 14.7301,21.1078 14.9728,21.1078C 15.2204,21.1078 15.4295,21.0652 15.6,20.9799 Z M 15.6,17.5239C 15.7345,17.4551 15.8222,17.3829 15.8632,17.3075C 15.9042,17.232 15.9247,17.1648 15.9247,17.1058C 15.9247,17.0402 15.9042,16.9684 15.8632,16.8905C 15.8222,16.8126 15.7345,16.7417 15.6,16.6778C 15.5115,16.6368 15.4143,16.604 15.3085,16.5794C 15.2028,16.5548 15.0908,16.5425 14.9728,16.5425C 14.8531,16.5425 14.742,16.5548 14.6395,16.5794C 14.537,16.604 14.4439,16.6368 14.3603,16.6778C 14.2258,16.7417 14.1381,16.8126 14.0971,16.8905C 14.0561,16.9684 14.0356,17.0402 14.0356,17.1058C 14.0356,17.1648 14.0561,17.232 14.0971,17.3075C 14.1381,17.3829 14.2258,17.4551 14.3603,17.5239C 14.5259,17.6043 14.7301,17.6445 14.9728,17.6445C 15.2204,17.6445 15.4295,17.6043 15.6,17.5239 Z M 19.2307,18.4316L 17.0267,18.4316L 17.0267,19.2187L 19.2307,19.2187L 19.2307,18.4316 Z M 20.6475,22.2098C 20.8492,21.9835 21.0456,21.7212 21.2366,21.4227C 21.4277,21.1242 21.5957,20.8209 21.7409,20.5126C 21.886,20.2043 22.0024,19.9026 22.0902,19.6074C 22.1779,19.3122 22.2218,19.0515 22.2218,18.8252C 22.2218,18.5989 22.1779,18.3381 22.0902,18.043C 22.0024,17.7478 21.886,17.4444 21.7409,17.1328C 21.5957,16.8213 21.4277,16.5179 21.2366,16.2227C 21.0456,15.9275 20.8492,15.6668 20.6475,15.4405L 19.8604,15.4405C 20.2753,15.9177 20.5889,16.4314 20.8012,16.9816C 21.0136,17.5317 21.1198,18.1463 21.1198,18.8252C 21.1198,19.4991 21.0136,20.1108 20.8012,20.6602C 20.5889,21.2095 20.2753,21.7261 19.8604,22.2098L 20.6475,22.2098 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -1602,8 +1943,13 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="{DynamicResource IconBaseBrush}" Geometry="F1 M 6.0625,9.40002L 0.78125,9.40002C 0.560394,9.40002 0.375,9.32348 0.225006,9.17031C 0.0749817,9.0172 0,8.82915 0,8.60625L 0,0.775017C 0,0.558342 0.0749817,0.375023 0.225006,0.224998C 0.375,0.0750046 0.560394,2.28882e-005 0.78125,2.28882e-005L 13.2906,2.28882e-005C 13.5052,2.28882e-005 13.6891,0.0734787 13.8422,0.220329C 13.9953,0.36721 14.0719,0.546898 14.0719,0.759392L 14.0719,4.6L 12.5094,3.8594L 12.5094,1.6L 1.5625,1.6L 1.5625,7.80004L 5.46875,7.80004L 6.0625,9.40002 Z  "/>
-                    <GeometryDrawing Brush="{DynamicResource IconRedBrush}" Geometry="F1 M 12.5,15.6C 12.3833,15.5604 12.1864,15.4766 11.9094,15.3484C 11.6323,15.2203 11.3214,15.0308 10.9766,14.7797C 10.6317,14.5287 10.2719,14.2042 9.89688,13.8063C 9.52188,13.4083 9.18176,12.9177 8.87656,12.3344C 8.57135,11.751 8.31924,11.0672 8.1203,10.2828C 7.92136,9.49844 7.82187,8.59585 7.82187,7.575C 7.82187,7.49584 7.83957,7.41357 7.875,7.32815C 7.9104,7.24273 7.96457,7.2 8.03751,7.2L 8.14374,7.2047L 8.26248,7.23125C 8.39166,7.29583 8.52448,7.36407 8.66092,7.43594C 8.79739,7.50784 8.93228,7.57293 9.06561,7.63125C 9.19894,7.6896 9.33072,7.73803 9.46094,7.7766C 9.59116,7.81512 9.71249,7.83437 9.82498,7.83437C 10.0583,7.83437 10.2661,7.79223 10.4484,7.70782C 10.6307,7.62344 10.7953,7.51772 10.9422,7.39065C 11.0891,7.26357 11.224,7.13699 11.3469,7.01098C 11.4698,6.88491 11.5906,6.77087 11.7094,6.66875C 11.8594,6.53542 11.9995,6.42397 12.1297,6.33437C 12.2599,6.2448 12.3864,6.2 12.5094,6.2C 12.6323,6.2 12.7589,6.24584 12.8891,6.33752C 13.0193,6.42919 13.1594,6.5396 13.3094,6.66875C 13.426,6.77294 13.5464,6.89065 13.6703,7.02187C 13.7943,7.15313 13.9297,7.28228 14.0766,7.40942C 14.2234,7.53649 14.388,7.6422 14.5703,7.72659C 14.7526,7.81094 14.9635,7.85314 15.2031,7.85314C 15.3156,7.85314 15.4349,7.83389 15.5609,7.79531C 15.687,7.75677 15.8151,7.70837 15.9453,7.65002C 16.0755,7.5917 16.2094,7.5266 16.3469,7.4547C 16.4844,7.38284 16.6177,7.3146 16.7469,7.25002C 16.7927,7.2354 16.8432,7.22344 16.8984,7.2141L 17,7.2C 17.0667,7.2 17.1161,7.24584 17.1484,7.33752C 17.1807,7.42919 17.1969,7.51458 17.1969,7.59377C 17.1969,8.60625 17.0958,9.5021 16.8937,10.2813C 16.6917,11.0604 16.4359,11.7406 16.1266,12.3219C 15.8172,12.9031 15.4755,13.3927 15.1016,13.7906C 14.7276,14.1885 14.3667,14.5156 14.0187,14.7719C 13.6708,15.0281 13.3583,15.2203 13.0812,15.3484C 12.8042,15.4766 12.6104,15.5604 12.5,15.6 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush7}" Geometry="F1 M 5,2.97917L 24,2.97917L 31,9.97917L 31.6767,33.1458L 5,33.1458L 5,2.97917 Z "/>
+                    <GeometryDrawing Geometry="F1 M 5,2.97916L 24,2.97916L 31,9.97916L 31,33.1458L 5,33.1458L 5,2.97916 Z ">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="2" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}"/>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconForegroundBrush1}" Geometry="F1 M 24.539,12.812C 24.7376,12.723 24.9163,12.6786 25.0752,12.6786C 25.2294,12.6786 25.3648,12.7143 25.4816,12.7858C 25.5984,12.8573 25.6953,12.9515 25.7724,13.0682C 25.8494,13.185 25.9067,13.3169 25.944,13.4639C 25.9813,13.6109 26,13.7559 26,13.8989C 26,14.8078 25.9476,15.6571 25.8427,16.4468C 25.7378,17.2365 25.5924,17.9726 25.4065,18.655C 25.2206,19.3375 25.0009,19.9667 24.7475,20.5427C 24.4941,21.1187 24.2196,21.649 23.924,22.1336C 23.6285,22.6183 23.317,23.0592 22.9897,23.4564C 22.6624,23.8537 22.3319,24.2112 21.9982,24.529C 20.8224,25.646 19.4893,26.4628 17.9988,26.9792C 16.5052,26.4628 15.1721,25.646 13.9994,24.529C 13.4989,24.0523 13.0087,23.4862 12.5288,22.8308C 12.049,22.1754 11.6219,21.4131 11.2477,20.5439C 10.8735,19.6747 10.572,18.6916 10.3432,17.5944C 10.1144,16.4972 10,15.2654 10,13.8989C 10,13.7495 10.0211,13.6029 10.0632,13.4591C 10.1053,13.3153 10.1672,13.1862 10.2491,13.0718C 10.3309,12.9574 10.4326,12.8657 10.5542,12.7965C 10.6757,12.7274 10.8135,12.6929 10.9677,12.6929C 11.1218,12.6929 11.2863,12.7326 11.461,12.812C 11.8631,12.9963 12.2329,13.1266 12.5705,13.2029C 12.9082,13.2792 13.2208,13.3173 13.5084,13.3173C 13.8914,13.3173 14.2354,13.2605 14.5404,13.1469C 14.8455,13.0333 15.126,12.8895 15.3818,12.7155C 15.6376,12.5415 15.8736,12.3552 16.0897,12.1566C 16.3058,11.958 16.5155,11.7717 16.7189,11.5977C 16.9223,11.4237 17.1281,11.2795 17.3362,11.1651C 17.5444,11.0507 17.7652,10.9935 17.9988,10.9935C 18.2372,10.9935 18.4608,11.0507 18.6697,11.1651C 18.8787,11.2795 19.0849,11.4237 19.2882,11.5977C 19.4916,11.7717 19.7026,11.958 19.9211,12.1566C 20.1395,12.3552 20.3755,12.5415 20.6289,12.7155C 20.8824,12.8895 21.1616,13.0333 21.4667,13.1469C 21.7718,13.2605 22.1158,13.3173 22.4987,13.3173C 22.7863,13.3173 23.0978,13.2792 23.433,13.2029C 23.7683,13.1266 24.1369,12.9963 24.539,12.812 Z M 17.9988,25.0867C 18.1625,25.0867 18.3178,25.0534 18.4648,24.9866C 18.6118,24.9199 18.7397,24.8269 18.8485,24.7078C 18.9573,24.5886 19.0443,24.4495 19.1095,24.2906C 19.1746,24.1318 19.2072,23.9625 19.2072,23.783C 19.2072,23.605 19.1746,23.4366 19.1095,23.2777C 19.0443,23.1188 18.9573,22.981 18.8485,22.8642C 18.7397,22.7474 18.6118,22.6552 18.4648,22.5877C 18.3178,22.5202 18.1625,22.4864 17.9988,22.4864C 17.8351,22.4864 17.6802,22.5202 17.534,22.5877C 17.3879,22.6552 17.2599,22.7474 17.1503,22.8642C 17.0407,22.981 16.9549,23.1188 16.8929,23.2777C 16.8309,23.4366 16.7999,23.605 16.7999,23.783C 16.7999,23.9625 16.8309,24.1318 16.8929,24.2906C 16.9549,24.4495 17.0407,24.5886 17.1503,24.7078C 17.2599,24.8269 17.3879,24.9199 17.534,24.9866C 17.6802,25.0534 17.8351,25.0867 17.9988,25.0867 Z M 18.7806,20.9896L 19.2072,14.9857L 16.7999,14.9857L 17.2242,20.9896L 18.7806,20.9896 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -1699,24 +2045,38 @@
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Geometry="F1 M 2,1L 6.5,4L 2,7L 2,1 Z ">
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 31.5375,22.3738L 22.4175,22.3738L 22.4175,31.4938L 17.6175,31.4938L 17.6175,22.3738L 8.4975,22.3738L 8.4975,17.5738L 17.6175,17.5738L 17.6175,8.45375L 22.4175,8.45375L 22.4175,17.5738L 31.5375,17.5738L 31.5375,22.3738 Z "/>
+                    <GeometryDrawing Geometry="F1 M 9,3.96874L 31,3.96874C 33.7614,3.96874 36,6.20732 36,8.96874L 36,30.9687C 36,33.7302 33.7614,35.9688 31,35.9688L 9,35.9688C 6.23858,35.9688 4,33.7302 4,30.9687L 4,8.96874C 4,6.20732 6.23858,3.96874 9,3.96874 Z ">
                         <GeometryDrawing.Pen>
-                            <Pen MiterLimit="2.75" Brush="#FF000000"/>
+                            <Pen Thickness="4" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}"/>
                         </GeometryDrawing.Pen>
                     </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
+
     <DrawingBrush x:Key="CODE.Framework-Icon-Expanded" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
                 <DrawingGroup.Children>
-                    <GeometryDrawing Brush="#FF000000" Geometry="F1 M 6.5,2L 6.5,6.5L 2,6.5L 6.5,2 Z ">
+                    <GeometryDrawing Geometry="F1 M 9,3.96874L 31,3.96874C 33.7614,3.96874 36,6.20732 36,8.96874L 36,30.9687C 36,33.7302 33.7614,35.9688 31,35.9688L 9,35.9688C 6.23858,35.9688 4,33.7302 4,30.9687L 4,8.96874C 4,6.20732 6.23858,3.96874 9,3.96874 Z ">
                         <GeometryDrawing.Pen>
-                            <Pen MiterLimit="2.75" Brush="#FF000000"/>
+                            <Pen Thickness="4" LineJoin="Round" Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}"/>
                         </GeometryDrawing.Pen>
                     </GeometryDrawing>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 8.4375,17.5312L 31.5,17.5312L 31.5,22.3438L 8.4375,22.3438L 8.4375,17.5312 Z "/>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="CODE.Framework-Icon-Menu" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 6.99999,2L 41,2C 43.7614,2 46,4.23858 46,7L 46,7C 46,9.76142 43.7614,12 41,12L 6.99999,12C 4.23857,12 2,9.76142 2,7L 2,7C 2,4.23858 4.23857,2 6.99999,2 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 7,19L 41,19C 43.7614,19 46,21.2386 46,24L 46,24C 46,26.7614 43.7614,29 41,29L 7,29C 4.23858,29 2,26.7614 2,24L 2,24C 2,21.2386 4.23858,19 7,19 Z "/>
+                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Wildcat-IconThemeBrush1}" Geometry="F1 M 6.99999,36L 41,36C 43.7614,36 46,38.2386 46,41L 46,41C 46,43.7614 43.7614,46 41,46L 6.99999,46C 4.23857,46 2,43.7614 2,41L 2,41C 2,38.2386 4.23857,36 6.99999,36 Z "/>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>

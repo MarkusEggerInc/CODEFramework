@@ -21,10 +21,10 @@ namespace CODE.Framework.Wpf.Theme.Metro.Controls
             ClipToBounds = true;
 
             _animationContainer = new StackPanel
-                                      {
-                                          VerticalAlignment = VerticalAlignment.Top,
-                                          HorizontalAlignment = HorizontalAlignment.Stretch
-                                      };
+            {
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
             Children.Add(_animationContainer);
         }
 
@@ -56,7 +56,7 @@ namespace CODE.Framework.Wpf.Theme.Metro.Controls
         }
 
         /// <summary>Defines how far the animation moves the visuals vertically</summary>
-        public static readonly DependencyProperty VerticalSlideProperty = DependencyProperty.Register("VerticalSlide", typeof (double), typeof (PeekAnimationContainer), new UIPropertyMetadata(150d, TriggerRefresh));
+        public static readonly DependencyProperty VerticalSlideProperty = DependencyProperty.Register("VerticalSlide", typeof (double), typeof (PeekAnimationContainer), new UIPropertyMetadata(151d, TriggerRefresh));
 
         /// <summary>Time (in milliseconds) the top content should be displayed</summary>
         public int TopContentDisplayDuration
@@ -101,33 +101,33 @@ namespace CODE.Framework.Wpf.Theme.Metro.Controls
         /// <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         public int AnimationStartDelayRandomAddition
         {
-            get { return (int)GetValue(AnimationStartDelayRandomAdditionProperty); }
+            get { return (int) GetValue(AnimationStartDelayRandomAdditionProperty); }
             set { SetValue(AnimationStartDelayRandomAdditionProperty, value); }
         }
 
         /// <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        public static readonly DependencyProperty AnimationStartDelayRandomAdditionProperty = DependencyProperty.Register("AnimationStartDelayRandomAddition", typeof(int), typeof(PeekAnimationContainer), new UIPropertyMetadata(5000, TriggerRefresh));
+        public static readonly DependencyProperty AnimationStartDelayRandomAdditionProperty = DependencyProperty.Register("AnimationStartDelayRandomAddition", typeof (int), typeof (PeekAnimationContainer), new UIPropertyMetadata(5000, TriggerRefresh));
 
 
         /// <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         public int TopContentDisplayDurationRandomAddition
         {
-            get { return (int)GetValue(TopContentDisplayDurationRandomAdditionProperty); }
+            get { return (int) GetValue(TopContentDisplayDurationRandomAdditionProperty); }
             set { SetValue(TopContentDisplayDurationRandomAdditionProperty, value); }
         }
 
         /// <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        public static readonly DependencyProperty TopContentDisplayDurationRandomAdditionProperty = DependencyProperty.Register("TopContentDisplayDurationRandomAddition", typeof(int), typeof(PeekAnimationContainer), new UIPropertyMetadata(2500, TriggerRefresh));
+        public static readonly DependencyProperty TopContentDisplayDurationRandomAdditionProperty = DependencyProperty.Register("TopContentDisplayDurationRandomAddition", typeof (int), typeof (PeekAnimationContainer), new UIPropertyMetadata(2500, TriggerRefresh));
 
         /// <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         public int BottomContentDisplayDurationRandomAddition
         {
-            get { return (int)GetValue(BottomContentDisplayDurationRandomAdditionProperty); }
+            get { return (int) GetValue(BottomContentDisplayDurationRandomAdditionProperty); }
             set { SetValue(BottomContentDisplayDurationRandomAdditionProperty, value); }
         }
 
         /// <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        public static readonly DependencyProperty BottomContentDisplayDurationRandomAdditionProperty = DependencyProperty.Register("BottomContentDisplayDurationRandomAddition", typeof(int), typeof(PeekAnimationContainer), new UIPropertyMetadata(2500, TriggerRefresh));
+        public static readonly DependencyProperty BottomContentDisplayDurationRandomAdditionProperty = DependencyProperty.Register("BottomContentDisplayDurationRandomAddition", typeof (int), typeof (PeekAnimationContainer), new UIPropertyMetadata(2500, TriggerRefresh));
 
         /// <summary>Indicates whether the top content is to be displayed initially</summary>
         public bool StartWithTopContent
@@ -178,11 +178,11 @@ namespace CODE.Framework.Wpf.Theme.Metro.Controls
             var move3 = move2 + BottomContentDisplayDuration + GetRandomAddition(BottomContentDisplayDurationRandomAddition);
             var move4 = move3 + ContentTransitionDuration;
 
-            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position1, KeyTime.FromTimeSpan(new TimeSpan(0))));
-            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move1))));
-            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position2, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move2))));
-            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position2, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move3))));
-            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move4))));
+            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position1, KeyTime.FromTimeSpan(new TimeSpan(0)), new KeySpline(.75d, 0d, 0d, .75d)));
+            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move1)), new KeySpline(.75d, 0d, 0d, .75d)));
+            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position2, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move2)), new KeySpline(.75d, 0d, 0d, .75d)));
+            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position2, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move3)), new KeySpline(.75d, 0d, 0d, .75d)));
+            a1.KeyFrames.Add(new SplineThicknessKeyFrame(position1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(move4)), new KeySpline(.75d, 0d, 0d, .75d)));
 
             _storyboard.Begin();
         }

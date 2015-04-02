@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using CODE.Framework.Wpf.Mvvm;
 
 namespace CODE.Framework.Wpf.TestBench
 {
@@ -21,6 +11,29 @@ namespace CODE.Framework.Wpf.TestBench
         public MultiPanelTest()
         {
             InitializeComponent();
+            DataContext = new MultiPanelTestViewModel();
+        }
+    }
+
+    public class MultiPanelTestViewModel : ViewModel
+    {
+        private Visibility _panel1Visible = Visibility.Visible;
+
+        public MultiPanelTestViewModel()
+        {
+            CloseAction = new ViewAction(execute: (a, o) => Panel1Visible = Visibility.Collapsed);
+        }
+
+        public ViewAction CloseAction { get; set; }
+
+        public Visibility Panel1Visible
+        {
+            get { return _panel1Visible; }
+            set
+            {
+                _panel1Visible = value;
+                NotifyChanged("Panel1Visible");
+            }
         }
     }
 }

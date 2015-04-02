@@ -361,42 +361,48 @@ namespace CODE.Framework.Wpf.Mvvm
                 requestContext.ProcessingController = this;
 
                 var methodName = "index";
-                if (requestContext.RouteData.Data.ContainsKey("action"))
-                    methodName = requestContext.RouteData.Data["action"].ToString();
+                if (requestContext.RouteData.Data.ContainsKey("action")) methodName = requestContext.RouteData.Data["action"].ToString();
                 else requestContext.RouteData.Data.Add("action", methodName);
 
-                var routedParameters = new Dictionary<string, Type>();
-                foreach (var key in requestContext.RouteData.Data.Keys)
-                    if (key != "controller" && key != "action")
-                        routedParameters.Add(key, requestContext.RouteData.Data[key].GetType());
-
+                var routedParameters = requestContext.RouteData.Data.Keys.Where(key => key != "controller" && key != "action").ToDictionary(key => key, key => requestContext.RouteData.Data[key].GetType());
                 var methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance);
+
                 foreach (var method in methods)
-                {
-                    if (method.Name.ToLower() == methodName.ToLower() &&
-                        (method.ReturnType == typeof (ActionResult) || method.ReturnType.IsSubclassOf(typeof (ActionResult))))
-                        // Potential match!
+                    if (method.Name.ToLower() == methodName.ToLower() && (method.ReturnType == typeof (ActionResult) || method.ReturnType.IsSubclassOf(typeof (ActionResult))))
                     {
+                        // Potential match!
                         var paras = new List<object>();
                         var expectedParameters = method.GetParameters();
-                        if (expectedParameters.Length == routedParameters.Count) // Still a potential match
+                        if (expectedParameters.Length != routedParameters.Count) continue;
+                        // We look at each parameter this method expects and see if we have them in the route info
+                        foreach (var expectedParameter in expectedParameters)
                         {
-                            // We look at each parameter this method expects and see if we have them in the route info
-                            foreach (var expectedParameter in expectedParameters)
-                            {
-                                var expectedParameterName = expectedParameter.Name.ToLower();
-                                if (routedParameters.ContainsKey(expectedParameterName) &&
-                                    expectedParameter.ParameterType == routedParameters[expectedParameterName])
-                                    paras.Add(requestContext.RouteData.Data[expectedParameterName]);
-                            }
-                            if (paras.Count == expectedParameters.Length) // Looks like we found values for all parameters
-                            {
-                                requestContext.Result = method.Invoke(this, paras.ToArray()) as ActionResult;
-                                return; // We found and invoked the method, so we are done
-                            }
+                            var expectedParameterName = expectedParameter.Name.ToLower();
+                            if (routedParameters.ContainsKey(expectedParameterName) && expectedParameter.ParameterType == routedParameters[expectedParameterName])
+                                paras.Add(requestContext.RouteData.Data[expectedParameterName]);
+                        }
+                        if (paras.Count == expectedParameters.Length) // Looks like we found values for all parameters
+                        {
+                            requestContext.Result = method.Invoke(this, paras.ToArray()) as ActionResult;
+                            return; // We found and invoked the method, so we are done
                         }
                     }
-                }
+
+                // We haven't found the desired method yet, but we attempt another way of matching it
+                if (routedParameters.Count == 1)
+                    foreach (var method in methods)
+                        if (method.Name.ToLower() == methodName.ToLower() && (method.ReturnType == typeof (ActionResult) || method.ReturnType.IsSubclassOf(typeof (ActionResult))))
+                        {
+                            // Potential match!
+                            var expectedParameters = method.GetParameters();
+                            if (expectedParameters.Length != 1) continue;
+
+                            if (expectedParameters[0].ParameterType != routedParameters.First().Value) continue;
+                            // We have a single-parameter method with a parameter type match, so we use that
+                            var paras = (from key in requestContext.RouteData.Data.Keys where key != "controller" && key != "action" select requestContext.RouteData.Data[key]).ToList();
+                            requestContext.Result = method.Invoke(this, paras.ToArray()) as ActionResult;
+                            return; // We found and invoked the method, so we are done
+                        }
 
                 // Since we got to this point, we weren't able to find the desired action, so we indicate this to the caller
                 requestContext.Result = null;

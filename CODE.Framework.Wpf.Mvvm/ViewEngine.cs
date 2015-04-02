@@ -310,11 +310,11 @@ namespace CODE.Framework.Wpf.Mvvm
                         viewInfo.OriginalViewLoadLocation = searchPath;
 
                     var viewResult = new ViewEngineResult
-                                         {
-                                             View = view,
-                                             FoundView = true,
-                                             ViewSource = "XAML Resource: " + searchPath
-                                         };
+                    {
+                        View = view,
+                        FoundView = true,
+                        ViewSource = "XAML Resource: " + searchPath
+                    };
 
                     TryAttachingLayoutResources(view, searchPath);
 

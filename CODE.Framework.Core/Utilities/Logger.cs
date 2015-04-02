@@ -121,6 +121,31 @@ namespace CODE.Framework.Core.Utilities
     }
 
     /// <summary>
+    /// Output Window logger class
+    /// </summary>
+    /// <remarks>
+    /// Performs the equivalent of a System.Diagnostics.Debug.WriteLine()
+    /// </remarks>
+    /// <example>
+    /// EPS.Utilities.LoggingMediator.AddLogger(new EPS.Utilities.OutputWindowLogger());
+    /// 
+    /// EPS.Utilities.LoggingMediator.Log("Hello World!", EPS.Utilities.LogEventType.Information);
+    /// EPS.Utilities.LoggingMediator.Log("A critical error occured!", EPS.Utilities.LogEventType.Critical | EPS.Utilities.LogEventType.Error);
+    /// </example>
+    public class OutputWindowLogger : Logger
+    {
+        /// <summary>
+        /// Logs the specified event (text).
+        /// </summary>
+        /// <param name="logEvent">The event (text).</param>
+        /// <param name="type">The event type.</param>
+        public override void Log(string logEvent, LogEventType type)
+        {
+            System.Diagnostics.Debug.WriteLine(type + ": " + logEvent);
+        }
+    }
+
+    /// <summary>
     /// Multiple file logger class
     /// </summary>
     /// <remarks>

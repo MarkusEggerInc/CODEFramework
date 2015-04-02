@@ -1,11 +1,12 @@
-﻿using System;
+﻿using CODE.Framework.Core.Utilities.Extensions;
+using System;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using CODE.Framework.Core.Utilities.Extensions;
 
 namespace CODE.Framework.Services.Server.WebApi
 {
@@ -16,7 +17,7 @@ namespace CODE.Framework.Services.Server.WebApi
     public class ServiceHostController<TServiceImplementation> : ApiController where TServiceImplementation : new()
     {
         private readonly TServiceImplementation _host;
-        private readonly Type _contractType;
+        private Type _contractType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceHostController{TServiceImplementation}"/> class.
@@ -25,11 +26,20 @@ namespace CODE.Framework.Services.Server.WebApi
         public ServiceHostController()
         {
             _host = new TServiceImplementation();
-
-            var interfaces = _host.GetType().GetInterfaces();
-            if (interfaces.Length != 1) throw new NotSupportedException("The hosted service contract must implement a service interface");
-            _contractType = interfaces[0];
         }
+
+
+        /// <summary>
+        /// Returns the first contract (interface) implemented by TServiceImplementation.
+        /// Override this method to specify a different interface.
+        /// </summary>
+        /// <returns>The interface to be exposed by the ApiController.</returns>
+        /// <exception cref="System.NotSupportedException">The hosted service contract must implement a service interface</exception>
+        protected virtual Type GetContractInterface()
+        {
+            return null;
+        }
+
 
         /// <summary>
         /// execute as an asynchronous operation.
@@ -56,6 +66,8 @@ namespace CODE.Framework.Services.Server.WebApi
 
             var httpMethod = controllerContext.Request.Method.Method.ToUpper();
 
+            CheckContractInterface();
+
             var method = RestHelper.GetMethodNameFromUrlFragmentAndContract(urlFragment, httpMethod, _contractType);
             if (method == null) throw new NotSupportedException("Refusing request");
 
@@ -72,7 +84,15 @@ namespace CODE.Framework.Services.Server.WebApi
                     if (urlProperty == null) continue;
                     urlProperty.SetValue(parameterObject, urlParameters[propertyName], null);
                 }
-                var result = method.Invoke(_host, new[] {parameterObject});
+                object result;
+                try
+                {
+                    result = method.Invoke(_host, new[] { parameterObject });
+                }
+                catch (TargetException ex)
+                {
+                    throw new TargetException("Service " + _host.GetType().ToString() + " does not implement interface " + _contractType.ToString() + ".", ex);
+                }
                 var response = new HttpResponseMessage {Content = new ObjectContent(result.GetType(), result, new JsonMediaTypeFormatter(), "application/json")};
                 return response;
             }
@@ -84,10 +104,31 @@ namespace CODE.Framework.Services.Server.WebApi
                 var formatter = new JsonMediaTypeFormatter();
                 var stream = await controllerContext.Request.Content.ReadAsStreamAsync();
                 var parameterObject = await formatter.ReadFromStreamAsync(parameterType, stream, controllerContext.Request.Content, null);
-                var result = method.Invoke(_host, new[] {parameterObject});
-                var response = new HttpResponseMessage {Content = new ObjectContent(result.GetType(), result, new JsonMediaTypeFormatter(), "application/json")};
+                object result;
+                try
+                {
+                    result = method.Invoke(_host, new[] { parameterObject });
+                }
+                catch (TargetException ex)
+                {
+                    throw new TargetException("Service " + _host.GetType().ToString() + " does not implement interface " + _contractType.ToString() + ".", ex);
+                } 
+                var response = new HttpResponseMessage { Content = new ObjectContent(result.GetType(), result, new JsonMediaTypeFormatter(), "application/json") };
                 return response;
             }
+        }
+
+        private void CheckContractInterface()
+        {
+            if (_contractType != null) return;
+
+            _contractType = GetContractInterface();
+            if (_contractType != null) return;
+
+            // No explicitly defined contract interface found. Therefore, we try to use one implicitly
+            var interfaces = _host.GetType().GetInterfaces();
+            if (interfaces.Length != 1) throw new NotSupportedException("The hosted service contract must implement a service interface");
+            _contractType = interfaces[0]; 
         }
     }
 }

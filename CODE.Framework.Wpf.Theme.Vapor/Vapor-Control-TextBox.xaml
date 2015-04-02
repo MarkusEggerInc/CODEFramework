@@ -31,7 +31,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
             </Trigger>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="BorderBrush" TargetName="Bd" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=1}" />
+                <Setter Property="BorderBrush" TargetName="Bd" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=1.1}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

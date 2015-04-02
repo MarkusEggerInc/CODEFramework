@@ -3378,6 +3378,27 @@
             <param name="logEvent">The event (text).</param>
             <param name="type">The event type.</param>
         </member>
+        <member name="T:CODE.Framework.Core.Utilities.OutputWindowLogger">
+            <summary>
+            Output Window logger class
+            </summary>
+            <remarks>
+            Performs the equivalent of a System.Diagnostics.Debug.WriteLine()
+            </remarks>
+            <example>
+            EPS.Utilities.LoggingMediator.AddLogger(new EPS.Utilities.OutputWindowLogger());
+            
+            EPS.Utilities.LoggingMediator.Log("Hello World!", EPS.Utilities.LogEventType.Information);
+            EPS.Utilities.LoggingMediator.Log("A critical error occured!", EPS.Utilities.LogEventType.Critical | EPS.Utilities.LogEventType.Error);
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.OutputWindowLogger.Log(System.String,CODE.Framework.Core.Utilities.LogEventType)">
+            <summary>
+            Logs the specified event (text).
+            </summary>
+            <param name="logEvent">The event (text).</param>
+            <param name="type">The event type.</param>
+        </member>
         <member name="T:CODE.Framework.Core.Utilities.MultiFileLogger">
             <summary>
             Multiple file logger class
@@ -4663,6 +4684,33 @@
             string value = "xxx";
             bool valueBool = StringHelper.TryBoolParse(value);
             </example>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.TransparentProxyGenerator">
+            <summary>
+            Class TransparentProxyGenerator.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.TransparentProxyGenerator.GetProxy``1(CODE.Framework.Core.Utilities.IProxyHandler)">
+            <summary>
+            Returns a proxy for the provided interface
+            </summary>
+            <typeparam name="TProxy">Type to be proxied</typeparam>
+            <param name="handler">The actual handler object that handles all the calls to the proxy.</param>
+            <returns>Proxy object</returns>
+            <exception cref="T:System.ArgumentException">T needs to be an interface</exception>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.IProxyHandler">
+            <summary>
+            Interface for handler objects that can be used to provide transparent proxy functionality
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.IProxyHandler.OnMethod(System.Reflection.MethodInfo,System.Object[])">
+            <summary>
+            This method is called when any method on a proxied object is invoked.
+            </summary>
+            <param name="method">Information about the method being called.</param>
+            <param name="args">The arguments passed to the method.</param>
+            <returns>Result value from the proxy call</returns>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.XmlHelper">
             <summary>

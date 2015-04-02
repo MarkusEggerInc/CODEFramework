@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -63,6 +64,9 @@
     </Compile>
     <Compile Include="BiStackTest.xaml.cs">
       <DependentUpon>BiStackTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ButtonMenuTest.xaml.cs">
+      <DependentUpon>ButtonMenuTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="CanExecuteChangedTest.xaml.cs">
       <DependentUpon>CanExecuteChangedTest.xaml</DependentUpon>
@@ -115,6 +119,12 @@
     <Compile Include="ObjectHelperTest.xaml.cs">
       <DependentUpon>ObjectHelperTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PanoramaTest.xaml.cs">
+      <DependentUpon>PanoramaTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PrimarySecondaryHorizontalTest.xaml.cs">
+      <DependentUpon>PrimarySecondaryHorizontalTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProgressAnimations.xaml.cs">
       <DependentUpon>ProgressAnimations.xaml</DependentUpon>
     </Compile>
@@ -135,6 +145,9 @@
     </Compile>
     <Compile Include="SizeCalcEx.xaml.cs">
       <DependentUpon>SizeCalcEx.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SliderTest.xaml.cs">
+      <DependentUpon>SliderTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="SpellCheck.xaml.cs">
       <DependentUpon>SpellCheck.xaml</DependentUpon>
@@ -157,6 +170,9 @@
     <Compile Include="TreeViewTest.xaml.cs">
       <DependentUpon>TreeViewTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewActionItemsControlTest.xaml.cs">
+      <DependentUpon>ViewActionItemsControlTest.xaml</DependentUpon>
+    </Compile>
     <Page Include="AsyncTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -166,6 +182,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BiStackTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ButtonMenuTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -271,6 +291,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="PanoramaTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PrimarySecondaryHorizontalTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProgressAnimations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -299,6 +327,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SliderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SpellCheck.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -324,6 +356,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TreeViewTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewActionItemsControlTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

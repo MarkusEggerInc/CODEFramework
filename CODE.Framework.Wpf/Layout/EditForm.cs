@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -107,6 +108,50 @@ namespace CODE.Framework.Wpf.Layout
         }
         /// <summary>Defines whether a group background should be rendered for groups</summary>
         public static readonly DependencyProperty RenderGroupBackgroundProperty = DependencyProperty.Register("RenderGroupBackground", typeof(bool), typeof(EditForm), new UIPropertyMetadata(false));
+
+        /// <summary>
+        /// Indicates whether a horizontal separator line should be rendered after every control-pair
+        /// </summary>
+        /// <value><c>true</c> if [render horizontal control separator lines]; otherwise, <c>false</c>.</value>
+        public bool RenderHorizontalControlSeparatorLines
+        {
+            get { return (bool)GetValue(RenderHorizontalControlSeparatorLinesProperty); }
+            set { SetValue(RenderHorizontalControlSeparatorLinesProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether a horizontal separator line should be rendered after every control-pair
+        /// </summary>
+        public static readonly DependencyProperty RenderHorizontalControlSeparatorLinesProperty = DependencyProperty.Register("RenderHorizontalControlSeparatorLines", typeof(bool), typeof(EditForm), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Vertical offset for a potential horizontal control separator line (if shown)
+        /// </summary>
+        /// <value>The vertical control separator offset.</value>
+        public double VerticalControlSeparatorOffset
+        {
+            get { return (double)GetValue(VerticalControlSeparatorOffsetProperty); }
+            set { SetValue(VerticalControlSeparatorOffsetProperty, value); }
+        }
+        /// <summary>
+        /// Vertical offset for a potential horizontal control separator line (if shown)
+        /// </summary>
+        public static readonly DependencyProperty VerticalControlSeparatorOffsetProperty = DependencyProperty.Register("VerticalControlSeparatorOffset", typeof(double), typeof(EditForm), new PropertyMetadata(0d));
+
+        /// <summary>
+        /// Brush used to render horizontal separators between control pairs
+        /// </summary>
+        /// <value>The horizontal line separator brush.</value>
+        /// <remarks>Only used if RenderHorizontalControlSeparatorLines = true</remarks>
+        public Brush HorizontalLineSeparatorBrush
+        {
+            get { return (Brush)GetValue(HorizontalLineSeparatorBrushProperty); }
+            set { SetValue(HorizontalLineSeparatorBrushProperty, value); }
+        }
+        /// <summary>
+        /// Brush used to render horizontal separators between control pairs
+        /// </summary>
+        /// <remarks>Only used if RenderHorizontalControlSeparatorLines = true</remarks>
+        public static readonly DependencyProperty HorizontalLineSeparatorBrushProperty = DependencyProperty.Register("HorizontalLineSeparatorBrush", typeof(Brush), typeof(EditForm), new PropertyMetadata(null));
 
         /// <summary>Background brush for group backgrounds</summary>
         /// <remarks>Only used of RenderGroupBackground = true</remarks>
@@ -791,6 +836,8 @@ namespace CODE.Framework.Wpf.Layout
             return columnSize;
         }
 
+        private readonly List<List<Rect>> _controlPairPositionedRectangles = new List<List<Rect>>();
+
         /// <summary>Provides the behavior for the Arrange pass of Silverlight layout. Classes can override this method to define their own Arrange pass behavior.</summary>
         /// <param name="finalSize">The final area within the parent that this object should use to arrange itself and its children.</param>
         /// <returns>The actual size used once the element is arranged.</returns>
@@ -798,6 +845,7 @@ namespace CODE.Framework.Wpf.Layout
         {
             _groupBackgrounds.Clear();
             _headers.Clear();
+            _controlPairPositionedRectangles.Clear();
 
             double totalHeight = 0d, totalWidth = 0d, currentY = 0d, currentX = 0d, lastBorderX = 0d, lastBorderY = 0d, lastBorderHeight = 0d;
             var columnCount = 0;
@@ -805,6 +853,7 @@ namespace CODE.Framework.Wpf.Layout
 
             foreach (var column in _columnsUsed)
             {
+                _controlPairPositionedRectangles.Add(new List<Rect>());
                 columnCount++;
                 var columnRenderInfo = _columnRenderInformation[columnCount - 1];
 
@@ -944,6 +993,13 @@ namespace CODE.Framework.Wpf.Layout
                         secondaryControl.Arrange(secondaryRect);
                         secondaryX = secondaryRect.Right + (FlowWithPreviousSpacing * _scale.ScaleX);
                     }
+
+                    var resultingTop = Math.Min(labelRect.Top, editRect.Top);
+                    var resultingLeft = Math.Min(labelRect.Left, editRect.Left);
+                    var resultingHeight = Math.Max(labelRect.Bottom, editRect.Bottom) - resultingTop;
+                    var resultingWidth = Math.Max(labelRect.Right, editRect.Right) - resultingLeft;
+                    // TODO: Should this be supported with secondary flow controls as well?
+                    _controlPairPositionedRectangles[_controlPairPositionedRectangles.Count - 1].Add(new Rect(resultingLeft, resultingTop, resultingWidth, resultingHeight));
 
                     double currentItemWidth;
                     if (LabelPosition == EditFormLabelPositions.Top)
@@ -1127,6 +1183,24 @@ namespace CODE.Framework.Wpf.Layout
 
                 foreach (var header in _headers)
                     GroupHeaderRenderer.RenderHeader(dc, header, scale, offset);
+            }
+
+            if (RenderHorizontalControlSeparatorLines && HorizontalLineSeparatorBrush != null)
+            {
+                var pen = new Pen(HorizontalLineSeparatorBrush, 1d);
+                foreach (var column in _controlPairPositionedRectangles)
+                {
+                    var right = column.Max(c => c.Right);
+                    right = (double)(int) right;
+                    foreach (var rect in column)
+                    {
+                        var y = rect.Bottom + VerticalControlSeparatorOffset;
+                        y = (int) y;
+                        y += .5d;
+                        var x = (double) (int) rect.X;
+                        dc.DrawLine(pen, new Point(x, y), new Point(right, y));
+                    }
+                }
             }
 
             OnRenderCustom(dc, scale, offset);

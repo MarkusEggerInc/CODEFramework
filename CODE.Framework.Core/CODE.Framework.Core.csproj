@@ -86,6 +86,7 @@
     <Compile Include="Utilities\SecurityHelper.cs" />
     <Compile Include="Utilities\StreamHelper.cs" />
     <Compile Include="Utilities\StringHelper.cs" />
+    <Compile Include="Utilities\TransparentProxyGenerator.cs" />
     <Compile Include="Utilities\XmlHelper.cs" />
     <Compile Include="Utilities\Zip.cs" />
   </ItemGroup>

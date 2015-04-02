@@ -1,0 +1,200 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
+
+    <Style TargetType="FlowDocumentReader" x:Key="Newsroom-Control-FlowDocumentReader">
+        <Style.Resources>
+            <SolidColorBrush x:Key="CODE.Framework-Newsroom-IconForegroundBrush" Color="Black" />
+        </Style.Resources>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="Local"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="FlowDocumentReader">
+                    <ControlTemplate.Resources>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Height" Value="16" />
+                            <Setter Property="Width" Value="16" />
+                        </Style>
+                    </ControlTemplate.Resources>
+                    <Grid Background="{TemplateBinding Background}" Controls:GridEx.RowHeights="*,Auto">
+                        <Border x:Name="PART_ContentHost" KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabIndex="1" KeyboardNavigation.TabNavigation="Local" Margin="{TemplateBinding Padding}" />
+                        <Grid Grid.Row="1" Controls:GridEx.ColumnWidths="*,Auto,*" Margin="5">
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton x:Name="FindButton" Command="ApplicationCommands.Find" Focusable="False" Margin="0,0,5,0" ToolTip="Find" Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarToggleButton}">
+                                    <Rectangle Fill="{DynamicResource CODE.Framework-Icon-Search}" />
+                                </ToggleButton>
+                                <Border x:Name="PART_FindToolBarHost" Visibility="Collapsed" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel x:Name="PageCountAndButtons" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
+                                <RepeatButton Command="NavigationCommands.PreviousPage" IsEnabled="{TemplateBinding CanGoToPreviousPage}" ToolTip="Previous Page" Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRepeatButton}">
+                                    <Rectangle Height="12" Width="12" Fill="{DynamicResource CODE.Framework-Icon-Previous}" />
+                                </RepeatButton>
+                                <TextBlock Margin="3,0,0,0" Text="{Binding PageNumber, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Margin="3,0,0,0" Text="of" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Margin="3,0,3,0" Text="{Binding PageCount, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <RepeatButton Command="NavigationCommands.NextPage" IsEnabled="{TemplateBinding CanGoToNextPage}" ToolTip="Next Page"  Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRepeatButton}">
+                                    <Rectangle Height="12" Width="12" Fill="{DynamicResource CODE.Framework-Icon-Next}" />
+                                </RepeatButton>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                                    <RadioButton x:Name="PageViewButton" CommandParameter="Page" Command="FlowDocumentReader.SwitchViewingModeCommand" GroupName="ViewingMode" IsEnabled="{TemplateBinding IsPageViewEnabled}" ToolTip="Page Mode" Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRadioButton}">
+                                        <Rectangle Fill="{DynamicResource CODE.Framework-Icon-Page}" />
+                                    </RadioButton>
+                                    <RadioButton x:Name="TwoPageViewButton" CommandParameter="TwoPage" Command="FlowDocumentReader.SwitchViewingModeCommand" GroupName="ViewingMode" IsEnabled="{TemplateBinding IsTwoPageViewEnabled}" ToolTip="Two Page Mode" Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRadioButton}">
+                                        <Rectangle Fill="{DynamicResource CODE.Framework-Icon-TwoPage}" />
+                                    </RadioButton>
+                                    <RadioButton x:Name="ScrollViewButton" CommandParameter="Scroll" Command="FlowDocumentReader.SwitchViewingModeCommand" GroupName="ViewingMode" IsEnabled="{TemplateBinding IsScrollViewEnabled}" ToolTip="Scroll Mode" Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRadioButton}">
+                                        <Rectangle Fill="{DynamicResource CODE.Framework-Icon-Sort}" />
+                                    </RadioButton>
+                                </StackPanel>
+                                <RepeatButton Grid.Column="1" Command="NavigationCommands.DecreaseZoom" IsEnabled="{TemplateBinding CanDecreaseZoom}" ToolTip="Decrease Zoom" Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRepeatButton}">
+                                    <Rectangle Fill="{DynamicResource CODE.Framework-Icon-ZoomOut}" />
+                                </RepeatButton>
+                                <TextBlock Text="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}}" Margin="3,0,0,0" VerticalAlignment="Center" />
+                                <TextBlock Text="%" Margin="0,0,3,0" VerticalAlignment="Center" />
+                                <RepeatButton Grid.Column="3" Command="NavigationCommands.IncreaseZoom" IsEnabled="{TemplateBinding CanIncreaseZoom}" ToolTip="Increase Zoom"  Style="{DynamicResource Newsroom-Control-FlowDocumentReaderToolbarRepeatButton}">
+                                    <Rectangle Fill="{DynamicResource CODE.Framework-Icon-ZoomIn}" />
+                                </RepeatButton>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ViewingMode" Value="Page">
+                            <Setter Property="IsChecked" TargetName="PageViewButton" Value="True"/>
+                        </Trigger>
+                        <Trigger Property="ViewingMode" Value="TwoPage">
+                            <Setter Property="IsChecked" TargetName="TwoPageViewButton" Value="True"/>
+                        </Trigger>
+                        <Trigger Property="ViewingMode" Value="Scroll">
+                            <Setter Property="IsChecked" TargetName="ScrollViewButton" Value="True"/>
+                            <Setter Property="Visibility" TargetName="PageCountAndButtons" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="Document" Value="{x:Null}">
+                            <Setter Property="IsEnabled" TargetName="FindButton" Value="False"/>
+                        </Trigger>
+                        <Trigger Property="IsFindEnabled" Value="False">
+                            <Setter Property="IsEnabled" TargetName="FindButton" Value="False"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="FlowDocumentReader" BasedOn="{StaticResource Newsroom-Control-FlowDocumentReader}" />
+
+    <Style x:Key="Newsroom-Control-FlowDocumentReaderToolbarToggleButton" TargetType="ToggleButton">
+        <Style.Resources>
+            <SolidColorBrush x:Key="CODE.Framework-Newsroom-IconForegroundBrush" Color="Black" />
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Silver"/>
+            </Trigger>
+        </Style.Triggers>
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Newsroom-IconForegroundBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Smaller}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Width="Auto" Height="30">
+                        <Rectangle Grid.RowSpan="2" IsHitTestVisible="True" Fill="Transparent" />
+                        <Ellipse VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Fill="{TemplateBinding Foreground}"
+                                 Height="30" Width="30" Opacity="0" x:Name="hoverHighlight"/>
+                        <Ellipse VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Stroke="{TemplateBinding Foreground}" StrokeThickness="2" 
+                                 Height="30" Width="30" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" TargetName="hoverHighlight" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Newsroom-Control-FlowDocumentReaderToolbarRepeatButton" TargetType="RepeatButton">
+        <Style.Resources>
+            <SolidColorBrush x:Key="CODE.Framework-Newsroom-IconForegroundBrush" Color="Black" />
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Silver"/>
+            </Trigger>
+        </Style.Triggers>
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Newsroom-IconForegroundBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Smaller}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Grid Width="Auto" Height="30">
+                        <Rectangle Grid.RowSpan="2" IsHitTestVisible="True" Fill="Transparent" />
+                        <Ellipse VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Fill="{TemplateBinding Foreground}"
+                                 Height="30" Width="30" Opacity="0" x:Name="hoverHighlight"/>
+                        <Ellipse VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Stroke="{TemplateBinding Foreground}" StrokeThickness="2" 
+                                 Height="30" Width="30" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" TargetName="hoverHighlight" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Newsroom-Control-FlowDocumentReaderToolbarRadioButton" TargetType="RadioButton">
+        <Style.Resources>
+            <SolidColorBrush x:Key="CODE.Framework-Newsroom-IconForegroundBrush" Color="Black" />
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+        </Style.Triggers>
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Newsroom-IconForegroundBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Smaller}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid Width="Auto" Height="30">
+                        <Rectangle Grid.RowSpan="2" IsHitTestVisible="True" Fill="Transparent" />
+                        <Ellipse VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Fill="{TemplateBinding Foreground}"
+                                 Height="30" Width="30" Opacity="0" x:Name="hoverHighlight"/>
+                        <Ellipse VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Stroke="{TemplateBinding Foreground}" StrokeThickness="2" 
+                                 Height="30" Width="30" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" TargetName="hoverHighlight" Value="0.2"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Opacity" TargetName="hoverHighlight" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

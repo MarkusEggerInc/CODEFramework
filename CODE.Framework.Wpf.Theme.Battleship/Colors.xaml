@@ -20,8 +20,6 @@
     <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">Black</Color>
     <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Transparent</Color>
 
-
-
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush2" Color="{DynamicResource CODE.Framework-Application-BackgroundColor2}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush3" Color="{DynamicResource CODE.Framework-Application-BackgroundColor3}" />
@@ -43,4 +41,6 @@
 
     <SolidColorBrush x:Key="CODE.Framework-Application-ToolbarButtonHighlightBrush1" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-ToolbarButtonHighlightBrush2" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity=".5" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Battleship-IconForegroundBrush" Color="Black"/>
 </ResourceDictionary>

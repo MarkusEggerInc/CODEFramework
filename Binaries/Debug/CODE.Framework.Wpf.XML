@@ -687,6 +687,14 @@
             </summary>
             <param name="host">The host.</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FloatingDockWindow.#ctor(CODE.Framework.Wpf.Layout.MultiPanel,System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.FloatingDockWindow"/> class.
+            </summary>
+            <param name="multiPanel">The multi panel parent container.</param>
+            <param name="title">The title.</param>
+            <param name="oldChildIndex">Old index of the child in the multi panel.</param>
+        </member>
         <member name="F:CODE.Framework.Wpf.Controls.FloatingDockWindow.AutoDockOnCloseProperty">
             <summary>
             Indicates whether clicking the close button will automatically dock the content back into the host
@@ -2617,6 +2625,78 @@
             Fires when the spell check flag is toggled
             </summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.TouchEx">
+            <summary>
+            This class provides attached properties for touch-related features
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TouchEx.UpdatePointingDeviceInputModeProperty">
+            <summary>
+            If set to true, the PointingDeviceInputMode attached property is automatically and continuously set on the target object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TouchEx.GetUpdatePointingDeviceInputMode(System.Windows.DependencyObject)">
+            <summary>
+            If set to true, the PointingDeviceInputMode attached property is automatically and continuously set on the target object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TouchEx.SetUpdatePointingDeviceInputMode(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            If set to true, the PointingDeviceInputMode attached property is automatically and continuously set on the target object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TouchEx.OnUpdatePointingDeviceInputModeChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the property value changes
+            </summary>
+            <param name="d">Deopendency object the value is set on</param>
+            <param name="e">Event args</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TouchEx.PointingDeviceInputModeProperty">
+            <summary>
+            Indicates the current input mode
+            </summary>
+            <remarks>This property should never be set manually. It is auto-updated if UpdatePointingDeviceInputMode is set to true.</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TouchEx._mostRecentPointingDeviceInputMode">
+            <summary>
+            Global flag for the most recent input mode
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TouchEx.OnPointingDeviceInputModeChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the property value changes
+            </summary>
+            <param name="d">Reference to the object the value changed on</param>
+            <param name="e">Event args</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TouchEx.GetPointingDeviceInputMode(System.Windows.DependencyObject)">
+            <summary>
+            Indicates the current input mode
+            </summary>
+            <remarks>This property should never be set manually. It is auto-updated if UpdatePointingDeviceInputMode is set to true.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TouchEx.SetPointingDeviceInputMode(System.Windows.DependencyObject,CODE.Framework.Wpf.Controls.PointingDeviceInputMode)">
+            <summary>
+            Indicates the current input mode
+            </summary>
+            <remarks>This property should never be set manually. It is auto-updated if UpdatePointingDeviceInputMode is set to true.</remarks>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.PointingDeviceInputMode">
+            <summary>
+            Defines available input modes for pointing devices
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.PointingDeviceInputMode.Mouse">
+            <summary>
+            The mouse is used as a pointing device
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.PointingDeviceInputMode.Touch">
+            <summary>
+            Touch is used
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.TreeViewEx">
             <summary>
             Tree view with additional features
@@ -4350,6 +4430,22 @@
         <member name="F:CODE.Framework.Wpf.Layout.EditForm.RenderGroupBackgroundProperty">
             <summary>Defines whether a group background should be rendered for groups</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.EditForm.RenderHorizontalControlSeparatorLinesProperty">
+            <summary>
+            Indicates whether a horizontal separator line should be rendered after every control-pair
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.EditForm.VerticalControlSeparatorOffsetProperty">
+            <summary>
+            Vertical offset for a potential horizontal control separator line (if shown)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.EditForm.HorizontalLineSeparatorBrushProperty">
+            <summary>
+            Brush used to render horizontal separators between control pairs
+            </summary>
+            <remarks>Only used if RenderHorizontalControlSeparatorLines = true</remarks>
+        </member>
         <member name="F:CODE.Framework.Wpf.Layout.EditForm.GroupBackgroundBrushProperty">
             <summary>Background brush for group backgrounds</summary>
             <remarks>Only used of RenderGroupBackground = true</remarks>
@@ -4537,6 +4633,25 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.EditForm.RenderGroupBackground">
             <summary>Defines whether a group background should be rendered for groups</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.EditForm.RenderHorizontalControlSeparatorLines">
+            <summary>
+            Indicates whether a horizontal separator line should be rendered after every control-pair
+            </summary>
+            <value><c>true</c> if [render horizontal control separator lines]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.EditForm.VerticalControlSeparatorOffset">
+            <summary>
+            Vertical offset for a potential horizontal control separator line (if shown)
+            </summary>
+            <value>The vertical control separator offset.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.EditForm.HorizontalLineSeparatorBrush">
+            <summary>
+            Brush used to render horizontal separators between control pairs
+            </summary>
+            <value>The horizontal line separator brush.</value>
+            <remarks>Only used if RenderHorizontalControlSeparatorLines = true</remarks>
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.EditForm.GroupBackgroundBrush">
             <summary>Background brush for group backgrounds</summary>
@@ -5744,6 +5859,9 @@
         <member name="F:CODE.Framework.Wpf.Layout.MetroTiles.TileWidthProperty">
             <summary>Width of a single tile (which is uniform across all objects in a tile layout... double width tiles are twice this value + horizontal tile spacing)</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MetroTiles.TileVisibilityProperty">
+            <summary>Visibility of the tile</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Layout.MetroTiles.HorizontalTileSpacingProperty">
             <summary>Horizontal spacing of a tiles within groups</summary>
         </member>
@@ -5803,6 +5921,20 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.MetroTiles.SetTileHeight(System.Windows.DependencyObject,System.Double)">
             <summary>Set operation for TileHeightProperty dependency property</summary><param name="obj">The object the property really belongs to</param><param name="value">The value to set.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MetroTiles.GetTileVisibility(System.Windows.DependencyObject)">
+            <summary>
+            Gets the tile visibility.
+            </summary>
+            <param name="obj">The object.</param>
+            <returns>Visibility.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MetroTiles.SetTileVisibility(System.Windows.DependencyObject,System.Windows.Visibility)">
+            <summary>
+            Sets the tile visibility.
+            </summary>
+            <param name="obj">The object.</param>
+            <param name="value">The value.</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.MetroTiles.GetTileWidth(System.Windows.DependencyObject)">
             <summary>Get operation for TileHeightProperty dependency property</summary><param name="obj">The object the property really belongs to</param><returns>Actual property value.</returns>
@@ -5911,6 +6043,16 @@
             Uses the default set for the entire panel
             </summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.TileWidthModes.Tiny">
+            <summary>
+            Tiny tile size (quarter of the normal ones)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.TileWidthModes.DoubleSquare">
+            <summary>
+            Square size of the double size (twice as large as double)
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Layout.MultiPanel">
             <summary>
             This layout panel arranges objects in multiple "panels", typically multiple rows of panels
@@ -5926,6 +6068,18 @@
             Margin between panels
             </summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanel.HeaderRendererProperty">
+            <summary>
+            Optional header renderer object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnHeaderRendererChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the Header Renderer changes.
+            </summary>
+            <param name="d">The multi panel object</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.MeasureOverride(System.Windows.Size)">
             <summary>
             When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
@@ -5940,10 +6094,311 @@
             <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
             <returns>The actual size used.</returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnMouseMove(System.Windows.Input.MouseEventArgs)">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseMove attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnMouseEnter(System.Windows.Input.MouseEventArgs)">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseEnter attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnMouseLeave(System.Windows.Input.MouseEventArgs)">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseLeave attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnMouseDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnMouseUp(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseUp routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the mouse button was released.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+            </summary>
+            <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Layout.MultiPanel.Spacing">
             <summary>
             Margin between panels
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderer">
+            <summary>
+            Optional header renderer object
+            </summary>
+            <value>The header renderer.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation">
+            <summary>
+            Header renderer information
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation.TotalArea">
+            <summary>
+            Complete area used up by the child element + header
+            </summary>
+            <value>The total area.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation.Child">
+            <summary>
+            Gets or sets the child.
+            </summary>
+            <value>The child.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer">
+            <summary>
+            This interface can be implemented to create a renderer object that measures and renders
+            headers for child elements contained in a MultiPanel
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.GetClientArea(System.Windows.Rect)">
+            <summary>
+            Returns the client area (the area available for the child control) based on the total area available for the child
+            </summary>
+            <param name="totalArea">The total area.</param>
+            <returns>The client area</returns>
+            <remarks>
+            When a header is added for a child element, it takes away from the area available for the child.
+            For instance, when a header text is to be rendered across the top of a child, then the child must be moved down 
+            and the overall space for the child shrinks accordingly. The value returned by this method indicates
+            the remaining space for the child element.
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Size,System.Windows.UIElement)">
+            <summary>Renders the header element for a single child.</summary>
+            <param name="dc">The drawing context.</param>
+            <param name="clientAreaSize">Size of the client area of the entire contained control (including area). Note: Top/left render position is always 0,0.</param>
+            <param name="child">The actual child element.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.OnMouseEnter(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseEnter attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.OnMouseLeave(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseLeave attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.OnMouseDown(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.OnMouseUp(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseUp routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the mouse button was released.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IMultiPanelHeaderRenderer.OnMouseMove(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseMove attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer">
+            <summary>
+            Standard header renderer object for multi panel headers
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.OrientationProperty">
+            <summary>
+            Header Text Orientation
+            </summary>
+            <value>The orientation of the header text.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontSizeProperty">
+            <summary>
+            Header text font size
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontFamilyProperty">
+            <summary>
+            Header text font family
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontStyleProperty">
+            <summary>
+            Header text font style
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontWeightProperty">
+            <summary>
+            Header text font weight
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.ForegroundProperty">
+            <summary>
+            Foreground brush for the header text
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.BackgroundProperty">
+            <summary>
+            The background brush for the entire header area
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.CloseIconProperty">
+            <summary>
+            Brush used to render the close icon
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.MaxCloseIconSizeProperty">
+            <summary>
+            Max height/width for the close icon
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FloatWindowStyleProperty">
+            <summary>
+            Optional style for windows in undock scenarios
+            </summary>
+            <remarks>The style needs to target type FloatingDockWindow</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.GetClientArea(System.Windows.Rect)">
+            <summary>
+            Returns the client area (the area available for the child control) based on the total area available for the child
+            </summary>
+            <param name="totalArea">The total area.</param>
+            <returns>The client area</returns>
+            <remarks>When a header is added for a child element, it takes away from the area available for the child.
+            For instance, when a header text is to be rendered across the top of a child, then the child must be moved down
+            and the overall space for the child shrinks accordingly. The value returned by this method indicates
+            the remaining space for the child element.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Size,System.Windows.UIElement)">
+            <summary>
+            Renders the header element for a single child
+            </summary>
+            <param name="dc">The drawing context.</param>
+            <param name="clientAreaSize">Size of the client area of the entire contained control (including area). Note: Top/left render position is always 0,0.</param>
+            <param name="child">The actual child element.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.OnMouseEnter(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseEnter attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.OnMouseLeave(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseLeave attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.OnMouseDown(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.OnMouseUp(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseUp routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the mouse button was released.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.OnMouseMove(CODE.Framework.Wpf.Layout.MultiPanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.MultiPanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseMove attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="multiPanel">The multi panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.Orientation">
+            <summary>
+            Header Text Orientation
+            </summary>
+            <value>The orientation of the header text.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontSize">
+            <summary>
+            Header text font size
+            </summary>
+            <value>The header text font size.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontFamily">
+            <summary>
+            Header text font family
+            </summary>
+            <value>The header text font family.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontStyle">
+            <summary>
+            Header text font style
+            </summary>
+            <value>The header text font style.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FontWeight">
+            <summary>
+            Header text font weight
+            </summary>
+            <value>The header text font weight.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.Foreground">
+            <summary>
+            Foreground brush for the header text
+            </summary>
+            <value>Header text foreground brush.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.Background">
+            <summary>
+            The background brush for the entire header area
+            </summary>
+            <value>The background brush.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.CloseIcon">
+            <summary>
+            Brush used to render the close icon
+            </summary>
+            <value>The close icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.MaxCloseIconSize">
+            <summary>
+            Max height/width for the close icon
+            </summary>
+            <value>The maximum size of the close icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.FloatWindowStyle">
+            <summary>
+            Optional style for windows in undock scenarios
+            </summary>
+            <value>The float window style.</value>
+            <remarks>The style needs to target type FloatingDockWindow</remarks>
         </member>
         <member name="T:CODE.Framework.Wpf.Layout.OneToManyPanel">
             <summary>
@@ -6044,6 +6499,457 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.OneToManyPanel.CaptionSpacing">
             <summary>Spacing between the caption and the element</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.PanoramaPanel">
+            <summary>
+            Panorama layout container (similar, but not identical, to the Windows Phone Panorama control)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Layout.PanoramaPanel"/> class.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PanoramaPanel.SelectedIndexProperty">
+            <summary>
+            Selected item within the panorama
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnSelectedIndexChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the selected panorama item changes
+            </summary>
+            <param name="d">The panorama panel</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PanoramaPanel.HeaderFontSizeProperty">
+            <summary>
+            Font size for header elements
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnHeaderFontSizeChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the header font size changes
+            </summary>
+            <param name="d">The panorama panel</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PanoramaPanel.HeaderFontFamilyProperty">
+            <summary>
+            Font family used for header rendering
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnHeaderFontFamilyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the header font family changes
+            </summary>
+            <param name="d">The panorama panel</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PanoramaPanel.SelectedHeaderForegroundProperty">
+            <summary>
+            Brush used to render the selected header
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnSelectedHeaderForegroundChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the header selected foreground brush changes
+            </summary>
+            <param name="d">The panorama panel</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PanoramaPanel.UnselectedHeaderForegroundProperty">
+            <summary>
+            Brush used to render the unselected header
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnUnselectedHeaderForegroundChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the header unselected foreground brush changes
+            </summary>
+            <param name="d">The panorama panel</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PanoramaPanel.HorizontalHeaderRenderingOffsetProperty">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnHorizontalHeaderRenderingOffsetChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="d">The panorama panel</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.ArrangeOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
+            </summary>
+            <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+            <returns>The actual size used.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+            </summary>
+            <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PanoramaPanel.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.UIElement.MouseLeftButtonDown" /> routed event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was pressed.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PanoramaPanel.SelectedIndex">
+            <summary>
+            Selected item within the panorama
+            </summary>
+            <value>The index of the selected.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PanoramaPanel.HeaderFontSize">
+            <summary>
+            Font size for header elements
+            </summary>
+            <value>The size of the header font.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PanoramaPanel.HeaderFontFamily">
+            <summary>
+            Font family used for header rendering
+            </summary>
+            <value>The header font family.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PanoramaPanel.SelectedHeaderForeground">
+            <summary>
+            Brush used to render the selected header
+            </summary>
+            <value>The selected header foreground.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PanoramaPanel.UnselectedHeaderForeground">
+            <summary>
+            Brush used to render the unselected header
+            </summary>
+            <value>The unselected header foreground.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PanoramaPanel.HorizontalHeaderRenderingOffset">
+            <summary>
+            For internal use only
+            </summary>
+            <value>The horizontal header rendering offset.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel">
+            <summary>
+            This panel can lay out primary/secondary element views in a horizontal fashion, with added features, such as collapsing the secondary part.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.CanCollapseSecondaryProperty">
+            <summary>
+            Defines whether the secondary part of the UI can be collapsed
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.IsSecondaryElementCollapsedProperty">
+            <summary>
+            Indicates whether the secondary element is currently collapsed
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.OnIsSecondaryElementCollapsedChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the collapse state of the secondary element changes
+            </summary>
+            <param name="d">The panel object</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.ElementSpacingProperty">
+            <summary>
+            Spacing between primary and secondary elements
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.SecondaryElementWidthProperty">
+            <summary>
+            Width available to the secondary element
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.HeaderRendererProperty">
+            <summary>
+            Header renderer used to render visual aspects of the panel
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.SecondaryAreaLocationProperty">
+            <summary>
+            Defines the desired location of the secondary element
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.PrimaryAreaBackgroundProperty">
+            <summary>
+            Background brush for the primary area
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.OnPrimaryAreaBackgroundChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the primary area background brush changes
+            </summary>
+            <param name="d">The panel object</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.SecondaryAreaBackgroundProperty">
+            <summary>
+            Background brush for the secondary area
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.OnSecondaryAreaBackgroundChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the secondary area background color changes
+            </summary>
+            <param name="d">The d.</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.ArrangeOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
+            </summary>
+            <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+            <returns>The actual size used.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+            </summary>
+            <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.OnMouseDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Invoked when an unhandled Mouse Down attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.CanCollapseSecondary">
+            <summary>
+            Defines whether the secondary part of the UI can be collapsed
+            </summary>
+            <value><c>true</c> if this instance can collapse secondary; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.IsSecondaryElementCollapsed">
+            <summary>
+            Indicates whether the secondary element is currently collapsed
+            </summary>
+            <value><c>true</c> if this instance is secondary element collapsed; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.ElementSpacing">
+            <summary>
+            Spacing between primary and secondary elements
+            </summary>
+            <value>The element spacing.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.SecondaryElementWidth">
+            <summary>
+            Width available to the secondary element
+            </summary>
+            <value>The width of the secondary element.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.HeaderRenderer">
+            <summary>
+            Header renderer used to render visual aspects of the panel
+            </summary>
+            <value>The header renderer.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.SecondaryAreaLocation">
+            <summary>
+            Defines the desired location of the secondary element
+            </summary>
+            <value>The secondary area location.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.PrimaryAreaBackground">
+            <summary>
+            Background brush for the primary area
+            </summary>
+            <value>The primary area background.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel.SecondaryAreaBackground">
+            <summary>
+            Background brush for the secondary area
+            </summary>
+            <value>The secondary area background.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer">
+            <summary>
+            Interface for a stylable header renderer used by the PrimarySecondaryHorizontalPanel
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.GetPrimaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Detirmines the size of the client area for the primary element, based on the overall area allocated to it
+            </summary>
+            <param name="totalPrimaryArea">The total primary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>The client size (area usable by the contained element, which excludes areas needed for header information)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.GetSecondaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Detirmines the size of the client area for the secondary element, based on the overall area allocated to it
+            </summary>
+            <param name="totalSecondaryArea">The total secondary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>The client size (area usable by the contained element, which excludes areas needed for header information)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Rect,System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Renders additional graphical elements
+            </summary>
+            <param name="dc">The dc.</param>
+            <param name="currentPrimaryArea">The current primary area.</param>
+            <param name="currentSecondaryArea">The current secondary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.GetMinimumCollapsedAreaWidth(CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Returns the minimum width of a collapsed secondary area
+            </summary>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>Minimum width of the area</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.Click(System.Windows.Point,System.Windows.Rect,System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Called when a click on the panel background happens
+            </summary>
+            <param name="location">The location of the click.</param>
+            <param name="currentPrimaryArea">The current primary area.</param>
+            <param name="currentSecondaryArea">The current secondary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>True if the click event has been handled and no further processing is needed</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer">
+            <summary>
+            Standard renderer for the primary/secondary horizontal panel
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.CollapsedSecondaryAreaIconProperty">
+            <summary>
+            Brush used to render a collapsed state icon for a collapsed primary area
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.ExpandedSecondaryAreaIconProperty">
+            <summary>
+            Brush used to render an expanded state icon for an expanded primary area
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.ExpandCollapseIconSizeProperty">
+            <summary>
+            Size of the expand/collapse icon
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.IconMarginProperty">
+            <summary>
+            Defines the margin around the header icon
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.IgnoreIconSizeForLayoutProperty">
+            <summary>
+            Indicates whether the icon size and placement is to be considered and reserved when laying out other objects,
+            or whether the icon will simply overlap other elements
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.GetPrimaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Detirmines the size of the client area for the primary element, based on the overall area allocated to it
+            </summary>
+            <param name="totalPrimaryArea">The total primary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>The client size (area usable by the contained element, which excludes areas needed for header information)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.GetSecondaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Detirmines the size of the client area for the secondary element, based on the overall area allocated to it
+            </summary>
+            <param name="totalSecondaryArea">The total secondary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>The client size (area usable by the contained element, which excludes areas needed for header information)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Rect,System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Renders additional graphical elements
+            </summary>
+            <param name="dc">The dc.</param>
+            <param name="currentPrimaryArea">The current primary area.</param>
+            <param name="currentSecondaryArea">The current secondary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.GetMinimumCollapsedAreaWidth(CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Returns the minimum width of a collapsed secondary area
+            </summary>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>Minimum width of the area</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.Click(System.Windows.Point,System.Windows.Rect,System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
+            <summary>
+            Called when a click on the panel background happens
+            </summary>
+            <param name="location">The location of the click.</param>
+            <param name="currentPrimaryArea">The current primary area.</param>
+            <param name="currentSecondaryArea">The current secondary area.</param>
+            <param name="parentPanel">The parent panel.</param>
+            <returns>True if the click event has been handled and no further processing is needed</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.CollapsedSecondaryAreaIcon">
+            <summary>
+            Brush used to render a collapsed state icon for a collapsed primary area
+            </summary>
+            <value>The collapsed secondary area icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.ExpandedSecondaryAreaIcon">
+            <summary>
+            Brush used to render an expanded state icon for an expanded primary area
+            </summary>
+            <value>The expanded secondary area icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.ExpandCollapseIconSize">
+            <summary>
+            Size of the expand/collapse icon
+            </summary>
+            <value>The size of the expand collapse icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.IconMargin">
+            <summary>
+            Defines the margin around the header icon
+            </summary>
+            <value>The icon margin.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.IgnoreIconSizeForLayout">
+            <summary>
+            Indicates whether the icon size and placement is to be considered and reserved when laying out other objects,
+            or whether the icon will simply overlap other elements
+            </summary>
+            <value><c>true</c> if the icon is to be ignored for layout, otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.SecondaryAreaLocation">
+            <summary>
+            Defines where the secondary area should be placed by the layout engine
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SecondaryAreaLocation.Left">
+            <summary>
+            Docked on the left
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SecondaryAreaLocation.Right">
+            <summary>
+            Docked on the right
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Layout.PropertySheet">
             <summary>
@@ -6660,6 +7566,25 @@
             <param name="obj">Object to set the title on</param>
             <param name="value">Value to set</param>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.TitleColorProperty">
+            <summary>
+            Color associated with the Title. (Note: Not all elements that respect the Title also respect the color. It's an optional setting)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetTitleColor(System.Windows.DependencyObject)">
+            <summary>
+            Gets the color of the title.
+            </summary>
+            <param name="obj">The object to get the color for.</param>
+            <returns>Title color (brush)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetTitleColor(System.Windows.DependencyObject,System.Windows.Media.Brush)">
+            <summary>
+            Sets the color of the title.
+            </summary>
+            <param name="obj">The object to set the value on.</param>
+            <param name="value">The color (Brush).</param>
+        </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.GroupProperty">
             <summary>Attached property to set any view's group</summary>
             <remarks>This attached property can be attached to any UI Element to define a view group</remarks>
@@ -6876,6 +7801,70 @@
             <param name="o">The object the property is set on.</param>
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.DockedProperty">
+            <summary>Indicates whether a view element is "docked" into the main object or not.</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetDocked(System.Windows.DependencyObject)">
+            <summary>Indicates whether a view element is "docked" into the main object or not.</summary>
+            <param name="obj">The object the property is set on.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetDocked(System.Windows.DependencyObject,System.Boolean)">
+            <summary>Indicates whether a view element is "docked" into the main object or not.</summary>
+            <param name="obj">The object the property is set on.</param>
+            <param name="value">True or false</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.SupportsDockingProperty">
+            <summary>Indicates whether an element can be docked and undocked</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetSupportsDocking(System.Windows.DependencyObject)">
+            <summary>Indicates whether an element can be docked and undocked</summary>
+            <param name="obj">The object the property is set on.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetSupportsDocking(System.Windows.DependencyObject,System.Boolean)">
+            <summary>Indicates whether an element can be docked and undocked</summary>
+            <param name="obj">The object the property is set on.</param>
+            <param name="value">True or false</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.ClosableProperty">
+            <summary>Indicates whether an element can be independenty closed</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetClosable(System.Windows.DependencyObject)">
+            <summary>Indicates whether an element can be independenty closed</summary>
+            <param name="obj">The object the property is set on.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetClosable(System.Windows.DependencyObject,System.Boolean)">
+            <summary>Indicates whether an element can be independenty closed</summary>
+            <param name="obj">The object the property is set on.</param>
+            <param name="value">True or false</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.CloseActionProperty">
+            <summary>Command to be triggered when a view (element) is closed</summary>
+            <remarks>
+            Only applies to objects that have the Closable attached property set to true.
+            In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetCloseAction(System.Windows.DependencyObject)">
+            <summary>Command to be triggered when a view (element) is closed</summary>
+            <param name="obj">The object the property is set on.</param>
+            <returns>Command or view action</returns>
+            <remarks>
+            Only applies to objects that have the Closable attached property set to true.
+            In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetCloseAction(System.Windows.DependencyObject,System.Windows.Input.ICommand)">
+            <summary>Command to be triggered when a view (element) is closed</summary>
+            <param name="obj">The object the property is set on.</param>
+            <param name="value">Command or view action</param>
+            <remarks>
+            Only applies to objects that have the Closable attached property set to true.
+            In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
+            </remarks>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.InvalidateAllVisuals(System.Windows.DependencyObject)">
             <summary>Invalidates everything in the UI and forces a refresh</summary>
             <param name="source">Reference to an instance of the form itself</param>
@@ -7019,19 +8008,39 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Utilities.ElementHelper.FindParent``1(System.Windows.FrameworkElement)">
             <summary>
-            Finds the parent by walking element.Parent until a parent of a certain type is found, or the end of the chain is reached
+            Finds the parent by walking parentElement.Parent until a parent of a certain type is found, or the end of the chain is reached
             </summary>
-            <typeparam name="TType">The type of the parent element that is to be found.</typeparam>
-            <param name="element">The element.</param>
+            <typeparam name="TType">The type of the parent parentElement that is to be found.</typeparam>
+            <param name="element">The parentElement.</param>
             <returns>FrameworkElement.</returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Utilities.ElementHelper.FindVisualTreeParent``1(System.Windows.FrameworkElement)">
             <summary>
             Finds the parent by walking the complete visual tree until a parent of a certain type is found, or the end of the chain is reached
             </summary>
-            <typeparam name="TType">The type of the parent element that is to be found.</typeparam>
-            <param name="element">The element.</param>
+            <typeparam name="TType">The type of the parent parentElement that is to be found.</typeparam>
+            <param name="element">The parentElement.</param>
             <returns>FrameworkElement.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.ElementHelper.DetachElementFromParent(System.Windows.UIElement,System.Windows.DependencyObject)">
+            <summary>
+            Detaches an element from its current parrent
+            </summary>
+            <param name="elementToDetach">The element to detach.</param>
+            <param name="parentElement">The parent element.</param>
+            <exception cref="T:System.NotSupportedException">Can't remove element from current parent control of type  + parentElement.GetType()</exception>
+            <remarks>
+            Supports various ways of removing an element from its parent, such as content controls, child elements, and more.
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.ElementHelper.DetachElementFromParent(System.Windows.FrameworkElement)">
+            <summary>
+            Finds the parentElement's parent and detaches it
+            </summary>
+            <param name="element">The parentElement.</param>
+            <remarks>
+            Looks for different types of parent objects in different types of containers
+            </remarks>
         </member>
         <member name="T:CODE.Framework.Wpf.Utilities.FocusHelper">
             <summary>This class provides helpful features for focus management</summary>

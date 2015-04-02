@@ -178,6 +178,12 @@ namespace CODE.Framework.Wpf.Mvvm
                     else
                         shell.Title = shell.NormalViews[viewIndex].ViewTitle + " - " + shell._originalTitle;
                     break;
+                case ShellTitleMode.ViewTitleOnly:
+                    if (shell.NormalViews.Count == 0)
+                        shell.Title = shell._originalTitle;
+                    else
+                        shell.Title = shell.NormalViews[viewIndex].ViewTitle;
+                    break;
             }
 
             var view = shell.NormalViews[viewIndex].View;
@@ -976,6 +982,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Shows the original title plus the current view title (such as "Word - ReadMe.doc")
         /// </summary>
-        OriginalTitleDashViewTitle
+        OriginalTitleDashViewTitle,
+        /// <summary>
+        /// Shows only the title of the current view (except when there is no open view, then the original title is shown)
+        /// </summary>
+        ViewTitleOnly
     }
 }

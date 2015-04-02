@@ -18,19 +18,22 @@
         <ResourceDictionary Source="Metro-Control-GroupBox.xaml"/>
         <ResourceDictionary Source="Metro-Control-Label.xaml"/>
         <ResourceDictionary Source="Metro-Control-ListBox.xaml"/>
+        <ResourceDictionary Source="Metro-Control-Menu.xaml"/>
         <ResourceDictionary Source="Metro-Control-MetroTiles.xaml"/>
         <ResourceDictionary Source="Metro-Control-PasswordBox.xaml"/>
         <ResourceDictionary Source="Metro-Control-RadioButton.xaml"/>
         <ResourceDictionary Source="Metro-Control-RichTextBox.xaml"/>
         <ResourceDictionary Source="Metro-Control-ScrollBar.xaml"/>
-        <!--<ResourceDictionary Source="Metro-Control-Slider.xaml"/>-->
+        <ResourceDictionary Source="Metro-Control-Slider.xaml"/>
         <ResourceDictionary Source="Metro-Control-TabControl.xaml"/>
         <ResourceDictionary Source="Metro-Control-Textblock.xaml"/>
         <ResourceDictionary Source="Metro-Control-Textbox.xaml"/>
+        <ResourceDictionary Source="Metro-Control-ViewActionItemsControl.xaml"/>
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
         <ResourceDictionary Source="Metro-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Metro-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Metro-Layout-MultiPanel.xaml"/>
         <ResourceDictionary Source="Metro-Layout-OneToManyPanel.xaml"/>
         <ResourceDictionary Source="Metro-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Metro-Layout-SimpleForm.xaml"/>

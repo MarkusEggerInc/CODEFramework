@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using CODE.Framework.Wpf.Interfaces;
 
@@ -359,6 +360,23 @@ namespace CODE.Framework.Wpf.Layout
         /// </summary>
         public event EventHandler TitleChanged;
 
+        /// <summary>
+        /// Color associated with the Title. (Note: Not all elements that respect the Title also respect the color. It's an optional setting)
+        /// </summary>
+        public static readonly DependencyProperty TitleColorProperty = DependencyProperty.RegisterAttached("TitleColor", typeof(Brush), typeof(SimpleView), new PropertyMetadata(null));
+        /// <summary>
+        /// Gets the color of the title.
+        /// </summary>
+        /// <param name="obj">The object to get the color for.</param>
+        /// <returns>Title color (brush)</returns>
+        public static Brush GetTitleColor(DependencyObject obj) { return (Brush)obj.GetValue(TitleColorProperty); }
+        /// <summary>
+        /// Sets the color of the title.
+        /// </summary>
+        /// <param name="obj">The object to set the value on.</param>
+        /// <param name="value">The color (Brush).</param>
+        public static void SetTitleColor(DependencyObject obj, Brush value) { obj.SetValue(TitleColorProperty, value); }
+
         /// <summary>Attached property to set any view's group</summary>
         /// <remarks>This attached property can be attached to any UI Element to define a view group</remarks>
         public static readonly DependencyProperty GroupProperty = DependencyProperty.RegisterAttached("Group", typeof (string), typeof (SimpleView), new PropertyMetadata(""));
@@ -578,6 +596,90 @@ namespace CODE.Framework.Wpf.Layout
 
             element.GotFocus += (sender, e) => SetFocusForwardingTarget(element, element);
             //element.LostFocus += (sender, e) => SetFocusForwardingTarget(element, null);
+        }
+
+        /// <summary>Indicates whether a view element is "docked" into the main object or not.</summary>
+        public static readonly DependencyProperty DockedProperty = DependencyProperty.RegisterAttached("Docked", typeof(bool), typeof(SimpleView), new PropertyMetadata(true));
+
+        /// <summary>Indicates whether a view element is "docked" into the main object or not.</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <returns>True or false</returns>
+        public static bool GetDocked(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(DockedProperty);
+        }
+        /// <summary>Indicates whether a view element is "docked" into the main object or not.</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <param name="value">True or false</param>
+        public static void SetDocked(DependencyObject obj, bool value)
+        {
+            obj.SetValue(DockedProperty, value);
+        }
+
+        /// <summary>Indicates whether an element can be docked and undocked</summary>
+        public static readonly DependencyProperty SupportsDockingProperty = DependencyProperty.RegisterAttached("SupportsDocking", typeof(bool), typeof(SimpleView), new PropertyMetadata(false));
+
+        /// <summary>Indicates whether an element can be docked and undocked</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <returns>True or false</returns>
+        public static bool GetSupportsDocking(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(SupportsDockingProperty);
+        }
+        /// <summary>Indicates whether an element can be docked and undocked</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <param name="value">True or false</param>
+        public static void SetSupportsDocking(DependencyObject obj, bool value)
+        {
+            obj.SetValue(SupportsDockingProperty, value);
+        }
+
+        /// <summary>Indicates whether an element can be independenty closed</summary>
+        public static readonly DependencyProperty ClosableProperty = DependencyProperty.RegisterAttached("Closable", typeof(bool), typeof(SimpleView), new PropertyMetadata(false));
+
+        /// <summary>Indicates whether an element can be independenty closed</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <returns>True or false</returns>
+        public static bool GetClosable(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(ClosableProperty);
+        }
+        /// <summary>Indicates whether an element can be independenty closed</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <param name="value">True or false</param>
+        public static void SetClosable(DependencyObject obj, bool value)
+        {
+            obj.SetValue(ClosableProperty, value);
+        }
+
+        /// <summary>Command to be triggered when a view (element) is closed</summary>
+        /// <remarks>
+        /// Only applies to objects that have the Closable attached property set to true.
+        /// In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
+        /// </remarks>
+        public static readonly DependencyProperty CloseActionProperty = DependencyProperty.RegisterAttached("CloseAction", typeof(ICommand), typeof(SimpleView), new PropertyMetadata(null));
+
+        /// <summary>Command to be triggered when a view (element) is closed</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <returns>Command or view action</returns>
+        /// <remarks>
+        /// Only applies to objects that have the Closable attached property set to true.
+        /// In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
+        /// </remarks>
+        public static ICommand GetCloseAction(DependencyObject obj)
+        {
+            return (ICommand)obj.GetValue(CloseActionProperty);
+        }
+        /// <summary>Command to be triggered when a view (element) is closed</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <param name="value">Command or view action</param>
+        /// <remarks>
+        /// Only applies to objects that have the Closable attached property set to true.
+        /// In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
+        /// </remarks>
+        public static void SetCloseAction(DependencyObject obj, ICommand value)
+        {
+            obj.SetValue(CloseActionProperty, value);
         }
 
         /// <summary>Invalidates everything in the UI and forces a refresh</summary>

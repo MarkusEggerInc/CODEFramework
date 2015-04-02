@@ -90,8 +90,10 @@ namespace CODE.Framework.Wpf.Theme.Metro.Classes
                 case "DataSmall03": return new DataSmall03();
                 case "Notification": return new LargeText09();
 
+                case "TileTiny": return new TileTiny(); // Metro only
                 case "TileNarrow": return new TileNarrow(); // Metro only
                 case "TileWide": return new TileWide(); // Metro only
+                case "TileWideSquare": return new TileWideSquare(); // Metro only
             }
 
             return new Fallback();

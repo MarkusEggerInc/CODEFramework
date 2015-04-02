@@ -81,6 +81,7 @@
     <Compile Include="Controls\SortOrderIndicator.cs" />
     <Compile Include="Controls\TextBlockEx.cs" />
     <Compile Include="Controls\TextBoxEx.cs" />
+    <Compile Include="Controls\TouchEx.cs" />
     <Compile Include="Controls\TreeViewEx.cs" />
     <Compile Include="Controls\WindowButtons.cs" />
     <Compile Include="Controls\WindowEx.cs" />
@@ -102,6 +103,8 @@
     <Compile Include="Controls\GridEx.cs" />
     <Compile Include="Layout\MultiPanel.cs" />
     <Compile Include="Layout\OneToManyPanel.cs" />
+    <Compile Include="Layout\PanoramaPanel.cs" />
+    <Compile Include="Layout\PrimarySecondaryHorizontalPanel.cs" />
     <Compile Include="Layout\PropertySheet.cs" />
     <Compile Include="Layout\ScrollAwareItemsPresenter.cs" />
     <Compile Include="Layout\View.cs" />

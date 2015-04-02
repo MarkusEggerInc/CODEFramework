@@ -91,6 +91,9 @@ namespace CODE.Framework.Wpf.Mvvm
                 case "metro":
                     Resources.MergedDictionaries.Add(new ResourceDictionary {Source = new Uri("pack://application:,,,/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml", UriKind.Absolute)});
                     break;
+                case "newsroom":
+                    Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/CODE.Framework.Wpf.Theme.Newsroom;component/ThemeRoot.xaml", UriKind.Absolute) });
+                    break;
                 case "vapor":
                     Resources.MergedDictionaries.Add(new ResourceDictionary {Source = new Uri("pack://application:,,,/CODE.Framework.Wpf.Theme.Vapor;component/ThemeRoot.xaml", UriKind.Absolute)});
                     break;

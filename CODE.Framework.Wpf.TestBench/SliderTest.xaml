@@ -1,0 +1,20 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.SliderTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="Slider Test" Height="500" Width="500">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <controls:ZoomSlider VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10" Width="150" Background="#ACFFC8"/>
+        <Slider Width="200" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,138,0,0" Value="5" Background="#FFC9C9C9"/>
+        <Slider Orientation="Vertical" Height="200" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,214,0,0" Value="3" Background="#FFCFCFCF" />
+    </Grid>
+</Window>

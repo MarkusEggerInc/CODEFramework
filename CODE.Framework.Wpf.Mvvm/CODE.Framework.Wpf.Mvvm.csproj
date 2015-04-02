@@ -90,7 +90,9 @@
     <Compile Include="View.cs" />
     <Compile Include="ViewActionAndOpenViewSelector.cs" />
     <Compile Include="ViewActionHelper.cs" />
+    <Compile Include="ViewActionItemsControl.cs" />
     <Compile Include="ViewActionMenu.cs" />
+    <Compile Include="ViewActionMenuButton.cs" />
     <Compile Include="ViewActionRibbon.cs" />
     <Compile Include="ViewActionStackPanel.cs" />
     <Compile Include="ViewActionTabPanel.cs" />

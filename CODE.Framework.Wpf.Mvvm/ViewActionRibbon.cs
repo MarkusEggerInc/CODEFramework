@@ -22,18 +22,18 @@ namespace CODE.Framework.Wpf.Mvvm
         public ViewActionRibbon()
         {
             SelectionChanged += (s, e) =>
+            {
+                if (!FirstPageIsSpecial) return;
+                if (SelectedIndex == 0)
+                    IsSpecialFirstPageActive = true;
+                else
                 {
-                    if (!FirstPageIsSpecial) return;
-                    if (SelectedIndex == 0)
-                        IsSpecialFirstPageActive = true;
-                    else
-                    {
-                        IsSpecialFirstPageActive = false;
-                        if (SelectedIndex > -1)
-                            LastRegularIndex = SelectedIndex;
-                    }
-                    Visibility = SelectedIndex == 0 ? Visibility.Hidden : Visibility.Visible;
-                };
+                    IsSpecialFirstPageActive = false;
+                    if (SelectedIndex > -1)
+                        LastRegularIndex = SelectedIndex;
+                }
+                Visibility = SelectedIndex == 0 ? Visibility.Hidden : Visibility.Visible;
+            };
 
             Loaded += (s, e) =>
             {
@@ -44,57 +44,55 @@ namespace CODE.Framework.Wpf.Mvvm
             };
 
             Initialized += (o, e) =>
+            {
+                var window = ElementHelper.FindParent<Window>(this) ?? ElementHelper.FindVisualTreeParent<Window>(this);
+                if (window == null) return;
+                window.PreviewKeyDown += (s, a) =>
                 {
-                    var window = ElementHelper.FindParent<Window>(this) ?? ElementHelper.FindVisualTreeParent<Window>(this);
-                    if (window != null)
+                    var key = a.Key;
+                    var systemKey = a.SystemKey;
+                    if (GetKeyboardShortcutsActive(this))
                     {
-                        window.PreviewKeyDown += (s, a) =>
-                            {
-                                var key = a.Key;
-                                var systemKey = a.SystemKey;
-                                if (GetKeyboardShortcutsActive(this))
-                                {
-                                    if (SelectedIndex < 0 || SelectedIndex >= Items.Count) return;
-                                    var page = Items[SelectedIndex] as RibbonPage;
-                                    if (page == null) return;
-                                    var panel = page.Content as RibbonPageLayoutPanel;
-                                    if (panel == null) return;
-                                    foreach (var child in panel.Children)
-                                    {
-                                        var button = child as RibbonButton;
-                                        if (button == null || string.IsNullOrEmpty(button.AccessKey) || button.AccessKey != a.Key.ToString() || button.Command == null) continue;
-                                        var command = button.Command as ViewAction;
-                                        if (command == null || !command.CanExecute(button.CommandParameter)) continue;
-                                        command.Execute(button.CommandParameter);
-                                        SetKeyboardShortcutsActive(window, false);
-                                        a.Handled = true;
-                                        return;
-                                    }
-                                }
-                                if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
-                                {
-                                    if (!ReadyForStatusChange) return;
-                                    var state = !GetKeyboardShortcutsActive(window);
-                                    SetKeyboardShortcutsActive(window, state);
-                                    ReadyForStatusChange = !state;
-                                    a.Handled = true;
-                                }
-                                else if (key == Key.Escape)
-                                {
-                                    SetKeyboardShortcutsActive(window, false);
-                                    ReadyForStatusChange = true;
-                                    a.Handled = true;
-                                }
-                            };
-                        window.PreviewKeyUp += (s, a) =>
-                            {
-                                var key = a.Key;
-                                var systemKey = a.SystemKey;
-                                if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
-                                    ReadyForStatusChange = true;
-                            };
+                        if (SelectedIndex < 0 || SelectedIndex >= Items.Count) return;
+                        var page = Items[SelectedIndex] as RibbonPage;
+                        if (page == null) return;
+                        var panel = page.Content as RibbonPageLayoutPanel;
+                        if (panel == null) return;
+                        foreach (var child in panel.Children)
+                        {
+                            var button = child as RibbonButton;
+                            if (button == null || string.IsNullOrEmpty(button.AccessKey) || button.AccessKey != a.Key.ToString() || button.Command == null) continue;
+                            var command = button.Command as ViewAction;
+                            if (command == null || !command.CanExecute(button.CommandParameter)) continue;
+                            command.Execute(button.CommandParameter);
+                            SetKeyboardShortcutsActive(window, false);
+                            a.Handled = true;
+                            return;
+                        }
+                    }
+                    if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
+                    {
+                        if (!ReadyForStatusChange) return;
+                        var state = !GetKeyboardShortcutsActive(window);
+                        SetKeyboardShortcutsActive(window, state);
+                        ReadyForStatusChange = !state;
+                        a.Handled = true;
+                    }
+                    else if (key == Key.Escape)
+                    {
+                        SetKeyboardShortcutsActive(window, false);
+                        ReadyForStatusChange = true;
+                        a.Handled = true;
                     }
                 };
+                window.PreviewKeyUp += (s, a) =>
+                {
+                    var key = a.Key;
+                    var systemKey = a.SystemKey;
+                    if ((key == Key.LeftAlt || key == Key.RightAlt) || (key == Key.System && (systemKey == Key.LeftAlt || systemKey == Key.RightAlt)))
+                        ReadyForStatusChange = true;
+                };
+            };
         }
 
         /// <summary>
@@ -104,13 +102,15 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Indicates whether the user has pressed the ALT key and thus activated display of keyboard shortcuts</summary>
         public static readonly DependencyProperty KeyboardShortcutsActiveProperty = DependencyProperty.RegisterAttached("KeyboardShortcutsActive", typeof (bool), typeof (ViewActionRibbon), new FrameworkPropertyMetadata(false) {Inherits = true});
+
         /// <summary>Indicates whether the user has pressed the ALT key and thus activated display of keyboard shortcuts</summary>
         /// <param name="obj">The obj.</param>
         /// <returns>System.String.</returns>
         public static bool GetKeyboardShortcutsActive(DependencyObject obj)
         {
-            return (bool)obj.GetValue(KeyboardShortcutsActiveProperty);
+            return (bool) obj.GetValue(KeyboardShortcutsActiveProperty);
         }
+
         /// <summary>Indicates whether the user has pressed the ALT key and thus activated display of keyboard shortcuts</summary>
         public static void SetKeyboardShortcutsActive(DependencyObject obj, bool value)
         {
@@ -122,13 +122,14 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         public bool FirstPageIsSpecial
         {
-            get { return (bool)GetValue(FirstPageIsSpecialProperty); }
+            get { return (bool) GetValue(FirstPageIsSpecialProperty); }
             set { SetValue(FirstPageIsSpecialProperty, value); }
         }
+
         /// <summary>
         /// Indicates whether the first ribbon page is to be handled differently as a file menu
         /// </summary>
-        public static readonly DependencyProperty FirstPageIsSpecialProperty = DependencyProperty.Register("FirstPageIsSpecial", typeof(bool), typeof(ViewActionRibbon), new PropertyMetadata(true));
+        public static readonly DependencyProperty FirstPageIsSpecialProperty = DependencyProperty.Register("FirstPageIsSpecial", typeof (bool), typeof (ViewActionRibbon), new PropertyMetadata(true));
 
         /// <summary>
         /// For internal use only
@@ -140,52 +141,56 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         public string EmptyGlobalCategoryTitle
         {
-            get { return (string)GetValue(EmptyGlobalCategoryTitleProperty); }
+            get { return (string) GetValue(EmptyGlobalCategoryTitleProperty); }
             set { SetValue(EmptyGlobalCategoryTitleProperty, value); }
         }
+
         /// <summary>
         /// Title for empty global category titles (default: File)
         /// </summary>
-        public static readonly DependencyProperty EmptyGlobalCategoryTitleProperty = DependencyProperty.Register("EmptyGlobalCategoryTitle", typeof(string), typeof(ViewActionRibbon), new PropertyMetadata("File"));
+        public static readonly DependencyProperty EmptyGlobalCategoryTitleProperty = DependencyProperty.Register("EmptyGlobalCategoryTitle", typeof (string), typeof (ViewActionRibbon), new PropertyMetadata("File"));
 
         /// <summary>
         /// Title for empty local category titles (default: File)
         /// </summary>
         public string EmptyLocalCategoryTitle
         {
-            get { return (string)GetValue(EmptyLocalCategoryTitleProperty); }
+            get { return (string) GetValue(EmptyLocalCategoryTitleProperty); }
             set { SetValue(EmptyLocalCategoryTitleProperty, value); }
         }
+
         /// <summary>
         /// Title for empty local category titles (default: File)
         /// </summary>
-        public static readonly DependencyProperty EmptyLocalCategoryTitleProperty = DependencyProperty.Register("EmptyLocalCategoryTitle", typeof(string), typeof(ViewActionRibbon), new PropertyMetadata("File"));
+        public static readonly DependencyProperty EmptyLocalCategoryTitleProperty = DependencyProperty.Register("EmptyLocalCategoryTitle", typeof (string), typeof (ViewActionRibbon), new PropertyMetadata("File"));
 
         /// <summary>
         /// Indicates whether local categories (ribbon pages populated from local/individual view actions) shall use the special colors
         /// </summary>
         public bool HighlightLocalCategories
         {
-            get { return (bool)GetValue(HighlightLocalCategoriesProperty); }
+            get { return (bool) GetValue(HighlightLocalCategoriesProperty); }
             set { SetValue(HighlightLocalCategoriesProperty, value); }
         }
+
         /// <summary>
         /// Indicates whether local categories (ribbon pages populated from local/individual view actions) shall use the special colors
         /// </summary>
-        public static readonly DependencyProperty HighlightLocalCategoriesProperty = DependencyProperty.Register("HighlightLocalCategories", typeof(bool), typeof(ViewActionRibbon), new PropertyMetadata(true));
+        public static readonly DependencyProperty HighlightLocalCategoriesProperty = DependencyProperty.Register("HighlightLocalCategories", typeof (bool), typeof (ViewActionRibbon), new PropertyMetadata(true));
 
         /// <summary>
         /// Indicates whether the first special ribbon page is active
         /// </summary>
         public bool IsSpecialFirstPageActive
         {
-            get { return (bool)GetValue(IsSpecialFirstPageActiveProperty); }
+            get { return (bool) GetValue(IsSpecialFirstPageActiveProperty); }
             set { SetValue(IsSpecialFirstPageActiveProperty, value); }
         }
+
         /// <summary>
         /// Indicates whether the first special ribbon page is active
         /// </summary>
-        public static readonly DependencyProperty IsSpecialFirstPageActiveProperty = DependencyProperty.Register("IsSpecialFirstPageActive", typeof(bool), typeof(ViewActionRibbon), new PropertyMetadata(false, IsSpecialFirstPageActiveChanged));
+        public static readonly DependencyProperty IsSpecialFirstPageActiveProperty = DependencyProperty.Register("IsSpecialFirstPageActive", typeof (bool), typeof (ViewActionRibbon), new PropertyMetadata(false, IsSpecialFirstPageActiveChanged));
 
         /// <summary>
         /// Determines whether [is special first page active changed] [the specified dependency object].
@@ -224,20 +229,20 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Occurs when the special first page is activated
         /// </summary>
         public static readonly RoutedEvent SpecialFirstPageActivateEvent = EventManager.RegisterRoutedEvent("SpecialFirstPageActivate", RoutingStrategy.Bubble, typeof (RoutedEventHandler), typeof (ViewActionRibbon));
- 
+
         /// <summary>
         /// Occurs when the special first page is activated
         /// </summary>
         public event RoutedEventHandler SpecialFirstPageActivate
         {
-            add { AddHandler(SpecialFirstPageActivateEvent, value); } 
+            add { AddHandler(SpecialFirstPageActivateEvent, value); }
             remove { RemoveHandler(SpecialFirstPageActivateEvent, value); }
         }
 
         /// <summary>
         /// Occurs when the special first page is deactivated
         /// </summary>
-        public static readonly RoutedEvent SpecialFirstPageDeactivateEvent = EventManager.RegisterRoutedEvent("SpecialFirstPageDeactivate", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ViewActionRibbon));
+        public static readonly RoutedEvent SpecialFirstPageDeactivateEvent = EventManager.RegisterRoutedEvent("SpecialFirstPageDeactivate", RoutingStrategy.Bubble, typeof (RoutedEventHandler), typeof (ViewActionRibbon));
 
         /// <summary>
         /// Occurs when the special first page is activated
@@ -256,16 +261,18 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
+
         /// <summary>
         /// Model dependency property
         /// </summary>
-        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(object), typeof(ViewActionRibbon), new UIPropertyMetadata(null, ModelChanged));
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof (object), typeof (ViewActionRibbon), new UIPropertyMetadata(null, ModelChanged));
+
         /// <summary>
         /// Change handler for model property
         /// </summary>
         /// <param name="d">The dependency object that triggered this change.</param>
         /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        static void ModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ribbon = d as ViewActionRibbon;
             if (ribbon == null) return;
@@ -293,19 +300,22 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return GetValue(SelectedViewProperty); }
             set { SetValue(SelectedViewProperty, value); }
         }
+
         /// <summary>
         /// Selected view dependency property
         /// </summary>
-        public static readonly DependencyProperty SelectedViewProperty = DependencyProperty.Register("SelectedView", typeof(object), typeof(ViewActionRibbon), new UIPropertyMetadata(null, SelectedViewChanged));
+        public static readonly DependencyProperty SelectedViewProperty = DependencyProperty.Register("SelectedView", typeof (object), typeof (ViewActionRibbon), new UIPropertyMetadata(null, SelectedViewChanged));
+
         /// <summary>
         /// Change handler for selected view property
         /// </summary>
         /// <param name="d">The dependency object that triggered this change.</param>
         /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        static void SelectedViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void SelectedViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
-            var ribbon = d as ViewActionRibbon; if (ribbon == null) return;
+            var ribbon = d as ViewActionRibbon;
+            if (ribbon == null) return;
             var viewResult = e.NewValue as ViewResult;
             if (viewResult == null)
             {
@@ -329,24 +339,26 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <value><c>true</c> if [force top level menu items upper case]; otherwise, <c>false</c>.</value>
         public bool ForceTopLevelTitlesUpperCase
         {
-            get { return (bool)GetValue(ForceTopLevelTitlesUpperCaseProperty); }
+            get { return (bool) GetValue(ForceTopLevelTitlesUpperCaseProperty); }
             set { SetValue(ForceTopLevelTitlesUpperCaseProperty, value); }
         }
+
         /// <summary>
         /// If set to true, the top level menu items will be forced to be upper case
         /// </summary>
-        public static readonly DependencyProperty ForceTopLevelTitlesUpperCaseProperty = DependencyProperty.Register("ForceTopLevelTitlesUpperCase", typeof(bool), typeof(ViewActionRibbon), new PropertyMetadata(true, ForceTopLevelTitlesUpperCaseChanged));
+        public static readonly DependencyProperty ForceTopLevelTitlesUpperCaseProperty = DependencyProperty.Register("ForceTopLevelTitlesUpperCase", typeof (bool), typeof (ViewActionRibbon), new PropertyMetadata(true, ForceTopLevelTitlesUpperCaseChanged));
 
         private static void ForceTopLevelTitlesUpperCaseChanged(DependencyObject d, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             var ribbon = d as ViewActionRibbon;
             if (ribbon != null) ribbon.PopulateRibbon(ribbon.Model as IHaveActions);
         }
-        
+
         /// <summary>
         /// Attached property used to reference the command/action on any custom ribbon item
         /// </summary>
-        public static readonly DependencyProperty RibbonItemCommandProperty = DependencyProperty.RegisterAttached("RibbonItemCommand", typeof(ICommand), typeof(ViewActionRibbon), new PropertyMetadata(null));
+        public static readonly DependencyProperty RibbonItemCommandProperty = DependencyProperty.RegisterAttached("RibbonItemCommand", typeof (ICommand), typeof (ViewActionRibbon), new PropertyMetadata(null));
+
         /// <summary>
         /// Attached property used to reference the command/action on any custom ribbon item
         /// </summary>
@@ -356,6 +368,7 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             return (ICommand) d.GetValue(RibbonItemCommandProperty);
         }
+
         /// <summary>
         /// Attached property used to reference the command/action on any custom ribbon item
         /// </summary>
@@ -476,7 +489,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         protected virtual void AfterTabCreated()
         {
-            
+
         }
 
         /// <summary>
@@ -522,23 +535,7 @@ namespace CODE.Framework.Wpf.Mvvm
                         var command = GetRibbonItemCommand(matchingAction.ActionView);
                         if (command == null) SetRibbonItemCommand(matchingAction.ActionView, matchingAction);
                         if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = matchingAction.ActionView});
-                        var existingParent = VisualTreeHelper.GetParent(matchingAction.ActionView);
-                        if (existingParent != null) // For some reason, this object is already parented somewhere else (perhaps we switched from a different theme), so we have to remove it
-                        {
-                            var contentControl = existingParent as ContentControl;
-                            if (contentControl != null) contentControl.Content = null;
-                            else
-                            {
-                                var itemsControl = existingParent as ItemsControl;
-                                if (itemsControl != null) itemsControl.Items.Remove(matchingAction.ActionView);
-                                else
-                                {
-                                    var childControl = existingParent as Panel;
-                                    if (childControl != null) childControl.Children.Remove(matchingAction.ActionView);
-                                    else throw new NotSupportedException("Can't remove custom ribbon view from current parent control of type " + existingParent.GetType());
-                                }
-                            }
-                        }
+                        ElementHelper.DetachElementFromParent(matchingAction.ActionView);
                         if (matchingAction.ActionView.Style == null)
                         {
                             var resource = TryFindResource("CODE.Framework-Ribbon-CustomControlContainerStyle");
@@ -572,7 +569,7 @@ namespace CODE.Framework.Wpf.Mvvm
                                 Visibility = matchingAction.Visibility
                             };
                         newRibbonButton.IsVisibleChanged += (s, e) => InvalidateAll();
-                        newRibbonButton.SetBinding(ContentControl.ContentProperty, new Binding("Caption") { Source = matchingAction, Mode = BindingMode.OneWay });
+                        newRibbonButton.SetBinding(ContentControl.ContentProperty, new Binding("Caption") {Source = matchingAction, Mode = BindingMode.OneWay});
                         CreateMenuItemBinding(matchingAction, newRibbonButton);
                         if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = newRibbonButton});
                         if (matchingAction.ViewActionType == ViewActionTypes.Toggle) newRibbonButton.SetBinding(RibbonButton.IsCheckedProperty, new Binding("IsChecked") {Source = matchingAction});
@@ -681,11 +678,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Access key to be displayed for the page</summary>
         public string PageAccessKey
         {
-            get { return (string)GetValue(PageAccessKeyProperty); }
+            get { return (string) GetValue(PageAccessKeyProperty); }
             set { SetValue(PageAccessKeyProperty, value); }
         }
+
         /// <summary>Access key to be displayed for the page</summary>
-        public static readonly DependencyProperty PageAccessKeyProperty = DependencyProperty.Register("PageAccessKey", typeof(string), typeof(RibbonPage), new PropertyMetadata(string.Empty, OnPageAccessKeyChanged));
+        public static readonly DependencyProperty PageAccessKeyProperty = DependencyProperty.Register("PageAccessKey", typeof (string), typeof (RibbonPage), new PropertyMetadata(string.Empty, OnPageAccessKeyChanged));
 
         /// <summary>Fires when the page access key changes</summary>
         /// <param name="d">The dependency object.</param>
@@ -701,11 +699,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <value><c>true</c> if [page access key set]; otherwise, <c>false</c>.</value>
         public bool PageAccessKeySet
         {
-            get { return (bool)GetValue(PageAccessKeySetProperty); }
+            get { return (bool) GetValue(PageAccessKeySetProperty); }
             set { SetValue(PageAccessKeySetProperty, value); }
         }
+
         /// <summary>Indicates whether a page access key has been set</summary>
-        public static readonly DependencyProperty PageAccessKeySetProperty = DependencyProperty.Register("PageAccessKeySet", typeof(bool), typeof(RibbonPage), new PropertyMetadata(false));
+        public static readonly DependencyProperty PageAccessKeySetProperty = DependencyProperty.Register("PageAccessKeySet", typeof (bool), typeof (RibbonPage), new PropertyMetadata(false));
     }
 
     /// <summary>
@@ -732,22 +731,24 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         public Brush Icon
         {
-            get { return (Brush)GetValue(IconProperty); }
+            get { return (Brush) GetValue(IconProperty); }
             set { SetValue(IconProperty, value); }
         }
+
         /// <summary>
         /// Button Icon
         /// </summary>
-        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(Brush), typeof(RibbonButton), new PropertyMetadata(Brushes.Transparent));
+        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof (Brush), typeof (RibbonButton), new PropertyMetadata(Brushes.Transparent));
 
         /// <summary>Access key to be displayed for the button</summary>
         public string AccessKey
         {
-            get { return (string)GetValue(AccessKeyProperty); }
+            get { return (string) GetValue(AccessKeyProperty); }
             set { SetValue(AccessKeyProperty, value); }
         }
+
         /// <summary>Access key to be displayed for the button</summary>
-        public static readonly DependencyProperty AccessKeyProperty = DependencyProperty.Register("AccessKey", typeof(string), typeof(RibbonButton), new PropertyMetadata(string.Empty, OnAccessKeyChanged));
+        public static readonly DependencyProperty AccessKeyProperty = DependencyProperty.Register("AccessKey", typeof (string), typeof (RibbonButton), new PropertyMetadata(string.Empty, OnAccessKeyChanged));
 
         /// <summary>Fires when the access key changes</summary>
         /// <param name="d">The dependency object.</param>
@@ -763,27 +764,29 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <value><c>true</c> if [access key set]; otherwise, <c>false</c>.</value>
         public bool AccessKeySet
         {
-            get { return (bool)GetValue(AccessKeySetProperty); }
+            get { return (bool) GetValue(AccessKeySetProperty); }
             set { SetValue(AccessKeySetProperty, value); }
         }
+
         /// <summary>Indicates whether a page access key has been set</summary>
-        public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof(bool), typeof(RibbonButton), new PropertyMetadata(false));
+        public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof (bool), typeof (RibbonButton), new PropertyMetadata(false));
 
         /// <summary>Indicates whether the button is to be rendered as "checked" (often used in Toggle-style actions)</summary>
         public bool IsChecked
         {
-            get { return (bool)GetValue(IsCheckedProperty); }
+            get { return (bool) GetValue(IsCheckedProperty); }
             set { SetValue(IsCheckedProperty, value); }
         }
+
         /// <summary>Indicates whether the button is to be rendered as "checked" (often used in Toggle-style actions)</summary>
-        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(RibbonButton), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof (bool), typeof (RibbonButton), new PropertyMetadata(false));
     }
 
     /// <summary>
     /// Large button element used in ribbons
     /// </summary>
     public class RibbonButtonLarge : RibbonButton
-    {   
+    {
     }
 
     /// <summary>
@@ -815,47 +818,52 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Font Size used to render group titles</summary>
         public double GroupTitleFontSize
         {
-            get { return (double)GetValue(GroupTitleFontSizeProperty); }
+            get { return (double) GetValue(GroupTitleFontSizeProperty); }
             set { SetValue(GroupTitleFontSizeProperty, value); }
         }
+
         /// <summary>Font Size used to render group titles</summary>
-        public static readonly DependencyProperty GroupTitleFontSizeProperty = DependencyProperty.Register("GroupTitleFontSize", typeof(double), typeof(RibbonPageLayoutPanel), new PropertyMetadata(10d));
+        public static readonly DependencyProperty GroupTitleFontSizeProperty = DependencyProperty.Register("GroupTitleFontSize", typeof (double), typeof (RibbonPageLayoutPanel), new PropertyMetadata(10d));
 
         /// <summary>Font family used to render group titles</summary>
         public FontFamily GroupTitleFontFamily
         {
-            get { return (FontFamily)GetValue(GroupTitleFontFamilyProperty); }
+            get { return (FontFamily) GetValue(GroupTitleFontFamilyProperty); }
             set { SetValue(GroupTitleFontFamilyProperty, value); }
         }
+
         /// <summary>Font family used to render group titles</summary>
-        public static readonly DependencyProperty GroupTitleFontFamilyProperty = DependencyProperty.Register("GroupTitleFontFamily", typeof(FontFamily), typeof(RibbonPageLayoutPanel), new PropertyMetadata(new FontFamily("Segoe UI")));
+        public static readonly DependencyProperty GroupTitleFontFamilyProperty = DependencyProperty.Register("GroupTitleFontFamily", typeof (FontFamily), typeof (RibbonPageLayoutPanel), new PropertyMetadata(new FontFamily("Segoe UI")));
 
         /// <summary>Font weight used to render group titles</summary>
         public FontWeight GroupTitleFontWeight
         {
-            get { return (FontWeight)GetValue(GroupTitleFontWeightProperty); }
+            get { return (FontWeight) GetValue(GroupTitleFontWeightProperty); }
             set { SetValue(GroupTitleFontWeightProperty, value); }
         }
+
         /// <summary>Font weight used to render group titles</summary>
-        public static readonly DependencyProperty GroupTitleFontWeightProperty = DependencyProperty.Register("GroupTitleFontWeight", typeof(FontWeight), typeof(RibbonPageLayoutPanel), new PropertyMetadata(FontWeights.Normal));
+        public static readonly DependencyProperty GroupTitleFontWeightProperty = DependencyProperty.Register("GroupTitleFontWeight", typeof (FontWeight), typeof (RibbonPageLayoutPanel), new PropertyMetadata(FontWeights.Normal));
 
         /// <summary>Foreground brush used to render group titles</summary>
         public Brush GroupTitleForegroundBrush
         {
-            get { return (Brush)GetValue(GroupTitleForegroundBrushProperty); }
+            get { return (Brush) GetValue(GroupTitleForegroundBrushProperty); }
             set { SetValue(GroupTitleForegroundBrushProperty, value); }
         }
+
         /// <summary>Foreground brush used to render group titles</summary>
-        public static readonly DependencyProperty GroupTitleForegroundBrushProperty = DependencyProperty.Register("GroupTitleForegroundBrush", typeof(Brush), typeof(RibbonPageLayoutPanel), new PropertyMetadata(Brushes.Black));
+        public static readonly DependencyProperty GroupTitleForegroundBrushProperty = DependencyProperty.Register("GroupTitleForegroundBrush", typeof (Brush), typeof (RibbonPageLayoutPanel), new PropertyMetadata(Brushes.Black));
 
         /// <summary>Foreground brush opacity used to render group titles</summary>
         public double GroupTitleForegroundBrushOpacity
         {
-            get { return (double)GetValue(GroupTitleForegroundBrushOpacityProperty); }
+            get { return (double) GetValue(GroupTitleForegroundBrushOpacityProperty); }
             set { SetValue(GroupTitleForegroundBrushOpacityProperty, value); }
         }
+
         /// <summary>Foreground brush opacity used to render group titles</summary>
-        public static readonly DependencyProperty GroupTitleForegroundBrushOpacityProperty = DependencyProperty.Register("GroupTitleForegroundBrushOpacity", typeof(double), typeof(RibbonPageLayoutPanel), new PropertyMetadata(.6d));
+        public static readonly DependencyProperty GroupTitleForegroundBrushOpacityProperty = DependencyProperty.Register("GroupTitleForegroundBrushOpacity", typeof (double), typeof (RibbonPageLayoutPanel), new PropertyMetadata(.6d));
 
         /// <summary>
         /// When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
@@ -906,7 +914,7 @@ namespace CODE.Framework.Wpf.Mvvm
                         top = 0d;
                     }
 
-                    if (top + smallButton.DesiredSize.Height >  availableHeight)
+                    if (top + smallButton.DesiredSize.Height > availableHeight)
                     {
                         left += lastLargestWidth;
                         lastLargestWidth = 0d;
@@ -1145,13 +1153,14 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         public ViewActionRibbon Ribbon
         {
-            get { return (ViewActionRibbon)GetValue(RibbonProperty); }
+            get { return (ViewActionRibbon) GetValue(RibbonProperty); }
             set { SetValue(RibbonProperty, value); }
         }
+
         /// <summary>
         /// Reference to the ribbon control
         /// </summary>
-        public static readonly DependencyProperty RibbonProperty = DependencyProperty.Register("Ribbon", typeof(ViewActionRibbon), typeof(CloseSpecialRibbonUiButton), new PropertyMetadata(null));
+        public static readonly DependencyProperty RibbonProperty = DependencyProperty.Register("Ribbon", typeof (ViewActionRibbon), typeof (CloseSpecialRibbonUiButton), new PropertyMetadata(null));
 
         /// <summary>
         /// Called when a <see cref="T:System.Windows.Controls.Button" /> is clicked.
@@ -1222,16 +1231,18 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
+
         /// <summary>
         /// Model dependency property
         /// </summary>
-        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(object), typeof(SpecialFirstPageActionList), new UIPropertyMetadata(null, ModelChanged));
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof (object), typeof (SpecialFirstPageActionList), new UIPropertyMetadata(null, ModelChanged));
+
         /// <summary>
         /// Change handler for model property
         /// </summary>
         /// <param name="d">The dependency object that triggered this change.</param>
         /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        static void ModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var list = d as SpecialFirstPageActionList;
             if (list == null) return;
@@ -1254,16 +1265,18 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return GetValue(SelectedViewProperty); }
             set { SetValue(SelectedViewProperty, value); }
         }
+
         /// <summary>
         /// Selected view dependency property
         /// </summary>
-        public static readonly DependencyProperty SelectedViewProperty = DependencyProperty.Register("SelectedView", typeof(object), typeof(SpecialFirstPageActionList), new UIPropertyMetadata(null, SelectedViewChanged));
+        public static readonly DependencyProperty SelectedViewProperty = DependencyProperty.Register("SelectedView", typeof (object), typeof (SpecialFirstPageActionList), new UIPropertyMetadata(null, SelectedViewChanged));
+
         /// <summary>
         /// Change handler for selected view property
         /// </summary>
         /// <param name="d">The dependency object that triggered this change.</param>
         /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        static void SelectedViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void SelectedViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
             var list = d as SpecialFirstPageActionList;
@@ -1306,11 +1319,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 foreach (var action in matchingActions)
                 {
                     var button = new SpecialFirstPageRibbonButton
-                        {
-                            Content = action.Caption,
-                            Command = action,
-                            AccessKey = action.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper()
-                        };
+                    {
+                        Content = action.Caption,
+                        Command = action,
+                        AccessKey = action.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper()
+                    };
                     CreateMenuItemBinding(action, button);
                     Children.Add(button);
                 }
@@ -1324,7 +1337,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="ribbonButton">The ribbon button.</param>
         private static void CreateMenuItemBinding(IViewAction action, FrameworkElement ribbonButton)
         {
-            ribbonButton.SetBinding(VisibilityProperty, new Binding("Availability") { Source = action, Converter = new AvailabilityToVisibleConverter() });
+            ribbonButton.SetBinding(VisibilityProperty, new Binding("Availability") {Source = action, Converter = new AvailabilityToVisibleConverter()});
         }
     }
 
@@ -1344,7 +1357,7 @@ namespace CODE.Framework.Wpf.Mvvm
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value is ViewActionAvailabilities)) return Visibility.Collapsed;
-            var availability = (ViewActionAvailabilities)value;
+            var availability = (ViewActionAvailabilities) value;
             return availability == ViewActionAvailabilities.Available ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -1381,7 +1394,7 @@ namespace CODE.Framework.Wpf.Mvvm
             var result = Visibility.Collapsed;
             foreach (var value in values)
             {
-                var visibility = (Visibility)value;
+                var visibility = (Visibility) value;
 
                 if (result == Visibility.Collapsed && (visibility == Visibility.Hidden || visibility == Visibility.Visible)) result = visibility;
                 else if (result == Visibility.Hidden && visibility == Visibility.Visible) return Visibility.Visible; // It can't be more than visible, so we can simply return this
@@ -1424,7 +1437,7 @@ namespace CODE.Framework.Wpf.Mvvm
             var result = Visibility.Visible;
             foreach (var value in values)
             {
-                var visibility = (Visibility)value;
+                var visibility = (Visibility) value;
                 if (visibility == Visibility.Collapsed) return Visibility.Collapsed;
                 if (result == Visibility.Visible && visibility == Visibility.Hidden) result = Visibility.Hidden;
             }
@@ -1452,6 +1465,7 @@ namespace CODE.Framework.Wpf.Mvvm
     public class ChildrenCollectionCountToVisibleConverter : IValueConverter
     {
         private readonly UIElementCollection _children;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChildrenCollectionCountToVisibleConverter" /> class.
         /// </summary>
@@ -1506,11 +1520,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Access key to be displayed for the button</summary>
         public string AccessKey
         {
-            get { return (string)GetValue(AccessKeyProperty); }
+            get { return (string) GetValue(AccessKeyProperty); }
             set { SetValue(AccessKeyProperty, value); }
         }
+
         /// <summary>Access key to be displayed for the button</summary>
-        public static readonly DependencyProperty AccessKeyProperty = DependencyProperty.Register("AccessKey", typeof(string), typeof(SpecialFirstPageRibbonButton), new PropertyMetadata(string.Empty, OnAccessKeyChanged));
+        public static readonly DependencyProperty AccessKeyProperty = DependencyProperty.Register("AccessKey", typeof (string), typeof (SpecialFirstPageRibbonButton), new PropertyMetadata(string.Empty, OnAccessKeyChanged));
 
         /// <summary>Fires when the access key changes</summary>
         /// <param name="d">The dependency object.</param>
@@ -1526,10 +1541,11 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <value><c>true</c> if [access key set]; otherwise, <c>false</c>.</value>
         public bool AccessKeySet
         {
-            get { return (bool)GetValue(AccessKeySetProperty); }
+            get { return (bool) GetValue(AccessKeySetProperty); }
             set { SetValue(AccessKeySetProperty, value); }
         }
+
         /// <summary>Indicates whether a page access key has been set</summary>
-        public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof(bool), typeof(SpecialFirstPageRibbonButton), new PropertyMetadata(false));
+        public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof (bool), typeof (SpecialFirstPageRibbonButton), new PropertyMetadata(false));
     }
 }

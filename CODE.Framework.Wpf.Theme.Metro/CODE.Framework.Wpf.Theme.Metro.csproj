@@ -58,8 +58,11 @@
     <Compile Include="Classes\ContextBindingDummy.cs" />
     <Compile Include="Classes\HorizontalScrollEnabledToVisibilityConverter.cs" />
     <Compile Include="Classes\MetroStandardFeatures.cs" />
+    <Compile Include="Classes\PointingDeviceInputModeToMarginConverter.cs" />
+    <Compile Include="Classes\TileTemplateSelector.cs" />
     <Compile Include="Controls\CircularProgressAnimation.cs" />
     <Compile Include="Controls\LinearProgressAnimation.cs" />
+    <Compile Include="Controls\MetroScrollViewer.cs" />
     <Compile Include="Controls\PeekAnimationContainer.cs" />
     <Compile Include="Controls\ShellMetroTiles.cs" />
     <Compile Include="Controls\ShellTabControl.cs" />
@@ -251,8 +254,32 @@
     <Compile Include="StandardViews\TileNarrow.xaml.cs">
       <DependentUpon>TileNarrow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StandardViews\TileNarrow1Image.xaml.cs">
+      <DependentUpon>TileNarrow1Image.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileTiny.xaml.cs">
+      <DependentUpon>TileTiny.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileTiny1Image.xaml.cs">
+      <DependentUpon>TileTiny1Image.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StandardViews\TileWide.xaml.cs">
       <DependentUpon>TileWide.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileWide1Image.xaml.cs">
+      <DependentUpon>TileWide1Image.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileWide5Images.xaml.cs">
+      <DependentUpon>TileWide5Images.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileWideSquare.xaml.cs">
+      <DependentUpon>TileWideSquare.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileWideSquare1Image.xaml.cs">
+      <DependentUpon>TileWideSquare1Image.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StandardViews\TileWideSquare5Images.xaml.cs">
+      <DependentUpon>TileWideSquare5Images.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +295,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Metro-Control-Menu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Metro-Control-RichTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -280,7 +311,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Metro-Layout-MultiPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Metro-Layout-OneToManyPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Metro-Control-ViewActionItemsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -656,7 +695,39 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="StandardViews\TileNarrow1Image.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileTiny.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileTiny1Image.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StandardViews\TileWide.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileWide1Image.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileWide5Images.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileWideSquare.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileWideSquare1Image.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StandardViews\TileWideSquare5Images.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,1691 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CODE.Framework.Wpf.Theme.Newsroom</name>
+    </assembly>
+    <members>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.AvailabilityToVisibilityConverter">
+            <summary>
+            Converter used to convert availability information to visibility
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.AvailabilityToVisibilityConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value produced by the binding source.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.AvailabilityToVisibilityConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value that is produced by the binding target.</param>
+            <param name="targetType">The type to convert to.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy">
+            <summary>Invisible object used to bind elements together that are otherwise not directly bindable</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.SourceProperty">
+            <summary>
+            Source
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.UpdateDestination(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Updates the destination.
+            </summary>
+            <param name="s">The source</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.DestinationProperty">
+            <summary>
+            Destination
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.Source">
+            <summary>
+            Gets or sets the source.
+            </summary>
+            <value>
+            The source.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.Destination">
+            <summary>
+            Gets or sets the destination.
+            </summary>
+            <value>
+            The destination.
+            </value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.HorizontalScrollEnabledToVisibilityConverter">
+            <summary>
+            Converts the ability to scroll horizontally to visibility
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.HorizontalScrollEnabledToVisibilityConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
+            </summary>
+            <param name="values">The array of values that the source bindings in the <see cref="T:System.Windows.Data.MultiBinding"/> produces. The value <see cref="F:System.Windows.DependencyProperty.UnsetValue"/> indicates that the source binding has no value to provide for conversion.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>
+            A converted value.If the method returns null, the valid null value is used.A return value of <see cref="T:System.Windows.DependencyProperty"/>.<see cref="F:System.Windows.DependencyProperty.UnsetValue"/> indicates that the converter did not produce a value, and that the binding will use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue"/> if it is available, or else will use the default value.A return value of <see cref="T:System.Windows.Data.Binding"/>.<see cref="F:System.Windows.Data.Binding.DoNothing"/> indicates that the binding does not transfer the value or use the <see cref="P:System.Windows.Data.BindingBase.FallbackValue"/> or the default value.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.HorizontalScrollEnabledToVisibilityConverter.ConvertBack(System.Object,System.Type[],System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a binding target value to the source binding values.
+            </summary>
+            <param name="value">The value that the binding target produces.</param>
+            <param name="targetTypes">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>
+            An array of values that have been converted from the target value back to the source values.
+            </returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.NewsroomStandardFeatures">
+            <summary>
+            Standard features supported by the Metro theme
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Classes.NewsroomStandardFeatures.StandardViewFactory">
+            <summary>Reference to the standard view factory (if supported)</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.NewsroomStandardViewFactory">
+            <summary>Factory to create standard views supported by Metro</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.NewsroomStandardViewFactory.GetStandardView(System.String)">
+            <summary>Returns a standard view based on the view name as a string</summary>
+            <param name="viewName">Standard view name</param>
+            <returns>Standard view or null</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Classes.NewsroomStandardViewFactory.GetStandardView(CODE.Framework.Wpf.Mvvm.StandardViews)">
+            <summary>Returns a standard view based on the standard view enumeration</summary>
+            <param name="standardView">Standard view identifier</param>
+            <returns>Standard view or null</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation">
+            <summary>Simple rendering mechanism to render a standard Newsroom loading animation (circular)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotCountProperty">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotDiameterProperty">
+            <summary>Defines the diameter of each dot within the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotBrushProperty">
+            <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotSpaceFactorProperty">
+            <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotAnimationSpeedFactorProperty">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.IsActiveProperty">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.TriggerVisualRefresh(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>Triggers a re-creation of all the child elements that make up the animation</summary>
+            <param name="o">Dependency Object</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.CreateVisuals(System.Int32)">
+            <summary>Creates the actual visual elements that make up the animation</summary>
+            <param name="circleCount">Number of circles to use in the animation</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.StartAnimation">
+            <summary>
+            Starts the animation.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation._animationInStartMode">
+            <summary>Internal field used to prevent recursive calls</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.StopAnimation">
+            <summary>
+            Stops the animation.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotSpaceFactor">
+            <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation">
+            <summary>Simple rendering mechanism to render a standard Newsroom loading animatin (circular)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotCountProperty">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotDiameterProperty">
+            <summary>Defines the diameter of each dot within the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotBrushProperty">
+            <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactorProperty">
+            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotAnimationSpeedFactorProperty">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.IsActiveProperty">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.TriggerVisualRefresh(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>Triggers a re-creation of all the child elements that make up the animation</summary>
+            <param name="o">Dependency Object</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.CreateVisuals(System.Int32)">
+            <summary>Creates the actual visual elements that make up the animation</summary>
+            <param name="circleCount">Number of circles to use in the animation</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.StartAnimation">
+            <summary>
+            Starts the animation.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation._animationInStartMode">
+            <summary>Internal field used to prevent recursive calls</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.StopAnimation">
+            <summary>
+            Stops the animation.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactor">
+            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomScrollViewer">
+            <summary>
+            Special scroll viewer for Newsroom UIs.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomScrollViewer.OnMouseWheel(System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Responds to a click of the mouse wheel.
+            </summary>
+            <param name="e">Required arguments that describe this event.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer">
+            <summary>
+            This control has two content elements which make up the entire surface. Elements are
+            aligned vertically. Animations move them up and down.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer"/> class.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTopProperty">
+            <summary>Content positioned at the top</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentBottomProperty">
+            <summary>Content positioned at the top</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.VerticalSlideProperty">
+            <summary>Defines how far the animation moves the visuals vertically</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTransitionDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayProperty">
+            <summary>Time (in milliseconds) used to delay the start of the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.StartWithTopContentProperty">
+            <summary>Indicates whether the top content is to be displayed initially</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTop">
+            <summary>Content positioned at the top</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentBottom">
+            <summary>Content positioned at the top</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.VerticalSlide">
+            <summary>Defines how far the animation moves the visuals vertically</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDuration">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDuration">
+            <summary>Time (in milliseconds) the bottom content should be displayed</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTransitionDuration">
+            <summary>Time (in milliseconds) used for the transition from one content to the other</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelay">
+            <summary>Time (in milliseconds) used to delay the start of the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayRandomAddition">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAddition">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAddition">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.StartWithTopContent">
+            <summary>Indicates whether the top content is to be displayed initially</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton">
+            <summary>
+            Special button class used for Newsroom styled tiles
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.IconProperty">
+            <summary>
+            Gets or sets the icon.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.CaptionProperty">
+            <summary>
+            Gets or sets the caption.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.SignificanceProperty">
+            <summary>
+            Gets or sets the significance.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.OnSignificanceChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the SignificanceProperty changes
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.HighSignificanceVisibleProperty">
+            <summary>
+            Defines whether high significance items are visible
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Icon">
+            <summary>
+            Gets or sets the icon.
+            </summary>
+            <value>The icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Caption">
+            <summary>
+            Gets or sets the caption.
+            </summary>
+            <value>The caption.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Significance">
+            <summary>
+            Gets or sets the significance.
+            </summary>
+            <value>The significance.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.HighSignificanceVisible">
+            <summary>
+            Defines whether high significance items are visible
+            </summary>
+            <value>The high significance visible.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles">
+            <summary>
+            Special version of the MetroTiles layout specific to start screens
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles.CreateAllMenuKeyBindings">
+            <summary>
+            Removes all key bindings from the current window that were associated with a view category menu
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles.RemoveAllMenuKeyBindings">
+            <summary>
+            Removes all key bindings from the current window that were associated with a view category menu
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement"/>-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>
+            The size that this element determines it needs during layout, based on its calculations of child element sizes.
+            </returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl">
+            <summary>
+            Tab Control used specifically as a view host in a Metro Shell
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl"/> class.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.PageSwitchedEvent">
+            <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.OnApplyTemplate">
+            <summary>
+            Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.MakeHomePageVisible">
+            <summary>
+            Makes the home page visible.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomeTitleProperty">
+            <summary>
+            Title for the home item in the tabs
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageVisibleProperty">
+            <summary>
+            Defines whether the homepage is the currently visible element
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageProperty">
+            <summary>
+            Visual for the homepage
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.PageSwitched">
+            <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomeTitle">
+            <summary>
+            Title for the home item in the tabs
+            </summary>
+            <value>The home title.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageVisible">
+            <summary>
+            Defines whether the homepage is the currently visible element
+            </summary>
+            <value>
+              <c>true</c> if home page visible; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePage">
+            <summary>
+            Visual for the homepage
+            </summary>
+            <value>
+            The home page.
+            </value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl">
+            <summary>
+            Special content control that is aware of its size and reduces margins accordingly
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MaximumMarginProperty">
+            <summary>Maximum margin allowed around the control</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumMarginProperty">
+            <summary>Minimum margin allowed around the control</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumDesiredControlSizeProperty">
+            <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.CalculateMargin">
+            <summary>This method re-calculates the actual margin the control should use</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MaximumMargin">
+            <summary>Maximum margin allowed around the control</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumMargin">
+            <summary>Minimum margin allowed around the control</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumDesiredControlSize">
+            <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Block">
+            <summary>
+            Interaction logic for Block.xaml
+            </summary>
+            <summary>
+            Block
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Block.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Block"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Block.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Components.LogoNameAndCount">
+            <summary>
+            Interaction logic for LogoNameAndCount.xaml
+            </summary>
+            <summary>
+            LogoNameAndCount
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Components.LogoNameAndCount.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Components.LogoNameAndCount"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Components.LogoNameAndCount.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data01">
+            <summary>
+            Interaction logic for Data01.xaml
+            </summary>
+            <summary>
+            Data01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data02">
+            <summary>
+            Interaction logic for Data02.xaml
+            </summary>
+            <summary>
+            Data02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data03">
+            <summary>
+            Interaction logic for Data03.xaml
+            </summary>
+            <summary>
+            Data03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Data03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage01">
+            <summary>
+            Interaction logic for DataAndImage01.xaml
+            </summary>
+            <summary>
+            DataAndImage01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage02">
+            <summary>
+            Interaction logic for DataAndImage02.xaml
+            </summary>
+            <summary>
+            DataAndImage02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage03">
+            <summary>
+            Interaction logic for DataAndImage03.xaml
+            </summary>
+            <summary>
+            DataAndImage03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataRowAndImage01">
+            <summary>
+            Interaction logic for DataRowAndImage01.xaml
+            </summary>
+            <summary>
+            DataRowAndImage01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataRowAndImage01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataRowAndImage01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataRowAndImage01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall01">
+            <summary>
+            Interaction logic for DataSmall01.xaml
+            </summary>
+            <summary>
+            DataSmall01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall02">
+            <summary>
+            Interaction logic for DataSmall02.xaml
+            </summary>
+            <summary>
+            DataSmall02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall03">
+            <summary>
+            Interaction logic for DataSmall03.xaml
+            </summary>
+            <summary>
+            DataSmall03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataSmall03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Fallback">
+            <summary>
+            Metro fallback standard view, which is used in case a desired standard view can't be found
+            </summary>
+            <summary>
+            Fallback
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Fallback.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Fallback"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Fallback.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Image">
+            <summary>
+            Interaction logic for Image.xaml
+            </summary>
+            <summary>
+            Image
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Image.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Image"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Image.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText01">
+            <summary>
+            Interaction logic for LargeBlockAndText01.xaml
+            </summary>
+            <summary>
+            LargeBlockAndText01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText02">
+            <summary>
+            Interaction logic for LargeBlockAndTexct02.xaml
+            </summary>
+            <summary>
+            LargeBlockAndText02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeBlockAndText02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImage">
+            <summary>
+            Interaction logic for LargeImage.xaml
+            </summary>
+            <summary>
+            LargeImage
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImage.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImage"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText01">
+            <summary>
+            Interaction logic for LargeImageAndText01.xaml
+            </summary>
+            <summary>
+            LargeImageAndText01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText02">
+            <summary>
+            Interaction logic for LargeImageAndText02.xaml
+            </summary>
+            <summary>
+            LargeImageAndText02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageAndText02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageCollection">
+            <summary>
+            Interaction logic for LargeImageCollection.xaml
+            </summary>
+            <summary>
+            LargeImageCollection
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageCollection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageCollection"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImageCollection.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText01">
+            <summary>
+            Interaction logic for LargePeekImageAndText01.xaml
+            </summary>
+            <summary>
+            LargePeekImageAndText01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText02">
+            <summary>
+            Interaction logic for LargePeekImageAndText02.xaml
+            </summary>
+            <summary>
+            LargePeekImageAndText02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText03">
+            <summary>
+            Interaction logic for LargePeekImageAndText03.xaml
+            </summary>
+            <summary>
+            LargePeekImageAndText03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText04">
+            <summary>
+            Interaction logic for LargePeekImageAndText04.xaml
+            </summary>
+            <summary>
+            LargePeekImageAndText04
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText04.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText04"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText04.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText05">
+            <summary>
+            Interaction logic for LargePeekImageAndText05.xaml
+            </summary>
+            <summary>
+            LargePeekImageAndText05
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText05.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText05"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText05.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText06">
+            <summary>
+            Interaction logic for LargePeekImageAndText06.xaml
+            </summary>
+            <summary>
+            LargePeekImageAndText06
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText06.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText06"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageAndText06.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection01">
+            <summary>
+            Interaction logic for LargePeekImageCollection01.xaml
+            </summary>
+            <summary>
+            LargePeekImageCollection01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection02">
+            <summary>
+            Interaction logic for LargePeekImageCollection02.xaml
+            </summary>
+            <summary>
+            LargePeekImageCollection02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection03">
+            <summary>
+            Interaction logic for LargePeekImageCollection03.xaml
+            </summary>
+            <summary>
+            LargePeekImageCollection03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection04">
+            <summary>
+            Interaction logic for LargePeekImageCollection04.xaml
+            </summary>
+            <summary>
+            LargePeekImageCollection04
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection04.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection04"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection04.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection05">
+            <summary>
+            Interaction logic for LargePeekImageCollection05.xaml
+            </summary>
+            <summary>
+            LargePeekImageCollection05
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection05.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection05"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection05.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection06">
+            <summary>
+            Interaction logic for LargePeekImageCollection06.xaml
+            </summary>
+            <summary>
+            LargePeekImageCollection06
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection06.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection06"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargePeekImageCollection06.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText01">
+            <summary>
+            Interaction logic for LargeSmallImageAndText01.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText02">
+            <summary>
+            Interaction logic for LargeSmallImageAndText02.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText03">
+            <summary>
+            Interaction logic for LargeSmallImageAndText03.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText04">
+            <summary>
+            Interaction logic for LargeSmallImageAndText04.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText04
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText04.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText04"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText04.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText05">
+            <summary>
+            Interaction logic for LargeSmallImageAndText05.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText05
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText05.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText05"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText05.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText06">
+            <summary>
+            Interaction logic for LargeSmallImageAndText06.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText06
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText06.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText06"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText06.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText07">
+            <summary>
+            Interaction logic for LargeSmallImageAndText07.xaml
+            </summary>
+            <summary>
+            LargeSmallImageAndText07
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText07.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText07"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeSmallImageAndText07.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText01">
+            <summary>
+            Interaction logic for LargeText01.xaml
+            </summary>
+            <summary>
+            LargeText01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText02">
+            <summary>
+            Interaction logic for LargeText02.xaml
+            </summary>
+            <summary>
+            LargeText02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText03">
+            <summary>
+            Interaction logic for LargeText03.xaml
+            </summary>
+            <summary>
+            LargeText03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText04">
+            <summary>
+            Interaction logic for LargeText04.xaml
+            </summary>
+            <summary>
+            LargeText04
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText04.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText04"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText04.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText05">
+            <summary>
+            Interaction logic for LargeText05.xaml
+            </summary>
+            <summary>
+            LargeText05
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText05.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText05"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText05.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText06">
+            <summary>
+            Interaction logic for LargeText06.xaml
+            </summary>
+            <summary>
+            LargeText06
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText06.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText06"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText06.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText07">
+            <summary>
+            Interaction logic for LargeText07.xaml
+            </summary>
+            <summary>
+            LargeText07
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText07.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText07"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText07.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText08">
+            <summary>
+            Interaction logic for LargeText08.xaml
+            </summary>
+            <summary>
+            LargeText08
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText08.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText08"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText08.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText09">
+            <summary>
+            Interaction logic for LargeText09.xaml
+            </summary>
+            <summary>
+            LargeText09
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText09.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText09"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText09.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText10">
+            <summary>
+            Interaction logic for LargeText10.xaml
+            </summary>
+            <summary>
+            LargeText10
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText10.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText10"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText10.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText11">
+            <summary>
+            Interaction logic for LargeText11.xaml
+            </summary>
+            <summary>
+            LargeText11
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText11.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText11"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeText11.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Notifications">
+            <summary>
+            Interaction logic for Notifications.xaml
+            </summary>
+            <summary>
+            Notifications
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Notifications.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Notifications"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Notifications.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText01">
+            <summary>
+            Interaction logic for PeekImageAndText01.xaml
+            </summary>
+            <summary>
+            PeekImageAndText01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText02">
+            <summary>
+            Interaction logic for PeekImageAndText02.xaml
+            </summary>
+            <summary>
+            PeekImageAndText02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText03">
+            <summary>
+            Interaction logic for PeekImageAndText03.xaml
+            </summary>
+            <summary>
+            PeekImageAndText03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText04">
+            <summary>
+            Interaction logic for PeekImageAndText04.xaml
+            </summary>
+            <summary>
+            PeekImageAndText04
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText04.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText04"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText04.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText05">
+            <summary>
+            Interaction logic for PeekImageAndText05.xaml
+            </summary>
+            <summary>
+            PeekImageAndText05
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText05.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText05"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.PeekImageAndText05.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text01">
+            <summary>
+            Interaction logic for Text01.xaml
+            </summary>
+            <summary>
+            Text01
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text01.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text01"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text01.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text02">
+            <summary>
+            Interaction logic for Text02.xaml
+            </summary>
+            <summary>
+            Text02
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text02.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text02"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text02.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text03">
+            <summary>
+            Interaction logic for Text03.xaml
+            </summary>
+            <summary>
+            Text03
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text03.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text03"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text03.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text04">
+            <summary>
+            Interaction logic for Text04.xaml
+            </summary>
+            <summary>
+            Text04
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text04.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text04"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text04.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text05">
+            <summary>
+            Interaction logic for Text05.xaml
+            </summary>
+            <summary>
+            Text05
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text05.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text05"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Text05.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileNarrow">
+            <summary>
+            Interaction logic for TileNarrow.xaml
+            </summary>
+            <summary>
+            TileNarrow
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileNarrow.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileNarrow"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileNarrow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileTiny">
+            <summary>
+            Templates for tiny tiles
+            </summary>
+            <summary>
+            TileTiny
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileTiny.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileTiny"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileTiny.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWide">
+            <summary>
+            Interaction logic for TileWide.xaml
+            </summary>
+            <summary>
+            TileWide
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWide.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWide"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWide.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWideSquare">
+            <summary>
+            Tile template for large squares
+            </summary>
+            <summary>
+            TileWideSquare
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWideSquare.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWideSquare"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWideSquare.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

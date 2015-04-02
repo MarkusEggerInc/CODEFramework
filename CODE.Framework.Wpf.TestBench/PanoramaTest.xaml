@@ -1,0 +1,16 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.PanoramaTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf"
+        xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+        Title="Panorama Test" Height="600" Width="1000">
+    
+    <l:PanoramaPanel UnselectedHeaderForeground="Black" SelectedHeaderForeground="#0079CB">
+        <Rectangle Fill="Red" mvvm:View.Title="First" />
+        <Rectangle Fill="Green" mvvm:View.Title="Second" Visibility="Collapsed" />
+        <Rectangle Fill="Blue" mvvm:View.Title="Third" />
+        <Rectangle Fill="Orange" mvvm:View.Title="This is Four" />
+        <Rectangle Fill="Gold" mvvm:View.Title="And just one More" />
+    </l:PanoramaPanel>
+    
+</Window>

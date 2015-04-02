@@ -50,6 +50,8 @@
     </Compile>
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RestHelper.cs" />
+    <Compile Include="RestProxyHandler.cs" />
     <Compile Include="ServiceClient.cs" />
     <Compile Include="ServiceGardenLocal.cs" />
     <Compile Include="ServiceHelper.cs" />
@@ -58,6 +60,10 @@
     <ProjectReference Include="..\CODE.Framework.Core\CODE.Framework.Core.csproj">
       <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
       <Name>CODE.Framework.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Services.Contracts\CODE.Framework.Services.Contracts.csproj">
+      <Project>{E60C861C-70EA-42B2-AA6E-49A9FF63388F}</Project>
+      <Name>CODE.Framework.Services.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using CODE.Framework.Wpf.Mvvm;
 
 namespace CODE.Framework.Wpf.Theme.Metro.Classes

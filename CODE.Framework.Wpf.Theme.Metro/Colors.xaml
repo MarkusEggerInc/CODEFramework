@@ -4,25 +4,25 @@
     <!-- Standard theme colors -->
     <Color x:Key="CODE.Framework-Application-BackgroundColor1">Black</Color>
     <Color x:Key="CODE.Framework-Application-BackgroundColor2">White</Color>
-    <Color x:Key="CODE.Framework-Application-BackgroundColor3">DarkGreen</Color>
+    <Color x:Key="CODE.Framework-Application-BackgroundColor3">#1D1D1D</Color>
 
-    <Color x:Key="CODE.Framework-Application-ThemeColor1">#518BC9</Color>
-    <Color x:Key="CODE.Framework-Application-ThemeColor2">Teal</Color>
-    <Color x:Key="CODE.Framework-Application-ThemeColor3">LimeGreen</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor1">#0076BD</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor2">#00BD76</Color>
+    <Color x:Key="CODE.Framework-Application-ThemeColor3">#BD7600</Color>
 
     <Color x:Key="CODE.Framework-Application-ForegroundColor1">White</Color>
-    <Color x:Key="CODE.Framework-Application-ForegroundColor2">Black</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor2">WhiteSmoke</Color>
     <Color x:Key="CODE.Framework-Application-ForegroundColor3">Gray</Color>
 
     <Color x:Key="CODE.Framework-Application-HighlightColor1">Blue</Color>
     <Color x:Key="CODE.Framework-Application-HighlightColor2">CornflowerBlue</Color>
     <Color x:Key="CODE.Framework-Application-HighlightColor3">Yellow</Color>
 
-    <Color x:Key="CODE.Framework-Application-ShellHeaderColor">Black</Color>
-    <Color x:Key="CODE.Framework-Application-StandardIconColor">Black</Color>
+    <Color x:Key="CODE.Framework-Application-ShellHeaderColor">White</Color>
+    <Color x:Key="CODE.Framework-Application-StandardIconColor">White</Color>
 
     <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">White</Color>
-    <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Orange</Color>
+    <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">#0076BD</Color>
 
 
     <!-- Standard theme brushes -->
@@ -51,12 +51,12 @@
     <!-- Special colors only used in Metro -->
     <!-- Tile selection -->
     <Color x:Key="CODE.Framework-Metro-TileSelectionColor">White</Color>
-    <Color x:Key="CODE.Framework-Metro-TileSelectionCheckMarkColor">Orange</Color>
+    <Color x:Key="CODE.Framework-Metro-TileSelectionCheckMarkColor">#0076BD</Color>
 
     <!-- Application status bar -->
-    <Color x:Key="CODE.Framework-Metro-StatusReadyBackgroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusReadyBackgroundColor">#7FFFFFFF</Color>
     <Color x:Key="CODE.Framework-Metro-StatusReadyForegroundColor">Black</Color>
-    <Color x:Key="CODE.Framework-Metro-StatusProcessingBackgroundColor">White</Color>
+    <Color x:Key="CODE.Framework-Metro-StatusProcessingBackgroundColor">#7FFFFFFF</Color>
     <Color x:Key="CODE.Framework-Metro-StatusProcessingForegroundColor">Black</Color>
     <Color x:Key="CODE.Framework-Metro-StatusWarningBackgroundColor">DarkOrange</Color>
     <Color x:Key="CODE.Framework-Metro-StatusWarningForegroundColor">White</Color>
@@ -87,7 +87,7 @@
     <SolidColorBrush x:Key="CODE.Framework-Metro-NotificationBackgroundBrush" Color="{DynamicResource CODE.Framework-Metro-NotificationBackgroundColor}" />
     
     <!-- Icon colors -->
-    <Color x:Key="CODE.Framework-Metro-IconForegroundColor">Black</Color>
+    <Color x:Key="CODE.Framework-Metro-IconForegroundColor">White</Color>
 
     <!-- Icon brushes -->
     <SolidColorBrush x:Key="CODE.Framework-Metro-IconForegroundBrush" Color="{DynamicResource CODE.Framework-Metro-IconForegroundColor}" />

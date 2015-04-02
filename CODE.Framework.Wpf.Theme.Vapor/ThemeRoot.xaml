@@ -26,6 +26,7 @@
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
         <ResourceDictionary Source="Vapor-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Vapor-Layout-MultiPanel.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-OneToManyPanel.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-SimpleForm.xaml"/>

@@ -1,0 +1,59 @@
+﻿<Grid x:Class="CODE.Framework.Wpf.Theme.Newsroom.StandardViews.DataAndImage03"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}"
+      Height="75" Width="310"
+      ToolTip="{Binding ToolTipText}">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+
+    <!-- Main Content -->
+
+    <Rectangle Margin="10,5,0,5" Height="65" Width="50" Fill="{Binding Image1}" />
+
+    <Grid VerticalAlignment="Top" Margin="10,0" Grid.Column="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Main Content -->
+        <TextBlock Text="{Binding Text1}" Grid.ColumnSpan="3"
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Larger}" 
+                   FontWeight="Light"
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        <TextBlock Text="{Binding Text2}" Grid.Row="1"
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Normal}" 
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        <TextBlock Text="{Binding Text3}" Grid.Row="2"
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Normal}" 
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        <TextBlock Text="{Binding Text4}" Grid.Row="1" Grid.Column="2"
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Normal}" 
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+        <TextBlock Text="{Binding Text5}" Grid.Row="2" Grid.Column="2"
+                   FontFamily="{DynamicResource DefaultFont}" 
+                   FontSize="{DynamicResource FontSize-Normal}" 
+                   TextWrapping="NoWrap"
+                   Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+    </Grid>
+
+    <Rectangle Margin="0,5,10,5" VerticalAlignment="Bottom" Height="36" Width="36" Fill="{Binding Image2}" Grid.Column="2" />
+</Grid>

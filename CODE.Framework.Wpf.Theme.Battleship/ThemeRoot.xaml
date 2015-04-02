@@ -24,6 +24,7 @@
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
         <ResourceDictionary Source="Battleship-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-MultiPanel.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-OneToManyPanel.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-SimpleForm.xaml"/>

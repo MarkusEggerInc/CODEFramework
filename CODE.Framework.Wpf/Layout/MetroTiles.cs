@@ -34,6 +34,9 @@ namespace CODE.Framework.Wpf.Layout
         /// <summary>Width of a single tile (which is uniform across all objects in a tile layout... double width tiles are twice this value + horizontal tile spacing)</summary>
         public static readonly DependencyProperty TileWidthProperty = DependencyProperty.RegisterAttached("TileWidth", typeof (double), typeof (MetroTiles), new PropertyMetadata(150d, InvalidateEverything));
 
+        /// <summary>Visibility of the tile</summary>
+        public static readonly DependencyProperty TileVisibilityProperty = DependencyProperty.RegisterAttached("TileVisibility", typeof(Visibility), typeof(MetroTiles), new PropertyMetadata(Visibility.Visible, InvalidateEverything));
+
         /// <summary>Horizontal spacing of a tiles within groups</summary>
         public static readonly DependencyProperty HorizontalTileSpacingProperty = DependencyProperty.RegisterAttached("HorizontalTileSpacing", typeof (double), typeof (MetroTiles), new PropertyMetadata(10d, InvalidateEverything));
 
@@ -68,7 +71,7 @@ namespace CODE.Framework.Wpf.Layout
         public static readonly DependencyProperty HeaderForegroundBrushProperty = DependencyProperty.Register("HeaderForegroundBrush", typeof (Brush), typeof (MetroTiles), new UIPropertyMetadata(Brushes.Black, InvalidateEverything));
 
         /// <summary>Spacing between the caption and the element</summary>
-        public static readonly DependencyProperty HeaderSpacingProperty = DependencyProperty.Register("HeaderSpacing", typeof (double), typeof (MetroTiles), new UIPropertyMetadata(10d, InvalidateEverything));
+        public static readonly DependencyProperty HeaderSpacingProperty = DependencyProperty.Register("HeaderSpacing", typeof (double), typeof (MetroTiles), new UIPropertyMetadata(15d, InvalidateEverything));
 
         private readonly List<AutoHeaderTextRenderInfo> _headers = new List<AutoHeaderTextRenderInfo>();
 
@@ -194,6 +197,26 @@ namespace CODE.Framework.Wpf.Layout
             obj.SetValue(TileHeightProperty, value);
         }
 
+        /// <summary>
+        /// Gets the tile visibility.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>Visibility.</returns>
+        public static Visibility GetTileVisibility(DependencyObject obj)
+        {
+            return (Visibility)obj.GetValue(TileVisibilityProperty);
+        }
+
+        /// <summary>
+        /// Sets the tile visibility.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="value">The value.</param>
+        public static void SetTileVisibility(DependencyObject obj, Visibility value)
+        {
+            obj.SetValue(TileVisibilityProperty, value);
+        }
+
         /// <summary>Get operation for TileHeightProperty dependency property</summary><param name="obj">The object the property really belongs to</param><returns>Actual property value.</returns>
         public static double GetTileWidth(DependencyObject obj)
         {
@@ -248,11 +271,11 @@ namespace CODE.Framework.Wpf.Layout
         private static void InvalidateEverything(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             If.Real<MetroTiles>(dependencyObject, panel =>
-                {
-                    panel.InvalidateArrange();
-                    panel.InvalidateMeasure();
-                    panel.InvalidateVisual();
-                });
+            {
+                panel.InvalidateArrange();
+                panel.InvalidateMeasure();
+                panel.InvalidateVisual();
+            });
         }
 
         /// <summary>
@@ -296,6 +319,7 @@ namespace CODE.Framework.Wpf.Layout
                 var tileWidthNormal = GetTileWidth(this);
                 var tileHeight = GetTileHeight(this);
                 var tileWidthDouble = tileWidthNormal*2 + horizontalSpacing;
+                var tileWidthTiny = (tileWidthNormal - horizontalSpacing)/2;
 
                 var groups = GetChildrenByGroup();
 
@@ -310,7 +334,7 @@ namespace CODE.Framework.Wpf.Layout
                         var group = groups[groupKey];
                         if (group.Count > 0)
                         {
-                            var groupTitle = GetGroupTitle(group[0]);
+                            var groupTitle = GetGroupTitleForObject(group[0]);
                             titles.Add(groupTitle);
                             if (!string.IsNullOrEmpty(groupTitle)) foundTitle = true;
                         }
@@ -322,15 +346,15 @@ namespace CODE.Framework.Wpf.Layout
                         foreach (var title in titles)
                         {
                             var header = new AutoHeaderTextRenderInfo
-                                {
-                                    Text = title,
-                                    FormattedText = new FormattedText(title,
-                                                                      CultureInfo.CurrentUICulture,
-                                                                      FlowDirection.LeftToRight,
-                                                                      new Typeface(HeaderFontFamily, HeaderFontStyle, HeaderFontWeight, FontStretches.Normal),
-                                                                      HeaderFontSize,
-                                                                      HeaderForegroundBrush)
-                                };
+                            {
+                                Text = title,
+                                FormattedText = new FormattedText(title,
+                                    CultureInfo.CurrentUICulture,
+                                    FlowDirection.LeftToRight,
+                                    new Typeface(HeaderFontFamily, HeaderFontStyle, HeaderFontWeight, FontStretches.Normal),
+                                    HeaderFontSize,
+                                    HeaderForegroundBrush)
+                            };
                             maxHeaderHeight = Math.Max(header.FormattedText.Height, maxHeaderHeight);
                             _headers.Add(header);
                         }
@@ -343,78 +367,164 @@ namespace CODE.Framework.Wpf.Layout
                     }
                 }
 
-                var addedTileToColumn = false;
-
                 var groupCount = -1;
                 foreach (var group in groups.Values)
                 {
                     groupCount++;
                     var groupWidth = tileWidthDouble;
                     var groupLeft = left;
-                    var lastNormalColumn = -1;
+
+                    var currentTinyCount = 0;
+                    var currentNormalCount = 0;
+
+                    var currentMaxColumnWidth = 0d;
+
                     foreach (var child in group)
                     {
+                        TileWidthModes tileWidth;
+                        var contentPresenter = child as ContentPresenter;
+                        if (contentPresenter != null && contentPresenter.Content != null && contentPresenter.Content is DependencyObject)
+                        {
+                            var dependencyContent = (DependencyObject)contentPresenter.Content;
+                            tileWidth = GetTileWidthMode(dependencyContent);
+                            child.Visibility = MetroTiles.GetTileVisibility(dependencyContent);
+                        }
+                        else
+                            tileWidth = GetTileWidthMode(child);
+                        if (tileWidth == TileWidthModes.Default) tileWidth = DefaultTileWidth;
+
                         if (child.Visibility != Visibility.Visible) continue;
 
-                        addedTileToColumn = true;
-                        var tileWidth = GetTileWidthMode(child);
-                        if (tileWidth == TileWidthModes.Default) tileWidth = DefaultTileWidth;
-                        var isNormalWidth = tileWidth == TileWidthModes.Normal;
-                        var width = isNormalWidth ? tileWidthNormal : tileWidthDouble;
-                        if (!isNormalWidth)
+                        switch (tileWidth)
                         {
-                            if (lastNormalColumn > -1)
-                            {
-                                top += tileHeight + verticalSpacing;
-                                if (top + tileHeight > availableSize.Height)
+                            case TileWidthModes.Tiny:
+                                if (currentTinyCount == 0 && top > absoluteTop && top + tileHeight > availableSize.Height) // We are beyond the bottom and can do something about it
                                 {
-                                    // Need to overflow into the next column, since we are out of room
                                     top = absoluteTop;
                                     left += tileWidthDouble + horizontalSpacing;
-                                    groupWidth += tileWidthDouble + horizontalSpacing;
+                                    groupWidth += currentMaxColumnWidth + horizontalSpacing;
+                                    currentMaxColumnWidth = 0d;
                                 }
-                            }
-                            lastNormalColumn = -1;
-                            // This is a double-wide column, so we need to reset the square column counter
-                        }
-
-                        // We calculate the exact size and position of the tile and then pass that to the delegate handed to the current method.
-                        // We also memorize the maximum dimension used up by the tile so we can later use it for an absolute measurement of the used up area.
-                        var finalLeft = left;
-                        if (lastNormalColumn != -1) finalLeft = left + tileWidthNormal + horizontalSpacing;
-                        var tileRectangle = new Rect(finalLeft, top, width, tileHeight);
-                        methodToCall(child, tileRectangle);
-                        heightUsed = Math.Max(heightUsed, tileRectangle.Bottom);
-                        widthUsed = Math.Max(widthUsed, tileRectangle.Right);
-
-                        if (!isNormalWidth) top += tileHeight + verticalSpacing; // Double width tiles always use up an entire column
-                        else if (lastNormalColumn == 0)
-                        {
-                            lastNormalColumn = -1;
-                            // filled the horizontal space in the column, so we need to go to the next line. Otherwise, another tile still fits
-                            top += tileHeight + verticalSpacing;
-                        }
-                        else lastNormalColumn++;
-
-                        if (top + tileHeight > availableSize.Height)
-                        {
-                            // Need to overflow into the next column, since we are out of room
-                            top = absoluteTop;
-                            left += tileWidthDouble + horizontalSpacing;
-                            addedTileToColumn = false;
+                                var tinyAreaLeft = left;
+                                if (currentNormalCount == 1) tinyAreaLeft += tileWidthNormal + horizontalSpacing;
+                                switch (currentTinyCount)
+                                {
+                                    case 0:
+                                        var tinyTileRect0 = new Rect(tinyAreaLeft, top, tileWidthTiny, tileWidthTiny);
+                                        methodToCall(child, tinyTileRect0);
+                                        heightUsed = Math.Max(heightUsed, tinyTileRect0.Bottom);
+                                        widthUsed = Math.Max(widthUsed, tinyTileRect0.Right);
+                                        currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthTiny);
+                                        break;
+                                    case 1:
+                                        var tinyTileRect1 = new Rect(tinyAreaLeft + horizontalSpacing + tileWidthTiny, top, tileWidthTiny, tileWidthTiny);
+                                        methodToCall(child, tinyTileRect1);
+                                        heightUsed = Math.Max(heightUsed, tinyTileRect1.Bottom);
+                                        widthUsed = Math.Max(widthUsed, tinyTileRect1.Right);
+                                        currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny + horizontalSpacing + tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthNormal);
+                                        break;
+                                    case 2:
+                                        var tinyTileRect2 = new Rect(tinyAreaLeft, top + verticalSpacing + tileWidthTiny, tileWidthTiny, tileWidthTiny);
+                                        methodToCall(child, tinyTileRect2);
+                                        heightUsed = Math.Max(heightUsed, tinyTileRect2.Bottom);
+                                        widthUsed = Math.Max(widthUsed, tinyTileRect2.Right);
+                                        currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny + horizontalSpacing + tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthNormal);
+                                        break;
+                                    case 3:
+                                        var tinyTileRect3 = new Rect(tinyAreaLeft + horizontalSpacing + tileWidthTiny, top + verticalSpacing + tileWidthTiny, tileWidthTiny, tileWidthTiny);
+                                        methodToCall(child, tinyTileRect3);
+                                        heightUsed = Math.Max(heightUsed, tinyTileRect3.Bottom);
+                                        widthUsed = Math.Max(widthUsed, tinyTileRect3.Right);
+                                        currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny + horizontalSpacing + tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthNormal);
+                                        break;
+                                }
+                                currentTinyCount++;
+                                if (currentTinyCount > 3)
+                                {
+                                    currentNormalCount++;
+                                    currentTinyCount = 0;
+                                }
+                                if (currentNormalCount > 1)
+                                {
+                                    top += tileHeight + verticalSpacing;
+                                    currentNormalCount = 0;
+                                }
+                                break;
+                            case TileWidthModes.Normal:
+                                if (currentNormalCount == 1 && currentTinyCount > 0)
+                                {
+                                    top += tileHeight + verticalSpacing;
+                                    currentNormalCount = 0;
+                                }
+                                if (currentNormalCount == 0 && top > absoluteTop && top + tileHeight > availableSize.Height) // We are beyond the bottom and can do something about it
+                                {
+                                    top = absoluteTop;
+                                    left += tileWidthDouble + horizontalSpacing;
+                                    groupWidth += currentMaxColumnWidth + horizontalSpacing;
+                                    currentMaxColumnWidth = 0d;
+                                }
+                                var normalTileRect = new Rect(currentNormalCount == 1 ? left + tileWidthNormal + horizontalSpacing : left, top, tileWidthNormal, tileHeight);
+                                currentTinyCount = 0;
+                                currentNormalCount++;
+                                methodToCall(child, normalTileRect);
+                                heightUsed = Math.Max(heightUsed, normalTileRect.Bottom);
+                                widthUsed = Math.Max(widthUsed, normalTileRect.Right);
+                                currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 1 ? tileWidthNormal : tileWidthDouble);
+                                if (currentNormalCount > 1)
+                                {
+                                    top += tileHeight + verticalSpacing;
+                                    currentNormalCount = 0;
+                                }
+                                break;
+                            case TileWidthModes.Double:
+                                if (currentNormalCount > 0) top += tileHeight + verticalSpacing;
+                                if (currentTinyCount > 0) top += tileHeight + verticalSpacing;
+                                if (top > absoluteTop && top + tileHeight > availableSize.Height) // We are beyond the bottom and can do something about it
+                                {
+                                    top = absoluteTop;
+                                    left += tileWidthDouble + horizontalSpacing;
+                                    groupWidth += currentMaxColumnWidth + horizontalSpacing;
+                                }
+                                currentNormalCount = 0;
+                                currentTinyCount = 0;
+                                var dobleTileRect = new Rect(left, top, tileWidthDouble, tileHeight);
+                                methodToCall(child, dobleTileRect);
+                                heightUsed = Math.Max(heightUsed, dobleTileRect.Bottom);
+                                widthUsed = Math.Max(widthUsed, dobleTileRect.Right);
+                                currentMaxColumnWidth = tileWidthDouble;
+                                top += tileHeight + verticalSpacing;
+                                break;
+                            case TileWidthModes.DoubleSquare:
+                                if (currentNormalCount > 0) top += tileHeight + verticalSpacing;
+                                if (currentTinyCount > 0) top += tileHeight + verticalSpacing;
+                                if (top > absoluteTop && top + tileWidthDouble > availableSize.Height) // We are beyond the bottom and can do something about it
+                                {
+                                    top = absoluteTop;
+                                    left += tileWidthDouble + horizontalSpacing;
+                                    groupWidth += currentMaxColumnWidth + horizontalSpacing;
+                                }
+                                currentNormalCount = 0;
+                                currentTinyCount = 0;
+                                var dobleSquareTileRect = new Rect(left, top, tileWidthDouble, tileWidthDouble);
+                                methodToCall(child, dobleSquareTileRect);
+                                heightUsed = Math.Max(heightUsed, dobleSquareTileRect.Bottom);
+                                widthUsed = Math.Max(widthUsed, dobleSquareTileRect.Right);
+                                currentMaxColumnWidth = tileWidthDouble;
+                                top += tileWidthDouble + verticalSpacing;
+                                break;
                         }
 
                         // Possible headers
                         if (RenderHeaders && _headers.Count > groupCount)
                         {
-                            _headers[groupCount].RenderRect = new Rect(groupLeft, 0d, groupWidth, _headers[groupCount].FormattedText.Height);
+                            _headers[groupCount].RenderRect = new Rect(groupLeft, 0d, groupWidth, _headers[groupCount].FormattedText.Height +4);
                             InvalidateVisual();
                         }
                     }
+
                     top = absoluteTop;
                     left += horizontalGroupSpacing - horizontalSpacing;
-                    if (addedTileToColumn) left += tileWidthDouble;
-                    else left -= horizontalSpacing;
+                    left += currentMaxColumnWidth;
                 }
                 //return new Size(left + tileWidthDouble, top + tileHeight);
                 return new Size(widthUsed, heightUsed);
@@ -433,9 +543,9 @@ namespace CODE.Framework.Wpf.Layout
         private Dictionary<string, List<UIElement>> GetChildrenByGroup()
         {
             var groups = new List<string>();
-            foreach (UIElement child in Children)
+            foreach (DependencyObject child in Children)
             {
-                var group = GetGroupName(child);
+                var group = GetGroupNameForObject(child);
                 if (!groups.Contains(group))
                     groups.Add(group);
             }
@@ -444,13 +554,37 @@ namespace CODE.Framework.Wpf.Layout
 
             foreach (var group in groups)
                 foreach (UIElement child in Children)
-                    if (GetGroupName(child) == group)
+                    if (GetGroupNameForObject(child) == group)
                     {
                         if (!result.ContainsKey(group)) result.Add(group, new List<UIElement>());
                         result[group].Add(child);
                     }
 
             return result;
+        }
+
+        private string GetGroupNameForObject(DependencyObject d)
+        {
+            var group = GetGroupName(d);
+            if (string.IsNullOrEmpty(group) && d is ContentPresenter)
+            {
+                var dependencyContent = ((ContentPresenter)d).Content as DependencyObject;
+                if (dependencyContent != null)
+                    group = GetGroupName(dependencyContent);
+            }
+            return group;
+        }
+
+        private string GetGroupTitleForObject(DependencyObject d)
+        {
+            var group = GetGroupTitle(d);
+            if (string.IsNullOrEmpty(group) && d is ContentPresenter)
+            {
+                var dependencyContent = ((ContentPresenter)d).Content as DependencyObject;
+                if (dependencyContent != null)
+                    group = GetGroupTitle(dependencyContent);
+            }
+            return group;
         }
 
         /// <summary>
@@ -490,6 +624,16 @@ namespace CODE.Framework.Wpf.Layout
         /// <summary>
         /// Uses the default set for the entire panel
         /// </summary>
-        Default
+        Default,
+
+        /// <summary>
+        /// Tiny tile size (quarter of the normal ones)
+        /// </summary>
+        Tiny,
+
+        /// <summary>
+        /// Square size of the double size (twice as large as double)
+        /// </summary>
+        DoubleSquare
     }
 }

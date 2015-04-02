@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using CODE.Framework.Core.Configuration;
 using CODE.Framework.Core.Exceptions;
+using CODE.Framework.Core.Utilities;
 
 namespace CODE.Framework.Services.Client
 {
@@ -675,7 +676,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -687,11 +688,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -728,6 +729,12 @@ namespace CODE.Framework.Services.Client
                 case Protocol.WsHttp:
                     var serviceId2 = GetServiceId<TServiceType>();
                     return GetChannelDedicated<TServiceType>(serviceId2, protocol, GetMessageSize(serviceId2));
+                case Protocol.RestHttpJson:
+                    var serviceId3 = GetServiceId<TServiceType>();
+                    var restUri = new Uri(GetSetting("RestServiceUrl:" + serviceId3));
+                    var restHandler = new RestProxyHandler(restUri);
+                    var proxy = TransparentProxyGenerator.GetProxy<TServiceType>(restHandler);
+                    return proxy;
                 default:
                     return default(TServiceType);
             }
@@ -815,7 +822,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -827,11 +834,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -878,7 +885,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -890,11 +897,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1328,7 +1335,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1340,11 +1347,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1390,7 +1397,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1402,11 +1409,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1481,7 +1488,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1493,11 +1500,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1546,7 +1553,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1558,11 +1565,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1612,7 +1619,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                CloseChannel(channel, false);
+                if (channel is IClientChannel) CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1624,11 +1631,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        CloseChannel(channel, false);
+                        if (channel is IClientChannel) CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        AbortChannel(channel, ex2);
+                        if (channel is IClientChannel) AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -2430,38 +2437,36 @@ namespace CODE.Framework.Services.Client
         public static bool CloseChannel(object channel, bool channelMayBeShared = true)
         {
             var channel2 = channel as IClientChannel;
-            if (channel2 != null)
+            if (channel2 == null) return false;
+            try
             {
-                try
-                {
-                    if (channelMayBeShared)
-                        for (var channelIndex = 0; channelIndex < OpenChannels.Count; channelIndex++)
-                        {
-                            var openChannel = OpenChannels[channelIndex];
-                            if (openChannel.Channel == channel2)
-                            {
-                                lock (OpenChannels)
-                                    OpenChannels.RemoveAt(channelIndex);
-                                break;
-                            }
-                        }
-
-                    if (channel2.State == CommunicationState.Opened)
+                if (channelMayBeShared)
+                    for (var channelIndex = 0; channelIndex < OpenChannels.Count; channelIndex++)
                     {
-                        channel2.Close();
-                        channel2.Dispose();
+                        var openChannel = OpenChannels[channelIndex];
+                        if (openChannel.Channel == channel2)
+                        {
+                            lock (OpenChannels)
+                                OpenChannels.RemoveAt(channelIndex);
+                            break;
+                        }
                     }
-                    return true;
-                }
-                catch (Exception ex)
+
+                if (channel2.State == CommunicationState.Opened)
                 {
-                    if (ChannelException != null)
-                        ChannelException(null, new ChannelExceptionEventArgs(channel2, ex));
-
-                    if (!HandleChannelExceptions) throw;
-
-                    return false;
+                    channel2.Close();
+                    channel2.Dispose();
                 }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (ChannelException != null)
+                    ChannelException(null, new ChannelExceptionEventArgs(channel2, ex));
+
+                if (!HandleChannelExceptions) throw;
+
+                return false;
             }
             return false;
         }

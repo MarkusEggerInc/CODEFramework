@@ -1,0 +1,53 @@
+﻿<Grid x:Class="CODE.Framework.Wpf.Theme.Newsroom.StandardViews.TileWide"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
+      Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}"
+      Height="150" Width="310"
+      ToolTip="{Binding ToolTipText}">
+
+    <Grid.Resources>
+        <BindingConverters:StringToVisibleConverter x:Key="StringToVisibleConverter" />
+        <SolidColorBrush x:Key="CODE.Framework-Newsroom-IconForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
+    </Grid.Resources>
+
+    <!-- Main Content -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Rectangle VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Height="80" Width="80"
+                   Fill="{Binding Image1}" />
+
+        <Grid Margin="15,0,15,7" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Text1}" 
+                       VerticalAlignment="Bottom" HorizontalAlignment="Left" TextAlignment="Left"
+                       FontFamily="{DynamicResource DefaultFont}" 
+                       FontSize="{DynamicResource FontSize-Normal}" 
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}" />
+
+            <!-- Item count -->
+            <Border VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                    Margin="10,0,0,0" Grid.Column="1"
+                    Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}" 
+                    Visibility="{Binding Number1, Converter={StaticResource StringToVisibleConverter}}">
+                <TextBlock Text="{Binding Number1}" 
+                           FontFamily="{DynamicResource DefaultFont}" 
+                           FontSize="{DynamicResource FontSize-Normal}" 
+                           Foreground="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundBrush}"
+                           FontWeight="Bold"
+                           Margin="5,5,0,0"
+                           />
+            </Border>
+        </Grid>
+    </Grid>
+
+</Grid>

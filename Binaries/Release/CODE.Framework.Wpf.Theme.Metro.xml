@@ -116,6 +116,114 @@
             <param name="standardView">Standard view identifier</param>
             <returns>Standard view or null</returns>
         </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter">
+            <summary>
+            Converts the pointing mode to a margin
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the value to a margin
+            </summary>
+            <param name="value">Value</param>
+            <param name="targetType">Target Type</param>
+            <param name="parameter">Parameter</param>
+            <param name="culture">Culture</param>
+            <returns>Margin</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the value back 
+            </summary>
+            <param name="value">Value</param>
+            <param name="targetType">Target type</param>
+            <param name="parameter">Parameter</param>
+            <param name="culture">Culture</param>
+            <returns>Unchanged value</returns>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.MouseMargin">
+            <summary>
+            Margin to be used when the mode is set to Mouse
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.TouchMargin">
+            <summary>
+            Margin to be used when the mode is set to Touch
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector">
+            <summary>
+            Selects an appropriate tile template
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.SelectTemplate(System.Object,System.Windows.DependencyObject)">
+            <summary>
+            When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate" /> based on custom logic.
+            </summary>
+            <param name="item">The data object for which to select the template.</param>
+            <param name="container">The data-bound object.</param>
+            <returns>Returns a <see cref="T:System.Windows.DataTemplate" /> or null. The default value is null.</returns>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.TinyTileTemplate">
+            <summary>
+            Template for tiny tiles
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.TinyTile1ImageTemplate">
+            <summary>
+            Template for tiny tiles with 1 image brush
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.NormalTileTemplate">
+            <summary>
+            Template for normal tiles
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.NormalTile1ImageTemplate">
+            <summary>
+            Template for normal tiles with 1 image brush
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.WideTileTemplate">
+            <summary>
+            Template for wide tiles
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.WideTile1ImageTemplate">
+            <summary>
+            Template for wide tiles with 1 image brush
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.WideTile5ImagesTemplate">
+            <summary>
+            Template for wide tiles with 5 populated images
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.WideSquareTileTemplate">
+            <summary>
+            Template for wide square tiles
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.WideSquareTile1ImageTemplate">
+            <summary>
+            Template for wide square tiles
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.WideSquareTile5ImagesTemplate">
+            <summary>
+            Template for wide square tiles
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector.CustomViewTileTemplate">
+            <summary>
+            Template for custom view tiles
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation">
             <summary>Simple rendering mechanism to render a standard Metro loading animation (circular)</summary>
         </member>
@@ -256,6 +364,17 @@
             <value>True if active</value>
             <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.MetroScrollViewer">
+            <summary>
+            Special scroll viewer for Metro UIs.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.MetroScrollViewer.OnPreviewMouseWheel(System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Responds to a click of the mouse wheel.
+            </summary>
+            <param name="e">Required arguments that describe this event.</param>
+        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer">
             <summary>
             This control has two content elements which make up the entire surface. Elements are
@@ -378,6 +497,11 @@
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.OnApplyTemplate">
             <summary>
             Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.MakeHomePageVisible">
+            <summary>
+            Makes the home page visible.
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomeTitleProperty">
@@ -1547,6 +1671,60 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileNarrow1Image">
+            <summary>
+            Interaction logic for TileNarrow1Image.xaml
+            </summary>
+            <summary>
+            TileNarrow1Image
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileNarrow1Image.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileNarrow1Image"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileNarrow1Image.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny">
+            <summary>
+            Templates for tiny tiles
+            </summary>
+            <summary>
+            TileTiny
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny1Image">
+            <summary>
+            Interaction logic for TileTiny1Image.xaml
+            </summary>
+            <summary>
+            TileTiny1Image
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny1Image.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny1Image"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileTiny1Image.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide">
             <summary>
             Interaction logic for TileWide.xaml
@@ -1561,6 +1739,96 @@
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide1Image">
+            <summary>
+            Interaction logic for TileWide1Image.xaml
+            </summary>
+            <summary>
+            TileWide1Image
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide1Image.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide1Image"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide1Image.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide5Images">
+            <summary>
+            Interaction logic for TileWide5Images.xaml
+            </summary>
+            <summary>
+            TileWide5Images
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide5Images.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide5Images"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWide5Images.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare">
+            <summary>
+            Tile template for large squares
+            </summary>
+            <summary>
+            TileWideSquare
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare1Image">
+            <summary>
+            Interaction logic for TileWideSquare1Image.xaml
+            </summary>
+            <summary>
+            TileWideSquare1Image
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare1Image.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare1Image.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare5Images">
+            <summary>
+            Interaction logic for TileWideSquare5Images.xaml
+            </summary>
+            <summary>
+            TileWideSquare5Images
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare5Images.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.StandardViews.TileWideSquare5Images.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>

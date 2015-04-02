@@ -1,0 +1,15 @@
+﻿<Grid x:Class="CODE.Framework.Wpf.Theme.Newsroom.StandardViews.LargeImage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:Components="clr-namespace:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Components"
+      Background="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundBrush}"
+      Height="150" Width="310"
+      ToolTip="{Binding ToolTipText}">
+
+    <!-- Main Content -->
+    <Rectangle Fill="{Binding Image1}" />
+
+    <!-- Standard Components -->
+    <Components:LogoNameAndCount />
+
+</Grid>

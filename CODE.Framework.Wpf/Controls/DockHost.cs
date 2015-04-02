@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using CODE.Framework.Wpf.Layout;
 
 namespace CODE.Framework.Wpf.Controls
 {
@@ -200,6 +201,34 @@ namespace CODE.Framework.Wpf.Controls
                     host.IsDocked = true;
                 host.WindowClosing = false;
                 host.FloatWindow = null;
+            };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FloatingDockWindow" /> class.
+        /// </summary>
+        /// <param name="multiPanel">The multi panel parent container.</param>
+        /// <param name="title">The title.</param>
+        /// <param name="oldChildIndex">Old index of the child in the multi panel.</param>
+        public FloatingDockWindow(MultiPanel multiPanel, string title, int oldChildIndex)
+        {
+            DataContext = multiPanel.DataContext;
+            Title = title;
+
+            Closing += (o, e) =>
+            {
+                if (AutoDockOnClose)
+                {
+                    var content = Content as UIElement;
+                    Content = null;
+                    if (content != null)
+                    {
+                        multiPanel.Children.Insert(oldChildIndex, content);
+                        multiPanel.InvalidateArrange();
+                        multiPanel.InvalidateMeasure();
+                        multiPanel.InvalidateVisual();
+                    }
+                }
             };
         }
 

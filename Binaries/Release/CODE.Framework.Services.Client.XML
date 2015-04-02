@@ -64,6 +64,99 @@
             For internal use only
             </summary>
         </member>
+        <member name="T:CODE.Framework.Services.Client.RestHelper">
+            <summary>
+            Helper functionality needed for REST operations
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.GetExposedMethodNameFromContract(System.String,System.String,System.Type)">
+            <summary>
+            Inspects the specified method in the contract for special configuration to see what the REST-exposed method name is supposed to be
+            </summary>
+            <param name="actualMethodName">Actual name of the method.</param>
+            <param name="httpMethod">The HTTP method.</param>
+            <param name="contractType">Service contract type.</param>
+            <returns>REST-exposed name of the method</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.GetHttpMethodFromContract(System.String,System.Type)">
+            <summary>
+            Returns the exposed HTTP-method/verb for the provided method
+            </summary>
+            <param name="methodName">Name of the method.</param>
+            <param name="contractType">Service contract type.</param>
+            <returns>HTTP Method/Verb</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.GetRestAttribute(System.Reflection.MethodInfo)">
+            <summary>
+            Extracts the RestAttribute from a method's attributes
+            </summary>
+            <param name="method">The method to be inspected</param>
+            <returns>The applied RestAttribute or a default RestAttribute.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.GetRestUrlParameterAttribute(System.Reflection.PropertyInfo)">
+            <summary>
+            Extracts the RestUrlParameterAttribute from a property's attributes
+            </summary>
+            <param name="property">The property.</param>
+            <returns>The applied RestUrlParameterAttribute or a default RestUrlParameterAttribute</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.GetOrderedInlinePropertyList(System.Type)">
+            <summary>
+            Gets a list of all properties that are to be used as inline parameters, sorted by their sequence
+            </summary>
+            <param name="contractType">Contract type</param>
+            <returns>List of properties to be used as inline URL parameters</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.GetNamedPropertyList(System.Type)">
+            <summary>
+            Returns a list of all properties of the provided object that are NOT flagged to be used as inline URL parameters
+            </summary>
+            <param name="contractType">Contract type</param>
+            <returns>List of named properties</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestHelper.SerializeToUrlParameters(System.Object,System.String)">
+            <summary>
+            Serializes an object to URL parameters
+            </summary>
+            <param name="objectToSerialize">The object to serialize.</param>
+            <param name="httpMethod">The HTTP method.</param>
+            <returns>System.String.</returns>
+            <remarks>This is used for REST GET operatoins</remarks>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.RestProxyHandler">
+            <summary>
+            Standard implementation for a REST Proxy handler
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestProxyHandler.#ctor(System.Uri)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.RestProxyHandler"/> class.
+            </summary>
+            <param name="serviceUri">The service root URI.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestProxyHandler.OnMethod(System.Reflection.MethodInfo,System.Object[])">
+            <summary>
+            This method is called when any method on a proxied object is invoked.
+            </summary>
+            <param name="method">Information about the method being called.</param>
+            <param name="args">The arguments passed to the method.</param>
+            <returns>Result value from the proxy call</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestProxyHandler.SerializeToRestJson(System.Object)">
+            <summary>
+            Serializes to REST JSON.
+            </summary>
+            <param name="objectToSerialize">The object to serialize.</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.RestProxyHandler.DeserializeFromRestJson(System.String,System.Type)">
+            <summary>
+            Deserializes from REST JSON.
+            </summary>
+            <param name="json">The json.</param>
+            <param name="resultType">Type of the result.</param>
+            <returns>Deserialized object</returns>
+        </member>
         <member name="T:CODE.Framework.Services.Client.ServiceClient">
             <summary>
             Helper class that provides methods that make it easier to talk to services
