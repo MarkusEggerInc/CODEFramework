@@ -506,7 +506,7 @@ namespace CODE.Framework.Wpf.Mvvm
             var populatedCategories = new List<string>();
             if (actions == null) return;
             var viewActions = actions as IViewAction[] ?? actions.ToArray();
-            var matchingActions = ViewActionHelper.GetAllActionsForCategory(viewActions, category, indentLevel);
+            var matchingActions = ViewActionHelper.GetAllActionsForCategory(viewActions, category, indentLevel, EmptyGlobalCategoryTitle);
             var addedMenuItems = 0;
             foreach (var matchingAction in matchingActions)
             {
@@ -1309,7 +1309,12 @@ namespace CODE.Framework.Wpf.Mvvm
             Children.Clear();
             if (actions == null) return;
             var actionList = ViewActionHelper.GetConsolidatedActions(actions, actions2, selectedViewTitle);
-            var rootCategories = ViewActionHelper.GetTopLevelActionCategories(actionList, "File", "File");
+
+            var globalCategory = "File";
+            var ribbon = ElementHelper.FindParent<ViewActionRibbon>(this);
+            if (ribbon != null)
+                globalCategory = ribbon.EmptyGlobalCategoryTitle;
+            var rootCategories = ViewActionHelper.GetTopLevelActionCategories(actionList, globalCategory, globalCategory);
 
             var viewActionCategories = rootCategories as ViewActionCategory[] ?? rootCategories.ToArray();
             if (viewActionCategories.Length > 0)

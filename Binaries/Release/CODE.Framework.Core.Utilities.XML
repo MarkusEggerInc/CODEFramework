@@ -46,6 +46,286 @@
             </summary>
             <remarks>The number of records is limited to <see cref="F:System.Int32.MaxValue"/> - 1.</remarks>
         </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._records">
+            <summary>
+            Contains the cached records.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._currentRecordIndex">
+            <summary>
+            Contains the current record index (inside the cached records array).
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._readingStream">
+            <summary>
+            Indicates if a new record is being read from the CSV stream.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._bindingList">
+            <summary>
+            Contains the binding list linked to this reader.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader"/> class.
+            </summary>
+            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="reader"/> is a <see langword="null"/>.
+            </exception>
+            <exception cref="T:ArgumentException">
+            Cannot read from <paramref name="reader"/>.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Int32)">
+            <summary>
+            Initializes a new instance of the CsvReader class.
+            </summary>
+            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+            <param name="bufferSize">The buffer size in bytes.</param>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="reader"/> is a <see langword="null"/>.
+            </exception>
+            <exception cref="T:ArgumentException">
+            	Cannot read from <paramref name="reader"/>.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char)">
+            <summary>
+            Initializes a new instance of the CsvReader class.
+            </summary>
+            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="reader"/> is a <see langword="null"/>.
+            </exception>
+            <exception cref="T:ArgumentException">
+            	Cannot read from <paramref name="reader"/>.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char,System.Int32)">
+            <summary>
+            Initializes a new instance of the CsvReader class.
+            </summary>
+            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+            <param name="bufferSize">The buffer size in bytes.</param>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="reader"/> is a <see langword="null"/>.
+            </exception>
+            <exception cref="T:ArgumentException">
+            	Cannot read from <paramref name="reader"/>.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char,System.Char,System.Char,System.Char,System.Boolean)">
+            <summary>
+            Initializes a new instance of the CsvReader class.
+            </summary>
+            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+            <param name="quote">The quotation character wrapping every field (default is ''').</param>
+            <param name="escape">
+            The escape character letting insert quotation characters inside a quoted field (default is '\').
+            If no escape character, set to '\0' to gain some performance.
+            </param>
+            <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
+            <param name="trimSpaces"><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>. Default is <see langword="true"/>.</param>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="reader"/> is a <see langword="null"/>.
+            </exception>
+            <exception cref="T:ArgumentException">
+            	Cannot read from <paramref name="reader"/>.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char,System.Char,System.Char,System.Char,System.Boolean,System.Int32)">
+            <summary>
+            Initializes a new instance of the CsvReader class.
+            </summary>
+            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+            <param name="quote">The quotation character wrapping every field (default is ''').</param>
+            <param name="escape">
+            The escape character letting insert quotation characters inside a quoted field (default is '\').
+            If no escape character, set to '\0' to gain some performance.
+            </param>
+            <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
+            <param name="trimSpaces"><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>. Default is <see langword="true"/>.</param>
+            <param name="bufferSize">The buffer size in bytes.</param>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="reader"/> is a <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            	<paramref name="bufferSize"/> must be 1 or more.
+            </exception>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CurrentRecordIndex">
+            <summary>
+            Gets the current record index in the CSV file.
+            </summary>
+            <value>The current record index in the CSV file.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.EndOfStream">
+            <summary>
+            Gets a value that indicates whether the current stream position is at the end of the stream.
+            </summary>
+            <value><see langword="true"/> if the current stream position is at the end of the stream; otherwise <see langword="false"/>.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.Item(System.Int32)">
+            <summary>
+            Gets the field at the specified index.
+            </summary>
+            <value>The field at the specified index.</value>
+            <exception cref="T:ArgumentOutOfRangeException">
+            	<paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
+            </exception>
+            <exception cref="T:InvalidOperationException">
+            	No record read yet. Call ReadLine() first.
+            </exception>
+            <exception cref="T:CODE.Framework.Core.Utilities.Csv.MissingFieldCsvException">
+            	The CSV data appears to be missing a field.
+            </exception>
+            <exception cref="T:MalformedCsvException">
+            	The CSV appears to be corrupt at the current position.
+            </exception>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            	The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.ReadToEnd">
+            <summary>
+            Reads the CSV stream from the current position to the end of the stream.
+            </summary>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.ReadNextRecord(System.Boolean,System.Boolean)">
+            <summary>
+            Reads the next record.
+            </summary>
+            <param name="onlyReadHeaders">
+            Indicates if the reader will proceed to the next record after having read headers.
+            <see langword="true"/> if it stops after having read headers; otherwise, <see langword="false"/>.
+            </param>
+            <param name="skipToNextLine">
+            Indicates if the reader will skip directly to the next line without parsing the current one. 
+            To be used when an error occurs.
+            </param>
+            <returns><see langword="true"/> if a record has been successfully reads; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.MoveToStart">
+            <summary>
+            Moves before the first record.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.MoveToLastCachedRecord">
+            <summary>
+            Moves to the last record read so far.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.MoveTo(System.Int64)">
+            <summary>
+            Moves to the specified record index.
+            </summary>
+            <param name="record">The record index.</param>
+            <exception cref="T:ArgumentOutOfRangeException">
+            	Record index must be > 0.
+            </exception>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            	The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList">
+            <summary>
+            Represents a binding list wrapper for a CSV reader.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._csv">
+            <summary>
+            Contains the linked CSV reader.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._count">
+            <summary>
+            Contains the cached record count.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._properties">
+            <summary>
+            Contains the cached property descriptors.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._sort">
+            <summary>
+            Contains the current sort property.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._direction">
+            <summary>
+            Contains the current sort direction.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList.#ctor(CODE.Framework.Core.Utilities.Csv.CachedCsvReader)">
+            <summary>
+            Initializes a new instance of the CsvBindingList class.
+            </summary>
+            <param name="csv"></param>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor">
+            <summary>
+            Represents a CSV field property descriptor.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor._index">
+            <summary>
+            Contains the field index.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the CsvPropertyDescriptor class.
+            </summary>
+            <param name="fieldName">The field name.</param>
+            <param name="index">The field index.</param>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor.Index">
+            <summary>
+            Gets the field index.
+            </summary>
+            <value>The field index.</value>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer">
+            <summary>
+            Represents a CSV record comparer.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer._field">
+            <summary>
+            Contains the field index of the values to compare.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer._direction">
+            <summary>
+            Contains the sort direction.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer.#ctor(System.Int32,System.ComponentModel.ListSortDirection)">
+            <summary>
+            Initializes a new instance of the CsvRecordComparer class.
+            </summary>
+            <param name="field">The field index of the values to compare.</param>
+            <param name="direction">The sort direction.</param>
+        </member>
         <member name="T:CODE.Framework.Core.Utilities.Csv.CsvReader">
             <summary>
             Represents a reader that provides fast, non-cached, forward-only access to CSV data.  
@@ -272,17 +552,186 @@
             <param name="trimSpaces">if set to <c>true</c> [trim spaces].</param>
             <param name="bufferSize">Size of the buffer.</param>
         </member>
+        <member name="E:CODE.Framework.Core.Utilities.Csv.CsvReader.ParseError">
+            <summary>
+            Occurs when there is an error while parsing the CSV stream.
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Csv.CsvReader.OnParseError(CODE.Framework.Core.Utilities.Csv.ParseErrorEventArgs)">
             <summary>
             Raises the <see cref="M:ParseError"/> event.
             </summary>
             <param name="e">The <see cref="T:CODE.Framework.Core.Utilities.Csv.ParseErrorEventArgs"/> that contains the event data.</param>
         </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Comment">
+            <summary>
+            Gets the comment character indicating that a line is commented out.
+            </summary>
+            <value>The comment character indicating that a line is commented out.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Escape">
+            <summary>
+            Gets the escape character letting insert quotation characters inside a quoted field.
+            </summary>
+            <value>The escape character letting insert quotation characters inside a quoted field.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Delimiter">
+            <summary>
+            Gets the delimiter character separating each field.
+            </summary>
+            <value>The delimiter character separating each field.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Quote">
+            <summary>
+            Gets the quotation character wrapping every field.
+            </summary>
+            <value>The quotation character wrapping every field.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.HasHeaders">
+            <summary>
+            Indicates if field names are located on the first non commented line.
+            </summary>
+            <value><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.TrimSpaces">
+            <summary>
+            Indicates if spaces at the start and end of a field are trimmed.
+            </summary>
+            <value><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.BufferSize">
+            <summary>
+            Gets the buffer size.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.DefaultParseErrorAction">
+            <summary>
+            Gets or sets the default action to take when a parsing error has occured.
+            </summary>
+            <value>The default action to take when a parsing error has occured.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.MissingFieldAction">
+            <summary>
+            Gets or sets the action to take when a field is missing.
+            </summary>
+            <value>The action to take when a field is missing.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.SupportsMultiline">
+            <summary>
+            Gets or sets a value indicating if the reader supports multiline fields.
+            </summary>
+            <value>A value indicating if the reader supports multiline field.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.SkipEmptyLines">
+            <summary>
+            Gets or sets a value indicating if the reader will skip empty lines.
+            </summary>
+            <value>A value indicating if the reader will skip empty lines.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.FieldCount">
+            <summary>
+            Gets the maximum number of fields to retrieve for each record.
+            </summary>
+            <value>The maximum number of fields to retrieve for each record.</value>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.EndOfStream">
+            <summary>
+            Gets a value that indicates whether the current stream position is at the end of the stream.
+            </summary>
+            <value><see langword="true"/> if the current stream position is at the end of the stream; otherwise <see langword="false"/>.</value>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Csv.CsvReader.GetFieldHeaders">
             <summary>
             Gets the field headers.
             </summary>
             <returns>The field headers or an empty array if headers are not supported.</returns>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.CurrentRecordIndex">
+            <summary>
+            Gets the current record index in the CSV file.
+            </summary>
+            <value>The current record index in the CSV file.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.MissingFieldFlag">
+            <summary>
+            Indicates if one or more field are missing for the current record.
+            Resets after each successful record read.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.ParseErrorFlag">
+            <summary>
+            Indicates if a parse error occured for the current record.
+            Resets after each successful record read.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.Int32,System.String)">
+            <summary>
+            Gets the field with the specified name and record position. <see cref="M:hasHeaders"/> must be <see langword="true"/>.
+            </summary>
+            <value>
+            The field with the specified name and record position.
+            </value>
+            <exception cref="T:ArgumentNullException">
+            	<paramref name="field"/> is <see langword="null"/> or an empty string.
+            </exception>
+            <exception cref="T:InvalidOperationException">
+            The CSV does not have headers (<see cref="M:HasHeaders"/> property is <see langword="false"/>).
+            </exception>
+            <exception cref="T:ArgumentException">
+            	<paramref name="field"/> not found.
+            </exception>
+            <exception cref="T:ArgumentOutOfRangeException">
+            	Record index must be > 0.
+            </exception>
+            <exception cref="T:InvalidOperationException">
+            	Cannot move to a previous record in forward-only mode.
+            </exception>
+            <exception cref="T:EndOfStreamException">
+            	Cannot read record at <paramref name="record"/>.
+            </exception>
+            <exception cref="T:MalformedCsvException">
+            	The CSV appears to be corrupt at the current position.
+            </exception>
+            <exception cref="T:System.ComponentModel.ObjectDisposedException">
+            The instance has been disposed of.
+            </exception>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.Int32,System.Int32)">
+            <summary>
+            Gets the column with the specified name.
+            </summary>
+            <returns>The column with the specified name as an <see cref="T:System.Object"/>.</returns>
+              
+            <exception cref="T:System.IndexOutOfRangeException">No column with the specified name was found. </exception>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.String)">
+            <summary>
+            Gets the column with the specified name.
+            </summary>
+            <returns>The column with the specified name as an <see cref="T:System.Object"/>.</returns>
+              
+            <exception cref="T:System.IndexOutOfRangeException">No column with the specified name was found. </exception>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.Int32)">
+            <summary>
+            Gets the field at the specified index.
+            </summary>
+            <value>The field at the specified index.</value>
+            <exception cref="T:ArgumentOutOfRangeException">
+            	<paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
+            </exception>
+            <exception cref="T:InvalidOperationException">
+            	No record read yet. Call ReadLine() first.
+            </exception>
+            <exception cref="T:MalformedCsvException">
+            	The CSV appears to be corrupt at the current position.
+            </exception>
             <exception cref="T:System.ComponentModel.ObjectDisposedException">
             The instance has been disposed of.
             </exception>
@@ -572,6 +1021,19 @@
             Contains the locking object for multi-threading purpose.
             </summary>
         </member>
+        <member name="E:CODE.Framework.Core.Utilities.Csv.CsvReader.Disposed">
+            <summary>
+            Occurs when the instance is disposed of.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.IsDisposed">
+            <summary>
+            Gets a value indicating whether the instance has been disposed of.
+            </summary>
+            <value>
+            	<see langword="true"/> if the instance has been disposed of; otherwise, <see langword="false"/>.
+            </value>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Csv.CsvReader.OnDisposed(System.EventArgs)">
             <summary>
             Raises the <see cref="M:Disposed"/> event.
@@ -609,188 +1071,6 @@
             <summary>
             Releases unmanaged resources and performs other cleanup operations before the instance is reclaimed by garbage collection.
             </summary>
-        </member>
-        <member name="E:CODE.Framework.Core.Utilities.Csv.CsvReader.ParseError">
-            <summary>
-            Occurs when there is an error while parsing the CSV stream.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Comment">
-            <summary>
-            Gets the comment character indicating that a line is commented out.
-            </summary>
-            <value>The comment character indicating that a line is commented out.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Escape">
-            <summary>
-            Gets the escape character letting insert quotation characters inside a quoted field.
-            </summary>
-            <value>The escape character letting insert quotation characters inside a quoted field.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Delimiter">
-            <summary>
-            Gets the delimiter character separating each field.
-            </summary>
-            <value>The delimiter character separating each field.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Quote">
-            <summary>
-            Gets the quotation character wrapping every field.
-            </summary>
-            <value>The quotation character wrapping every field.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.HasHeaders">
-            <summary>
-            Indicates if field names are located on the first non commented line.
-            </summary>
-            <value><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.TrimSpaces">
-            <summary>
-            Indicates if spaces at the start and end of a field are trimmed.
-            </summary>
-            <value><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.BufferSize">
-            <summary>
-            Gets the buffer size.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.DefaultParseErrorAction">
-            <summary>
-            Gets or sets the default action to take when a parsing error has occured.
-            </summary>
-            <value>The default action to take when a parsing error has occured.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.MissingFieldAction">
-            <summary>
-            Gets or sets the action to take when a field is missing.
-            </summary>
-            <value>The action to take when a field is missing.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.SupportsMultiline">
-            <summary>
-            Gets or sets a value indicating if the reader supports multiline fields.
-            </summary>
-            <value>A value indicating if the reader supports multiline field.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.SkipEmptyLines">
-            <summary>
-            Gets or sets a value indicating if the reader will skip empty lines.
-            </summary>
-            <value>A value indicating if the reader will skip empty lines.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.FieldCount">
-            <summary>
-            Gets the maximum number of fields to retrieve for each record.
-            </summary>
-            <value>The maximum number of fields to retrieve for each record.</value>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.EndOfStream">
-            <summary>
-            Gets a value that indicates whether the current stream position is at the end of the stream.
-            </summary>
-            <value><see langword="true"/> if the current stream position is at the end of the stream; otherwise <see langword="false"/>.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.CurrentRecordIndex">
-            <summary>
-            Gets the current record index in the CSV file.
-            </summary>
-            <value>The current record index in the CSV file.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.MissingFieldFlag">
-            <summary>
-            Indicates if one or more field are missing for the current record.
-            Resets after each successful record read.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.ParseErrorFlag">
-            <summary>
-            Indicates if a parse error occured for the current record.
-            Resets after each successful record read.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.Int32,System.String)">
-            <summary>
-            Gets the field with the specified name and record position. <see cref="M:hasHeaders"/> must be <see langword="true"/>.
-            </summary>
-            <value>
-            The field with the specified name and record position.
-            </value>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="field"/> is <see langword="null"/> or an empty string.
-            </exception>
-            <exception cref="T:InvalidOperationException">
-            The CSV does not have headers (<see cref="M:HasHeaders"/> property is <see langword="false"/>).
-            </exception>
-            <exception cref="T:ArgumentException">
-            	<paramref name="field"/> not found.
-            </exception>
-            <exception cref="T:ArgumentOutOfRangeException">
-            	Record index must be > 0.
-            </exception>
-            <exception cref="T:InvalidOperationException">
-            	Cannot move to a previous record in forward-only mode.
-            </exception>
-            <exception cref="T:EndOfStreamException">
-            	Cannot read record at <paramref name="record"/>.
-            </exception>
-            <exception cref="T:MalformedCsvException">
-            	The CSV appears to be corrupt at the current position.
-            </exception>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.Int32,System.Int32)">
-            <summary>
-            Gets the column with the specified name.
-            </summary>
-            <returns>The column with the specified name as an <see cref="T:System.Object"/>.</returns>
-              
-            <exception cref="T:System.IndexOutOfRangeException">No column with the specified name was found. </exception>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.String)">
-            <summary>
-            Gets the column with the specified name.
-            </summary>
-            <returns>The column with the specified name as an <see cref="T:System.Object"/>.</returns>
-              
-            <exception cref="T:System.IndexOutOfRangeException">No column with the specified name was found. </exception>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.Item(System.Int32)">
-            <summary>
-            Gets the field at the specified index.
-            </summary>
-            <value>The field at the specified index.</value>
-            <exception cref="T:ArgumentOutOfRangeException">
-            	<paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
-            </exception>
-            <exception cref="T:InvalidOperationException">
-            	No record read yet. Call ReadLine() first.
-            </exception>
-            <exception cref="T:MalformedCsvException">
-            	The CSV appears to be corrupt at the current position.
-            </exception>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="E:CODE.Framework.Core.Utilities.Csv.CsvReader.Disposed">
-            <summary>
-            Occurs when the instance is disposed of.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.IsDisposed">
-            <summary>
-            Gets a value indicating whether the instance has been disposed of.
-            </summary>
-            <value>
-            	<see langword="true"/> if the instance has been disposed of; otherwise, <see langword="false"/>.
-            </value>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.Csv.CsvReader.DataReaderValidations">
             <summary>
@@ -841,6 +1121,11 @@
             	<paramref name="reader"/> is a <see langword="null"/>.
             </exception>
         </member>
+        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.RecordEnumerator.Current">
+            <summary>
+            Gets the current record.
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Csv.CsvReader.RecordEnumerator.MoveNext">
             <summary>
             Advances the enumerator to the next record of the CSV.
@@ -852,300 +1137,15 @@
             Sets the enumerator to its initial position, which is before the first record in the CSV.
             </summary>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CsvReader.RecordEnumerator.Dispose">
-            <summary>
-            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.RecordEnumerator.Current">
-            <summary>
-            Gets the current record.
-            </summary>
-        </member>
         <member name="P:CODE.Framework.Core.Utilities.Csv.CsvReader.RecordEnumerator.System#Collections#IEnumerator#Current">
             <summary>
             Gets the current record.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._records">
+        <member name="M:CODE.Framework.Core.Utilities.Csv.CsvReader.RecordEnumerator.Dispose">
             <summary>
-            Contains the cached records.
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
             </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._currentRecordIndex">
-            <summary>
-            Contains the current record index (inside the cached records array).
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._readingStream">
-            <summary>
-            Indicates if a new record is being read from the CSV stream.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader._bindingList">
-            <summary>
-            Contains the binding list linked to this reader.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean)">
-            <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader"/> class.
-            </summary>
-            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="reader"/> is a <see langword="null"/>.
-            </exception>
-            <exception cref="T:ArgumentException">
-            Cannot read from <paramref name="reader"/>.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Int32)">
-            <summary>
-            Initializes a new instance of the CsvReader class.
-            </summary>
-            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-            <param name="bufferSize">The buffer size in bytes.</param>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="reader"/> is a <see langword="null"/>.
-            </exception>
-            <exception cref="T:ArgumentException">
-            	Cannot read from <paramref name="reader"/>.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char)">
-            <summary>
-            Initializes a new instance of the CsvReader class.
-            </summary>
-            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="reader"/> is a <see langword="null"/>.
-            </exception>
-            <exception cref="T:ArgumentException">
-            	Cannot read from <paramref name="reader"/>.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char,System.Int32)">
-            <summary>
-            Initializes a new instance of the CsvReader class.
-            </summary>
-            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-            <param name="bufferSize">The buffer size in bytes.</param>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="reader"/> is a <see langword="null"/>.
-            </exception>
-            <exception cref="T:ArgumentException">
-            	Cannot read from <paramref name="reader"/>.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char,System.Char,System.Char,System.Char,System.Boolean)">
-            <summary>
-            Initializes a new instance of the CsvReader class.
-            </summary>
-            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-            <param name="quote">The quotation character wrapping every field (default is ''').</param>
-            <param name="escape">
-            The escape character letting insert quotation characters inside a quoted field (default is '\').
-            If no escape character, set to '\0' to gain some performance.
-            </param>
-            <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
-            <param name="trimSpaces"><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>. Default is <see langword="true"/>.</param>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="reader"/> is a <see langword="null"/>.
-            </exception>
-            <exception cref="T:ArgumentException">
-            	Cannot read from <paramref name="reader"/>.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.#ctor(System.IO.TextReader,System.Boolean,System.Char,System.Char,System.Char,System.Char,System.Boolean,System.Int32)">
-            <summary>
-            Initializes a new instance of the CsvReader class.
-            </summary>
-            <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-            <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-            <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-            <param name="quote">The quotation character wrapping every field (default is ''').</param>
-            <param name="escape">
-            The escape character letting insert quotation characters inside a quoted field (default is '\').
-            If no escape character, set to '\0' to gain some performance.
-            </param>
-            <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
-            <param name="trimSpaces"><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>. Default is <see langword="true"/>.</param>
-            <param name="bufferSize">The buffer size in bytes.</param>
-            <exception cref="T:ArgumentNullException">
-            	<paramref name="reader"/> is a <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentOutOfRangeException">
-            	<paramref name="bufferSize"/> must be 1 or more.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.ReadToEnd">
-            <summary>
-            Reads the CSV stream from the current position to the end of the stream.
-            </summary>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.ReadNextRecord(System.Boolean,System.Boolean)">
-            <summary>
-            Reads the next record.
-            </summary>
-            <param name="onlyReadHeaders">
-            Indicates if the reader will proceed to the next record after having read headers.
-            <see langword="true"/> if it stops after having read headers; otherwise, <see langword="false"/>.
-            </param>
-            <param name="skipToNextLine">
-            Indicates if the reader will skip directly to the next line without parsing the current one. 
-            To be used when an error occurs.
-            </param>
-            <returns><see langword="true"/> if a record has been successfully reads; otherwise, <see langword="false"/>.</returns>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.MoveToStart">
-            <summary>
-            Moves before the first record.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.MoveToLastCachedRecord">
-            <summary>
-            Moves to the last record read so far.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.MoveTo(System.Int64)">
-            <summary>
-            Moves to the specified record index.
-            </summary>
-            <param name="record">The record index.</param>
-            <exception cref="T:ArgumentOutOfRangeException">
-            	Record index must be > 0.
-            </exception>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            	The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CurrentRecordIndex">
-            <summary>
-            Gets the current record index in the CSV file.
-            </summary>
-            <value>The current record index in the CSV file.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.EndOfStream">
-            <summary>
-            Gets a value that indicates whether the current stream position is at the end of the stream.
-            </summary>
-            <value><see langword="true"/> if the current stream position is at the end of the stream; otherwise <see langword="false"/>.</value>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.Item(System.Int32)">
-            <summary>
-            Gets the field at the specified index.
-            </summary>
-            <value>The field at the specified index.</value>
-            <exception cref="T:ArgumentOutOfRangeException">
-            	<paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
-            </exception>
-            <exception cref="T:InvalidOperationException">
-            	No record read yet. Call ReadLine() first.
-            </exception>
-            <exception cref="T:CODE.Framework.Core.Utilities.Csv.MissingFieldCsvException">
-            	The CSV data appears to be missing a field.
-            </exception>
-            <exception cref="T:MalformedCsvException">
-            	The CSV appears to be corrupt at the current position.
-            </exception>
-            <exception cref="T:System.ComponentModel.ObjectDisposedException">
-            	The instance has been disposed of.
-            </exception>
-        </member>
-        <member name="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList">
-            <summary>
-            Represents a binding list wrapper for a CSV reader.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._csv">
-            <summary>
-            Contains the linked CSV reader.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._count">
-            <summary>
-            Contains the cached record count.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._properties">
-            <summary>
-            Contains the cached property descriptors.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._sort">
-            <summary>
-            Contains the current sort property.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList._direction">
-            <summary>
-            Contains the current sort direction.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvBindingList.#ctor(CODE.Framework.Core.Utilities.Csv.CachedCsvReader)">
-            <summary>
-            Initializes a new instance of the CsvBindingList class.
-            </summary>
-            <param name="csv"></param>
-        </member>
-        <member name="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor">
-            <summary>
-            Represents a CSV field property descriptor.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor._index">
-            <summary>
-            Contains the field index.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor.#ctor(System.String,System.Int32)">
-            <summary>
-            Initializes a new instance of the CsvPropertyDescriptor class.
-            </summary>
-            <param name="fieldName">The field name.</param>
-            <param name="index">The field index.</param>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvPropertyDescriptor.Index">
-            <summary>
-            Gets the field index.
-            </summary>
-            <value>The field index.</value>
-        </member>
-        <member name="T:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer">
-            <summary>
-            Represents a CSV record comparer.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer._field">
-            <summary>
-            Contains the field index of the values to compare.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer._direction">
-            <summary>
-            Contains the sort direction.
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.CachedCsvReader.CsvRecordComparer.#ctor(System.Int32,System.ComponentModel.ListSortDirection)">
-            <summary>
-            Initializes a new instance of the CsvRecordComparer class.
-            </summary>
-            <param name="field">The field index of the values to compare.</param>
-            <param name="direction">The sort direction.</param>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.Csv.MalformedCsvException">
             <summary>
@@ -1221,13 +1221,6 @@
             <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
             <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.Csv.MalformedCsvException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            When overridden in a derived class, sets the <see cref="T:SerializationInfo"/> with information about the exception.
-            </summary>
-            <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-            <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
-        </member>
         <member name="P:CODE.Framework.Core.Utilities.Csv.MalformedCsvException.RawData">
             <summary>
             Gets the raw data when the error occured.
@@ -1257,6 +1250,13 @@
             Gets a message that describes the current exception.
             </summary>
             <value>A message that describes the current exception.</value>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Csv.MalformedCsvException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            When overridden in a derived class, sets the <see cref="T:SerializationInfo"/> with information about the exception.
+            </summary>
+            <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.Csv.MissingFieldAction">
             <summary>
@@ -1569,7 +1569,7 @@
             This class provides basic functionaloty for email features.
             </summary>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.EmailHelper.SendEmail(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,System.String,System.String)">
+        <member name="M:CODE.Framework.Core.Utilities.EmailHelper.SendEmail(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,System.String,System.String,System.Collections.Generic.List{System.Net.Mail.Attachment})">
             <summary>
             Sends an email to the specified recipient
             </summary>
@@ -1584,6 +1584,7 @@
             <param name="portNumber">If null or not supplied, uses default of 25</param>
             <param name="userName">Only required if SMTP server requires authentication to send</param>
             <param name="password">Only required if SMTP server requires authentication to send</param>
+            <param name="attachments">(Optional) Attachments to send with the email</param>
             <returns>True if sent successfully</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.EmailHelper.IsEmailAddressWellFormed(System.String)">
@@ -1966,6 +1967,18 @@
             <summary>
             Internal list of defined maps
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.Mapper.MilosDefaultMaps">
+            <summary>
+            Provides a list of default maps as typically used by Milos
+            </summary>
+            <remarks>
+            The following maps are included:
+            PK -> Id
+            PKString -> Id
+            PKInteger -> Id
+            </remarks>
+            <value>The milos default maps.</value>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.AddMap(System.String,System.String)">
             <summary>
@@ -2354,18 +2367,6 @@
             <param name="numberOfRowsToMap">Number of rows to map (start index = 20, number of rows = 10 means that rows 21-30 will be mapped)</param>
             <returns></returns>
         </member>
-        <member name="P:CODE.Framework.Core.Utilities.Mapper.MilosDefaultMaps">
-            <summary>
-            Provides a list of default maps as typically used by Milos
-            </summary>
-            <remarks>
-            The following maps are included:
-            PK -> Id
-            PKString -> Id
-            PKInteger -> Id
-            </remarks>
-            <value>The milos default maps.</value>
-        </member>
         <member name="T:CODE.Framework.Core.Utilities.Mapper.ReflectionHelper">
             <summary>
             Class used internally to aid in reflection tasks
@@ -2631,82 +2632,6 @@
             This class contains various useful features for detecting network state
             </summary>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CurrentlyConnectedToDomain(System.String)">
-            <summary>
-            Returns true, if the system is currently connected to the specified domain.
-            </summary>
-            <param name="domain">The domain (case insensitive).</param>
-            <returns>True if connected to the domain.</returns>
-            <example>
-            if (NetworkHelper.CurrentlyConnectedToDomain("mydomain"))
-            {
-                // ... do something with it
-            }
-            </example>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnect(System.String)">
-            <summary>
-            Determines whether it is possible to connect to the specified host.
-            </summary>
-            <param name="host">The host.</param>
-            <returns>
-            	<c>true</c> if this instance can connect the specified host; otherwise, <c>false</c>.
-            </returns>
-            <example>
-            if (NetworkHelper.CanConnect("www.Microsoft.com"))
-            {
-            // ... do something with the connection
-            }
-            </example>
-            <remarks>Port 80 is used to make the connection attempt.</remarks>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnect(System.String,System.Int32)">
-            <summary>
-            Determines whether it is possible to connect to the specified host.
-            </summary>
-            <param name="host">The host.</param>
-            <param name="port">The port.</param>
-            <returns>
-            	<c>true</c> if this instance can connect the specified host; otherwise, <c>false</c>.
-            </returns>
-            <example>
-            if (NetworkHelper.CanConnect("www.Microsoft.com", 80))
-            {
-                // ... do something with the connection
-            }
-            </example>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.GetAllAddressesForAdapter(System.Net.NetworkInformation.IPInterfaceProperties)">
-            <summary>
-            Gets all addresses for an adapter.
-            </summary>
-            <param name="interfaceProperties">The interface properties.</param>
-            <returns>List of IP Addresses</returns>
-            <remarks>For internal use only</remarks>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnectFromAddress(System.Net.IPAddress,System.Collections.Generic.IEnumerable{System.Net.NetworkInformation.IPAddressInformation},System.Net.IPHostEntry,System.Int32)">
-            <summary>
-            Determines whether it is possible to connect to the specified local host address.
-            </summary>
-            <param name="localHostAddress">The local host address.</param>
-            <param name="adapterAddressList">The adapter address list.</param>
-            <param name="remoteHostEntry">The remote host entry.</param>
-            <param name="port">The port.</param>
-            <returns>true if this instance can connect from the specified local host addr; otherwise false.</returns>
-            <remarks>For internal use only</remarks>
-        </member>
-        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnectFromEndPoint(System.Net.EndPoint,System.Net.IPHostEntry,System.Int32)">
-            <summary>
-            Determines whether it is possible to connect to the remote host from the specified endpoint.
-            </summary>
-            <param name="localEndPoint">The local end point.</param>
-            <param name="remoteHostEntry">The remote host entry.</param>
-            <param name="port">The port.</param>
-            <returns>
-            	<c>true</c> if this instance [can connect from end point] the specified local EP; otherwise, <c>false</c>.
-            </returns>
-            <remarks>For internal use only</remarks>
-        </member>
         <member name="P:CODE.Framework.Core.Utilities.NetworkHelper.NetworkAvailable">
             <summary>
             Gets a value indicating whether a valid network conneciton is available
@@ -2833,6 +2758,82 @@
             MessageBox.Show(sb.ToString());
             </example>
         </member>
+        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CurrentlyConnectedToDomain(System.String)">
+            <summary>
+            Returns true, if the system is currently connected to the specified domain.
+            </summary>
+            <param name="domain">The domain (case insensitive).</param>
+            <returns>True if connected to the domain.</returns>
+            <example>
+            if (NetworkHelper.CurrentlyConnectedToDomain("mydomain"))
+            {
+                // ... do something with it
+            }
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnect(System.String)">
+            <summary>
+            Determines whether it is possible to connect to the specified host.
+            </summary>
+            <param name="host">The host.</param>
+            <returns>
+            	<c>true</c> if this instance can connect the specified host; otherwise, <c>false</c>.
+            </returns>
+            <example>
+            if (NetworkHelper.CanConnect("www.Microsoft.com"))
+            {
+            // ... do something with the connection
+            }
+            </example>
+            <remarks>Port 80 is used to make the connection attempt.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnect(System.String,System.Int32)">
+            <summary>
+            Determines whether it is possible to connect to the specified host.
+            </summary>
+            <param name="host">The host.</param>
+            <param name="port">The port.</param>
+            <returns>
+            	<c>true</c> if this instance can connect the specified host; otherwise, <c>false</c>.
+            </returns>
+            <example>
+            if (NetworkHelper.CanConnect("www.Microsoft.com", 80))
+            {
+                // ... do something with the connection
+            }
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.GetAllAddressesForAdapter(System.Net.NetworkInformation.IPInterfaceProperties)">
+            <summary>
+            Gets all addresses for an adapter.
+            </summary>
+            <param name="interfaceProperties">The interface properties.</param>
+            <returns>List of IP Addresses</returns>
+            <remarks>For internal use only</remarks>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnectFromAddress(System.Net.IPAddress,System.Collections.Generic.IEnumerable{System.Net.NetworkInformation.IPAddressInformation},System.Net.IPHostEntry,System.Int32)">
+            <summary>
+            Determines whether it is possible to connect to the specified local host address.
+            </summary>
+            <param name="localHostAddress">The local host address.</param>
+            <param name="adapterAddressList">The adapter address list.</param>
+            <param name="remoteHostEntry">The remote host entry.</param>
+            <param name="port">The port.</param>
+            <returns>true if this instance can connect from the specified local host addr; otherwise false.</returns>
+            <remarks>For internal use only</remarks>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.NetworkHelper.CanConnectFromEndPoint(System.Net.EndPoint,System.Net.IPHostEntry,System.Int32)">
+            <summary>
+            Determines whether it is possible to connect to the remote host from the specified endpoint.
+            </summary>
+            <param name="localEndPoint">The local end point.</param>
+            <param name="remoteHostEntry">The remote host entry.</param>
+            <param name="port">The port.</param>
+            <returns>
+            	<c>true</c> if this instance [can connect from end point] the specified local EP; otherwise, <c>false</c>.
+            </returns>
+            <remarks>For internal use only</remarks>
+        </member>
         <member name="E:CODE.Framework.Core.Utilities.NetworkHelper.NetworkAddressChanged">
             <summary>
             Occurs when the IP Address of a network interface changes
@@ -2886,6 +2887,12 @@
             Indicates whether the class currently listens for power events
             </summary>
         </member>
+        <member name="P:CODE.Framework.Core.Utilities.PowerHelper.CurrentStatus">
+            <summary>
+            Current power status of the system
+            </summary>
+            <value>The current status.</value>
+        </member>
         <member name="F:CODE.Framework.Core.Utilities.PowerHelper._windowHandle">
             <summary>
             Window handle for windows power messages
@@ -2926,6 +2933,16 @@
             <returns>True if successfully set</returns>
             <remarks>This method is specific to the thread that calls it. When the thread goes away, so does this setting.</remarks>
         </member>
+        <member name="E:CODE.Framework.Core.Utilities.PowerHelper._powerChanged">
+            <summary>
+            Occurs when power settings change
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Core.Utilities.PowerHelper.PowerChanged">
+            <summary>
+            Occurs when power settings change
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.PowerHelper.RaisePowerChanged">
             <summary>
             Raises the power changed event.
@@ -2939,22 +2956,6 @@
         <member name="F:CODE.Framework.Core.Utilities.PowerHelper.DEVICE_NOTIFY_WINDOW_HANDLE">
             <summary>
             Device notify window handle
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Core.Utilities.PowerHelper.CurrentStatus">
-            <summary>
-            Current power status of the system
-            </summary>
-            <value>The current status.</value>
-        </member>
-        <member name="E:CODE.Framework.Core.Utilities.PowerHelper._powerChanged">
-            <summary>
-            Occurs when power settings change
-            </summary>
-        </member>
-        <member name="E:CODE.Framework.Core.Utilities.PowerHelper.PowerChanged">
-            <summary>
-            Occurs when power settings change
             </summary>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.PowerHelper.NativeMethods">
@@ -3278,11 +3279,6 @@
             Provides information about system power status
             </summary>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.PowerInformation.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Utilities.PowerInformation"/> class.
-            </summary>
-        </member>
         <member name="P:CODE.Framework.Core.Utilities.PowerInformation.BatteryIsCharging">
             <summary>
             Indicates whether the battery is currently charging.
@@ -3344,6 +3340,11 @@
             State of the monitor.
             </summary>
             <value>The state of the monitor.</value>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.PowerInformation.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Utilities.PowerInformation"/> class.
+            </summary>
         </member>
         <member name="P:CODE.Framework.Core.Utilities.PowerInformation.DiskDriveState">
             <summary>

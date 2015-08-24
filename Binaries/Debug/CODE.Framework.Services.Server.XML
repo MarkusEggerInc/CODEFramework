@@ -219,7 +219,7 @@
         </member>
         <member name="M:CODE.Framework.Services.Server.RestJsonHttpBehavior.#ctor(System.String,System.Type)">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestJsonHttpBehavior"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestJsonHttpBehavior" /> class.
             </summary>
             <param name="rootUrl">The root URL.</param>
             <param name="contractType">Type of the contract.</param>
@@ -244,7 +244,7 @@
         </member>
         <member name="M:CODE.Framework.Services.Server.RestJsonOperationSelector.#ctor(System.String,System.Type)">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestJsonOperationSelector"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestJsonOperationSelector" /> class.
             </summary>
             <param name="rootUrl">The root URL.</param>
             <param name="contractType">Type of the hosted service contract.</param>
@@ -263,7 +263,7 @@
         </member>
         <member name="M:CODE.Framework.Services.Server.RestDispatchMessageInspector.#ctor(System.String,System.Type)">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestDispatchMessageInspector"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.RestDispatchMessageInspector" /> class.
             </summary>
             <param name="rootUrl">The root URL.</param>
             <param name="contractType">Type of the contract.</param>
@@ -291,6 +291,22 @@
         </member>
         <member name="M:CODE.Framework.Services.Server.ServiceGarden.#cctor">
             <summary>Static constructor</summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BaseUrl">
+            <summary>
+            Base URL for the service
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BasePort">
+            <summary>
+            First used port number for the hosted services (each subsequent service will increase the listening port by 1)
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BasePath">
+            <summary>
+            Gets or sets the base path ("virtual directory")
+            </summary>
+            <value>The base path.</value>
         </member>
         <member name="F:CODE.Framework.Services.Server.ServiceGarden.Hosts">
             <summary>
@@ -430,6 +446,16 @@
             or
             Static BasePort property must be set on the ServiceGarden class before the garden can be populated.
             </exception>
+        </member>
+        <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeHostAdded">
+            <summary>
+            Fires before a new host is added (can be used to manipulate the host before it is opened)
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeEndpointAdded">
+            <summary>
+            Fires before a new host is added (can be used to manipulate the host before it is opened)
+            </summary>
         </member>
         <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostNetTcp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize)">
             <summary>Tries to create the service host and logs appropriate information</summary>
@@ -788,6 +814,16 @@
             ServiceGarden.AllowHttpCrossDomainCalls("www.eps-software.com");
             </example>
         </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HttpCrossDomainCallsAllowed">
+            <summary>
+            Indicates whether cross domain calls from script clients are allowed
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HttpCrossDomainCallsAllowedFrom">
+            <summary>
+            Indicates the URLs cross domain calls are allowed from
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Services.Server.ServiceGarden.AddServiceHostWsHttp(System.Type,System.Boolean)">
             <summary>
             Creates the service host.
@@ -1089,42 +1125,6 @@
             <param name="useHttps">Indicates whether HTTPS should be used</param>
             <returns>Service URL if successful. Empty string otherwise.</returns>
             <remarks>Uses the LoggingMediator class to log information. Configure LoggingMediator accordingly.</remarks>
-        </member>
-        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BaseUrl">
-            <summary>
-            Base URL for the service
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BasePort">
-            <summary>
-            First used port number for the hosted services (each subsequent service will increase the listening port by 1)
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Server.ServiceGarden.BasePath">
-            <summary>
-            Gets or sets the base path ("virtual directory")
-            </summary>
-            <value>The base path.</value>
-        </member>
-        <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeHostAdded">
-            <summary>
-            Fires before a new host is added (can be used to manipulate the host before it is opened)
-            </summary>
-        </member>
-        <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeEndpointAdded">
-            <summary>
-            Fires before a new host is added (can be used to manipulate the host before it is opened)
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HttpCrossDomainCallsAllowed">
-            <summary>
-            Indicates whether cross domain calls from script clients are allowed
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Server.ServiceGarden.HttpCrossDomainCallsAllowedFrom">
-            <summary>
-            Indicates the URLs cross domain calls are allowed from
-            </summary>
         </member>
         <member name="T:CODE.Framework.Services.Server.ServiceGarden.HostWrapper">
             <summary>

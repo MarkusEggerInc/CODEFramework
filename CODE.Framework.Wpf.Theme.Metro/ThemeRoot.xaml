@@ -8,10 +8,12 @@
         <!-- Standard settings (should always be merged in first -->
         <ResourceDictionary Source="Colors.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
+        <ResourceDictionary Source="Metro-ApplicationLogos.xaml"/>
 
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Metro-Control-AppBarButton.xaml"/>
         <ResourceDictionary Source="Metro-Control-Button.xaml"/>
+        <ResourceDictionary Source="Metro-Control-Calendar.xaml"/>
         <ResourceDictionary Source="Metro-Control-CheckBox.xaml"/>
         <ResourceDictionary Source="Metro-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Metro-Control-FlowDocumentReader.xaml"/>

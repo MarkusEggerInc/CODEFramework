@@ -11,7 +11,7 @@
     <Color x:Key="CODE.Framework-Application-ThemeColor3">#BD7600</Color>
 
     <Color x:Key="CODE.Framework-Application-ForegroundColor1">White</Color>
-    <Color x:Key="CODE.Framework-Application-ForegroundColor2">WhiteSmoke</Color>
+    <Color x:Key="CODE.Framework-Application-ForegroundColor2">#454545</Color>
     <Color x:Key="CODE.Framework-Application-ForegroundColor3">Gray</Color>
 
     <Color x:Key="CODE.Framework-Application-HighlightColor1">Blue</Color>

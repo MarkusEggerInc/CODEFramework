@@ -1,12 +1,14 @@
-﻿using CODE.Framework.Core.Utilities.Extensions;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using CODE.Framework.Core.Utilities;
+using CODE.Framework.Core.Utilities.Extensions;
 
 namespace CODE.Framework.Services.Server.WebApi
 {
@@ -87,13 +89,14 @@ namespace CODE.Framework.Services.Server.WebApi
                 object result;
                 try
                 {
-                    result = method.Invoke(_host, new[] { parameterObject });
+                    result = method.Invoke(_host, new[] {parameterObject});
                 }
                 catch (TargetException ex)
                 {
-                    throw new TargetException("Service " + _host.GetType().ToString() + " does not implement interface " + _contractType.ToString() + ".", ex);
+                    throw new TargetException("Service " + _host.GetType() + " does not implement interface " + _contractType + ".", ex);
                 }
-                var response = new HttpResponseMessage {Content = new ObjectContent(result.GetType(), result, new JsonMediaTypeFormatter(), "application/json")};
+                var json = JsonHelper.SerializeToRestJson(result);
+                var response = new HttpResponseMessage {Content = new StringContent(json, Encoding.UTF8, "application/json")};
                 return response;
             }
             else
@@ -107,13 +110,14 @@ namespace CODE.Framework.Services.Server.WebApi
                 object result;
                 try
                 {
-                    result = method.Invoke(_host, new[] { parameterObject });
+                    result = method.Invoke(_host, new[] {parameterObject});
                 }
                 catch (TargetException ex)
                 {
-                    throw new TargetException("Service " + _host.GetType().ToString() + " does not implement interface " + _contractType.ToString() + ".", ex);
-                } 
-                var response = new HttpResponseMessage { Content = new ObjectContent(result.GetType(), result, new JsonMediaTypeFormatter(), "application/json") };
+                    throw new TargetException("Service " + _host.GetType() + " does not implement interface " + _contractType + ".", ex);
+                }
+                var json = JsonHelper.SerializeToRestJson(result);
+                var response = new HttpResponseMessage {Content = new StringContent(json, Encoding.UTF8, "application/json")};
                 return response;
             }
         }
@@ -128,7 +132,7 @@ namespace CODE.Framework.Services.Server.WebApi
             // No explicitly defined contract interface found. Therefore, we try to use one implicitly
             var interfaces = _host.GetType().GetInterfaces();
             if (interfaces.Length != 1) throw new NotSupportedException("The hosted service contract must implement a service interface");
-            _contractType = interfaces[0]; 
+            _contractType = interfaces[0];
         }
     }
 }

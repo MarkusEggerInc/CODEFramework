@@ -11,6 +11,10 @@
     <SolidColorBrush x:Key="ScrollBarHoverBackground" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" Opacity=".1" />
     <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" Opacity=".1" />
 
+    <Style TargetType="ScrollViewer">
+        <Setter Property="PanningMode" Value="Both" />
+    </Style>
+
     <!-- Main control -->
     <Style TargetType="ScrollBar">
         <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"/>

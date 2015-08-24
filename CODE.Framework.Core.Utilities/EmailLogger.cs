@@ -76,7 +76,10 @@ namespace CODE.Framework.Core.Utilities
                         EmailHelper.SendEmail(_senderName, _senderEmail, recipient.Name, recipient.EmailAddress, subject, logEvent,
                             null, _mailServer, _portNumber, _userName, _password);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    { 
+                        System.Diagnostics.Debug.WriteLine(ExceptionHelper.GetExceptionText(ex)); 
+                    }
                 }
             });
         }

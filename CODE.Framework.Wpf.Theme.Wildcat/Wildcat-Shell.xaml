@@ -43,9 +43,11 @@
                                                  ItemsSource="{TemplateBinding NormalViews}" MainModel="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                                  SelectedIndex="{Binding SelectedNormalView, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                                  Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-NormalViewsHost}"/>
-                        <mvvm:ViewActionAndOpenViewSelector Views="{TemplateBinding NormalViews}" Actions="{Binding}" Grid.Row="2" 
-                                                            ViewTabs="{Binding ElementName=OpenViews, Mode=OneWay, Path=.}"
-                                                            Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-ViewActionAndOpenViewSelector}"/>
+                        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                            <mvvm:ViewActionAndOpenViewSelector Views="{TemplateBinding NormalViews}" Actions="{Binding}" 
+                                                                ViewTabs="{Binding ElementName=OpenViews, Mode=OneWay, Path=.}"
+                                                                Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-ViewActionAndOpenViewSelector}"/>
+                        </ScrollViewer>
                         <mvvm:TopLevelViewHostTabControl x:Name="tabControl" ItemsSource="{TemplateBinding TopLevelViews}" Grid.Row="1" Grid.RowSpan="2"
                                              SelectedIndex="{TemplateBinding SelectedTopLevelView}" 
                                              Style="{DynamicResource CODE.Framework.Wpf.Mvvm.Shell-TopLevelViewsHost}" 

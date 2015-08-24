@@ -33,6 +33,14 @@
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy">
             <summary>Invisible object used to bind elements together that are otherwise not directly bindable</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.Source">
+            <summary>
+            Gets or sets the source.
+            </summary>
+            <value>
+            The source.
+            </value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.SourceProperty">
             <summary>
             Source
@@ -45,19 +53,6 @@
             <param name="s">The source</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.DestinationProperty">
-            <summary>
-            Destination
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.Source">
-            <summary>
-            Gets or sets the source.
-            </summary>
-            <value>
-            The source.
-            </value>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.Destination">
             <summary>
             Gets or sets the destination.
@@ -65,6 +60,11 @@
             <value>
             The destination.
             </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Classes.ContextBindingDummy.DestinationProperty">
+            <summary>
+            Destination
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Classes.HorizontalScrollEnabledToVisibilityConverter">
             <summary>
@@ -122,20 +122,40 @@
         <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotCountProperty">
             <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotDiameterProperty">
             <summary>Defines the diameter of each dot within the animation</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotBrushProperty">
             <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotSpaceFactor">
+            <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotSpaceFactorProperty">
             <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotAnimationSpeedFactorProperty">
             <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.IsActiveProperty">
             <summary>Indicates whether the progress animation is active</summary>
@@ -164,46 +184,46 @@
             Stops the animation.
             </summary>
         </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotCount">
-            <summary>Defines the number of actual dots in the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotDiameter">
-            <summary>Defines the diameter of each dot within the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotBrush">
-            <summary>Brush used to draw each dot</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotSpaceFactor">
-            <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.DotAnimationSpeedFactor">
-            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.IsActive">
-            <summary>Indicates whether the progress animation is active</summary>
-            <value>True if active</value>
-            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
-        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation">
             <summary>Simple rendering mechanism to render a standard Newsroom loading animatin (circular)</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotCountProperty">
             <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotDiameterProperty">
             <summary>Defines the diameter of each dot within the animation</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotBrushProperty">
             <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactor">
+            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactorProperty">
             <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotAnimationSpeedFactorProperty">
             <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.IsActiveProperty">
             <summary>Indicates whether the progress animation is active</summary>
@@ -232,26 +252,6 @@
             Stops the animation.
             </summary>
         </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotCount">
-            <summary>Defines the number of actual dots in the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotDiameter">
-            <summary>Defines the diameter of each dot within the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotBrush">
-            <summary>Brush used to draw each dot</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactor">
-            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
-            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.IsActive">
-            <summary>Indicates whether the progress animation is active</summary>
-            <value>True if active</value>
-            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
-        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomScrollViewer">
             <summary>
             Special scroll viewer for Newsroom UIs.
@@ -274,70 +274,70 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer"/> class.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTopProperty">
-            <summary>Content positioned at the top</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentBottomProperty">
-            <summary>Content positioned at the top</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.VerticalSlideProperty">
-            <summary>Defines how far the animation moves the visuals vertically</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationProperty">
-            <summary>Time (in milliseconds) the top content should be displayed</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationProperty">
-            <summary>Time (in milliseconds) the top content should be displayed</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTransitionDurationProperty">
-            <summary>Time (in milliseconds) the top content should be displayed</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayProperty">
-            <summary>Time (in milliseconds) used to delay the start of the animation</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayRandomAdditionProperty">
-            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAdditionProperty">
-            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAdditionProperty">
-            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.StartWithTopContentProperty">
-            <summary>Indicates whether the top content is to be displayed initially</summary>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTop">
+            <summary>Content positioned at the top</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTopProperty">
             <summary>Content positioned at the top</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentBottom">
             <summary>Content positioned at the top</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentBottomProperty">
+            <summary>Content positioned at the top</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.VerticalSlide">
+            <summary>Defines how far the animation moves the visuals vertically</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.VerticalSlideProperty">
             <summary>Defines how far the animation moves the visuals vertically</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDuration">
             <summary>Time (in milliseconds) the top content should be displayed</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDuration">
             <summary>Time (in milliseconds) the bottom content should be displayed</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTransitionDuration">
             <summary>Time (in milliseconds) used for the transition from one content to the other</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.ContentTransitionDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelay">
+            <summary>Time (in milliseconds) used to delay the start of the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayProperty">
             <summary>Time (in milliseconds) used to delay the start of the animation</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayRandomAddition">
             <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.AnimationStartDelayRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAddition">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAdditionProperty">
             <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAddition">
             <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.StartWithTopContent">
+            <summary>Indicates whether the top content is to be displayed initially</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.PeekAnimationContainer.StartWithTopContentProperty">
             <summary>Indicates whether the top content is to be displayed initially</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton">
@@ -345,15 +345,33 @@
             Special button class used for Newsroom styled tiles
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Icon">
+            <summary>
+            Gets or sets the icon.
+            </summary>
+            <value>The icon.</value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.IconProperty">
             <summary>
             Gets or sets the icon.
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Caption">
+            <summary>
+            Gets or sets the caption.
+            </summary>
+            <value>The caption.</value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.CaptionProperty">
             <summary>
             Gets or sets the caption.
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Significance">
+            <summary>
+            Gets or sets the significance.
+            </summary>
+            <value>The significance.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.SignificanceProperty">
             <summary>
@@ -367,34 +385,16 @@
             <param name="d">The d.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.HighSignificanceVisibleProperty">
-            <summary>
-            Defines whether high significance items are visible
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Icon">
-            <summary>
-            Gets or sets the icon.
-            </summary>
-            <value>The icon.</value>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Caption">
-            <summary>
-            Gets or sets the caption.
-            </summary>
-            <value>The caption.</value>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.Significance">
-            <summary>
-            Gets or sets the significance.
-            </summary>
-            <value>The significance.</value>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.HighSignificanceVisible">
             <summary>
             Defines whether high significance items are visible
             </summary>
             <value>The high significance visible.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.NewsroomTileButton.HighSignificanceVisibleProperty">
+            <summary>
+            Defines whether high significance items are visible
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellNewsroomTiles">
             <summary>
@@ -438,6 +438,9 @@
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.PageSwitchedEvent">
             <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
         </member>
+        <member name="E:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.PageSwitched">
+            <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.OnApplyTemplate">
             <summary>
             Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
@@ -448,29 +451,16 @@
             Makes the home page visible.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomeTitleProperty">
-            <summary>
-            Title for the home item in the tabs
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageVisibleProperty">
-            <summary>
-            Defines whether the homepage is the currently visible element
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageProperty">
-            <summary>
-            Visual for the homepage
-            </summary>
-        </member>
-        <member name="E:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.PageSwitched">
-            <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomeTitle">
             <summary>
             Title for the home item in the tabs
             </summary>
             <value>The home title.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomeTitleProperty">
+            <summary>
+            Title for the home item in the tabs
+            </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageVisible">
             <summary>
@@ -480,6 +470,11 @@
               <c>true</c> if home page visible; otherwise, <c>false</c>.
             </value>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageVisibleProperty">
+            <summary>
+            Defines whether the homepage is the currently visible element
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePage">
             <summary>
             Visual for the homepage
@@ -487,6 +482,11 @@
             <value>
             The home page.
             </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.ShellTabControl.HomePageProperty">
+            <summary>
+            Visual for the homepage
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl">
             <summary>
@@ -496,26 +496,26 @@
         <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MaximumMargin">
+            <summary>Maximum margin allowed around the control</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MaximumMarginProperty">
             <summary>Maximum margin allowed around the control</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumMargin">
+            <summary>Minimum margin allowed around the control</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumMarginProperty">
             <summary>Minimum margin allowed around the control</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumDesiredControlSize">
+            <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumDesiredControlSizeProperty">
             <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.CalculateMargin">
             <summary>This method re-calculates the actual margin the control should use</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MaximumMargin">
-            <summary>Maximum margin allowed around the control</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumMargin">
-            <summary>Minimum margin allowed around the control</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.SizeAwareContentControl.MinimumDesiredControlSize">
-            <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Newsroom.StandardViews.Block">
             <summary>

@@ -9,6 +9,12 @@
             This popup class automatically adjusts the horizontal offset to always be centered in relation to the 
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup.IsDisplayed">
+            <summary>
+            Gets or sets a value indicating whether this instance is displayed.
+            </summary>
+            <value><c>true</c> if this instance is displayed; otherwise, <c>false</c>.</value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup.IsDisplayedProperty">
             <summary>
             The is displayed property
@@ -21,16 +27,16 @@
             <param name="d">The dependency object.</param>
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.SelfCenteringPopup.IsDisplayed">
-            <summary>
-            Gets or sets a value indicating whether this instance is displayed.
-            </summary>
-            <value><c>true</c> if this instance is displayed; otherwise, <c>false</c>.</value>
-        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel">
             <summary>
             Panel specifically designed to lay out sticky notes
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.Padding">
+            <summary>
+            Overall padding/margin around the sticky notes
+            </summary>
+            <value>The padding.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.PaddingProperty">
             <summary>
@@ -38,9 +44,19 @@
             </summary>
             <value>The padding.</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteWidth">
+            <summary>
+            Maximum width for each sticky note
+            </summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteWidthProperty">
             <summary>
             Maximum width for each sticky note
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteHeight">
+            <summary>
+            Maximum height for each sticky note
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteHeightProperty">
@@ -72,22 +88,6 @@
             </summary>
             <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
             <returns>The actual size used.</returns>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.Padding">
-            <summary>
-            Overall padding/margin around the sticky notes
-            </summary>
-            <value>The padding.</value>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteWidth">
-            <summary>
-            Maximum width for each sticky note
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.StickyNotePanel.MaxNoteHeight">
-            <summary>
-            Maximum height for each sticky note
-            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.ThemeColorConverter">
             <summary>
@@ -190,6 +190,12 @@
             </summary>
             <param name="originalAction"></param>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Position">
+            <summary>
+            Button position (whether it is first, middle, or last, which may result in different visual styles)
+            </summary>
+            <value>The position.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Execute(System.Object)">
             <summary>
             Defines the method to be called when the command is invoked.
@@ -202,19 +208,6 @@
             </summary>
             <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
             <returns>true if this command can be executed; otherwise, false.</returns>
-        </member>
-        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.InvalidateCanExecute">
-            <summary>
-            Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
-            </summary>
-            <exception cref="T:System.NotImplementedException"></exception>
-            <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.Position">
-            <summary>
-            Button position (whether it is first, middle, or last, which may result in different visual styles)
-            </summary>
-            <value>The position.</value>
         </member>
         <member name="E:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.CanExecuteChanged">
             <summary>
@@ -364,6 +357,13 @@
             </summary>
             <value>The shortcut modifier keys.</value>
             <remarks>Not all themes will pick this setting up</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatActionWrapper.InvalidateCanExecute">
+            <summary>
+            Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+            <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Wildcat.Classes.WildcatButton">
             <summary>

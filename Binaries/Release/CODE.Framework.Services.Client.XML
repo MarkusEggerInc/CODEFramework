@@ -172,6 +172,16 @@
             Internal channel cache
             </summary>
         </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceClient.OpenChannelInformationList">
+            <summary>
+            Almost the same as a List of T, but with a destructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.OpenChannelInformationList.Finalize">
+            <summary>
+            Destructor used to clean up potential open channels
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.GetChannelCacheIndex(System.Type,CODE.Framework.Services.Client.MessageSize,System.Int32,System.String,System.String,System.String)">
             <summary>
             Tries to find the desired channel in the cache and if found returns the cache index (otherwise returns -1)
@@ -199,6 +209,47 @@
             <param name="serviceType">Service type (contract)</param>
             <param name="cacheIndex">Channel index in the cache (usually retrieved using the GetChannelCacheIndex method)</param>
             <returns>Open channel</returns>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.BaseUrl">
+            <summary>
+            Base URL for the service
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.BasePath">
+            <summary>
+            Gets or sets the base path ("virtual directory")
+            </summary>
+            <value>The base path.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.HandleChannelExceptions">
+            <summary>Indicates whether channel exceptions should be handled (and thus hidden) or thrown to the caller.</summary>
+            <value>False (default) to throw the exception to the caller or True to handle the exceptions internally</value>
+            <remarks>See also: ClientException event</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.CacheSettings">
+            <summary>
+            Indicates whether configuration settings shoudl be cached (default = yes)
+            </summary>
+            <value><c>true</c> if [cache settings]; otherwise, <c>false</c>.</value>
+            <remarks>
+            When settings get cached, they are only retrieved from the configuration system
+            the first time they are needed. Subsequent uses will be based on the cache, which improves performance.
+            However, if settings are meant to change dynamically, caching needs to be turned off, otherwise
+            new configuration settings will be ignored by the service client.
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryFailedCalls">
+            <summary>Indicates whether calls that caused faults should automatically be re-issued a second time. (True by default)</summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryDelay">
+            <summary>Defines the delay (milliseconds) between auto-retry calls</summary>
+            <remarks>The delay is defined in milliseconds (-1 = no delay). Note that the delay puts the thread to sleep, so this should not be done on foreground threads.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryFailedCallsForExceptions">
+            <summary>Defines the list of exception types for which to auto-retry calls</summary>
+        </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.ChannelException">
+            <summary>Exception callback for exceptions occuring on the channel</summary>
         </member>
         <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedMessageSizes">
             <summary>Internal message size cache</summary>
@@ -848,6 +899,11 @@
             <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
             <returns>TCP/IP channel</returns>
         </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.BeforeChannelOpens">
+            <summary>
+            Event fires before a channel opens (can be used to programmatically configure a channel if need be)
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.CreateChannel``1(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
             <summary>
             Creates a channel using a (potentially cached) channel factory
@@ -1179,62 +1235,6 @@
         <member name="F:CODE.Framework.Services.Client.ServiceClient.SettingsCache">
             <summary>Internal settings cache</summary>
         </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.BaseUrl">
-            <summary>
-            Base URL for the service
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.BasePath">
-            <summary>
-            Gets or sets the base path ("virtual directory")
-            </summary>
-            <value>The base path.</value>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.HandleChannelExceptions">
-            <summary>Indicates whether channel exceptions should be handled (and thus hidden) or thrown to the caller.</summary>
-            <value>False (default) to throw the exception to the caller or True to handle the exceptions internally</value>
-            <remarks>See also: ClientException event</remarks>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.CacheSettings">
-            <summary>
-            Indicates whether configuration settings shoudl be cached (default = yes)
-            </summary>
-            <value><c>true</c> if [cache settings]; otherwise, <c>false</c>.</value>
-            <remarks>
-            When settings get cached, they are only retrieved from the configuration system
-            the first time they are needed. Subsequent uses will be based on the cache, which improves performance.
-            However, if settings are meant to change dynamically, caching needs to be turned off, otherwise
-            new configuration settings will be ignored by the service client.
-            </remarks>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryFailedCalls">
-            <summary>Indicates whether calls that caused faults should automatically be re-issued a second time. (True by default)</summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryDelay">
-            <summary>Defines the delay (milliseconds) between auto-retry calls</summary>
-            <remarks>The delay is defined in milliseconds (-1 = no delay). Note that the delay puts the thread to sleep, so this should not be done on foreground threads.</remarks>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceClient.AutoRetryFailedCallsForExceptions">
-            <summary>Defines the list of exception types for which to auto-retry calls</summary>
-        </member>
-        <member name="E:CODE.Framework.Services.Client.ServiceClient.ChannelException">
-            <summary>Exception callback for exceptions occuring on the channel</summary>
-        </member>
-        <member name="E:CODE.Framework.Services.Client.ServiceClient.BeforeChannelOpens">
-            <summary>
-            Event fires before a channel opens (can be used to programmatically configure a channel if need be)
-            </summary>
-        </member>
-        <member name="T:CODE.Framework.Services.Client.ServiceClient.OpenChannelInformationList">
-            <summary>
-            Almost the same as a List of T, but with a destructor
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Services.Client.ServiceClient.OpenChannelInformationList.Finalize">
-            <summary>
-            Destructor used to clean up potential open channels
-            </summary>
-        </member>
         <member name="T:CODE.Framework.Services.Client.ChannelState">
             <summary>
             State of the WCF Channel
@@ -1377,7 +1377,7 @@
         </member>
         <member name="M:CODE.Framework.Services.Client.ChannelExceptionEventArgs.#ctor(System.ServiceModel.IClientChannel,System.Exception)">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.ChannelExceptionEventArgs"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.ChannelExceptionEventArgs" /> class.
             </summary>
             <param name="channel">The channel.</param>
             <param name="exception">The exception.</param>
@@ -1440,6 +1440,12 @@
             Initializes the <see cref="T:CODE.Framework.Services.Client.ServiceGardenLocal"/> class.
             </summary>
         </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceGardenLocal.Hosts">
+            <summary>
+            Collection of known hosts
+            </summary>
+            <value>Hosts</value>
+        </member>
         <member name="M:CODE.Framework.Services.Client.ServiceGardenLocal.AddServiceHost(System.Type)">
             <summary>
             Adds a local service based on the services type
@@ -1475,12 +1481,6 @@
             </summary>
             <param name="contractType">Contract Type</param>
             <returns></returns>
-        </member>
-        <member name="P:CODE.Framework.Services.Client.ServiceGardenLocal.Hosts">
-            <summary>
-            Collection of known hosts
-            </summary>
-            <value>Hosts</value>
         </member>
         <member name="T:CODE.Framework.Services.Client.ServiceHelper">
             <summary>

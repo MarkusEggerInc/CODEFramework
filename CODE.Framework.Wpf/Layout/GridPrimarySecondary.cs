@@ -499,7 +499,7 @@ namespace CODE.Framework.Wpf.Layout
                 mustInvalidate = AssignElements(CalculatedLayout, primary, secondary, mustInvalidate);
             }
 
-            if (mustInvalidate)
+            if (maxHeight > 0 && mustInvalidate)
             {
                 // Need to run all this one more time to make sure everything got picked up right
                 MeasureOverride(constraint);

@@ -8,12 +8,15 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Control-TextBox.xaml"/>
-                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Control-ScrollBar.xaml"/>
-                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Colors.xaml"/>
-                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Fonts.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-Calendar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-DatePicker.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-TextBox.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-ScrollBar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Icon-Standard.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Colors.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Fonts.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <Color x:Key="CODE.Framework-Application-ThemeColor1">DarkGray</Color>
+            <!--<Color x:Key="CODE.Framework-Application-ThemeColor1">DarkGray</Color>-->
             <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
                 <Setter Property="Margin" Value="0" />
                 <Setter Property="Padding" Value="0" />
@@ -90,5 +93,10 @@
         <TextBox Mvvm:View.WidthEx="15" />
         <TextBlock>Phone 1:</TextBlock>
         <TextBox Mvvm:View.WidthEx="15" />
+
+        <TextBlock>Some Date:</TextBlock>
+        <DatePicker Mvvm:View.WidthEx="15" />
+        <!--<TextBlock>Some Date:</TextBlock>
+        <Calendar/>-->
     </Layout:EditForm>
 </Window>

@@ -14,15 +14,17 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabControl">
-                    <Grid ClipToBounds="False" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local" Height="117" controls:GridEx.RowHeights="Auto,*">
+                    <Grid ClipToBounds="False" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local" Height="117" controls:GridEx.RowHeights="Auto,*" 
+                          Background="{DynamicResource CODE.Framework-Application-RibbonSelectedPageBackgroundBrush}">
+                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonBackgroundBrush}"/>
                         <ScrollViewer Style="{DynamicResource RibbonTabItemHeaderScroll}" ClipToBounds="False" SnapsToDevicePixels="True"
                                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden">
                             <TabPanel IsItemsHost="true" Margin="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" ClipToBounds="False"/>
                         </ScrollViewer>
-                        <Border Grid.Row="1" BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" 
+                        <Border Grid.Row="1" BorderBrush="{DynamicResource CODE.Framework-Application-RibbonBorderBrush}" 
                                 BorderThickness="0,1,0,1" Background="{x:Null}" Opacity=".2" x:Name="border"
                                 KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local"/>
-                        <ScrollViewer Grid.Row="1" Margin="2" SnapsToDevicePixels="True" 
+                        <ScrollViewer Grid.Row="1" Margin="2" SnapsToDevicePixels="True"  
                                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                                       VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto"
                                       Style="{DynamicResource ViewActionRibbonContentScroll}">
@@ -51,16 +53,16 @@
                 <ControlTemplate TargetType="mvvm:RibbonPage">
                     <Grid x:Name="grid" SnapsToDevicePixels="True" Margin="2,0,0,0" Height="23" ClipToBounds="False">
                         <Border x:Name="selectedBorder" BorderThickness="0" VerticalAlignment="Stretch" Margin="0,0,0,-1" 
-                                Background="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"
+                                Background="{DynamicResource CODE.Framework-Application-RibbonSelectedPageBackgroundBrush}"
                                 Visibility="Hidden" />
                         <Border x:Name="selectedBorder2" BorderThickness="1,1,1,0" VerticalAlignment="Stretch" Margin="0,0,0,-1" 
-                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-RibbonBorderBrush}"
                                 Visibility="Hidden" Opacity=".2"/>
                         <ContentControl x:Name="Content" Margin="14,-1,14,0" VerticalAlignment="Center" HorizontalAlignment="Center" 
                                         Content="{TemplateBinding Header}"
-                                        TextElement.Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+                                        TextElement.Foreground="{DynamicResource CODE.Framework-Application-RibbonUnselectedHeaderForegroundBrush}" />
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0" x:Name="AccessKey"
-                                   Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
+                                   Background="#505050" Foreground="{DynamicResource CODE.Framework-Application-RibbonSelectedHeaderForegroundBrush}" Padding="3,0" Visibility="Collapsed"
                                    Text="{TemplateBinding PageAccessKey}"
                                    FontSize="{DynamicResource FontSize-Normal}" FontFamily="{DynamicResource DefaultFont}" />
                     </Grid>
@@ -73,10 +75,10 @@
                             <Setter Property="Visibility" TargetName="AccessKey" Value="Visible" />
                         </MultiTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}" />
+                            <Setter Property="Opacity" TargetName="Content" Value=".5" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}" />
+                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource CODE.Framework-Application-RibbonSelectedHeaderForegroundBrush}" />
                             <Setter Property="Panel.ZIndex" Value="1"/>
                             <Setter Property="Visibility" TargetName="selectedBorder" Value="Visible"/>
                             <Setter Property="Visibility" TargetName="selectedBorder2" Value="Visible"/>
@@ -94,15 +96,16 @@
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:RibbonFirstPage">
                     <Grid SnapsToDevicePixels="True" Margin="0" Height="23">
-                        <Border BorderThickness="0" VerticalAlignment="Stretch" Margin="0,0,0,-1" 
+                        <Border BorderThickness="0" VerticalAlignment="Stretch" Margin="0,0,0,1" 
                                 Background="{DynamicResource CODE.Framework-Application-ThemeBrush1}" />
-                        <Border x:Name="selectedBorder" BorderThickness="0" VerticalAlignment="Stretch" Margin="0,0,0,-1" 
-                                Background="White" Visibility="Hidden" Opacity=".2"/>
+                        <Border x:Name="selectedBorder" BorderThickness="0" VerticalAlignment="Stretch" Margin="0" 
+                                Background="Black" Opacity=".1"
+                                Visibility="Hidden" />
                         <ContentControl Margin="20,-1,20,0" VerticalAlignment="Center" HorizontalAlignment="Center" 
                                         Content="{TemplateBinding Header}"
-                                        TextElement.Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+                                        TextElement.Foreground="{DynamicResource CODE.Framework-Application-RibbonUnselectedHeaderForegroundBrush}" />
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0" x:Name="AccessKey"
-                                   Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
+                                   Background="#505050" Foreground="{DynamicResource CODE.Framework-Application-RibbonUnselectedHeaderForegroundBrush}" Padding="3,0" Visibility="Collapsed"
                                    Text="{TemplateBinding PageAccessKey}"
                                    FontSize="{DynamicResource FontSize-Normal}" FontFamily="{DynamicResource DefaultFont}" />
                     </Grid>
@@ -131,17 +134,17 @@
                 <ControlTemplate TargetType="mvvm:RibbonSpecialPage">
                     <Grid x:Name="grid" SnapsToDevicePixels="True" Margin="2,0,0,0" Height="23">
                         <Border x:Name="selectedBorder" BorderThickness="0" VerticalAlignment="Stretch" Margin="0,0,0,-1" 
-                                Background="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"
+                                Background="{DynamicResource CODE.Framework-Application-RibbonSelectedPageBackgroundBrush}"
                                 Visibility="Hidden" />
                         <Border x:Name="unselectedBorder" BorderThickness="0" VerticalAlignment="Stretch" Margin="0,0,0,1" 
                                 Background="{DynamicResource CODE.Framework-Application-RibbonSpecialBrush2}" />
                         <Border x:Name="selectedBorder2" BorderThickness="1,1,1,0" VerticalAlignment="Stretch" Margin="0,0,0,0" 
-                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-RibbonBorderBrush}"
                                 Visibility="Hidden" Opacity=".2"/>
                         <ContentControl x:Name="Content" Margin="14,-1,14,0" VerticalAlignment="Center" HorizontalAlignment="Center" 
                                         Content="{TemplateBinding Header}"
-                                        TextElement.Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
-                        <Border BorderThickness="0,2,0,0" VerticalAlignment="Stretch" Margin="0" 
+                                        TextElement.Foreground="{DynamicResource CODE.Framework-Application-RibbonUnselectedHeaderForegroundBrush}" />
+                        <Border BorderThickness="0,2,0,0" VerticalAlignment="Stretch" Margin="0" Visibility="Collapsed" x:Name="selectedBorder3"
                                 BorderBrush="{DynamicResource CODE.Framework-Application-RibbonSpecialBrush1}"/>
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0" x:Name="AccessKey"
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
@@ -157,13 +160,14 @@
                             <Setter Property="Visibility" TargetName="AccessKey" Value="Visible" />
                         </MultiTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}" />
+                            <Setter Property="Opacity" TargetName="Content" Value=".6" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource CODE.Framework-Application-RibbonSpecialBrush1}" />
+                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource CODE.Framework-Application-RibbonSelectedHeaderForegroundBrush}" />
                             <Setter Property="Panel.ZIndex" Value="1"/>
                             <Setter Property="Visibility" TargetName="selectedBorder" Value="Visible"/>
                             <Setter Property="Visibility" TargetName="selectedBorder2" Value="Visible"/>
+                            <Setter Property="Visibility" TargetName="selectedBorder3" Value="Visible"/>
                             <Setter Property="Visibility" TargetName="unselectedBorder" Value="Hidden"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -182,8 +186,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:RibbonButtonLarge">
                     <Grid controls:GridEx.RowHeights="36,*">
-                        <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush1}" Visibility="Hidden" x:Name="checkedIndicator"/>
-                        <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush2}" Visibility="Hidden" x:Name="highlight"/>
+                        <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="checkedIndicator"/>
+                        <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
                         <Rectangle Height="32" Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
                         <controls:ContentTextDisplay Content="{TemplateBinding Content}" Margin="3,0" Grid.Row="1" MaxLineCount="2" MinWidth="36" MaxWidth="200" />
@@ -191,7 +195,7 @@
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
                                    Text="{TemplateBinding AccessKey}"
                                    FontSize="{DynamicResource FontSize-Normal}" FontFamily="{DynamicResource DefaultFont}" />
-                        <Rectangle Grid.RowSpan="2" Fill="White" Opacity=".85" Visibility="Collapsed" x:Name="disabledIndicator" />
+                        <Rectangle Grid.RowSpan="2" Fill="White" Opacity=".9" Visibility="Collapsed" x:Name="disabledIndicator" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
@@ -226,8 +230,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="mvvm:RibbonButtonSmall">
                     <Grid controls:GridEx.ColumnWidths="22,*">
-                        <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush1}" Visibility="Hidden" x:Name="checkedIndicator"/>
-                        <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-HighlightBrush2}" Visibility="Hidden" x:Name="highlight"/>
+                        <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="checkedIndicator"/>
+                        <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
                         <Rectangle Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
                         <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,0" Grid.Column="1" />
@@ -235,7 +239,7 @@
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
                                    Text="{TemplateBinding AccessKey}"
                                    FontSize="{DynamicResource FontSize-Normal}" FontFamily="{DynamicResource DefaultFont}" />
-                        <Rectangle Grid.ColumnSpan="2" Fill="White" Opacity=".85" Visibility="Collapsed" x:Name="disabledIndicator" />
+                        <Rectangle Grid.ColumnSpan="2" Fill="White" Opacity=".9" Visibility="Collapsed" x:Name="disabledIndicator" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>

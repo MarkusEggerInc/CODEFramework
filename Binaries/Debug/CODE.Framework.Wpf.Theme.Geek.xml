@@ -40,38 +40,74 @@
             Special version of the primary secondary grid for the geek theme
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFont">
+            <summary>Font used to render the primary title</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFontProperty">
             <summary>Font used to render the primary title</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFont">
+            <summary>Font used to render the secondary title</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFontProperty">
             <summary>Font used to render the secondary title</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFontSize">
+            <summary>Font size used to render the primary title</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFontSizeProperty">
             <summary>Font size used to render the primary title</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFontSize">
+            <summary>Font size used to render the secondary title</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFontSizeProperty">
             <summary>Font size used to render the secondary title</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleHeaderBrush">
+            <summary>Brush used to render the foreground of the primary title</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleHeaderBrushProperty">
             <summary>Brush used to render the foreground of the primary title</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFooterBrush">
+            <summary>Brush used to render the foreground of the primary footer</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFooterBrushProperty">
             <summary>Brush used to render the foreground of the primary title</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleHeaderBrush">
+            <summary>Brush used to render the foreground of the secondary title</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleHeaderBrushProperty">
             <summary>Brush used to render the foreground of the secondary title</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFooterBrush">
+            <summary>Brush used to render the foreground of the secondary footer</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFooterBrushProperty">
             <summary>Brush used to render the foreground of the secondary footer</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryAreaHeaderBackgroundBrush">
+            <summary>Brush used to render the primary area header background</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryAreaHeaderBackgroundBrushProperty">
             <summary>Brush used to render the primary area header background</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryAreaHeaderBackgroundBrush">
+            <summary>Brush used to render the secondary area header background</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryAreaHeaderBackgroundBrushProperty">
             <summary>Brush used to render the secondary area header background</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryElementMargin">
+            <summary>Margin around the primary element</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryElementMarginProperty">
             <summary>Margin around the primary element</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryElementMargin">
+            <summary>Margin around the secondary element</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryElementMarginProperty">
             <summary>Margin around the secondary element</summary>
@@ -91,42 +127,6 @@
             This method draws additional elements into the main display area
             </summary>
             <param name="dc">Drawing context</param>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFont">
-            <summary>Font used to render the primary title</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFont">
-            <summary>Font used to render the secondary title</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFontSize">
-            <summary>Font size used to render the primary title</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFontSize">
-            <summary>Font size used to render the secondary title</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleHeaderBrush">
-            <summary>Brush used to render the foreground of the primary title</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryTitleFooterBrush">
-            <summary>Brush used to render the foreground of the primary footer</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleHeaderBrush">
-            <summary>Brush used to render the foreground of the secondary title</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryTitleFooterBrush">
-            <summary>Brush used to render the foreground of the secondary footer</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryAreaHeaderBackgroundBrush">
-            <summary>Brush used to render the primary area header background</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryAreaHeaderBackgroundBrush">
-            <summary>Brush used to render the secondary area header background</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.PrimaryElementMargin">
-            <summary>Margin around the primary element</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Geek.Controls.GeekPrimarySecondary.SecondaryElementMargin">
-            <summary>Margin around the secondary element</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Geek.Controls.GeekShellZoomSlider">
             <summary>

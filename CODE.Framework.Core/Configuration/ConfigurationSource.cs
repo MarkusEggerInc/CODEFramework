@@ -114,6 +114,9 @@
             private set { lock (this) _isDirty = value; }
         }
 
+        /// <summary>
+        /// The internal settings
+        /// </summary>
         protected ConfigurationSourceSettings InternalSettings;
         private bool _isActive = true;
         private bool _isDirty;

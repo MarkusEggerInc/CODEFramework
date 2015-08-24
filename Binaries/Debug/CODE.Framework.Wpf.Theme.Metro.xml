@@ -33,6 +33,14 @@
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy">
             <summary>Invisible object used to bind elements together that are otherwise not directly bindable</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy.Source">
+            <summary>
+            Gets or sets the source.
+            </summary>
+            <value>
+            The source.
+            </value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy.SourceProperty">
             <summary>
             Source
@@ -45,19 +53,6 @@
             <param name="s">The source</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy.DestinationProperty">
-            <summary>
-            Destination
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy.Source">
-            <summary>
-            Gets or sets the source.
-            </summary>
-            <value>
-            The source.
-            </value>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy.Destination">
             <summary>
             Gets or sets the destination.
@@ -65,6 +60,11 @@
             <value>
             The destination.
             </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Classes.ContextBindingDummy.DestinationProperty">
+            <summary>
+            Destination
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Classes.HorizontalScrollEnabledToVisibilityConverter">
             <summary>
@@ -126,6 +126,16 @@
             Constructor
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.MouseMargin">
+            <summary>
+            Margin to be used when the mode is set to Mouse
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.TouchMargin">
+            <summary>
+            Margin to be used when the mode is set to Touch
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
             <summary>
             Converts the value to a margin
@@ -145,16 +155,6 @@
             <param name="parameter">Parameter</param>
             <param name="culture">Culture</param>
             <returns>Unchanged value</returns>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.MouseMargin">
-            <summary>
-            Margin to be used when the mode is set to Mouse
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Classes.PointingDeviceInputModeToMarginConverter.TouchMargin">
-            <summary>
-            Margin to be used when the mode is set to Touch
-            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Classes.ViewActionTileTemplateSelector">
             <summary>
@@ -230,25 +230,55 @@
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotCountProperty">
             <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotDiameterProperty">
             <summary>Defines the diameter of each dot within the animation</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotBrushProperty">
             <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotSpaceFactor">
+            <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotSpaceFactorProperty">
             <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotAnimationSpeedFactorProperty">
             <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.IsActiveProperty">
             <summary>Indicates whether the progress animation is active</summary>
             <value>True if active</value>
             <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.StartDelay">
+            <summary>
+            Defines the delay (in milliseconds) before the progress animation appears when activated
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.StartDelayProperty">
+            <summary>
+            Defines the delay (in milliseconds) before the progress animation appears when activated
+            </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.TriggerVisualRefresh(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>Triggers a re-creation of all the child elements that make up the animation</summary>
@@ -272,26 +302,6 @@
             Stops the animation.
             </summary>
         </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotCount">
-            <summary>Defines the number of actual dots in the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotDiameter">
-            <summary>Defines the diameter of each dot within the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotBrush">
-            <summary>Brush used to draw each dot</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotSpaceFactor">
-            <summary>Determines the spacing of the individual dots (1 = neutral)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.DotAnimationSpeedFactor">
-            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.CircularProgressAnimation.IsActive">
-            <summary>Indicates whether the progress animation is active</summary>
-            <value>True if active</value>
-            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
-        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.ProgressRing">
             <summary>This class is functionally identical to the CircularProgressAnimation class</summary>
             <remarks>This class is mainly supported for syntax compatibility between WPF and Win8 Metro/WinRT</remarks>
@@ -302,20 +312,40 @@
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotCountProperty">
             <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotDiameterProperty">
             <summary>Defines the diameter of each dot within the animation</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotBrushProperty">
             <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotSpaceFactor">
+            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotSpaceFactorProperty">
             <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotAnimationSpeedFactorProperty">
             <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.IsActiveProperty">
             <summary>Indicates whether the progress animation is active</summary>
@@ -344,26 +374,6 @@
             Stops the animation.
             </summary>
         </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotCount">
-            <summary>Defines the number of actual dots in the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotDiameter">
-            <summary>Defines the diameter of each dot within the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotBrush">
-            <summary>Brush used to draw each dot</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotSpaceFactor">
-            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
-            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation.IsActive">
-            <summary>Indicates whether the progress animation is active</summary>
-            <value>True if active</value>
-            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
-        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.MetroScrollViewer">
             <summary>
             Special scroll viewer for Metro UIs.
@@ -386,70 +396,70 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer"/> class.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentTopProperty">
-            <summary>Content positioned at the top</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentBottomProperty">
-            <summary>Content positioned at the top</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.VerticalSlideProperty">
-            <summary>Defines how far the animation moves the visuals vertically</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.TopContentDisplayDurationProperty">
-            <summary>Time (in milliseconds) the top content should be displayed</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.BottomContentDisplayDurationProperty">
-            <summary>Time (in milliseconds) the top content should be displayed</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentTransitionDurationProperty">
-            <summary>Time (in milliseconds) the top content should be displayed</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.AnimationStartDelayProperty">
-            <summary>Time (in milliseconds) used to delay the start of the animation</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.AnimationStartDelayRandomAdditionProperty">
-            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAdditionProperty">
-            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAdditionProperty">
-            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.StartWithTopContentProperty">
-            <summary>Indicates whether the top content is to be displayed initially</summary>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentTop">
+            <summary>Content positioned at the top</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentTopProperty">
             <summary>Content positioned at the top</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentBottom">
             <summary>Content positioned at the top</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentBottomProperty">
+            <summary>Content positioned at the top</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.VerticalSlide">
+            <summary>Defines how far the animation moves the visuals vertically</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.VerticalSlideProperty">
             <summary>Defines how far the animation moves the visuals vertically</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.TopContentDisplayDuration">
             <summary>Time (in milliseconds) the top content should be displayed</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.TopContentDisplayDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.BottomContentDisplayDuration">
             <summary>Time (in milliseconds) the bottom content should be displayed</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.BottomContentDisplayDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentTransitionDuration">
             <summary>Time (in milliseconds) used for the transition from one content to the other</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.ContentTransitionDurationProperty">
+            <summary>Time (in milliseconds) the top content should be displayed</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.AnimationStartDelay">
+            <summary>Time (in milliseconds) used to delay the start of the animation</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.AnimationStartDelayProperty">
             <summary>Time (in milliseconds) used to delay the start of the animation</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.AnimationStartDelayRandomAddition">
             <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.AnimationStartDelayRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAddition">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.TopContentDisplayDurationRandomAdditionProperty">
             <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAddition">
             <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.BottomContentDisplayDurationRandomAdditionProperty">
+            <summary>Maximum random additional duration (in milliseconds) to create a more dynamic animation cycle</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.StartWithTopContent">
+            <summary>Indicates whether the top content is to be displayed initially</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.PeekAnimationContainer.StartWithTopContentProperty">
             <summary>Indicates whether the top content is to be displayed initially</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.ShellMetroTiles">
@@ -494,6 +504,9 @@
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.PageSwitchedEvent">
             <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
         </member>
+        <member name="E:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.PageSwitched">
+            <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.OnApplyTemplate">
             <summary>
             Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
@@ -504,29 +517,16 @@
             Makes the home page visible.
             </summary>
         </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomeTitleProperty">
-            <summary>
-            Title for the home item in the tabs
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomePageVisibleProperty">
-            <summary>
-            Defines whether the homepage is the currently visible element
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomePageProperty">
-            <summary>
-            Visual for the homepage
-            </summary>
-        </member>
-        <member name="E:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.PageSwitched">
-            <summary>This event fires whenever the user switches to a different view (but not to and from the start page)</summary>
-        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomeTitle">
             <summary>
             Title for the home item in the tabs
             </summary>
             <value>The home title.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomeTitleProperty">
+            <summary>
+            Title for the home item in the tabs
+            </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomePageVisible">
             <summary>
@@ -536,6 +536,11 @@
               <c>true</c> if home page visible; otherwise, <c>false</c>.
             </value>
         </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomePageVisibleProperty">
+            <summary>
+            Defines whether the homepage is the currently visible element
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomePage">
             <summary>
             Visual for the homepage
@@ -543,6 +548,11 @@
             <value>
             The home page.
             </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ShellTabControl.HomePageProperty">
+            <summary>
+            Visual for the homepage
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl">
             <summary>
@@ -552,26 +562,26 @@
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MaximumMargin">
+            <summary>Maximum margin allowed around the control</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MaximumMarginProperty">
             <summary>Maximum margin allowed around the control</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MinimumMargin">
+            <summary>Minimum margin allowed around the control</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MinimumMarginProperty">
             <summary>Minimum margin allowed around the control</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MinimumDesiredControlSize">
+            <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MinimumDesiredControlSizeProperty">
             <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.CalculateMargin">
             <summary>This method re-calculates the actual margin the control should use</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MaximumMargin">
-            <summary>Maximum margin allowed around the control</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MinimumMargin">
-            <summary>Minimum margin allowed around the control</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.SizeAwareContentControl.MinimumDesiredControlSize">
-            <summary>If the size of the control (including margin) goes below this size, the maximum margin will not be applied and the margin will be shrunk down to the desired minimum margin</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.StandardViews.DataSmall01">
             <summary>

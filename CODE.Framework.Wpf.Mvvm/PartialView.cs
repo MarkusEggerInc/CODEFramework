@@ -95,7 +95,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 {
                     var parameterBindingExpression = GetBindingExpression(ParameterProperty);
                     if (parameterBindingExpression != null) return; // We have a binding, but no value yet, so we wait for this method to be re-triggered by an update through the binding
-                }
+                }   
                 var context = !hasParameter ? Mvvm.Controller.Action(Controller, Action) : Mvvm.Controller.Action(Controller, Action, new {parameter = Parameter});
                 If.Real<ViewResult>(context.Result, v =>
                 {
@@ -129,22 +129,27 @@ namespace CODE.Framework.Wpf.Mvvm
                 If.Real<ViewResult>(context.Result, v =>
                 {
                     Content = v.View;
-                    var element = this as FrameworkElement;
-                    while (element != null)
+                    if (v.View.DataContext == null && v.Model != null) v.View.DataContext = v.Model;
+                    else if (v.View.DataContext == null && Model != null) v.View.DataContext = Model;
+                    else
                     {
-                        if (element.DataContext != null)
+                        var element = this as FrameworkElement;
+                        while (element != null)
                         {
-                            v.View.DataContext = element.DataContext;
-                            break;
+                            if (element.DataContext != null)
+                            {
+                                v.View.DataContext = element.DataContext;
+                                break;
+                            }
+                            if (element.Parent == null)
+                            {
+                                // We reached the root view. All we can do at this point is bind the
+                                // data context of the current view to the data context of the root view
+                                v.View.SetBinding(DataContextProperty, new Binding("DataContext") {Source = element, Mode = BindingMode.OneWay});
+                                element = null;
+                            }
+                            else element = element.Parent as FrameworkElement;
                         }
-                        if (element.Parent == null)
-                        {
-                            // We reached the root view. All we can do at this point is bind the
-                            // data context of the current view to the data context of the root view
-                            v.View.SetBinding(DataContextProperty, new Binding("DataContext") {Source = element, Mode = BindingMode.OneWay});
-                            element = null;
-                        }
-                        else element = element.Parent as FrameworkElement;
                     }
                 });
             }

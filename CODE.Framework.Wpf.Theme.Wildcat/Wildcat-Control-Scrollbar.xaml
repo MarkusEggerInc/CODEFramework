@@ -224,6 +224,7 @@
     </Style>
 
     <Style TargetType="ScrollViewer">
+        <Setter Property="PanningMode" Value="Both" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">

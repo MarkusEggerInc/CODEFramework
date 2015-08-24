@@ -19,7 +19,7 @@
                 <ControlTemplate TargetType="mvvm:Shell">
                     <Grid Background="{TemplateBinding Background}" controls:GridEx.RowHeights="30,Auto,Auto,*,23">
                         <Border BorderBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" BorderThickness="1" Grid.RowSpan="5" Panel.ZIndex="10001" />
-                        <Grid controls:GridEx.ColumnWidths="Auto,*,Auto" HorizontalAlignment="Stretch">
+                        <Grid controls:GridEx.ColumnWidths="Auto,*,Auto" HorizontalAlignment="Stretch" Background="{DynamicResource CODE.Framework-Application-ThemeBrush1}" Margin="0,0,0,-1">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{TemplateBinding Icon}" Stretch="Uniform" Height="22" Width="22" Margin="8,4"/>
                                 <mvvm:ViewActionStackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch"
@@ -29,21 +29,23 @@
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
                                        x:Name="windowTitle" Text="{TemplateBinding Title}" Grid.Column="1" Margin="20,5"
                                        FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}"
-                                       Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
+                                       Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush2}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Height="22" Margin="0,3,1,0" Grid.Column="2">
                                 <controls:MinimizeButton/>
                                 <controls:ToggleMaximizeButton/>
                                 <controls:CloseButton/>
                             </StackPanel>
                         </Grid>
-                        <mvvm:ViewActionRibbon x:Name="ribbon" Grid.Row="1" HorizontalAlignment="Stretch" Model="{Binding}"
+                        <mvvm:ViewActionRibbon x:Name="ribbon" Grid.Row="1" HorizontalAlignment="Stretch" Model="{Binding}" ForceTopLevelTitlesUpperCase="False"
                                                SelectedView="{Binding Path=SelectedItem, ElementName=OpenViews, Mode=OneWay}" />
                         <ItemsControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" x:Name="notifications" Grid.Row="2"
                                       ItemsSource="{TemplateBinding CurrentNotifications}" 
-                                      Background="#FBF6B5" BorderBrush="#32000000" BorderThickness="0,0,0,1">
+                                      Background="#FBF6B5" BorderThickness="0">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <ContentControl Content="{Binding View}" Margin="1" />
+                                    <Border BorderBrush="#32000000" BorderThickness="0,0,0,1">
+                                        <ContentControl Content="{Binding View}" Margin="1" />
+                                    </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -87,11 +89,12 @@
                                           HorizontalAlignment="Stretch" 
                                           Margin="0,26,0,0" 
                                           ItemsSource="{TemplateBinding CurrentNotifications}" 
-                                          Background="#FBF6B5" 
-                                          BorderBrush="#32000000" BorderThickness="0,0,0,1">
+                                          Background="#FBF6B5" BorderThickness="0">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <ContentControl Content="{Binding View}" Margin="1" VerticalAlignment="Top" />
+                                            <Border BorderBrush="#32000000" BorderThickness="0,0,0,1">
+                                                <ContentControl Content="{Binding View}" Margin="1" VerticalAlignment="Top" />
+                                            </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -432,14 +435,14 @@
                         <Rectangle x:Name="bg" Fill="Transparent" IsHitTestVisible="True" />
                         <Border Width="12" Height="2" BorderThickness="1" RenderTransformOrigin=".5,.5"
                                                         VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                        BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}">
+                                                        BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}">
                             <Border.RenderTransform>
                                 <RotateTransform Angle="45" />
                             </Border.RenderTransform>
                         </Border>
                         <Border Width="12" Height="2" BorderThickness="1" RenderTransformOrigin=".5,.5"
                                                         VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                        BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}">
+                                                        BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}">
                             <Border.RenderTransform>
                                 <RotateTransform Angle="-45" />
                             </Border.RenderTransform>
@@ -466,20 +469,24 @@
                     <Grid>
                         <Rectangle x:Name="bg" Fill="Transparent" IsHitTestVisible="True" />
                         <Border Width="10" Height="10" BorderThickness="1,3,1,1" x:Name="norm"
-                                VerticalAlignment="Center" HorizontalAlignment="Center" Background="White"
-                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+                                VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                Background="{DynamicResource CODE.Framework-Application-ThemeBrush1}"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
                         <Border Width="8" Height="8" BorderThickness="1,2,1,1" Margin="4,0,0,4" x:Name="max2"
                                 VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"
-                                Background="White"
-                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+                                Background="{DynamicResource CODE.Framework-Application-ThemeBrush1}"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
                         <Border Width="8" Height="8" BorderThickness="1,2,1,1" Margin="0,2,2,0" x:Name="max1"
                                 VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"
-                                Background="White"
-                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+                                Background="{DynamicResource CODE.Framework-Application-ThemeBrush1}"
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Fill" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="bg" />
+                            <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="norm" />
+                            <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="max1" />
+                            <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" TargetName="max2" />
                         </Trigger>
                         <Trigger Property="IsMaximized" Value="True">
                             <Setter Property="Visibility" Value="Collapsed" TargetName="norm"/>
@@ -504,7 +511,7 @@
                         <Rectangle x:Name="bg" Fill="Transparent" IsHitTestVisible="True" />
                         <Border Width="10" Height="8" BorderThickness="0,0,0,2"
                                 VerticalAlignment="Center" HorizontalAlignment="Center"
-                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush1}" />
+                                BorderBrush="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

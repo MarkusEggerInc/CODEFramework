@@ -107,30 +107,15 @@
             <param name="resultType">Type of the result object.</param>
             <returns>Deserialized object</returns>
         </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.SerializeToRestJson(System.Object)">
-            <summary>
-            Serializes to REST JSON.
-            </summary>
-            <param name="objectToSerialize">The object to serialize.</param>
-            <returns></returns>
-        </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.DeserializeFromRestJson(System.String,System.Type)">
-            <summary>
-            Deserializes from REST JSON.
-            </summary>
-            <param name="json">The json.</param>
-            <param name="resultType">Type of the result.</param>
-            <returns>Deserialized object</returns>
-        </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs)">
             <summary>
-            Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyDown" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            Invoked when an unhandled PreviewKeyDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
             </summary>
             <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
         </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.ServiceTestHarnessUI.OnPreviewKeyUp(System.Windows.Input.KeyEventArgs)">
             <summary>
-            Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyUp" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            Invoked when an unhandled PreviewKeyUp attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
             </summary>
             <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
         </member>
@@ -159,23 +144,17 @@
             Represents a parameter
             </summary>
         </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.#ctor(System.Object)">
-            <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.ParameterItem"/> class.
-            </summary>
-            <param name="dataContext">The data context.</param>
-        </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.ConfigureEnum(System.Type)">
-            <summary>
-            Configures enum settings
-            </summary>
-            <param name="propertyType">Type of the property.</param>
-        </member>
         <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.DataContext">
             <summary>
             Gets the data context.
             </summary>
             <value>The data context.</value>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.ParameterItem"/> class.
+            </summary>
+            <param name="dataContext">The data context.</param>
         </member>
         <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.Name">
             <summary>
@@ -372,6 +351,12 @@
             Occurs when a property value changes.
             </summary>
         </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.ConfigureEnum(System.Type)">
+            <summary>
+            Configures enum settings
+            </summary>
+            <param name="propertyType">Type of the property.</param>
+        </member>
         <member name="T:CODE.Framework.Services.Tools.Windows.ControlFocusHelper">
             <summary>
             Helper class used to move the focus within elements of the contract entry tree
@@ -477,13 +462,6 @@
             Property link
             </summary>
         </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.PropertyLink.#ctor(System.Object,System.Reflection.PropertyInfo)">
-            <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.PropertyLink"/> class.
-            </summary>
-            <param name="instance">The instance.</param>
-            <param name="propertyInfo">The property info.</param>
-        </member>
         <member name="P:CODE.Framework.Services.Tools.Windows.PropertyLink.Instance">
             <summary>
             Gets or sets the instance.
@@ -495,6 +473,13 @@
             Gets or sets the property info.
             </summary>
             <value>The property info.</value>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.PropertyLink.#ctor(System.Object,System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Tools.Windows.PropertyLink"/> class.
+            </summary>
+            <param name="instance">The instance.</param>
+            <param name="propertyInfo">The property info.</param>
         </member>
         <member name="T:CODE.Framework.Services.Tools.Windows.TestServiceHost">
             <summary>
@@ -823,6 +808,39 @@
             <param name="sender">The source of the event.</param>
             <param name="e">The <see cref="T:System.Windows.Forms.ColumnClickEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="T:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter">
+            <summary>
+            This class is an implementation of the 'IComparer' interface.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter._objectCompare">
+            <summary>
+            Case insensitive comparer object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.#ctor">
+            <summary>
+            Class constructor.  Initializes various elements
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.Compare(System.Object,System.Object)">
+            <summary>
+            This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
+            </summary>
+            <param name="x">First object to be compared</param>
+            <param name="y">Second object to be compared</param>
+            <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.SortColumn">
+            <summary>
+            Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.Order">
+            <summary>
+            Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.Log(System.String,CODE.Framework.Core.Utilities.LogEventType)">
             <summary>
             Logs the specified event (text).
@@ -836,6 +854,15 @@
             </summary>
             <param name="logEvent">The event (object).</param>
             <param name="type">The event type.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.TypeFilter">
+            <summary>
+            Gets or sets the type filter.
+            </summary>
+            <value>The type filter.</value>
+            <remarks>
+            Only events that match the type filter will be considered by this logger.
+            </remarks>
         </member>
         <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.listView1_MouseDoubleClick(System.Object,System.Windows.Forms.MouseEventArgs)">
             <summary>
@@ -872,48 +899,6 @@
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.TypeFilter">
-            <summary>
-            Gets or sets the type filter.
-            </summary>
-            <value>The type filter.</value>
-            <remarks>
-            Only events that match the type filter will be considered by this logger.
-            </remarks>
-        </member>
-        <member name="T:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter">
-            <summary>
-            This class is an implementation of the 'IComparer' interface.
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter._objectCompare">
-            <summary>
-            Case insensitive comparer object
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.#ctor">
-            <summary>
-            Class constructor.  Initializes various elements
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.Compare(System.Object,System.Object)">
-            <summary>
-            This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
-            </summary>
-            <param name="x">First object to be compared</param>
-            <param name="y">Second object to be compared</param>
-            <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
-        </member>
-        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.SortColumn">
-            <summary>
-            Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Services.Tools.Windows.TestServiceHost.ListViewColumnSorter.Order">
-            <summary>
-            Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
             </summary>
         </member>
         <member name="T:CODE.Framework.Services.Tools.Windows.ServiceInfoWrapper">

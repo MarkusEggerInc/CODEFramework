@@ -21,8 +21,12 @@
     <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Transparent</Color>
 
     <!-- Ribbon Colors -->
-    <Color x:Key="CODE.Framework-Application-RibbonSpecialColor1">#C8599B</Color>
-    <Color x:Key="CODE.Framework-Application-RibbonSpecialColor2">#FBEFF6</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonSelectedPageBackgroundColor">#F0F0F0</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonUnselectedHeaderForegroundColor">#F8F8F8</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonBorderColor">LightGray</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonSpecialColor1">#A8000000</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonSpecialColor2">#32000000</Color>
+    <Color x:Key="CODE.Framework-Application-RibbonButtonHighlightColor">#C3C3C3</Color>
 
     <!-- Application status bar -->
     <Color x:Key="CODE.Framework-Workplace-StatusReadyBackgroundColor">#2B5799</Color>
@@ -65,7 +69,14 @@
     <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusErrorBackgroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusErrorBackgroundColor}" />
 
     <!-- Ribbon Colors -->
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonSelectedHeaderForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonSelectedPageBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-RibbonSelectedPageBackgroundColor}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonUnselectedPageBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor1}"/>
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonUnselectedHeaderForegroundBrush" Color="{DynamicResource CODE.Framework-Application-RibbonUnselectedHeaderForegroundColor}"/>
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonBorderBrush" Color="{DynamicResource CODE.Framework-Application-RibbonBorderColor}"/>
     <SolidColorBrush x:Key="CODE.Framework-Application-RibbonSpecialBrush1" Color="{DynamicResource CODE.Framework-Application-RibbonSpecialColor1}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-RibbonSpecialBrush2" Color="{DynamicResource CODE.Framework-Application-RibbonSpecialColor2}" />
+    <SolidColorBrush x:Key="CODE.Framework-Application-RibbonButtonHighlightBrush" Color="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightColor}" />
 
 </ResourceDictionary>

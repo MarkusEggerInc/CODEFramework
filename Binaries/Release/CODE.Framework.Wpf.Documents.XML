@@ -33,7 +33,7 @@
             Called when is items host changes.
             </summary>
             <param name="d">The dependency object the value is set on.</param>
-            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs" /> instance containing the event data.</param>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.DocEx.ItemsHostProperty">
             <summary>
@@ -58,7 +58,7 @@
             Fires when ItemsHost is changed
             </summary>
             <param name="sender">The sender.</param>
-            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+            <param name="e">The <see cref="T:System.EventArgs" /> instance containing the event data.</param>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.DocEx.ForceRefreshExpressionProperty">
             <summary>For internal use only</summary>
@@ -91,6 +91,12 @@
             Data template created for easy use in data bound documents
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.DocumentDataTemplate.DocumentVisualTree">
+            <summary>
+            Gets or sets the document visual tree.
+            </summary>
+            <value>The document visual tree.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Documents.DocumentDataTemplate.LoadDocumentTemplate">
             <summary>
             Loads the document template.
@@ -105,12 +111,6 @@
             <param name="parent">The parent.</param>
             <returns>IEnumerable{DependencyObject}.</returns>
         </member>
-        <member name="P:CODE.Framework.Wpf.Documents.DocumentDataTemplate.DocumentVisualTree">
-            <summary>
-            Gets or sets the document visual tree.
-            </summary>
-            <value>The document visual tree.</value>
-        </member>
         <member name="T:CODE.Framework.Wpf.Documents.DocumentMultiFragment">
             <summary>
             Document Fragment
@@ -118,8 +118,11 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Documents.DocumentMultiFragment.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Documents.DocumentMultiFragment"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Documents.DocumentMultiFragment" /> class.
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.DocumentMultiFragment.Items">
+            <summary>Represents a generic fragment of multiple content items within a print document</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Documents.DocumentMultiFragment.AddChild(System.Object)">
             <summary>
@@ -135,9 +138,6 @@
             <param name="text">The text to add to the object.</param>
             <exception cref="T:System.NotImplementedException"></exception>
         </member>
-        <member name="P:CODE.Framework.Wpf.Documents.DocumentMultiFragment.Items">
-            <summary>Represents a generic fragment of multiple content items within a print document</summary>
-        </member>
         <member name="T:CODE.Framework.Wpf.Documents.DocumentPaginatorEx">
             <summary>
             Document paginator class (used for print output)
@@ -145,36 +145,11 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.#ctor(System.Windows.Documents.FlowDocument,System.Windows.Size,System.Windows.Controls.PageRange)">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Documents.DocumentPaginatorEx"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Documents.DocumentPaginatorEx" /> class.
             </summary>
             <param name="document">The document.</param>
             <param name="printableArea">The printable area size.</param>
             <param name="range">The print page range.</param>
-        </member>
-        <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.GetTranslatedPageNumber(System.Int32)">
-            <summary>Translates the index of the printed page to the actual page</summary>
-            <param name="nativePageNumber">Native page number</param>
-            <returns>Translated page</returns>
-            <remarks>
-            Example: If only pages 3-5 are printed, then whenever the system requests 
-            page number 0, that is really the 3rd page (first in the printed range)
-            and thus page index 2 has to be returned
-            </remarks>
-        </member>
-        <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.GetPage(System.Int32)">
-            <summary>
-            When overridden in a derived class, gets the <see cref="T:System.Windows.Documents.DocumentPage" /> for the specified page number.
-            </summary>
-            <param name="pageNumber">The zero-based page number of the document page that is needed.</param>
-            <returns>The <see cref="T:System.Windows.Documents.DocumentPage" /> for the specified <paramref name="pageNumber" />, or <see cref="F:System.Windows.Documents.DocumentPage.Missing" /> if the page does not exist.</returns>
-        </member>
-        <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.RenderElement(System.Windows.Media.ContainerVisual,System.Windows.FrameworkElement,CODE.Framework.Wpf.Documents.DocumentPaginatorEx.PrintElementType)">
-            <summary>
-            Renders the element to the provided page (container).
-            </summary>
-            <param name="container">The container.</param>
-            <param name="visual">The visual.</param>
-            <param name="alignment">The alignment.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.DocumentPrintMargin">
             <summary>Defines the area within the total printable area that can be used to print page content</summary>
@@ -217,6 +192,16 @@
             <value>The page count.</value>
             <returns>A count of the number of pages that have been formatted.</returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.GetTranslatedPageNumber(System.Int32)">
+            <summary>Translates the index of the printed page to the actual page</summary>
+            <param name="nativePageNumber">Native page number</param>
+            <returns>Translated page</returns>
+            <remarks>
+            Example: If only pages 3-5 are printed, then whenever the system requests 
+            page number 0, that is really the 3rd page (first in the printed range)
+            and thus page index 2 has to be returned
+            </remarks>
+        </member>
         <member name="P:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.PageSize">
             <summary>
             When overridden in a derived class, gets or sets the suggested width and height of each page.
@@ -231,39 +216,24 @@
             <value>The source.</value>
             <returns>An <see cref="T:System.Windows.Documents.IDocumentPaginatorSource" /> representing the element being paginated.</returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.GetPage(System.Int32)">
+            <summary>
+            When overridden in a derived class, gets the <see cref="T:System.Windows.Documents.DocumentPage" /> for the specified page number.
+            </summary>
+            <param name="pageNumber">The zero-based page number of the document page that is needed.</param>
+            <returns>The <see cref="T:System.Windows.Documents.DocumentPage" /> for the specified <paramref name="pageNumber" />, or <see cref="F:System.Windows.Documents.DocumentPage.Missing" /> if the page does not exist.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Documents.DocumentPaginatorEx.RenderElement(System.Windows.Media.ContainerVisual,System.Windows.FrameworkElement,CODE.Framework.Wpf.Documents.DocumentPaginatorEx.PrintElementType)">
+            <summary>
+            Renders the element to the provided page (container).
+            </summary>
+            <param name="container">The container.</param>
+            <param name="visual">The visual.</param>
+            <param name="alignment">The alignment.</param>
+        </member>
         <member name="T:CODE.Framework.Wpf.Documents.FlowDocumentEx">
             <summary>
             Extended version of the WPF FlowDocument class
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.TitleProperty">
-            <summary>
-            Document title
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PageHeaderProperty">
-            <summary>
-            Page header for printed documents
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PageFooterProperty">
-            <summary>
-            Page footer for printed documents
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PrintWatermarkProperty">
-            <summary>
-            Watermark for print output
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PrintMarginProperty">
-            <summary>
-            Margins applied to the document when printing
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Wpf.Documents.FlowDocumentEx.Print">
-            <summary>
-            Prints this instance.
             </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Documents.FlowDocumentEx.OriginalLoadLocation">
@@ -278,7 +248,17 @@
             </summary>
             <value>The title.</value>
         </member>
+        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.TitleProperty">
+            <summary>
+            Document title
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Documents.FlowDocumentEx.PageHeader">
+            <summary>
+            Page header for printed documents
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PageHeaderProperty">
             <summary>
             Page header for printed documents
             </summary>
@@ -288,7 +268,17 @@
             Page footer for printed documents
             </summary>
         </member>
+        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PageFooterProperty">
+            <summary>
+            Page footer for printed documents
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Documents.FlowDocumentEx.PrintWatermark">
+            <summary>
+            Watermark for print output
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PrintWatermarkProperty">
             <summary>
             Watermark for print output
             </summary>
@@ -298,6 +288,16 @@
             Margins applied to the document when printing
             </summary>
             <value>The print margin.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Documents.FlowDocumentEx.PrintMarginProperty">
+            <summary>
+            Margins applied to the document when printing
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Documents.FlowDocumentEx.Print">
+            <summary>
+            Prints this instance.
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Documents.DocumentFragment">
             <summary>
@@ -314,16 +314,31 @@
         <member name="T:CODE.Framework.Wpf.Documents.HtmlParagraph">
             <summary>Paragraph object capable of displaying simple HTML fragments as part of Flow Documents</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.Html">
+            <summary>HTML string (fragment with limited HTML support)</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlParagraph.HtmlProperty">
             <summary>HTML string (fragment with limited HTML support)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.LeadingHtml">
+            <summary>Leading HTML string (fragment with limited HTML support)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlParagraph.LeadingHtmlProperty">
             <summary>Leading HTML string (fragment with limited HTML support)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.TrailingHtml">
+            <summary>Trailing HTML string (fragment with limited HTML support)</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlParagraph.TrailingHtmlProperty">
             <summary>Trailing HTML string (fragment with limited HTML support)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.TrimLeadingSpaces">
+            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlParagraph.TrimLeadingSpacesProperty">
+            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.TrimLeadingTabs">
             <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlParagraph.TrimLeadingTabsProperty">
@@ -334,48 +349,60 @@
             <param name="source">Special Paragraph object</param>
             <param name="e">Event arguments</param>
         </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.Html">
-            <summary>HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.LeadingHtml">
-            <summary>Leading HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.TrailingHtml">
-            <summary>Trailing HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.TrimLeadingSpaces">
-            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlParagraph.TrimLeadingTabs">
-            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
-        </member>
         <member name="T:CODE.Framework.Wpf.Documents.HtmlSection">
             <summary>
             Section class that can be populated from HTML
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.Html">
+            <summary>HTML string (fragment with limited HTML support)</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.HtmlProperty">
             <summary>HTML string (fragment with limited HTML support)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.Html2">
+            <summary>Second (optional) HTML string (fragment with limited HTML support)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.Html2Property">
             <summary>HTML string (fragment with limited HTML support)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.Style2">
+            <summary>Style assigned to the HTML2 content</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.Style2Property">
             <summary>Style assigned to the HTML2 content</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.LeadingBlock">
+            <summary>Block UI positioned at the leading left/top edge of the first paragraph</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.LeadingBlockProperty">
             <summary>Block UI positioned at the leading left/top edge of the first paragraph</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.LeadingBlockWidth">
+            <summary>Width allocated for the leading block</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.LeadingBlockWidthProperty">
             <summary>Width allocated for the leading block</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.LeadingParagraphHtml">
+            <summary>Leading HTML string (fragment with limited HTML support)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.LeadingParagraphHtmlProperty">
             <summary>Leading HTML string (fragment with limited HTML support)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.TrailingParagraphHtml">
+            <summary>Trailing HTML string (fragment with limited HTML support)</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.TrailingParagraphHtmlProperty">
             <summary>Trailing HTML string (fragment with limited HTML support)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.TrimLeadingParagraphSpaces">
+            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.TrimLeadingParagraphSpacesProperty">
+            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.TrimLeadingParagraphTabs">
             <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlSection.TrimLeadingParagraphTabsProperty">
@@ -386,37 +413,13 @@
             <param name="source">Special Paragraph object</param>
             <param name="e">Event arguments</param>
         </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.Html">
-            <summary>HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.Html2">
-            <summary>Second (optional) HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.Style2">
-            <summary>Style assigned to the HTML2 content</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.LeadingBlock">
-            <summary>Block UI positioned at the leading left/top edge of the first paragraph</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.LeadingBlockWidth">
-            <summary>Width allocated for the leading block</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.LeadingParagraphHtml">
-            <summary>Leading HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.TrailingParagraphHtml">
-            <summary>Trailing HTML string (fragment with limited HTML support)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.TrimLeadingParagraphSpaces">
-            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlSection.TrimLeadingParagraphTabs">
-            <summary>Defines whether spaces are trimmed off at the start of the paragraph</summary>
-        </member>
         <member name="T:CODE.Framework.Wpf.Documents.HtmlTextBlock">
             <summary>
             TextBlock that can be populated from HTML
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.HtmlTextBlock.Html">
+            <summary>HTML string (fragment with limited HTML support)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.HtmlTextBlock.HtmlProperty">
             <summary>HTML string (fragment with limited HTML support)</summary>
@@ -425,9 +428,6 @@
             <summary>Re-creates the actual paragraph inlines based on the HTML as well as leading and trailing inlines</summary>
             <param name="source">Special Paragraph object</param>
             <param name="e">Event arguments</param>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.HtmlTextBlock.Html">
-            <summary>HTML string (fragment with limited HTML support)</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Documents.HtmlToXamlHelper">
             <summary>
@@ -512,21 +512,43 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Documents.RepeatingSection.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Documents.RepeatingSection"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Documents.RepeatingSection" /> class.
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemsSource">
+            <summary>
+            Items source (data source)
+            </summary>
+            <value>The items source.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.RepeatingSection.ItemsSourceProperty">
             <summary>
             Items source (data source)
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemTemplate">
+            <summary>
+            Document template for each item
+            </summary>
+            <value>The item template.</value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.RepeatingSection.ItemTemplateProperty">
             <summary>
             Document template for each item
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemTemplateSelector">
+            <summary>Item Template Selector.</summary>
+            <value>The item template selector.</value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Documents.RepeatingSection.ItemTemplateSelectorProperty">
             <summary>Item Template Selector.</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemsPanel">
+            <summary>
+            Items panel template (defines the arrangement of each item relative to each other)
+            </summary>
+            <value>The items panel.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Documents.RepeatingSection.ItemsPanelProperty">
             <summary>
@@ -543,7 +565,7 @@
             Fires when the items collection changes
             </summary>
             <param name="sender">The sender.</param>
-            <param name="e">The <see cref="T:System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
+            <param name="e">The <see cref="T:System.Collections.Specialized.NotifyCollectionChangedEventArgs" /> instance containing the event data.</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Documents.RepeatingSection.GenerateContent">
             <summary>
@@ -573,28 +595,6 @@
             <param name="dataContext">only used when bindable content needs to be created</param>
             <param name="data"></param>
             <returns></returns>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemsSource">
-            <summary>
-            Items source (data source)
-            </summary>
-            <value>The items source.</value>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemTemplate">
-            <summary>
-            Document template for each item
-            </summary>
-            <value>The item template.</value>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemTemplateSelector">
-            <summary>Item Template Selector.</summary>
-            <value>The item template selector.</value>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Documents.RepeatingSection.ItemsPanel">
-            <summary>
-            Items panel template (defines the arrangement of each item relative to each other)
-            </summary>
-            <value>The items panel.</value>
         </member>
         <member name="T:CODE.Framework.Wpf.Documents.Properties.Resources">
             <summary>

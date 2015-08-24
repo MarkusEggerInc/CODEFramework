@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows;
@@ -21,18 +20,14 @@ using System.Windows.Media.Imaging;
 using CODE.Framework.Core.Utilities;
 using CODE.Framework.Core.Utilities.Extensions;
 using CODE.Framework.Services.Client;
-using CODE.Framework.Services.Server;
 using Button = System.Windows.Controls.Button;
 using Control = System.Windows.Controls.Control;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
-using MessageSize = CODE.Framework.Services.Client.MessageSize;
-using Protocol = CODE.Framework.Services.Client.Protocol;
 using RestHelper = CODE.Framework.Services.Server.RestHelper;
 using TextBox = System.Windows.Controls.TextBox;
 using TreeView = System.Windows.Controls.TreeView;
 using UserControl = System.Windows.Controls.UserControl;
-
 
 namespace CODE.Framework.Services.Tools.Windows
 {
@@ -298,7 +293,7 @@ namespace CODE.Framework.Services.Tools.Windows
                 return;
             }
 
-            if (_protocol != Protocol.RestHttpJson && _protocol != Protocol.RestHttpXml)
+            if (_protocol != Protocol.RestHttpXml && _protocol != Protocol.RestHttpJson)
             {
                 var service = ServiceClient.GetChannel(_contractType, _port, _serviceId, _protocol, _messageSize, _serviceUri);
 
@@ -356,7 +351,8 @@ namespace CODE.Framework.Services.Tools.Windows
                             switch (httpMethod)
                             {
                                 case "POST":
-                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, SerializeToRestJson(data));
+                                    var jsonPost = JsonHelper.SerializeToRestJson(data);
+                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, jsonPost);
                                     break;
                                 case "GET":
                                     MessageBox.Show("REST operations with HTTP-GET Verbs are not currently supported for self-hosted services. Please use a different HTTP Verb or host your REST service in a different host (wuch as WebApi). We are hoping to add HTTP-GET support for self-hosted services in the future.\r\n\r\nIf you have further questions, feel free to contact us: info@codemag.com", "CODE Framework");
@@ -366,7 +362,8 @@ namespace CODE.Framework.Services.Tools.Windows
                                     restResponse = client.DownloadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName + serializedData);
                                     break;
                                 default:
-                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, httpMethod, SerializeToRestJson(data));
+                                    var json = JsonHelper.SerializeToRestJson(data);
+                                    restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, httpMethod, json);
                                     break;
                             }
                             Dispatcher.Invoke(new Action<string>(ShowRawData), restResponse);
@@ -412,46 +409,6 @@ namespace CODE.Framework.Services.Tools.Windows
                     return serializer.ReadObject(stream);
             }
             catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Serializes to REST JSON.
-        /// </summary>
-        /// <param name="objectToSerialize">The object to serialize.</param>
-        /// <returns></returns>
-        public static string SerializeToRestJson(object objectToSerialize)
-        {
-            var stream = new MemoryStream();
-            var serializer = new DataContractJsonSerializer(objectToSerialize.GetType());
-            try
-            {
-                serializer.WriteObject(stream, objectToSerialize);
-                return StreamHelper.ToString(stream);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHelper.GetExceptionText(ex);
-            }
-        }
-
-        /// <summary>
-        /// Deserializes from REST JSON.
-        /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="resultType">Type of the result.</param>
-        /// <returns>Deserialized object</returns>
-        public static object DeserializeFromRestJson(string json, Type resultType)
-        {
-            try
-            {
-                var serializer = new DataContractJsonSerializer(resultType);
-                using (var stream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes(json)))
-                    return serializer.ReadObject(stream);
-            }
-            catch
             {
                 return null;
             }
@@ -617,7 +574,7 @@ namespace CODE.Framework.Services.Tools.Windows
                     _lastSelectedContractDisplayIndex = ContractDisplayTab.SelectedIndex;
                     break;
                 case 1: // Going from JSON to something else
-                    var contractObject = DeserializeFromRestJson(JsonContract.Text, RequestContractTree.DataContext.GetType());
+                    var contractObject = JsonHelper.DeserializeFromRestJson(JsonContract.Text, RequestContractTree.DataContext.GetType());
                     if (contractObject != null)
                     {
                         RefreshSelectedOperations(contractObject);
@@ -636,7 +593,7 @@ namespace CODE.Framework.Services.Tools.Windows
                     if (contractObject2 != null)
                     {
                         RefreshSelectedOperations(contractObject2);
-                        JsonContract.Text = JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext));
+                        JsonContract.Text = JsonHelper.Format(JsonHelper.SerializeToRestJson(RequestContractTree.DataContext));
                         _lastSelectedContractDisplayIndex = ContractDisplayTab.SelectedIndex;
                     }
                     else
@@ -664,7 +621,7 @@ namespace CODE.Framework.Services.Tools.Windows
             {
                 var path = dlg.FileName.JustPath();
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                StringHelper.ToFile(JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext)), dlg.FileName);
+                StringHelper.ToFile(JsonHelper.Format(JsonHelper.SerializeToRestJson(RequestContractTree.DataContext)), dlg.FileName);
             }
         }
 
@@ -681,7 +638,7 @@ namespace CODE.Framework.Services.Tools.Windows
             if (dlg.ShowDialog() == DialogResult.OK && File.Exists(dlg.FileName))
             {
                 var json = StringHelper.FromFile(dlg.FileName);
-                var contractObject = DeserializeFromRestJson(json, data.GetType());
+                var contractObject = JsonHelper.DeserializeFromRestJson(json, data.GetType());
                 if (contractObject == null)
                 {
                     MessageBox.Show("The JSON file didn't contain valid JSON, or the structure didn't match the current request contract.");
@@ -703,7 +660,7 @@ namespace CODE.Framework.Services.Tools.Windows
             var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
             if (!Directory.Exists(currentFolderName)) Directory.CreateDirectory(currentFolderName);
             var quickFileName = currentFolderName + @"\QuickSave.json";
-            StringHelper.ToFile(JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext)), quickFileName);
+            StringHelper.ToFile(JsonHelper.Format(JsonHelper.SerializeToRestJson(RequestContractTree.DataContext)), quickFileName);
             DisplayFlashMessage("Saved", Brushes.SeaGreen);
         }
 
@@ -728,7 +685,7 @@ namespace CODE.Framework.Services.Tools.Windows
                 return;
             }
             var json = StringHelper.FromFile(quickFileName);
-            var contractObject = DeserializeFromRestJson(json, data.GetType());
+            var contractObject = JsonHelper.DeserializeFromRestJson(json, data.GetType());
             if (contractObject == null)
             {
                 MessageBox.Show("The JSON file didn't contain valid JSON, or the structure didn't match the current request contract.");
@@ -741,7 +698,9 @@ namespace CODE.Framework.Services.Tools.Windows
 
         private void RefreshJsonAndXmlFromTree()
         {
-            JsonContract.Text = JsonHelper.Format(SerializeToRestJson(RequestContractTree.DataContext));
+            var json = JsonHelper.SerializeToRestJson(RequestContractTree.DataContext);
+            json = JsonHelper.Format(json);
+            JsonContract.Text = json;
             XmlContract.Text = XmlHelper.Format(SerializeToRestXml(RequestContractTree.DataContext));
         }
 
@@ -770,7 +729,7 @@ namespace CODE.Framework.Services.Tools.Windows
         private ParameterItem _currentRootParameter;
 
         /// <summary>
-        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyDown" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// Invoked when an unhandled PreviewKeyDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
         /// </summary>
         /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -783,7 +742,7 @@ namespace CODE.Framework.Services.Tools.Windows
         }
 
         /// <summary>
-        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyUp" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// Invoked when an unhandled PreviewKeyUp attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
         /// </summary>
         /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
         protected override void OnPreviewKeyUp(KeyEventArgs e)

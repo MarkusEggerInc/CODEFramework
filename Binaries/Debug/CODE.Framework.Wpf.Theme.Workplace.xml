@@ -11,13 +11,16 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton" /> class.
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton.OnClick">
             <summary>
             Raises an automation event and calls the base method to raise the <see cref="E:System.Windows.Controls.Primitives.ButtonBase.Click" /> event.
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton.ScrollViewer">
+            <summary>Reference to the scroll viewer this button goes with</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton.ScrollViewerProperty">
             <summary>Reference to the scroll viewer this button goes with</summary>
@@ -27,10 +30,7 @@
             This method fires when the assigned scroll viewer changes
             </summary>
             <param name="d">The dependency object.</param>
-            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton.ScrollViewer">
-            <summary>Reference to the scroll viewer this button goes with</summary>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs" /> instance containing the event data.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton">
             <summary>
@@ -39,13 +39,16 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton" /> class.
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton.OnClick">
             <summary>
             Raises an automation event and calls the base method to raise the <see cref="E:System.Windows.Controls.Primitives.ButtonBase.Click" /> event.
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton.ScrollViewer">
+            <summary>Reference to the scroll viewer this button goes with</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton.ScrollViewerProperty">
             <summary>Reference to the scroll viewer this button goes with</summary>
@@ -55,10 +58,7 @@
             This method fires when the assigned scroll viewer changes
             </summary>
             <param name="d">The dependency object.</param>
-            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollLeftButton.ScrollViewer">
-            <summary>Reference to the scroll viewer this button goes with</summary>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs" /> instance containing the event data.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ToUpperTextConverter">
             <summary>
@@ -114,20 +114,40 @@
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.#ctor">
             <summary>Constructor</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotCount">
+            <summary>Defines the number of actual dots in the animation</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotCountProperty">
             <summary>Defines the number of actual dots in the animation</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotDiameter">
+            <summary>Defines the diameter of each dot within the animation</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotDiameterProperty">
             <summary>Defines the diameter of each dot within the animation</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotBrush">
+            <summary>Brush used to draw each dot</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotBrushProperty">
             <summary>Brush used to draw each dot</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotSpaceFactor">
+            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotSpaceFactorProperty">
             <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
+            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotAnimationSpeedFactorProperty">
             <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.IsActive">
+            <summary>Indicates whether the progress animation is active</summary>
+            <value>True if active</value>
+            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.IsActiveProperty">
             <summary>Indicates whether the progress animation is active</summary>
@@ -156,26 +176,6 @@
             Stops the animation.
             </summary>
         </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotCount">
-            <summary>Defines the number of actual dots in the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotDiameter">
-            <summary>Defines the diameter of each dot within the animation</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotBrush">
-            <summary>Brush used to draw each dot</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotSpaceFactor">
-            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
-            <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.LinearProgressAnimation.IsActive">
-            <summary>Indicates whether the progress animation is active</summary>
-            <value>True if active</value>
-            <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
-        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Workplace.StandardViews.LargePeekImageAndText06">
             <summary>
             Interaction logic for LargePeekImageAndText06.xaml
@@ -186,7 +186,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.StandardViews.LargePeekImageAndText06.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.StandardViews.LargePeekImageAndText06"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.StandardViews.LargePeekImageAndText06" /> class.
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.StandardViews.LargePeekImageAndText06.InitializeComponent">
@@ -204,7 +204,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.StandardViews.Notification.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.StandardViews.Notification"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Theme.Workplace.StandardViews.Notification" /> class.
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Theme.Workplace.StandardViews.Notification.InitializeComponent">

@@ -78,8 +78,10 @@
                     </ControlTemplate.Resources>
                     <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
                         <controls:GridEx RowHeights="Auto,*">
-                            <controls:ListBoxGridHeader Columns="{Binding Path=(controls:ListEx.Columns), RelativeSource={RelativeSource TemplatedParent}}" />
-                            <ScrollViewer Focusable="false" Grid.Row="1" Padding="{TemplateBinding Padding}">
+                            <controls:ListBoxGridHeader Columns="{Binding Path=(controls:ListEx.Columns), RelativeSource={RelativeSource TemplatedParent}}"
+                                                        HorizontalHeaderOffset="{Binding ElementName=scroll, Path=ContentHorizontalOffset, Mode=OneWay}"
+                                                        SnapsToDevicePixels="True"/>
+                            <ScrollViewer Focusable="false" Grid.Row="1" Padding="{TemplateBinding Padding}" x:Name="scroll" SnapsToDevicePixels="True">
                                 <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                             </ScrollViewer>
                         </controls:GridEx>

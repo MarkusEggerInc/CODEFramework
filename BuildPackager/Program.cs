@@ -108,7 +108,7 @@ namespace BuildPackager
             foreach (var folder in folders)
             {
                 var folderName = folder.JustFileName().ToLower();
-                if (!folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
+                if (!folderName.StartsWith("packages") && !folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
                 {
                     var fullGitFolderName = gitHubSourceFolder + folder.JustFileName() + @"\";
                     if (!Directory.Exists(fullGitFolderName)) Directory.CreateDirectory(fullGitFolderName);
@@ -136,7 +136,14 @@ namespace BuildPackager
 
             var docsFolder = gitHubSourceFolder + @"Documentation\";
             if (!Directory.Exists(docsFolder)) Directory.CreateDirectory(docsFolder);
-            File.Copy(solutionFolder + @"\Build\CODE.Framework.chm", docsFolder + "CODE.Framework.chm", true);
+            try
+            {
+                File.Copy(solutionFolder + @"\Build\CODE.Framework.chm", docsFolder + "CODE.Framework.chm", true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Could not copy " + solutionFolder + @"\Build\CODE.Framework.chm to " + docsFolder + "CODE.Framework.chm\n" + ex.Message);
+            }
         }
 
         private static void ProcessFolderForGitSource(string fullFolder, string fullGitFolderName, string solutionFolder)
@@ -240,7 +247,7 @@ namespace BuildPackager
             foreach (var folder in folders)
             {
                 var folderName = folder.JustFileName().ToLower();
-                if (!folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
+                if (!folderName.StartsWith("packages") && !folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
                 {
                     Console.WriteLine("Processing folder: " + folder);
                     ProcessFolder(folder, solutionFolder, zip);
@@ -388,7 +395,8 @@ namespace BuildPackager
                 Console.WriteLine("Copying file: " + file);
                 var parts = file.Split('\\');
                 var outputFileName = outputFolder + "\\" + parts[parts.Length - 1];
-                if (!File.Exists(outputFileName) && !(outputFileName.IndexOf(".TestBench.", StringComparison.Ordinal) > -1) && !(outputFileName.IndexOf("Newtonsoft.Json.dll", StringComparison.Ordinal) > -1))
+                var justOutputFileName = parts[parts.Length - 1];
+                if (!File.Exists(outputFileName) && !(outputFileName.IndexOf(".TestBench.", StringComparison.Ordinal) > -1) && !(outputFileName.IndexOf("Newtonsoft.Json.dll", StringComparison.Ordinal) > -1) && !justOutputFileName.StartsWith("Microsoft.", StringComparison.Ordinal) && !justOutputFileName.StartsWith("System.", StringComparison.Ordinal))
                     File.Copy(file, outputFileName);
             }
         }
