@@ -162,6 +162,16 @@
             <value>True if active</value>
             <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.StartDelay">
+            <summary>
+            Defines the delay (in milliseconds) before the progress animation appears when activated
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.StartDelayProperty">
+            <summary>
+            Defines the delay (in milliseconds) before the progress animation appears when activated
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Theme.Newsroom.Controls.CircularProgressAnimation.TriggerVisualRefresh(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>Triggers a re-creation of all the child elements that make up the animation</summary>
             <param name="o">Dependency Object</param>

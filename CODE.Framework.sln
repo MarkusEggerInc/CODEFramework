@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User Interface", "User Interface", "{5E837C0E-EC89-46EC-8734-8591AC041A8C}"
 EndProject
@@ -63,6 +63,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CODE.Framework.Services.Server.WebApi", "CODE.Framework.Services.Server.WebApi\CODE.Framework.Services.Server.WebApi.csproj", "{DC02867D-1518-4402-8197-BE37B3AD9876}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CODE.Framework.Wpf.Theme.Newsroom", "CODE.Framework.Wpf.Theme.Newsroom\CODE.Framework.Wpf.Theme.Newsroom.csproj", "{5D510847-913E-4529-8ABD-37787619C5BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CODE.Framework.Wpf.Theme.Universe", "CODE.Framework.Wpf.Theme.Universe\CODE.Framework.Wpf.Theme.Universe.csproj", "{16139894-A035-4AA8-AAA1-8174ADC293DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -274,6 +276,18 @@ Global
 		{5D510847-913E-4529-8ABD-37787619C5BF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5D510847-913E-4529-8ABD-37787619C5BF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5D510847-913E-4529-8ABD-37787619C5BF}.Release|x86.ActiveCfg = Release|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Debug|x86.Build.0 = Debug|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{16139894-A035-4AA8-AAA1-8174ADC293DA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -300,5 +314,6 @@ Global
 		{E60C861C-70EA-42B2-AA6E-49A9FF63388F} = {D82E1571-6AA8-482A-BFDB-47EDD0786DC8}
 		{DC02867D-1518-4402-8197-BE37B3AD9876} = {D82E1571-6AA8-482A-BFDB-47EDD0786DC8}
 		{5D510847-913E-4529-8ABD-37787619C5BF} = {FF743A0C-0B9F-4956-B044-7FBF8F158000}
+		{16139894-A035-4AA8-AAA1-8174ADC293DA} = {FF743A0C-0B9F-4956-B044-7FBF8F158000}
 	EndGlobalSection
 EndGlobal

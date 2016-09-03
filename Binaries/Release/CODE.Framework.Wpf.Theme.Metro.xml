@@ -306,6 +306,31 @@
             <summary>This class is functionally identical to the CircularProgressAnimation class</summary>
             <remarks>This class is mainly supported for syntax compatibility between WPF and Win8 Metro/WinRT</remarks>
         </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.ModelStatusCircularProgressAnimation">
+            <summary>Progress ring animation that sets itself visible whenever the associated model has a busy status.</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.ModelStatusCircularProgressAnimation.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Metro.Controls.ModelStatusCircularProgressAnimation.Model">
+            <summary>
+            Model (must implement IModelStatus)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Metro.Controls.ModelStatusCircularProgressAnimation.ModelProperty">
+            <summary>
+            Model (must implement IModelStatus)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Metro.Controls.ModelStatusCircularProgressAnimation.OnModelChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the model changes
+            </summary>
+            <param name="d">Source object</param>
+            <param name="e">Event parameters</param>
+        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Metro.Controls.LinearProgressAnimation">
             <summary>Simple rendering mechanism to render a standard Metro loading animatin (circular)</summary>
         </member>

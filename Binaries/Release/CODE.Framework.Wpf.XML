@@ -194,6 +194,54 @@
             A converted value. If the method returns null, the valid null value is used.
             </returns>
         </member>
+        <member name="T:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter">
+            <summary>
+            Binds to a brush value and uses the fallback value when the brush is null
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter.FallbackBrush">
+            <summary>
+            Falback brush used when the bound brush is null
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter.FallbackBrushProperty">
+            <summary>
+            Falback brush used when the bound brush is null
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter.IgnoreColor">
+            <summary>
+            If the bound value is this color, then the fallback brush is used
+            </summary>
+            <value>The color of the ignore.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter.IgnoreColorProperty">
+            <summary>
+            If the bound value is this color, then the fallback brush is used
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the specified value.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="targetType">Type of the target.</param>
+            <param name="parameter">The parameter.</param>
+            <param name="culture">The culture.</param>
+            <returns>System.Object.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:CODE.Framework.Wpf.BindingConverters.ColorToBrushWithFallbackConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the back.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="targetType">Type of the target.</param>
+            <param name="parameter">The parameter.</param>
+            <param name="culture">The culture.</param>
+            <returns>System.Object.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
         <member name="T:CODE.Framework.Wpf.BindingConverters.LitBrushConverter">
             <summary>
             Converts solid color brushes to a lighter or darker version
@@ -264,6 +312,32 @@
             <summary>Converts a value. </summary>
             <returns>A converted value. If the method returns null, the valid null value is used.</returns>
             <param name="value">The value that is produced by the binding target.</param><param name="targetType">The type to convert to.</param><param name="parameter">The converter parameter to use.</param><param name="culture">The culture to use in the converter.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.BindingConverters.ReplaceBrushConverter">
+            <summary>
+            Replaces dynamic brushes withing a drawing brush with a different set of brushes
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.BindingConverters.ReplaceBrushConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the specified value.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="targetType">Type of the target.</param>
+            <param name="parameter">The parameter.</param>
+            <param name="culture">The culture.</param>
+            <returns>System.Object.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.BindingConverters.ReplaceBrushConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the back.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="targetType">Type of the target.</param>
+            <param name="parameter">The parameter.</param>
+            <param name="culture">The culture.</param>
+            <returns>System.Object.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
         </member>
         <member name="T:CODE.Framework.Wpf.BindingConverters.StringToVisibleConverter">
             <summary>Returns Collapsed for empty strings. Visible otherwise.</summary>
@@ -612,6 +686,27 @@
             <param name="constraint">The maximum size that the method can return.</param>
             <returns>The size of the control, up to the maximum specified by <paramref name="constraint" />.</returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ContentTextDisplay.GetFormattedText(System.String,System.Double,System.Int32)">
+            <summary>
+            Gets the formatted text.
+            </summary>
+            <param name="text">The text.</param>
+            <param name="maxWidth">The maximum width.</param>
+            <param name="maxLineCount">The maximum line count.</param>
+            <returns>FormattedText.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ContentTextDisplay.GetDisplayText">
+            <summary>
+            Gets the display text.
+            </summary>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ContentTextDisplay.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Called when the control needs to be rendered.
+            </summary>
+            <param name="drawingContext">The drawing context.</param>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.DockHost">
             <summary>
             This content control can be used for content that can be undocked into a separate window
@@ -687,13 +782,15 @@
             </summary>
             <param name="host">The host.</param>
         </member>
-        <member name="M:CODE.Framework.Wpf.Controls.FloatingDockWindow.#ctor(CODE.Framework.Wpf.Layout.MultiPanel,System.String,System.Int32)">
+        <member name="M:CODE.Framework.Wpf.Controls.FloatingDockWindow.#ctor(System.Windows.Controls.Panel,System.String,System.Int32,System.Windows.Controls.ItemsControl,System.Collections.Generic.IEnumerable{System.Windows.ResourceDictionary})">
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.FloatingDockWindow" /> class.
             </summary>
             <param name="multiPanel">The multi panel parent container.</param>
             <param name="title">The title.</param>
             <param name="oldChildIndex">Old index of the child in the multi panel.</param>
+            <param name="originalParent">The panel the child was originally in</param>
+            <param name="mergedDictionaries">Potential mergedDictionaries to be added to the new window's resources</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.FloatingDockWindow.AutoDockOnClose">
             <summary>
@@ -713,6 +810,21 @@
         <member name="M:CODE.Framework.Wpf.Controls.DockWindowContentButton.OnClick">
             <summary>
             Called when a <see cref="T:System.Windows.Controls.Button" /> is clicked.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.IDockResponder">
+            <summary>
+            This interface can be implemented by elements that want to respond to docking scenarios
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.IDockResponder.OnUndocked">
+            <summary>
+            Fires when the element is undocked
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.IDockResponder.OnDocked">
+            <summary>
+            Fires when the element is docked
             </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.Ex">
@@ -935,6 +1047,22 @@
             <summary>Cmmand parameter</summary>
             <param name="obj">Object to set the command parameter on</param>
             <param name="value">Value to set</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.GetTriggerCommandOnEnter(System.Windows.DependencyObject)">
+            <summary>Indicates whether the associated command shall be triggered when the user hits ENTER on the listbox </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.SetTriggerCommandOnEnter(System.Windows.DependencyObject,System.Boolean)">
+            <summary>Indicates whether the associated command shall be triggered when the user hits ENTER on the listbox </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListBoxEx.TriggerCommandOnEnterProperty">
+            <summary>Indicates whether the associated command shall be triggered when the user hits ENTER on the listbox </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.OnTriggerCommandOnEnterChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when TroggerCommandOnEnter changes
+            </summary>
+            <param name="d">The object the parameter is set on</param>
+            <param name="e">Event arguments</param>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListBoxEx.SelectedItemCollectionProperty">
             <summary>Provides a way to bind selected items into an observable collection</summary>
@@ -1413,6 +1541,55 @@
             Forces re-applying of the horizontal header offset
             </summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.FilterHeaderTextBox">
+            <summary>For internal use only (implements header filtering in listboxes)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterHeaderTextBox._column">
+            <summary>
+            Column the textbox is associated with
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterHeaderTextBox._timer">
+            <summary>
+            Internal dispatch timer
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.#ctor(CODE.Framework.Wpf.Controls.ListColumn)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="column">Column this textbox is associated with</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.GetCollectionChangedMethod(System.Object)">
+            <summary>Returns collection changed method for a specific item in a cached fashion</summary>
+            <param name="collection">The collection object on which to get the change method</param>
+            <returns>MethodInfo.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.ExecuteFilter">
+            <summary>
+            Performs the actual filtering
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.AssociatedList">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.OnTextChanged(System.Windows.Controls.TextChangedEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.UnfilteredItemsSourceProperty">
+            <summary>For internal use (stores the internal, unfiltered data source)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.GetUnfilteredItemsSource(System.Windows.DependencyObject)">
+            <summary>For internal use (stores the internal, unfiltered data source)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FilterHeaderTextBox.SetUnfilteredItemsSource(System.Windows.DependencyObject,System.Collections.IEnumerable)">
+            <summary>For internal use (stores the internal, unfiltered data source)</summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.HeaderClickCommandParameters">
             <summary>Parameters passed to the header click command</summary>
         </member>
@@ -1427,6 +1604,13 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.HeaderContentControl"/> class.
             </summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Controls.HeaderContentControl.SortByColumn(System.Boolean)">
+            <summary>
+            Performs sorting the column
+            </summary>
+            <param name="toggleSort">Indicates whether we wan to toggle to the next order, or use the current one (false)</param>
+            <returns></returns>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.HeaderContentControl.Column">
             <summary>List column associated with this header click content control</summary>
             <value>The column.</value>
@@ -1439,6 +1623,16 @@
         <member name="F:CODE.Framework.Wpf.Controls.HeaderContentControl.HeaderClickCommandProperty">
             <summary>Header click command</summary>
             <remarks>This is usually populated by means of a binding</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.HeaderContentControl.ColumnIsFiltered">
+            <summary>
+            Indicates whether the column is currently filtered
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.HeaderContentControl.ColumnIsFilteredProperty">
+            <summary>
+            Indicates whether the column is currently filtered
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.TextPlusGraphic">
             <summary>
@@ -1641,6 +1835,86 @@
             <param name="d">The object to get the value for.</param>
             <returns>True or false</returns>
         </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListEx.AutoFilterModeProperty">
+            <summary>
+            Defines how the list applies auto-filtering
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.SetAutoFilterMode(System.Windows.DependencyObject,CODE.Framework.Wpf.Controls.AutoFilterMode)">
+            <summary>
+            Defines how the list applies auto-filtering
+            </summary>
+            <param name="d">The object to get the value for.</param>
+            <param name="value">The new value to be set</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.GetAutoFilterMode(System.Windows.DependencyObject)">
+            <summary>
+            Defines how the list applies auto-filtering
+            </summary>
+            <param name="d">The object to get the value for.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListEx.InAutoFilteringProperty">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.SetInAutoFiltering(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="d">The object to get the value for.</param>
+            <param name="value">The new value to be set</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.GetInAutoFiltering(System.Windows.DependencyObject)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="d">The object to get the value for.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListEx.InAutoSortingProperty">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.SetInAutoSorting(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="d">The object to get the value for.</param>
+            <param name="value">The new value to be set</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.GetInAutoSorting(System.Windows.DependencyObject)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="d">The object to get the value for.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.AutoFilterMode">
+            <summary>
+            Defines the auto-filter mode of a list
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.AutoFilterMode.OneColumnAtATime">
+            <summary>
+            Filtering one column at a time. When a column is filtered while another column already
+            has a filter applied, the old filter is removed
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.AutoFilterMode.AllColumnsAnd">
+            <summary>
+            Allows for filters on multiple columns at once. All the filters are combined with 
+            an AND operation.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.AutoFilterMode.AllColumnsOr">
+            <summary>
+            Allows for filters on multiple columns at once. All the filters are combined with 
+            an OR operation.
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.ListColumnsCollection">
             <summary>Observable collection of generic list columns</summary>
         </member>
@@ -1838,6 +2112,26 @@
             <value>The cell background opacity.</value>
             <remarks>Only applies if the CellBackground property is not null</remarks>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.CellForeground">
+            <summary>
+            Defines the foreground color for the cell
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.CellForegroundProperty">
+            <summary>
+            Defines the foreground color for the cell
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.CellForegroundBindingPath">
+            <summary>Defines a binding path for individual cell foreground colors.</summary>
+            <value>The cell foreground binding path.</value>
+            <remarks>It is not possible to just bind the CellForeground property using standard WPF binding, as that would bind the generic definition of the cell, not each actual cell in the list. Using the binding path property, a new binding to the path will be created for each item.</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.CellForegroundBindingPathProperty">
+            <summary>Defines a binding path for individual cell foreground colors.</summary>
+            <value>The cell foreground binding path.</value>
+            <remarks>It is not possible to just bind the CellForeground property using standard WPF binding, as that would bind the generic definition of the cell, not each actual cell in the list. Using the binding path property, a new binding to the path will be created for each item.</remarks>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnControl">
             <summary>Defines which type of control the column should be using</summary>
             <value>The column controls.</value>
@@ -1860,6 +2154,18 @@
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.HeaderTextAlignmentProperty">
             <summary>Text alignment for simple text headers</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.HeaderForeground">
+            <summary>
+            Gets or sets the header foreground color/brush.
+            </summary>
+            <value>The header foreground.</value>
+            <remarks>Ignored when initially null</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.HeaderForegroundProperty">
+            <summary>
+            Gets or sets the header foreground color/brush.
+            </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.TextListItemsSourceBindingPath">
             <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
@@ -1986,12 +2292,34 @@
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.SortOrder">
             <summary>Column sort order indicator</summary>
             <value>The sort order indicator.</value>
-            <remarks>Note that setting this value does NOT actually sort the bound data. It simply creates a visual indicator showing that the column is sorted.</remarks>
+            <remarks>Note that setting this value does NOT actually sort the bound data unless AutoSort = true. It simply creates a visual indicator showing that the column is sorted.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.SortOrderProperty">
             <summary>Column sort order indicator</summary>
             <value>The sort order indicator.</value>
-            <remarks>Note that setting this value does NOT actually sort the bound data. It simply creates a visual indicator showing that the column is sorted.</remarks>
+            <remarks>Note that setting this value does NOT actually sort the bound data unless AutoSort = true. It simply creates a visual indicator showing that the column is sorted.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.AutoSort">
+            <summary>Indicates whether the list should automatically support sorting by this column</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.AutoSortProperty">
+            <summary>Indicates whether the list should automatically support sorting by this column</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.AutoFilter">
+            <summary>Indicates whether the list should automatically support filtering by this column</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.AutoFilterProperty">
+            <summary>Indicates whether the list should automatically support filtering by this column</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FilterMode">
+            <summary>
+            Indicates the mode of the filter operation
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FilterModeProperty">
+            <summary>
+            Indicates the mode of the filter operation
+            </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.SortOrderBindingPath">
             <summary>Binding path for a dynamically set sort order</summary>
@@ -1999,7 +2327,27 @@
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.SortOrderBindingPathProperty">
             <summary>Binding path for a dynamically set sort order</summary>
+            <remarks>Overrules the Tooltip property.</remarks>
             <value>The sort order binding path.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ToolTip">
+            <summary>Binding path for a hardcoded tooltip of the control inside a column</summary>
+            <remarks>Overrules the Tooltip property.</remarks>
+            <value>The tooltip.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ToolTipProperty">
+            <summary>Binding path for a hardcoded tooltip of the control inside a column</summary>
+            <remarks>If TooltipBindingPath is set, it overrules this property</remarks>
+            <value>The tooltip.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ToolTipBindingPath">
+            <summary>Binding path for a dynamically set tooltip of the control inside a column</summary>
+            <remarks>If TooltipBindingPath is set, it overrules this property</remarks>
+            <value>The tooltip binding path.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ToolTipBindingPathProperty">
+            <summary>Binding path for a dynamically set tooltip of the control inside a column</summary>
+            <value>The tooltip binding path.</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.IsFrozen">
             <summary>Indicates whether the column is considered to be "frozen"</summary>
@@ -2014,6 +2362,25 @@
             Gets or sets the visible of the column.
             </summary>
             <value>The visible.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlTemplate">
+            <summary>
+            Template for control header edit controls
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlTemplateProperty">
+            <summary>
+            Template for control header edit controls
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.UtilizedHeaderEditControl">
+            <summary>For internal use only</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlDataContext">
+            <summary>
+            Gets or sets the column header edit control data context.
+            </summary>
+            <value>The column header edit control data context.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.VisibilityProperty">
             <summary>
@@ -2031,6 +2398,12 @@
             <summary>
             Occurs when the column width changes
             </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListColumn.SetActualWidth(System.Double)">
+            <summary>
+            Sets the actual width if the new value is indeed significantly different from the original color (more than 1/10th of a pixel difference).
+            </summary>
+            <param name="actualWidth">The actual width.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.ListColumnControls">
             <summary>
@@ -2108,6 +2481,31 @@
         <member name="F:CODE.Framework.Wpf.Controls.ListGridLineMode.EditOnly">
             <summary>Only show grid lines when the cell is being edited</summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.FilterMode">
+            <summary>
+            Filter mode
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterMode.ContainedString">
+            <summary>
+            Filter searches for a contained string
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterMode.StartsWithString">
+            <summary>
+            Filter searches for an exact start of the string
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterMode.ExactMatchString">
+            <summary>
+            String must be an exact match
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FilterMode.Number">
+            <summary>
+            Filter attempts to match an exact number (and supports greater than and less than)
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.PasswordBoxEx">
             <summary>
             This class adds features to the PasswordBox control (in particular a bindable value property)
@@ -2134,6 +2532,252 @@
             <summary>Password value</summary>
             <param name="obj">Object to set the password value on</param>
             <param name="value">Value to set</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.RangeSlider">
+            <summary>
+            Range slider with low and high value
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.#cctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.LowValue">
+            <summary>
+            Low value
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.LowValueProperty">
+            <summary>
+            Low value
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnLowValueChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the <see cref="E:LowValueChanged" /> event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.LowValueFinal">
+            <summary>
+            Low value (not updated during drag operations)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.LowValueFinalProperty">
+            <summary>
+            Low value (not updated during drag operations)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnLowValueFinalChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the <see cref="E:LowValueFinalChanged" /> event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.HighValue">
+            <summary>
+            High value
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.HighValueProperty">
+            <summary>
+            High value
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnHighValueChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the <see cref="E:HighValueChanged" /> event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.HighValueFinal">
+            <summary>
+            High value (not updated during drag operations)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.HighValueFinalProperty">
+            <summary>
+            High value (not updated during drag operations)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnHighValueFinalChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the <see cref="E:HighValueFinalChanged" /> event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.Minimum">
+            <summary>
+            Minimum value
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.MinimumProperty">
+            <summary>
+            Minimum value
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.Maximum">
+            <summary>
+            Minimum value
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.MaximumProperty">
+            <summary>
+            Minimum value
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.Orientation">
+            <summary>
+            Orientation
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.OrientationProperty">
+            <summary>
+            Orientation
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnApplyTemplate">
+            <summary>
+            When overridden in a derived class, is invoked whenever application code or internal processes call System.Windows.FrameworkElement.ApplyTemplate.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.SelectedRangeBrush">
+            <summary>
+            Brush for the selected range ("track")
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.SelectedRangeBrushProperty">
+            <summary>
+            Brush for the selected range ("track")
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.RangeBrush">
+            <summary>
+            Brush for the selected range ("track")
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.RangeBrushProperty">
+            <summary>
+            Brush for the selected range ("track")
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.TickBrush">
+            <summary>
+            Brush used for tick marks as well as labels
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.TickBrushProperty">
+            <summary>
+            Brush used for tick marks as well as labels
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.LabelFontSize">
+            <summary>
+            Font size for labels
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.LabelFontSizeProperty">
+            <summary>
+            Font size for labels
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.IsInverted">
+            <summary>
+            An inverted range slider goes from highest to lowest, rather than lowest to highest
+            </summary>
+            <value><c>true</c> if this instance is inverted; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.RangeSlider.IsInvertedProperty">
+            <summary>
+            An inverted range slider goes from highest to lowest, rather than lowest to highest
+            </summary>
+            <value><c>true</c> if this instance is inverted; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.Track">
+            <summary>
+            Track
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.Handle1">
+            <summary>
+            Low range handle
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.Handle2">
+            <summary>
+            High range handle
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.RangeSlider.SelectedRange">
+            <summary>
+            Selected Track
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Controls.RangeSlider.LowValueUpdated">
+            <summary>
+            This event fires when the LowValue property is updated
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Controls.RangeSlider.LowValueFinalUpdated">
+            <summary>
+            This event fires when the LowValueFinal property is updated
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Controls.RangeSlider.HighValueUpdated">
+            <summary>
+            This event fires when the HighValue property is updated
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Controls.RangeSlider.HighValueFinalUpdated">
+            <summary>
+            This event fires when the HighValueFinal property is updated
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnRenderSizeChanged(System.Windows.SizeChangedInfo)">
+            <summary>
+            Raises the System.Windows.FrameworkElement.SizeChanged event, using the specified information as part of the eventual event data.
+            </summary>
+            <param name="sizeInfo">Details of the old and new size involved in the change.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.UpdateTrackPosition">
+            <summary>
+            For internal use only. Updates the position of the track element
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.RefreshAll(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Refreshes all UI positions identified by their part names
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnMouseDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Handles the <see cref="E:MouseDown" /> event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnMouseMove(System.Windows.Input.MouseEventArgs)">
+            <summary>
+            Handles the <see cref="E:MouseMove" /> event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.RangeSlider.OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Handles the <see cref="E:MouseLeftButtonUp" /> event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.RichTextBoxEx">
             <summary>
@@ -2263,7 +2907,7 @@
             <summary>Sort order</summary>
             <value>The sort order</value>
         </member>
-        <member name="M:CODE.Framework.Wpf.Controls.SortOrderIndicator.DependencyPropertyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+        <member name="M:CODE.Framework.Wpf.Controls.SortOrderIndicator.OnOrderChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>Fires when one of the dependency properties changes that causes a brush change</summary>
             <param name="d">The source</param>
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
@@ -2563,6 +3207,34 @@
             </summary>
             <param name="dependencyObject">The dependency object.</param>
             <param name="a">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TextBoxEx.UpdateSourceOnEnterKeyProperty">
+            <summary>
+            If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
+            text element is otherwise only updated on LostFocus or Explicit
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.OnUpdateSourceOnEnterKeyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the UpdateSourceOnEnterKey property changes
+            </summary>
+            <param name="d">The object the property is set on</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.GetUpdateSourceOnEnterKey(System.Windows.DependencyObject)">
+            <summary>
+            If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
+            text element is otherwise only updated on LostFocus or Explicit
+            </summary>
+            <param name="d">The object the property is set on</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.SetUpdateSourceOnEnterKey(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
+            text element is otherwise only updated on LostFocus or Explicit
+            </summary>
+            <param name="d">The object the property is set on</param>
+            <param name="value">The new value that is to be set</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.TouchEx">
             <summary>
@@ -3643,6 +4315,437 @@
             <param name="index">The zero-based index of the requested child element in the collection.</param>
             <returns>The requested child element. This should not return null; if the provided index is out of range, an exception is thrown.</returns>
         </member>
+        <member name="T:CODE.Framework.Wpf.Layout.BladePanel">
+            <summary>
+            This layout panel arranges objects in multiple "blades" in a left-to-right fashion
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Layout.BladePanel"/> class.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanel.BladeBackgroundProperty">
+            <summary>
+            Background color for each individual blade
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.GetBladeBackground(System.Windows.DependencyObject)">
+            <summary>
+            Background color for each individual blade
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.SetBladeBackground(System.Windows.DependencyObject,System.Windows.Media.Brush)">
+            <summary>
+            Background color for each individual blade
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.ScrollBarStyle">
+            <summary>Style used by the scroll bars</summary>
+            <value>The scroll bar style.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanel.ScrollBarStyleProperty">
+            <summary>Style used by the scroll bars</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.ScrollBarStyleChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            This method gets called whenever the ScrollBarStyle property is updated
+            </summary>
+            <param name="d">Dependency object</param>
+            <param name="args">Arguments</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.Spacing">
+            <summary>
+            Margin between panels
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanel.SpacingProperty">
+            <summary>
+            Margin between panels
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderer">
+            <summary>
+            Optional header renderer object
+            </summary>
+            <value>The header renderer.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanel.HeaderRendererProperty">
+            <summary>
+            Optional header renderer object
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.ChildItemPadding">
+            <summary>
+            Defines the padding for each child item within a blade.
+            </summary>
+            <value>The child item padding.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanel.ChildItemPaddingProperty">
+            <summary>
+            Defines the padding for each child item within a blade.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.LastTopItemFillsSpace">
+            <summary>
+            Indicates whether the last top (or left) item fills the remaining space of the whole panel
+            </summary>
+            <value><c>true</c> if last top/left item fills space; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanel.LastTopItemFillsSpaceProperty">
+            <summary>
+            Indicates whether the last top (or left) item fills the remaining space of the whole panel
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.ArrangeOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
+            </summary>
+            <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+            <returns>The actual size used.</returns>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.BottomContentSize">
+            <summary>
+            Gets or sets the size of the bottom content.
+            </summary>
+            <value>The size of the bottom content.</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanel.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+            </summary>
+            <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation">
+            <summary>
+            Header renderer information
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation.TotalArea">
+            <summary>
+            Complete area used up by the child element + header
+            </summary>
+            <value>The total area.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation.Child">
+            <summary>
+            Gets or sets the child.
+            </summary>
+            <value>The child.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation.IsTop">
+            <summary>
+            Indicates wheter this is a top/left element.
+            </summary>
+            <value><c>true</c> if this instance is top; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer">
+            <summary>
+            This interface can be implemented to create a renderer object that measures and renders
+            headers for child elements contained in a BladePanel
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.GetClientArea(System.Windows.Rect,System.Boolean)">
+            <summary>
+            Returns the client area (the area available for the child control) based on the total area available for the child
+            </summary>
+            <param name="totalArea">The total area.</param>
+            <param name="isOtherOrientation">if set to <c>true</c> [is other orientation].</param>
+            <returns>The client area</returns>
+            <remarks>When a header is added for a child element, it takes away from the area available for the child.
+            For instance, when a header text is to be rendered across the top of a child, then the child must be moved down
+            and the overall space for the child shrinks accordingly. The value returned by this method indicates
+            the remaining space for the child element.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Size,System.Windows.UIElement)">
+            <summary>Renders the header element for a single child.</summary>
+            <param name="dc">The drawing context.</param>
+            <param name="clientAreaSize">Size of the client area of the entire contained control (including area). Note: Top/left render position is always 0,0.</param>
+            <param name="child">The actual child element.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.OnMouseEnter(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseEnter attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.OnMouseLeave(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseLeave attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.OnMouseDown(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.OnMouseUp(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseUp routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the mouse button was released.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.OnMouseMove(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseMove attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas">Area information for specific headers</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer">
+            <summary>
+            Standard header renderer object for multi panel headers
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.Orientation">
+            <summary>
+            Header Text Orientation
+            </summary>
+            <value>The orientation of the header text.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.OrientationProperty">
+            <summary>
+            Header Text Orientation
+            </summary>
+            <value>The orientation of the header text.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontSize">
+            <summary>
+            Header text font size
+            </summary>
+            <value>The header text font size.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontSizeProperty">
+            <summary>
+            Header text font size
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontFamily">
+            <summary>
+            Header text font family
+            </summary>
+            <value>The header text font family.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontFamilyProperty">
+            <summary>
+            Header text font family
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontStyle">
+            <summary>
+            Header text font style
+            </summary>
+            <value>The header text font style.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontStyleProperty">
+            <summary>
+            Header text font style
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontWeight">
+            <summary>
+            Header text font weight
+            </summary>
+            <value>The header text font weight.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.FontWeightProperty">
+            <summary>
+            Header text font weight
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.Foreground">
+            <summary>
+            Foreground brush for the header text
+            </summary>
+            <value>Header text foreground brush.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.ForegroundProperty">
+            <summary>
+            Foreground brush for the header text
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.Background">
+            <summary>
+            The background brush for the entire header area
+            </summary>
+            <value>The background brush.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.BackgroundProperty">
+            <summary>
+            The background brush for the entire header area
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColorForForeground">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the foreground color of the header text
+            </summary>
+            <value><c>true</c> if [use title color for foreground]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColorForForegroundProperty">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the foreground color of the header text
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColor2ForForeground">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor2 setting fore the foreground color of the header text
+            </summary>
+            <value><c>true</c> if [use title color for foreground]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColor2ForForegroundProperty">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the foreground color of the header text
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColorForBackground">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
+            </summary>
+            <value><c>true</c> if [use title color for background]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColorForBackgroundProperty">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColor2ForBackground">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor2 setting fore the background color of the header
+            </summary>
+            <value><c>true</c> if [use title color for background]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.UseTitleColor2ForBackgroundProperty">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.CloseIcon">
+            <summary>
+            Brush used to render the close icon
+            </summary>
+            <value>The close icon.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.CloseIconProperty">
+            <summary>
+            Brush used to render the close icon
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.MaxCloseIconSize">
+            <summary>
+            Max height/width for the close icon
+            </summary>
+            <value>The maximum size of the close icon.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.MaxCloseIconSizeProperty">
+            <summary>
+            Max height/width for the close icon
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.GetClientArea(System.Windows.Rect,System.Boolean)">
+            <summary>
+            Returns the client area (the area available for the child control) based on the total area available for the child
+            </summary>
+            <param name="totalArea">The total area currently set.</param>
+            <param name="isOtherOrientation">True if the object is to be filled in from the "other" side (such as horizontal alignment = left)</param>
+            <returns>The client area</returns>
+            <remarks>When a header is added for a child element, it takes away from the area available for the child.
+            For instance, when a header text is to be rendered across the top of a child, then the child must be moved down
+            and the overall space for the child shrinks accordingly. The value returned by this method indicates
+            the remaining space for the child element.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Size,System.Windows.UIElement)">
+            <summary>
+            Renders the header element for a single child
+            </summary>
+            <param name="dc">The drawing context.</param>
+            <param name="clientAreaSize">Size of the client area of the entire contained control (including area). Note: Top/left render position is always 0,0.</param>
+            <param name="child">The actual child element.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.OnMouseEnter(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseEnter attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.OnMouseLeave(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseLeave attached event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.OnMouseDown(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseDown attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.OnMouseUp(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseButtonEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseUp routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the mouse button was released.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.OnMouseMove(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Input.MouseEventArgs,System.Collections.Generic.List{CODE.Framework.Wpf.Layout.BladePanel.HeaderRenderInformation})">
+            <summary>
+            Invoked when an unhandled System.Windows.Input.Mouse.MouseMove attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="bladePanel">The blade panel.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+            <param name="headerRenderAreas"></param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.BladePanelScrollAdorner">
+            <summary>Adorner UI for scrollbars of the blade panel control</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelScrollAdorner.#ctor(CODE.Framework.Wpf.Layout.BladePanel,System.Windows.Controls.Primitives.ScrollBar)">
+            <summary>Constructor</summary>
+            <param name="adornedElement">Adorned element</param>
+            <param name="horizontal">The horizontal scrollbar.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelScrollAdorner.MeasureOverride(System.Windows.Size)">
+            <summary>Implements any custom measuring behavior for the adorner.</summary>
+            <param name="constraint">A size to constrain the adorner to.</param>
+            <returns>A <see cref="T:System.Windows.Size"/> object representing the amount of layout space needed by the adorner.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelScrollAdorner.ArrangeOverride(System.Windows.Size)">
+            <summary>When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement"/> derived class.</summary>
+            <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+            <returns>The actual size used.</returns>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BladePanelScrollAdorner.VisualChildrenCount">
+            <summary>Gets the number of visual child elements within this element.</summary>
+            <returns>The number of visual child elements for this element.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelScrollAdorner.GetVisualChild(System.Int32)">
+            <summary>Overrides <see cref="M:System.Windows.Media.Visual.GetVisualChild(System.Int32)"/>, and returns a child at the specified index from a collection of child elements.</summary>
+            <param name="index">The zero-based index of the requested child element in the collection.</param>
+            <returns>The requested child element. This should not return null; if the provided index is out of range, an exception is thrown.</returns>
+        </member>
         <member name="T:CODE.Framework.Wpf.Layout.ColumnPanel">
             <summary>
             This automatic layout control can arrange elements in columns
@@ -3771,7 +4874,7 @@
         </member>
         <member name="T:CODE.Framework.Wpf.Layout.ColumnPanelColumnsCollection">
             <summary>
-            Spezialized collection class for column definitions on the ColumnPanel class
+            Specialized collection class for column definitions on the ColumnPanel class
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.ColumnPanelColumnsCollection.#ctor(CODE.Framework.Wpf.Layout.ColumnPanel)">
@@ -6084,12 +7187,16 @@
             Optional header renderer object
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.OnHeaderRendererChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanel.Orientation">
             <summary>
-            Fires when the Header Renderer changes.
+            Gets or sets the general orientation of the content alignment.
             </summary>
-            <param name="d">The multi panel object</param>
-            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+            <value>The orientation.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanel.OrientationProperty">
+            <summary>
+            Gets or sets the general orientation of the content alignment.
+            </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.MultiPanel.MeasureOverride(System.Windows.Size)">
             <summary>
@@ -6304,6 +7411,28 @@
         <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.BackgroundProperty">
             <summary>
             The background brush for the entire header area
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.UseTitleColorForForeground">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the foreground color of the header text
+            </summary>
+            <value><c>true</c> if [use title color for foreground]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.UseTitleColorForForegroundProperty">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the foreground color of the header text
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.UseTitleColorForBackground">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
+            </summary>
+            <value><c>true</c> if [use title color for background]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.UseTitleColorForBackgroundProperty">
+            <summary>
+            If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
             </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.MultiPanelHeaderRenderer.CloseIcon">
@@ -7590,6 +8719,25 @@
             <param name="obj">The object to set the value on.</param>
             <param name="value">The color (Brush).</param>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.TitleColor2Property">
+            <summary>
+            Second color (such as background color) associated with the Title. (Note: Not all elements that respect the Title also respect the color. It's an optional setting)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetTitleColor2(System.Windows.DependencyObject)">
+            <summary>
+            Gets the second color of the title.
+            </summary>
+            <param name="obj">The object to get the color for.</param>
+            <returns>Title color (brush)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetTitleColor2(System.Windows.DependencyObject,System.Windows.Media.Brush)">
+            <summary>
+            Sets the second color of the title.
+            </summary>
+            <param name="obj">The object to set the value on.</param>
+            <param name="value">The color (Brush).</param>
+        </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.GroupProperty">
             <summary>Attached property to set any view's group</summary>
             <remarks>This attached property can be attached to any UI Element to define a view group</remarks>
@@ -7870,6 +9018,50 @@
             In most cases, this command/action is optional. When no special action is provided, the element's visibility is simply set to collapsed.
             </remarks>
         </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.RelativeWidthProperty">
+            <summary>
+            <summary>Indicates the relative width of an alement compared to other elements</summary>
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.OnRelativeWidthChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the <see cref="E:RelativeWidthChanged" /> event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetRelativeWidth(System.Windows.DependencyObject)">
+            <summary>Indicates the relative width of an alement compared to other elements</summary>
+            <param name="obj">The object the property is set on.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetRelativeWidth(System.Windows.DependencyObject,System.Windows.GridLength)">
+            <summary>Indicates the relative width of an alement compared to other elements</summary>
+            <param name="obj">The object the property is set on.</param>
+            <param name="value">True or false</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.SimpleView.RelativeHeightProperty">
+            <summary>
+            <summary>Indicates the relative height of an alement compared to other elements</summary>
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.OnRelativeHeightChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the <see cref="E:RelativeHeightChanged" /> event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetRelativeHeight(System.Windows.DependencyObject)">
+            <summary>Indicates the relative height of an alement compared to other elements</summary>
+            <param name="obj">The object the property is set on.</param>
+            <returns>True or false</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetRelativeHeight(System.Windows.DependencyObject,System.Windows.GridLength)">
+            <summary>Indicates the relative height of an alement compared to other elements</summary>
+            <param name="obj">The object the property is set on.</param>
+            <param name="value">True or false</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.InvalidateAllVisuals(System.Windows.DependencyObject)">
             <summary>Invalidates everything in the UI and forces a refresh</summary>
             <param name="source">Reference to an instance of the form itself</param>
@@ -7932,6 +9124,462 @@
         <member name="F:CODE.Framework.Wpf.Layout.ViewSizeStrategies.UseSuggestedSize">
             <summary>Use the suggested size of possible, otherwise, use maximum size</summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding">
+            <summary>
+            This class allows binding members of XAML elements to attributes set on members
+            </summary>
+            <seealso cref="T:System.Windows.Markup.MarkupExtension" />
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.Path">
+            <summary>
+            The path to the member the attribute is to be found on. The path is relative to the DataContext of the target element.
+            </summary>
+            <value>The path.</value>
+            <example>
+            The following example sets the IsEnabled property to true, if the FirstName property on the current
+            DataContext has an assigned 'Enabled' attribute.
+            
+            &lt;TextBox IsEnabled=&quot;{a:AttributeBinding Path=FirstName, AttributeName=Enabled, Mode=IsAttributeSet}&quot; /&gt;
+            </example>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.Source">
+            <summary>
+            The binding source. Defines the source object the binding targets relative to the current DataContext.
+            If not set, the current DataContext is assumed.
+            </summary>
+            <value>The binding source.</value>
+            <remarks>
+            When set in XAML, the source usually is set in the form of resources and a complex binding expression. 
+            In most cases, a source does not have to be explicitly specified.
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.Name">
+            <summary>
+            Name of the attribute on the bound member (Path) that is to be bound to
+            </summary>
+            <value>The name of the attribute.</value>
+            <example>
+            The following example sets the IsEnabled property to true, if the FirstName property on the current
+            DataContext has an assigned 'Enabled' attribute.
+            
+            &lt;TextBox IsEnabled=&quot;{a:AttributeBinding Path=FirstName, Name=Enabled, Mode=IsAttributeSet}&quot; /&gt;
+            </example>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.PropertyName">
+            <summary>
+            Name of the attribute's property to bind to when Mode=AttributeProperty
+            </summary>
+            <value>The name of the property.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.IncludeInheritedAttributes">
+            <summary>
+            Defines whether attributes that are set due to being inherited should be considered (true, default) or ignored (false)
+            </summary>
+            <value>True if inherited attributes are included</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.Mode">
+            <summary>
+            The binding mode. This specifies what the binding does and how it behaves:
+            Attribute: Returns the actual attribute
+            Attributes: Returns all attributes of that type, or attributes that are derived from that type
+            AttributeSet: Returns a true as the bound value, if the attribute does indeed exist.
+            </summary>
+            <value>The attribute binding mode.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.Converter">
+            <summary>
+            The converter to apply
+            </summary>
+            <value>The converter.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.ConverterParameter">
+            <summary>
+            The parameter to pass to the converter
+            </summary>
+            <value>The converter parameter.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.FallbackValue">
+            <summary>
+            Fall-back value to be used when the binding doesn't succeed
+            </summary>
+            <value>The fallback value.</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding" /> class.
+            </summary>
+            <param name="path">The property path (and optionally the attribute name in brackets)</param>
+            <example>
+            &lt;TextBox IsEnabled=&quot;{a:AttributeBinding FirstName, Name=Enabled, Mode=IsAttributeSet}&quot; /&gt;
+            &lt;TextBox IsEnabled=&quot;{a:AttributeBinding FirstName[Enabled], Mode=IsAttributeSet}&quot; /&gt;
+            </example>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.ProvideValue(System.IServiceProvider)">
+            <summary>
+            Provides the value.
+            </summary>
+            <param name="serviceProvider">The service provider.</param>
+            <returns>System.Object.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.GetAttribute(System.Object,System.Object)">
+            <summary>
+            Executes the binding for Mode=Attribute
+            </summary>
+            <param name="targetObject">The target object.</param>
+            <param name="targetProperty">The target property.</param>
+            <returns>The actual attribute or null if not found</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.GetAttributeProperty(System.Object,System.Object)">
+            <summary>
+            Executes the binding for Mode=Attribute
+            </summary>
+            <param name="targetObject">The target object.</param>
+            <param name="targetProperty">The target property.</param>
+            <returns>The actual attribute or null if not found</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.GetAttributes(System.Object,System.Object)">
+            <summary>
+            Executes the binding for Mode=Attributes
+            </summary>
+            <param name="targetObject">The target object.</param>
+            <param name="targetProperty">The target property.</param>
+            <returns>An enumerable collection containing all the attributes that match the criteria (collection is empty if no matches are found)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding.IsAttributeSet(System.Object,System.Object)">
+            <summary>
+            Executes the binding for Mode=IsAttributeSet
+            </summary>
+            <param name="targetObject">The target object.</param>
+            <param name="targetProperty">The target property.</param>
+            <returns>True if the attribute has indeed been set on the target</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.AttributeSet">
+            <summary>
+            Special variation on the attribute binding, with Mode=IsAttributeSet
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeSet.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeSet"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeSet.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeSet" /> class.
+            </summary>
+            <param name="path">The property path (and optionally the attribute name in brackets)</param>
+            <example>
+            &lt;TextBox IsEnabled="{a:AttributeBinding FirstName, Name=Enabled, Mode=IsAttributeSet}" /&gt;
+            &lt;TextBox IsEnabled="{a:AttributeBinding FirstName[Enabled], Mode=IsAttributeSet}" /&gt;
+            </example>
+        </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.AttributeListBinding">
+            <summary>
+            Special version of an attribute binding that defaults to list mode
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeListBinding.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeListBinding"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeListBinding.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeListBinding"/> class.
+            </summary>
+            <param name="path">The path.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.AttributeValidationBinding">
+            <summary>
+            Special attribute binding that binds to all validation attributes
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeListBinding" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeValidationBinding.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeValidationBinding"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributeValidationBinding.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeValidationBinding"/> class.
+            </summary>
+            <param name="path">The path.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.AttributePropertyBinding">
+            <summary>
+            Special attribute binding class that binds to a property on an attribute by default
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBinding" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributePropertyBinding.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributePropertyBinding"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.AttributePropertyBinding.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.AttributePropertyBinding"/> class.
+            </summary>
+            <param name="path">The property path (and optionally the attribute name in brackets)</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.AttributeBindingMode">
+            <summary>
+            Attribute binding mode enumeration
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.MarkupExtensions.AttributeBindingMode.Attribute">
+            <summary>
+            Returns the actual attribute as the binding value
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.MarkupExtensions.AttributeBindingMode.Attributes">
+            <summary>
+            Returns an IEnumerable of Attribute containing all the attributes that match the name, or derive from it.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.MarkupExtensions.AttributeBindingMode.IsAttributeSet">
+            <summary>
+            This mode checks if an attribute has been set and returns true if it has been found
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.MarkupExtensions.AttributeBindingMode.AttributeProperty">
+            <summary>
+            This mode binds to the value of a specific property of an attribute
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.MarkupExtensions.Bind">
+            <summary>
+            An extension to the standard Binding markup extension provided by WPF.
+            This extension provides all features of the standard WPF Binding class, as well as additional features,
+            such as binding security setup, binding validation, and more
+            </summary>
+            <seealso cref="T:System.Windows.Markup.MarkupExtension" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.Bind.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.Bind"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.Bind.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.MarkupExtensions.Bind"/> class.
+            </summary>
+            <param name="path">The path.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.MarkupExtensions.Bind._binding">
+            <summary>
+            The decorated binding class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.Binding">
+            <summary>
+            The decorated binding class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.AsyncState">
+            <summary> Opaque data passed to the asynchronous data dispatcher </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.BindsDirectlyToSource">
+            <summary> True if Binding should interpret its path relative to
+            the data item itself.
+            </summary>
+            <remarks>
+            The normal behavior (when this property is false)
+            includes special treatment for a data item that implements IDataSource.
+            In this case, the path is treated relative to the object obtained
+            from the IDataSource.Data property.  In addition, the binding listens
+            for the IDataSource.DataChanged event and reacts accordingly.
+            Setting this property to true overrides this behavior and gives
+            the binding access to properties on the data source object itself.
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.Converter">
+            <summary>
+            The converter to apply
+            </summary>
+            <value>The converter.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.TargetNullValue">
+            <summary>
+            Value to be used for the target when the bound value is null
+            </summary>
+            <value>The target null value.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.ConverterCulture">
+            <summary>
+            The converter culture to apply
+            </summary>
+            <value>The converter culture.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.ConverterParameter">
+            <summary>
+            Gets or sets the converter parameter.
+            </summary>
+            <value>The converter parameter.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.ElementName">
+            <summary>
+            Name of the element to use as the source
+            </summary>
+            <value>The name of the element.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.FallbackValue">
+            <summary>
+            Fallback value to apply when no binding value can be detirmined
+            </summary>
+            <value>The fallback value.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.IsAsync">
+            <summary>
+            Gets or sets a value indicating whether this instance is asynchronous.
+            </summary>
+            <value><c>true</c> if this instance is asynchronous; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.Mode">
+            <summary>
+            Binding Mode
+            </summary>
+            <value>The mode.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.NotifyOnSourceUpdated">
+            <summary>
+            Raise SourceUpdated event whenever a value flows from target to source
+            </summary>
+            <value><c>true</c> if [notify on source updated]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.NotifyOnTargetUpdated">
+            <summary>
+            Raise TargetUpdated event whenever a value flows from source to target
+            </summary>
+            <value><c>true</c> if [notify on target updated]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.NotifyOnValidationError">
+            <summary>
+            Raise ValidationError event whenever there is a ValidationError on Update
+            </summary>
+            <value><c>true</c> if [notify on validation error]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.Path">
+            <summary>
+            The source path (for CLR bindings).
+            </summary>
+            <value>The path.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.RelativeSource">
+            <summary>
+            Gets or sets the relative source.
+            </summary>
+            <value>The relative source.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.Source">
+            <summary> object to use as the source </summary>
+            <remarks> To clear this property, set it to DependencyProperty.UnsetValue. </remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.UpdateSourceExceptionFilter">
+            <summary>
+            called whenever any exception is encountered when trying to update
+            the value to the source. The application author can provide its own
+            handler for handling exceptions here. If the delegate returns
+                null - don't throw an error or provide a ValidationError.
+                Exception - returns the exception itself, we will fire the exception using Async exception model.
+                ValidationError - it will set itself as the BindingInError and add it to the element's Validation errors.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.UpdateSourceTrigger">
+            <summary>
+            Update type
+            </summary>
+            <value>The update source trigger.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.ValidatesOnDataErrors">
+            <summary>
+            True if a data error in the source item should be considered a validation error.
+            </summary>
+            <value><c>true</c> if [validates on data errors]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.ValidatesOnExceptions">
+            <summary>
+            True if an exception during source updates should be considered a validation error.
+            </summary>
+            <value><c>true</c> if [validates on exceptions]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.XPath">
+            <summary>
+            The XPath path (for XML bindings).
+            </summary>
+            <value>The x path.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.ValidationRules">
+            <summary>
+                Collection&lt;ValidationRule&gt; is a collection of ValidationRule
+                implementations on either a Binding or a MultiBinding.  Each of the rules
+                is run by the binding engine when validation on update to source
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.StringFormat">
+            <summary>
+            Gets or sets the string format.
+            </summary>
+            <value>The string format.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.BindingGroupName">
+            <summary>
+            Gets or sets the name of the binding group.
+            </summary>
+            <value>The name of the binding group.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.BindSecurityAttribute">
+            <summary>
+            Defines whether the security attribute on the binding source should automatically be bound 
+            to the CODE Framework security system for UI security.
+            </summary>
+            <value><c>true</c> if the security system is to automatically kick in (default)</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.BindValidationAttributes">
+            <summary>
+            Defines whether validation attributes should be automatically bound to the CODE Framework validation system
+            </summary>
+            <value><c>true</c> if the validation system is to automatically kick in (default)</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.Bind.ProvideValue(System.IServiceProvider)">
+            <summary>
+            This basic implementation just sets a binding on the targeted
+            <see cref="T:System.Windows.DependencyObject"/> and returns the appropriate
+            <see cref="T:System.Windows.Data.BindingExpressionBase"/> instance.<br/>
+            All this work is delegated to the decorated <see cref="P:CODE.Framework.Wpf.MarkupExtensions.Bind.Binding"/>
+            instance.
+            </summary>
+            <returns>
+            The object value to set on the property where the extension is applied. 
+            In case of a valid binding expression, this is a <see cref="T:System.Windows.Data.BindingExpressionBase"/>
+            instance.
+            </returns>
+            <param name="provider">Object that can provide services for the markup
+            extension.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.MarkupExtensions.Bind.TryGetTargetItems(System.IServiceProvider,System.Windows.DependencyObject@,System.Windows.DependencyProperty@)">
+            <summary>
+            Validates a service provider that was submitted to the <see cref="M:CODE.Framework.Wpf.MarkupExtensions.Bind.ProvideValue(System.IServiceProvider)"/>
+            method. This method checks whether the provider is null (happens at design time),
+            whether it provides an <see cref="T:System.Windows.Markup.IProvideValueTarget"/> service, and whether
+            the service's <see cref="P:System.Windows.Markup.IProvideValueTarget.TargetObject"/> and
+            <see cref="P:System.Windows.Markup.IProvideValueTarget.TargetProperty"/> properties are valid
+            <see cref="T:System.Windows.DependencyObject"/> and <see cref="T:System.Windows.DependencyProperty"/>
+            instances.
+            </summary>
+            <param name="provider">The provider to be validated.</param>
+            <param name="target">The binding target of the binding.</param>
+            <param name="dp">The target property of the binding.</param>
+            <returns>True if the provider supports all that's needed.</returns>
+        </member>
         <member name="T:CODE.Framework.Wpf.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -7947,6 +9595,75 @@
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Security.Security">
+            <summary>
+            This class provides various security features for WPF applications
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Security.Security.GetReadOnlyRoles(System.Windows.DependencyObject)">
+            <summary>
+            Defines the roles the current user has to be in to be granted read-only access to the control this applies to
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Security.Security.SetReadOnlyRoles(System.Windows.DependencyObject,System.String)">
+            <summary>
+            Defines the roles the current user has to be in to be granted read-only access to the control this applies to
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Security.Security.ReadOnlyRolesProperty">
+            <summary>
+            Defines the roles the current user has to be in to be granted read-only access to the control this applies to
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Security.Security.OnReadOnlyRolesChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when read-only roles are assigned
+            </summary>
+            <param name="d">The object the roles are set on</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Security.Security.GetFullAccessRoles(System.Windows.DependencyObject)">
+            <summary>
+            Defines the roles the current user has to be in to be granted full access to the control this applies to
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Security.Security.SetFullAccessRoles(System.Windows.DependencyObject,System.String)">
+            <summary>
+            Defines the roles the current user has to be in to be granted full access to the control this applies to
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Security.Security.FullAccessRolesProperty">
+            <summary>
+            Defines the roles the current user has to be in to be granted full access to the control this applies to
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Security.Security.OnFullAccessRolesChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when read-only roles are assigned
+            </summary>
+            <param name="d">The object the roles are set on</param>
+            <param name="e">Event arguments</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Security.SecurityAttribute">
+            <summary>
+            Security atttribute that can be applied to properties
+            </summary>
+            <seealso cref="T:System.Attribute" />
+        </member>
+        <member name="P:CODE.Framework.Wpf.Security.SecurityAttribute.ReadOnlyRoles">
+            <summary>
+            Comma-separated list of roles that have read-only access.
+            </summary>
+            <remarks>If empty, then everyone has read-only access</remarks>
+            <value>The read only roles.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Security.SecurityAttribute.FullAccessRoles">
+            <summary>
+            Comma-separated list of roles that have full access.
+            </summary>
+            <value>The full access roles.</value>
+            <remarks>If empty, then everyone has full access</remarks>
         </member>
         <member name="T:CODE.Framework.Wpf.Utilities.AutoLayoutHeaderRenderer">
             <summary>
@@ -8081,6 +9798,39 @@
             <param name="bitmap">The bitmap.</param>
             <returns>ImageSource.</returns>
         </member>
+        <member name="T:CODE.Framework.Wpf.Utilities.ObservableResourceDictionary">
+            <summary>
+            Resource dictionary with CollectionChanged functionality
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Utilities.ObservableResourceDictionary.CollectionChanged">
+            <summary>
+            Occurs when an item is added, removed, changed, moved, or the entire list is refreshed.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.ObservableResourceDictionary.Clear">
+            <summary>
+            Clears this instance.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.ObservableResourceDictionary.Add(System.Object,System.Object)">
+            <summary>
+            Adds the specified key/value pair.
+            </summary>
+            <param name="key">The key.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.ObservableResourceDictionary.Remove(System.Object)">
+            <summary>
+            Removes the specified key.
+            </summary>
+            <param name="key">The key.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.ObservableResourceDictionary.EndInit">
+            <summary>
+            Ends the initialize.
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Utilities.ResourceHelper">
             <summary>
             This class provides useful helper methods for dealing with XAML resources
@@ -8165,6 +9915,181 @@
             <summary>
             GIF
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Validation.InputValidation">
+            <summary>
+            This class provides features around UI data validation
+            </summary>
+            <seealso cref="T:System.Windows.DependencyObject" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.GetIsValid(System.Windows.DependencyObject)">
+            <summary>
+            Defines whether an element is valid (true) or not (false)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.SetIsValid(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            Defines whether an element is valid (true) or not (false)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Validation.InputValidation.IsValidProperty">
+            <summary>
+            Defines whether an element is valid (true) or not (false)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.GetErrorMessages(System.Windows.DependencyObject)">
+            <summary>
+            List of error messages
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.SetErrorMessages(System.Windows.DependencyObject,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            List of error messages
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Validation.InputValidation.ErrorMessagesProperty">
+            <summary>
+            List of error messages
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.GetErrorMessage(System.Windows.DependencyObject)">
+            <summary>
+            Consolidated list of error messages
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.SetErrorMessage(System.Windows.DependencyObject,System.String)">
+            <summary>
+            Consolidated list of error messages
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Validation.InputValidation.ErrorMessageProperty">
+            <summary>
+            Consolidated list of error messages
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.GetValidationAttributes(System.Windows.DependencyObject)">
+            <summary>
+            Enumerable list of validation attributes, which are then automatically used to set up appropriate validation.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.SetValidationAttributes(System.Windows.DependencyObject,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+            Enumerable list of validation attributes, which are then automatically used to set up appropriate validation.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Validation.InputValidation.ValidationAttributesProperty">
+            <summary>
+            Enumerable list of validation attributes, which are then automatically used to set up appropriate validation.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.OnValidationAttributesChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when validation attributes change
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.OnTextBoxValidationAttributesChanged(System.Windows.Controls.TextBox,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+            Handles validation logic on textboxes
+            </summary>
+            <param name="text">The text.</param>
+            <param name="validationAttributes">The validation attributes.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.OnPasswordBoxValidationAttributesChanged(System.Windows.Controls.PasswordBox,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+            Handles validation logic on passwordboxes
+            </summary>
+            <param name="passwordBox">The text.</param>
+            <param name="validationAttributes">The validation attributes.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.OnSelectorValidationAttributesChanged(System.Windows.Controls.Primitives.Selector,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+            Handles validation logic on selectors (such as listboxes)
+            </summary>
+            <param name="selector">The text.</param>
+            <param name="validationAttributes">The validation attributes.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.OnToggleButtonValidationAttributesChanged(System.Windows.Controls.Primitives.ToggleButton,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+            Handles validation logic on toggle buttons (such as checkboxes)
+            </summary>
+            <param name="toggleButton">The text.</param>
+            <param name="validationAttributes">The validation attributes.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.OnDatePickerValidationAttributesChanged(System.Windows.Controls.DatePicker,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+            Handles validation logic on toggle buttons (such as checkboxes)
+            </summary>
+            <param name="datePicker">The text.</param>
+            <param name="validationAttributes">The validation attributes.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.ApplyAttributeValidation(System.Windows.DependencyObject,System.Object)">
+            <summary>
+            Performs the actual validation based on the provided attributes
+            </summary>
+            <param name="d">The source object to be validated</param>
+            <param name="value">The value to be validated.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.InputValidation.ValidateObject(System.Object,CODE.Framework.Wpf.Validation.ValidationResults)">
+            <summary>
+            Performs data validation on all properties of the provided object.
+            </summary>
+            <param name="objectToValidate">The object to validate.</param>
+            <param name="results">An existing results object (can be useful if you want to add up multiple valdations for multiple objects)</param>
+            <returns>ValidationResults.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Validation.ValidationResults">
+            <summary>
+            Validation results for input validation on multiple objects
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.ValidationResults.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Validation.ValidationResults"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Validation.ValidationResults.IsValid">
+            <summary>
+            Indicates whether all validations returned true (the entire validated set is valid)
+            </summary>
+            <value><c>true</c> if this instance is valid; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Validation.ValidationResults.InvalidProperties">
+            <summary>
+            If IsValid=false, this collection contains information about all the properties that indicated an invalid state
+            </summary>
+            <value>The invalid properties.</value>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Validation.PropertyValidationResult">
+            <summary>
+            Validation result for an individual property
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Validation.PropertyValidationResult.#ctor(System.Object,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Validation.PropertyValidationResult"/> class.
+            </summary>
+            <param name="parentObject">The parent object.</param>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Validation.PropertyValidationResult.ParentObject">
+            <summary>
+            Object the property belongs to.
+            </summary>
+            <value>The parent object.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Validation.PropertyValidationResult.PropertyName">
+            <summary>
+            Name of the property that caused the validation error.
+            </summary>
+            <value>The name of the property.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Validation.PropertyValidationResult.ErrorMessages">
+            <summary>
+            List of error messages
+            </summary>
+            <value>The error messages.</value>
         </member>
     </members>
 </doc>

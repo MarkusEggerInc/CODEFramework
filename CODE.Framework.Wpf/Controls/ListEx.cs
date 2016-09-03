@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +13,7 @@ namespace CODE.Framework.Wpf.Controls
     public class ListEx : DependencyObject
     {
         /// <summary>This attached property can be used to generically express the content of columns</summary>
-        public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached("Columns", typeof(ListColumnsCollection), typeof(ListEx), new UIPropertyMetadata(null));
+        public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached("Columns", typeof (ListColumnsCollection), typeof (ListEx), new FrameworkPropertyMetadata(null) {BindsTwoWayByDefault = false});
         /// <summary>Sets the columns.</summary>
         /// <param name="o">The DependencyObject to set the value on.</param>
         /// <param name="value">The value.</param>
@@ -110,6 +111,104 @@ namespace CODE.Framework.Wpf.Controls
         {
             return (bool) d.GetValue(IsEditableProperty);
         }
+
+        /// <summary>
+        /// Defines how the list applies auto-filtering
+        /// </summary>
+        public static readonly DependencyProperty AutoFilterModeProperty = DependencyProperty.Register("AutoFilterMode", typeof(AutoFilterMode), typeof(ListEx), new PropertyMetadata(Controls.AutoFilterMode.OneColumnAtATime));
+
+        /// <summary>
+        /// Defines how the list applies auto-filtering
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <param name="value">The new value to be set</param>
+        public static void SetAutoFilterMode(DependencyObject d, AutoFilterMode value)
+        {
+            d.SetValue(AutoFilterModeProperty, value);
+        }
+        /// <summary>
+        /// Defines how the list applies auto-filtering
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <returns>True or false</returns>
+        public static AutoFilterMode GetAutoFilterMode(DependencyObject d)
+        {
+            return (AutoFilterMode) d.GetValue(AutoFilterModeProperty);
+        }
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        [Browsable(false)]
+        public static readonly DependencyProperty InAutoFilteringProperty = DependencyProperty.RegisterAttached("InAutoFiltering", typeof(bool), typeof(ListEx), new PropertyMetadata(false));
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <param name="value">The new value to be set</param>
+        [Browsable(false)]
+        public static void SetInAutoFiltering(DependencyObject d, bool value)
+        {
+            d.SetValue(InAutoFilteringProperty, value);
+        }
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <returns>True or false</returns>
+        [Browsable(false)]
+        public static bool GetInAutoFiltering(DependencyObject d)
+        {
+            return (bool)d.GetValue(InAutoFilteringProperty);
+        }
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        [Browsable(false)]
+        public static readonly DependencyProperty InAutoSortingProperty = DependencyProperty.RegisterAttached("InAutoSorting", typeof(bool), typeof(ListEx), new PropertyMetadata(false));
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <param name="value">The new value to be set</param>
+        [Browsable(false)]
+        public static void SetInAutoSorting(DependencyObject d, bool value)
+        {
+            d.SetValue(InAutoSortingProperty, value);
+        }
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <param name="d">The object to get the value for.</param>
+        /// <returns>True or false</returns>
+        [Browsable(false)]
+        public static bool GetInAutoSorting(DependencyObject d)
+        {
+            return (bool)d.GetValue(InAutoSortingProperty);
+        }
+    }
+
+    /// <summary>
+    /// Defines the auto-filter mode of a list
+    /// </summary>
+    public enum AutoFilterMode
+    {
+        /// <summary>
+        /// Filtering one column at a time. When a column is filtered while another column already
+        /// has a filter applied, the old filter is removed
+        /// </summary>
+        OneColumnAtATime,
+        /// <summary>
+        /// Allows for filters on multiple columns at once. All the filters are combined with 
+        /// an AND operation.
+        /// </summary>
+        AllColumnsAnd,
+        /// <summary>
+        /// Allows for filters on multiple columns at once. All the filters are combined with 
+        /// an OR operation.
+        /// </summary>
+        AllColumnsOr
     }
 
     /// <summary>Observable collection of generic list columns</summary>
@@ -384,6 +483,32 @@ namespace CODE.Framework.Wpf.Controls
         /// <remarks>Only applies if the CellBackground property is not null</remarks>
         public static readonly DependencyProperty CellBackgroundOpacityProperty = DependencyProperty.Register("CellBackgroundOpacity", typeof(double), typeof(ListColumn), new PropertyMetadata(1d));
 
+        /// <summary>
+        /// Defines the foreground color for the cell
+        /// </summary>
+        public Brush CellForeground
+        {
+            get { return (Brush)GetValue(CellForegroundProperty); }
+            set { SetValue(CellForegroundProperty, value); }
+        }
+        /// <summary>
+        /// Defines the foreground color for the cell
+        /// </summary>
+        public static readonly DependencyProperty CellForegroundProperty = DependencyProperty.Register("CellForeground", typeof(Brush), typeof(ListColumn), new PropertyMetadata(null));
+
+        /// <summary>Defines a binding path for individual cell foreground colors.</summary>
+        /// <value>The cell foreground binding path.</value>
+        /// <remarks>It is not possible to just bind the CellForeground property using standard WPF binding, as that would bind the generic definition of the cell, not each actual cell in the list. Using the binding path property, a new binding to the path will be created for each item.</remarks>
+        public string CellForegroundBindingPath
+        {
+            get { return (string)GetValue(CellForegroundBindingPathProperty); }
+            set { SetValue(CellForegroundBindingPathProperty, value); }
+        }
+        /// <summary>Defines a binding path for individual cell foreground colors.</summary>
+        /// <value>The cell foreground binding path.</value>
+        /// <remarks>It is not possible to just bind the CellForeground property using standard WPF binding, as that would bind the generic definition of the cell, not each actual cell in the list. Using the binding path property, a new binding to the path will be created for each item.</remarks>
+        public static readonly DependencyProperty CellForegroundBindingPathProperty = DependencyProperty.Register("CellForegroundBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
         /// <summary>Defines which type of control the column should be using</summary>
         /// <value>The column controls.</value>
         /// <remarks>Only applies for columns without item templates</remarks>
@@ -415,6 +540,21 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Text alignment for simple text headers</summary>
         public static readonly DependencyProperty HeaderTextAlignmentProperty = DependencyProperty.Register("HeaderTextAlignment", typeof(TextAlignment), typeof(ListColumn), new PropertyMetadata(TextAlignment.Left));
+
+        /// <summary>
+        /// Gets or sets the header foreground color/brush.
+        /// </summary>
+        /// <value>The header foreground.</value>
+        /// <remarks>Ignored when initially null</remarks>
+        public Brush HeaderForeground
+        {
+            get { return (Brush)GetValue(HeaderForegroundProperty); }
+            set { SetValue(HeaderForegroundProperty, value); }
+        }
+        /// <summary>
+        /// Gets or sets the header foreground color/brush.
+        /// </summary>
+        public static readonly DependencyProperty HeaderForegroundProperty = DependencyProperty.Register("HeaderForeground", typeof(Brush), typeof(ListColumn), new PropertyMetadata(null));
 
         /// <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
         /// <value>The text list item source binding path.</value>
@@ -585,7 +725,7 @@ namespace CODE.Framework.Wpf.Controls
 
         /// <summary>Column sort order indicator</summary>
         /// <value>The sort order indicator.</value>
-        /// <remarks>Note that setting this value does NOT actually sort the bound data. It simply creates a visual indicator showing that the column is sorted.</remarks>
+        /// <remarks>Note that setting this value does NOT actually sort the bound data unless AutoSort = true. It simply creates a visual indicator showing that the column is sorted.</remarks>
         public SortOrder SortOrder
         {
             get { return (SortOrder)GetValue(SortOrderProperty); }
@@ -593,8 +733,40 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Column sort order indicator</summary>
         /// <value>The sort order indicator.</value>
-        /// <remarks>Note that setting this value does NOT actually sort the bound data. It simply creates a visual indicator showing that the column is sorted.</remarks>
+        /// <remarks>Note that setting this value does NOT actually sort the bound data unless AutoSort = true. It simply creates a visual indicator showing that the column is sorted.</remarks>
         public static readonly DependencyProperty SortOrderProperty = DependencyProperty.Register("SortOrder", typeof(SortOrder), typeof(ListColumn), new PropertyMetadata(SortOrder.Unsorted));
+
+        /// <summary>Indicates whether the list should automatically support sorting by this column</summary>
+        public bool AutoSort
+        {
+            get { return (bool)GetValue(AutoSortProperty); }
+            set { SetValue(AutoSortProperty, value); }
+        }
+        /// <summary>Indicates whether the list should automatically support sorting by this column</summary>
+        public static readonly DependencyProperty AutoSortProperty = DependencyProperty.Register("AutoSort", typeof(bool), typeof(ListColumn), new PropertyMetadata(false));
+
+        /// <summary>Indicates whether the list should automatically support filtering by this column</summary>
+        public bool AutoFilter
+        {
+            get { return (bool)GetValue(AutoFilterProperty); }
+            set { SetValue(AutoFilterProperty, value); }
+        }
+        /// <summary>Indicates whether the list should automatically support filtering by this column</summary>
+        public static readonly DependencyProperty AutoFilterProperty = DependencyProperty.Register("AutoFilter", typeof(bool), typeof(ListColumn), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Indicates the mode of the filter operation
+        /// </summary>
+        public FilterMode FilterMode
+        {
+            get { return (FilterMode)GetValue(FilterModeProperty); }
+            set { SetValue(FilterModeProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates the mode of the filter operation
+        /// </summary>
+        public static readonly DependencyProperty FilterModeProperty = DependencyProperty.Register("FilterMode", typeof(FilterMode), typeof(ListColumn), new PropertyMetadata(FilterMode.ContainedString));
 
         /// <summary>Binding path for a dynamically set sort order</summary>
         /// <value>The sort order binding path.</value>
@@ -605,8 +777,36 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>Binding path for a dynamically set sort order</summary>
+        /// <remarks>Overrules the Tooltip property.</remarks>
         /// <value>The sort order binding path.</value>
         public static readonly DependencyProperty SortOrderBindingPathProperty = DependencyProperty.Register("SortOrderBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>Binding path for a hardcoded tooltip of the control inside a column</summary>
+        /// <remarks>Overrules the Tooltip property.</remarks>
+        /// <value>The tooltip.</value>
+        public string ToolTip
+        {
+            get { return (string)GetValue(ToolTipProperty); }
+            set { SetValue(ToolTipProperty, value); }
+        }
+
+        /// <summary>Binding path for a hardcoded tooltip of the control inside a column</summary>
+        /// <remarks>If TooltipBindingPath is set, it overrules this property</remarks>
+        /// <value>The tooltip.</value>
+        public static readonly DependencyProperty ToolTipProperty = DependencyProperty.Register("ToolTip", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>Binding path for a dynamically set tooltip of the control inside a column</summary>
+        /// <remarks>If TooltipBindingPath is set, it overrules this property</remarks>
+        /// <value>The tooltip binding path.</value>
+        public string ToolTipBindingPath
+        {
+            get { return (string)GetValue(ToolTipBindingPathProperty); }
+            set { SetValue(ToolTipBindingPathProperty, value); }
+        }
+
+        /// <summary>Binding path for a dynamically set tooltip of the control inside a column</summary>
+        /// <value>The tooltip binding path.</value>
+        public static readonly DependencyProperty ToolTipBindingPathProperty = DependencyProperty.Register("ToolTipBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
 
         /// <summary>Indicates whether the column is considered to be "frozen"</summary>
         /// <remarks>Frozen status usually indicates that all frozen columns are kept visible on the left side of the listbox. Note that different controls and styles may interpret this property differently.</remarks>
@@ -631,6 +831,29 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>
+        /// Template for control header edit controls
+        /// </summary>
+        public DataTemplate ColumnHeaderEditControlTemplate
+        {
+            get { return (DataTemplate)GetValue(ColumnHeaderEditControlTemplateProperty); }
+            set { SetValue(ColumnHeaderEditControlTemplateProperty, value); }
+        }
+        /// <summary>
+        /// Template for control header edit controls
+        /// </summary>
+        public static readonly DependencyProperty ColumnHeaderEditControlTemplateProperty = DependencyProperty.Register("ColumnHeaderEditControlTemplate", typeof(DataTemplate), typeof(ListEx), new PropertyMetadata(null));
+
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public FrameworkElement UtilizedHeaderEditControl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column header edit control data context.
+        /// </summary>
+        /// <value>The column header edit control data context.</value>
+        public object ColumnHeaderEditControlDataContext { get; set; }
+
+        /// <summary>
         /// Gets or sets the visible of the column.
         /// </summary>
         public static readonly DependencyProperty VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(ListColumn), new PropertyMetadata(Visibility.Visible, OnVisibilityChanged));
@@ -653,6 +876,16 @@ namespace CODE.Framework.Wpf.Controls
         /// Occurs when the column width changes
         /// </summary>
         public event EventHandler VisibilityChanged;
+
+        /// <summary>
+        /// Sets the actual width if the new value is indeed significantly different from the original color (more than 1/10th of a pixel difference).
+        /// </summary>
+        /// <param name="actualWidth">The actual width.</param>
+        public void SetActualWidth(double actualWidth)
+        {
+            if (actualWidth > 0 && Math.Abs(ActualWidth - actualWidth) > .01)
+                ActualWidth = actualWidth;
+        }
     }
 
     /// <summary>
@@ -721,5 +954,28 @@ namespace CODE.Framework.Wpf.Controls
         Always,
         /// <summary>Only show grid lines when the cell is being edited</summary>
         EditOnly
+    }
+
+    /// <summary>
+    /// Filter mode
+    /// </summary>
+    public enum FilterMode
+    {
+        /// <summary>
+        /// Filter searches for a contained string
+        /// </summary>
+        ContainedString,
+        /// <summary>
+        /// Filter searches for an exact start of the string
+        /// </summary>
+        StartsWithString,
+        /// <summary>
+        /// String must be an exact match
+        /// </summary>
+        ExactMatchString,
+        /// <summary>
+        /// Filter attempts to match an exact number (and supports greater than and less than)
+        /// </summary>
+        Number
     }
 }

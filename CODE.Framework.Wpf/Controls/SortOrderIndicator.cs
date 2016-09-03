@@ -52,12 +52,12 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Sort order</summary>
         /// <value>The sort order</value>
-        public static readonly DependencyProperty OrderProperty = DependencyProperty.Register("Order", typeof(SortOrder), typeof(SortOrderIndicator), new PropertyMetadata(SortOrder.Unsorted, DependencyPropertyChanged));
+        public static readonly DependencyProperty OrderProperty = DependencyProperty.Register("Order", typeof(SortOrder), typeof(SortOrderIndicator), new PropertyMetadata(SortOrder.Unsorted, OnOrderChanged));
 
         /// <summary>Fires when one of the dependency properties changes that causes a brush change</summary>
         /// <param name="d">The source</param>
         /// <param name="args">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        private static void DependencyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        private static void OnOrderChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
         {
             var control = d as SortOrderIndicator;
             if (control == null) return;
@@ -73,7 +73,7 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Brush used to indicate unsorted order</summary>
         /// <value>The unsorted brush.</value>
-        public static readonly DependencyProperty UnsortedBrushProperty = DependencyProperty.Register("UnsortedBrush", typeof(Brush), typeof(SortOrderIndicator), new PropertyMetadata(null, DependencyPropertyChanged));
+        public static readonly DependencyProperty UnsortedBrushProperty = DependencyProperty.Register("UnsortedBrush", typeof(Brush), typeof(SortOrderIndicator), new PropertyMetadata(null, OnOrderChanged));
 
         /// <summary>Brush used to indicate ascending order</summary>
         /// <value>The ascending brush.</value>
@@ -84,7 +84,7 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Brush used to indicate ascending order</summary>
         /// <value>The ascending brush.</value>
-        public static readonly DependencyProperty AscendingBrushProperty = DependencyProperty.Register("AscendingBrush", typeof(Brush), typeof(SortOrderIndicator), new PropertyMetadata(null, DependencyPropertyChanged));
+        public static readonly DependencyProperty AscendingBrushProperty = DependencyProperty.Register("AscendingBrush", typeof(Brush), typeof(SortOrderIndicator), new PropertyMetadata(null, OnOrderChanged));
 
         /// <summary>Brush used to indicate descending order</summary>
         /// <value>The descending brush.</value>
@@ -95,7 +95,7 @@ namespace CODE.Framework.Wpf.Controls
         }
         /// <summary>Brush used to indicate descending order</summary>
         /// <value>The descending brush.</value>
-        public static readonly DependencyProperty DescendingBrushProperty = DependencyProperty.Register("DescendingBrush", typeof(Brush), typeof(SortOrderIndicator), new PropertyMetadata(null, DependencyPropertyChanged));
+        public static readonly DependencyProperty DescendingBrushProperty = DependencyProperty.Register("DescendingBrush", typeof(Brush), typeof(SortOrderIndicator), new PropertyMetadata(null, OnOrderChanged));
     }
 
     /// <summary>

@@ -21,6 +21,8 @@
     <Color x:Key="CODE.Framework-Application-MenuBorderColor">#4D4B48</Color>
     <Color x:Key="CODE.Framework-Application-MenuBackgroundColor">#3D3B3A</Color>
 
+    <Color x:Key="CODE.Framework-Application-ValidationErrorColor">OrangeRed</Color>
+
     <Color x:Key="CODE.Framework-Application-ToolbarBackgroundColor">#222222</Color>
     <Color x:Key="CODE.Framework-Application-ViewBackgroundColor">#222222</Color>
     <Color x:Key="CODE.Framework-Application-ViewBorderColor">#4D4B48</Color>
@@ -57,6 +59,8 @@
     <SolidColorBrush x:Key="CODE.Framework-Application-HeaderBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-HeaderBackgroundColor}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-SelectedNormalViewHeaderBrush" Color="{DynamicResource CODE.Framework-Application-SelectedNormalViewHeaderColor}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-UnselectedNormalViewHeaderBrush" Color="{DynamicResource CODE.Framework-Application-UnselectedNormalViewHeaderColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ValidationErrorBrush" Color="{DynamicResource CODE.Framework-Application-ValidationErrorColor}" />
 
     <!-- Application status bar -->
     <SolidColorBrush x:Key="CODE.Framework-Vapor-StatusReadyForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ThemeColor2}" />

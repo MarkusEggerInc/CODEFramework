@@ -164,4 +164,64 @@ namespace CODE.Framework.Wpf.Mvvm
             });
         }
     }
+
+    /// <summary>
+    /// Special view-action associated with a custom view defined by a controller action.
+    /// The custom view is typically loaded the first time the action is invoked.
+    /// </summary>
+    public class OnDemandLoadCustomViewViewAction : ViewAction
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="caption">Caption</param>
+        /// <param name="controller">Controller name</param>
+        /// <param name="action">Action name (method on the controller)</param>
+        /// <param name="routeValues">Optional route values (parameters) to be passed to the controller</param>
+        public OnDemandLoadCustomViewViewAction(string caption, string controller, string action, dynamic routeValues = null)
+        {
+            Caption = caption;
+            Controller = controller;
+            Action = action;
+            RouteValues = routeValues;
+        }
+
+        /// <summary>
+        /// Custom *synchronous* implementation of the execute method to load the view on the spot
+        /// </summary>
+        /// <param name="parameter"></param>
+        public override void Execute(object parameter)
+        {
+            if (ActionView != null) return;
+
+            var context = Mvvm.Controller.Action(Controller, Action, RouteValues, null, false);
+            if (context != null)
+            {
+                var viewResult = context.Result as ViewResult;
+                if (viewResult != null)
+                {
+                    ActionView = viewResult.View;
+                    ActionViewModel = viewResult.Model;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Controller name
+        /// </summary>
+        public string Controller { get; set; }
+        /// <summary>
+        /// Action name
+        /// </summary>
+        public string Action { get; set; }
+        /// <summary>
+        /// Route values (parameters) to be passed to the controller
+        /// </summary>
+        public dynamic RouteValues { get; set; }
+
+        /// <summary>
+        /// If set to true, this action is the one that gets executed by default
+        /// </summary>
+        public bool IsInitiallySelected { get; set; }
+    }
 }

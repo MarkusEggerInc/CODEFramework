@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:bindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf">
+                    xmlns:bindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
 
     <Style x:Key="Vapor-Control-TextBox" TargetType="TextBox">
         <Setter Property="BorderBrush" Value="{DynamicResource CODE.Framework-Application-ControlBorderBrush}"/>
@@ -23,7 +24,10 @@
                 Background="{TemplateBinding Background}" 
                 SnapsToDevicePixels="True"
                 CornerRadius="3">
-            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4"/>
+            <Grid>
+                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4"/>
+                <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
+            </Grid>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="False">
@@ -32,6 +36,10 @@
             </Trigger>
             <Trigger Property="IsFocused" Value="True">
                 <Setter Property="BorderBrush" TargetName="Bd" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=1.1}" />
+            </Trigger>
+            <Trigger Property="val:InputValidation.IsValid" Value="False">
+                <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

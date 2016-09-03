@@ -1227,7 +1227,8 @@ namespace CODE.Framework.Core.Utilities.Csv
                     for (int i = 0; i < _fields.Length; i++)
                     {
                         _fieldHeaders[i] = _fields[i];
-                        _fieldHeaderIndexes.Add(_fields[i], i);
+                        if (!_fieldHeaderIndexes.ContainsKey(_fields[i]))
+                            _fieldHeaderIndexes.Add(_fields[i], i);
                     }
 
                     // Proceed to first record

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace CODE.Framework.Wpf.Mvvm
 {
@@ -46,41 +47,41 @@ namespace CODE.Framework.Wpf.Mvvm
             SetModelStatusThreadSafe(statusObject, operationStatus, 1);
 
             worker.BeginInvoke(ar =>
+            {
+                try
                 {
+                    var result = worker.EndInvoke(ar);
+                    Application.Current.Dispatcher.BeginInvoke(new Action<Action<TResult>, TResult, IModelStatus>(ExecuteDispatch), completeMethod, result, statusObject);
+                }
+                catch (Exception ex)
+                {
+                    if (!AttemptToHandleBackgroundExceptions) throw;
+
                     try
                     {
-                        var result = worker.EndInvoke(ar);
-                        Application.Current.Dispatcher.BeginInvoke(new Action<Action<TResult>, TResult, IModelStatus>(ExecuteDispatch), new object[] {completeMethod, result, statusObject});
+                        // We attempt to create a default instance of the expected object since the operation failed
+                        var defaultInstance = Activator.CreateInstance<TResult>();
+
+                        // We see if we can assign some default values by convention
+                        if (AssignDefaultValuesToDefaultObjectByConvention)
+                        {
+                            var instanceType = defaultInstance.GetType();
+                            var successProperty = instanceType.GetProperty("Success");
+                            if (successProperty != null) successProperty.SetValue(defaultInstance, false, null);
+                            var failureInformationProperty = instanceType.GetProperty("Failure Information");
+                            if (failureInformationProperty != null) failureInformationProperty.SetValue(defaultInstance, ex.Message, null);
+                        }
+
+                        Application.Current.Dispatcher.BeginInvoke(new Action<Action<TResult>, TResult, IModelStatus>(ExecuteDispatch), new object[] {completeMethod, defaultInstance, statusObject});
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        if (!AttemptToHandleBackgroundExceptions) throw;
-
-                        try
-                        {
-                            // We attempt to create a default instance of the expected object since the operation failed
-                            var defaultInstance = Activator.CreateInstance<TResult>();
-
-                            // We see if we can assign some default values by convention
-                            if (AssignDefaultValuesToDefaultObjectByConvention)
-                            {
-                                var instanceType = defaultInstance.GetType();
-                                var successProperty = instanceType.GetProperty("Success");
-                                if (successProperty != null) successProperty.SetValue(defaultInstance, false, null);
-                                var failureInformationProperty = instanceType.GetProperty("Failure Information");
-                                if (failureInformationProperty != null) failureInformationProperty.SetValue(defaultInstance, ex.Message, null);
-                            }
-
-                            Application.Current.Dispatcher.BeginInvoke(new Action<Action<TResult>, TResult, IModelStatus>(ExecuteDispatch), new object[] {completeMethod, defaultInstance, statusObject});
-                        }
-                        catch (Exception)
-                        {
-                            // Well, now everything failed, so we re-throw the original exception (not the new one!) after all
-                            throw ex;
-                        }
+                        // Well, now everything failed, so we re-throw the original exception (not the new one!) after all
+                        throw ex;
                     }
+                }
 
-                }, null);
+            }, null);
         }
 
         /// <summary>
@@ -98,22 +99,22 @@ namespace CODE.Framework.Wpf.Mvvm
             SetModelStatusThreadSafe(statusObject, operationStatus, 1);
 
             Execute(() =>
-                {
-                    var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
-                    var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
-                    var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent};
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent};
 
-                    QueueWorkerForExecution(state1);
-                    QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
 
-                    WaitHandle.WaitAll(eventArray);
+                WaitHandle.WaitAll(eventArray);
 
-                    return new {Result1 = state1.Result, Result2 = state2.Result};
-                }, r =>
-                    {
-                        completeMethod(r.Result1, r.Result2);
-                        SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
-                    });
+                return new {Result1 = state1.Result, Result2 = state2.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
         }
 
         /// <summary>
@@ -133,24 +134,24 @@ namespace CODE.Framework.Wpf.Mvvm
             SetModelStatusThreadSafe(statusObject, operationStatus, 1);
 
             Execute(() =>
-                {
-                    var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
-                    var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
-                    var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
-                    var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent};
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent};
 
-                    QueueWorkerForExecution(state1);
-                    QueueWorkerForExecution(state2);
-                    QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
 
-                    WaitHandle.WaitAll(eventArray);
+                WaitHandle.WaitAll(eventArray);
 
-                    return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result};
-                }, r =>
-                    {
-                        completeMethod(r.Result1, r.Result2, r.Result3);
-                        SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
-                    });
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
         }
 
         /// <summary>
@@ -172,26 +173,26 @@ namespace CODE.Framework.Wpf.Mvvm
             SetModelStatusThreadSafe(statusObject, operationStatus, 1);
 
             Execute(() =>
-                {
-                    var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
-                    var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
-                    var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
-                    var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
-                    var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent};
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent};
 
-                    QueueWorkerForExecution(state1);
-                    QueueWorkerForExecution(state2);
-                    QueueWorkerForExecution(state3);
-                    QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
 
-                    WaitHandle.WaitAll(eventArray);
+                WaitHandle.WaitAll(eventArray);
 
-                    return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result};
-                }, r =>
-                    {
-                        completeMethod(r.Result1, r.Result2, r.Result3, r.Result4);
-                        SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
-                    });
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
         }
 
         /// <summary>
@@ -215,42 +216,327 @@ namespace CODE.Framework.Wpf.Mvvm
             SetModelStatusThreadSafe(statusObject, operationStatus, 1);
 
             Execute(() =>
-                {
-                    var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
-                    var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
-                    var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
-                    var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
-                    var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
-                    var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent};
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent};
 
-                    QueueWorkerForExecution(state1);
-                    QueueWorkerForExecution(state2);
-                    QueueWorkerForExecution(state3);
-                    QueueWorkerForExecution(state4);
-                    QueueWorkerForExecution(state5);
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state5);
 
-                    WaitHandle.WaitAll(eventArray);
+                WaitHandle.WaitAll(eventArray);
 
-                    return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result};
-                }, r =>
-                    {
-                        completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5);
-                        SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
-                    });
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
+        }
+
+        /// <summary>
+        /// Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+        /// </summary>
+        /// <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+        /// <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+        /// <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+        /// <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <param name="worker">The first method used to perform the operation</param>
+        /// <param name="worker2">The second method used to perform the operation</param>
+        /// <param name="worker3">The third method used to perform the operation</param>
+        /// <param name="worker4">The fourth method used to perform the operation</param>
+        /// <param name="worker5">The fifth method used to perform the operation</param>
+        /// <param name="worker6">The sixth method used to perform the operation</param>
+        /// <param name="completeMethod">Method to fire when all workers have completed.</param>
+        /// <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+        /// <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        public static void Execute<TResult, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<TResult> worker, Func<TResult2> worker2, Func<TResult3> worker3, Func<TResult4> worker4, Func<TResult5> worker5, Func<TResult6> worker6, Action<TResult, TResult2, TResult3, TResult4, TResult5, TResult6> completeMethod, IModelStatus statusObject = null, ModelStatus operationStatus = ModelStatus.Loading)
+        {
+            SetModelStatusThreadSafe(statusObject, operationStatus, 1);
+
+            Execute(() =>
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
+                var state6 = new MultiExecuteState<TResult6>(worker6, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent, state6.ResetEvent};
+
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state5);
+                QueueWorkerForExecution(state6);
+
+                WaitHandle.WaitAll(eventArray);
+
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result, Result6 = state6.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5, r.Result6);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
+        }
+
+        /// <summary>
+        /// Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+        /// </summary>
+        /// <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+        /// <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+        /// <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+        /// <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <param name="worker">The first method used to perform the operation</param>
+        /// <param name="worker2">The second method used to perform the operation</param>
+        /// <param name="worker3">The third method used to perform the operation</param>
+        /// <param name="worker4">The fourth method used to perform the operation</param>
+        /// <param name="worker5">The fifth method used to perform the operation</param>
+        /// <param name="worker6">The sixth method used to perform the operation</param>
+        /// <param name="worker7">The seventh method used to perform the operation</param>
+        /// <param name="completeMethod">Method to fire when all workers have completed.</param>
+        /// <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+        /// <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        public static void Execute<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<TResult> worker, Func<TResult2> worker2, Func<TResult3> worker3, Func<TResult4> worker4, Func<TResult5> worker5, Func<TResult6> worker6, Func<TResult7> worker7, Action<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> completeMethod, IModelStatus statusObject = null, ModelStatus operationStatus = ModelStatus.Loading)
+        {
+            SetModelStatusThreadSafe(statusObject, operationStatus, 1);
+
+            Execute(() =>
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
+                var state6 = new MultiExecuteState<TResult6>(worker6, new ManualResetEvent(false));
+                var state7 = new MultiExecuteState<TResult7>(worker7, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent, state6.ResetEvent, state7.ResetEvent};
+
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state5);
+                QueueWorkerForExecution(state6);
+                QueueWorkerForExecution(state7);
+
+                WaitHandle.WaitAll(eventArray);
+
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result, Result6 = state6.Result, Result7 = state7.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5, r.Result6, r.Result7);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
+        }
+
+        /// <summary>
+        /// Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+        /// </summary>
+        /// <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+        /// <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+        /// <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+        /// <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult8">The result produced by the eigth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <param name="worker">The first method used to perform the operation</param>
+        /// <param name="worker2">The second method used to perform the operation</param>
+        /// <param name="worker3">The third method used to perform the operation</param>
+        /// <param name="worker4">The fourth method used to perform the operation</param>
+        /// <param name="worker5">The fifth method used to perform the operation</param>
+        /// <param name="worker6">The sixth method used to perform the operation</param>
+        /// <param name="worker7">The seventh method used to perform the operation</param>
+        /// <param name="worker8">The eighth method used to perform the operation</param>
+        /// <param name="completeMethod">Method to fire when all workers have completed.</param>
+        /// <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+        /// <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        public static void Execute<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7, TResult8>(Func<TResult> worker, Func<TResult2> worker2, Func<TResult3> worker3, Func<TResult4> worker4, Func<TResult5> worker5, Func<TResult6> worker6, Func<TResult7> worker7, Func<TResult8> worker8, Action<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7, TResult8> completeMethod, IModelStatus statusObject = null, ModelStatus operationStatus = ModelStatus.Loading)
+        {
+            SetModelStatusThreadSafe(statusObject, operationStatus, 1);
+
+            Execute(() =>
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
+                var state6 = new MultiExecuteState<TResult6>(worker6, new ManualResetEvent(false));
+                var state7 = new MultiExecuteState<TResult7>(worker7, new ManualResetEvent(false));
+                var state8 = new MultiExecuteState<TResult8>(worker8, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent, state6.ResetEvent, state7.ResetEvent, state8.ResetEvent};
+
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state5);
+                QueueWorkerForExecution(state6);
+                QueueWorkerForExecution(state7);
+                QueueWorkerForExecution(state8);
+
+                WaitHandle.WaitAll(eventArray);
+
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result, Result6 = state6.Result, Result7 = state7.Result, Result8 = state8.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5, r.Result6, r.Result7, r.Result8);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
+        }
+
+        /// <summary>
+        /// Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+        /// </summary>
+        /// <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+        /// <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+        /// <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+        /// <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <param name="worker">The first method used to perform the operation</param>
+        /// <param name="worker2">The second method used to perform the operation</param>
+        /// <param name="worker3">The third method used to perform the operation</param>
+        /// <param name="worker4">The fourth method used to perform the operation</param>
+        /// <param name="worker5">The fifth method used to perform the operation</param>
+        /// <param name="worker6">The sixth method used to perform the operation</param>
+        /// <param name="worker7">The seventh method used to perform the operation</param>
+        /// <param name="worker8">The eighth method used to perform the operation</param>
+        /// <param name="worker9">The ninth method used to perform the operation</param>
+        /// <param name="completeMethod">Method to fire when all workers have completed.</param>
+        /// <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+        /// <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        public static void Execute<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7, TResult8, TResult9>(Func<TResult> worker, Func<TResult2> worker2, Func<TResult3> worker3, Func<TResult4> worker4, Func<TResult5> worker5, Func<TResult6> worker6, Func<TResult7> worker7, Func<TResult8> worker8, Func<TResult9> worker9, Action<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7, TResult8, TResult9> completeMethod, IModelStatus statusObject = null, ModelStatus operationStatus = ModelStatus.Loading)
+        {
+            SetModelStatusThreadSafe(statusObject, operationStatus, 1);
+
+            Execute(() =>
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
+                var state6 = new MultiExecuteState<TResult6>(worker6, new ManualResetEvent(false));
+                var state7 = new MultiExecuteState<TResult7>(worker7, new ManualResetEvent(false));
+                var state8 = new MultiExecuteState<TResult8>(worker8, new ManualResetEvent(false));
+                var state9 = new MultiExecuteState<TResult9>(worker9, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] { state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent, state6.ResetEvent, state7.ResetEvent, state8.ResetEvent, state9.ResetEvent };
+
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state5);
+                QueueWorkerForExecution(state6);
+                QueueWorkerForExecution(state7);
+                QueueWorkerForExecution(state8);
+                QueueWorkerForExecution(state9);
+
+                WaitHandle.WaitAll(eventArray);
+
+                return new { Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result, Result6 = state6.Result, Result7 = state7.Result, Result8 = state8.Result, Result9 = state9.Result };
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5, r.Result6, r.Result7, r.Result8, r.Result9);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
+        }
+
+        /// <summary>
+        /// Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+        /// </summary>
+        /// <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+        /// <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+        /// <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+        /// <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+        /// <param name="worker">The first method used to perform the operation</param>
+        /// <param name="worker2">The second method used to perform the operation</param>
+        /// <param name="worker3">The third method used to perform the operation</param>
+        /// <param name="worker4">The fourth method used to perform the operation</param>
+        /// <param name="worker5">The fifth method used to perform the operation</param>
+        /// <param name="worker6">The sixth method used to perform the operation</param>
+        /// <param name="worker7">The seventh method used to perform the operation</param>
+        /// <param name="worker8">The eighth method used to perform the operation</param>
+        /// <param name="worker9">The ninth method used to perform the operation</param>
+        /// <param name="worker10">The tenth method used to perform the operation</param>
+        /// <param name="completeMethod">Method to fire when all workers have completed.</param>
+        /// <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+        /// <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        public static void Execute<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7, TResult8, TResult9, TResult10>(Func<TResult> worker, Func<TResult2> worker2, Func<TResult3> worker3, Func<TResult4> worker4, Func<TResult5> worker5, Func<TResult6> worker6, Func<TResult7> worker7, Func<TResult8> worker8, Func<TResult9> worker9, Func<TResult10> worker10, Action<TResult, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7, TResult8, TResult9, TResult10> completeMethod, IModelStatus statusObject = null, ModelStatus operationStatus = ModelStatus.Loading)
+        {
+            SetModelStatusThreadSafe(statusObject, operationStatus, 1);
+
+            Execute(() =>
+            {
+                var state1 = new MultiExecuteState<TResult>(worker, new ManualResetEvent(false));
+                var state2 = new MultiExecuteState<TResult2>(worker2, new ManualResetEvent(false));
+                var state3 = new MultiExecuteState<TResult3>(worker3, new ManualResetEvent(false));
+                var state4 = new MultiExecuteState<TResult4>(worker4, new ManualResetEvent(false));
+                var state5 = new MultiExecuteState<TResult5>(worker5, new ManualResetEvent(false));
+                var state6 = new MultiExecuteState<TResult6>(worker6, new ManualResetEvent(false));
+                var state7 = new MultiExecuteState<TResult7>(worker7, new ManualResetEvent(false));
+                var state8 = new MultiExecuteState<TResult8>(worker8, new ManualResetEvent(false));
+                var state9 = new MultiExecuteState<TResult9>(worker9, new ManualResetEvent(false));
+                var state10 = new MultiExecuteState<TResult10>(worker10, new ManualResetEvent(false));
+                var eventArray = new WaitHandle[] {state1.ResetEvent, state2.ResetEvent, state3.ResetEvent, state4.ResetEvent, state5.ResetEvent, state6.ResetEvent, state7.ResetEvent, state8.ResetEvent, state9.ResetEvent, state10.ResetEvent};
+
+                QueueWorkerForExecution(state1);
+                QueueWorkerForExecution(state2);
+                QueueWorkerForExecution(state3);
+                QueueWorkerForExecution(state4);
+                QueueWorkerForExecution(state5);
+                QueueWorkerForExecution(state6);
+                QueueWorkerForExecution(state7);
+                QueueWorkerForExecution(state8);
+                QueueWorkerForExecution(state9);
+                QueueWorkerForExecution(state10);
+
+                WaitHandle.WaitAll(eventArray);
+
+                return new {Result1 = state1.Result, Result2 = state2.Result, Result3 = state3.Result, Result4 = state4.Result, Result5 = state5.Result, Result6 = state6.Result, Result7 = state7.Result, Result8 = state8.Result, Result9 = state9.Result, Result10 = state10.Result};
+            }, r =>
+            {
+                completeMethod(r.Result1, r.Result2, r.Result3, r.Result4, r.Result5, r.Result6, r.Result7, r.Result8, r.Result9, r.Result10);
+                SetModelStatusThreadSafe(statusObject, ModelStatus.NotApplicable, -1);
+            });
         }
 
         private static void QueueWorkerForExecution<TResult>(MultiExecuteState<TResult> multiExecuteState)
         {
             ThreadPool.QueueUserWorkItem(state =>
-                {
-                    var realState = state as MultiExecuteState<TResult>;
-                    if (realState == null) return;
-                    realState.Result = realState.Worker();
-                    realState.ResetEvent.Set();
-                }, multiExecuteState);
+            {
+                var realState = state as MultiExecuteState<TResult>;
+                if (realState == null) return;
+                realState.Result = realState.Worker();
+                realState.ResetEvent.Set();
+            }, multiExecuteState);
         }
 
-        /// <summary>Performs exacution of the loaded method back on the main thread and resets the status if need be</summary>
+        /// <summary>Performs execution of the loaded method back on the main thread and resets the status if need be</summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="completeMethod">The complete method.</param>
         /// <param name="parameter">The parameter.</param>
@@ -262,15 +548,15 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         private static Thread _backgroundProcess;
-        private static Dictionary<Guid, SchedulerItem> _intervalProcessess;
+        private static Dictionary<Guid, SchedulerItem> _intervalProcesses;
 
         private static void SchedulerLoop()
         {
             while (true)
             {
-                var internalValues = new List<SchedulerItem>(_intervalProcessess.Values.Count);
-                lock (_intervalProcessess)
-                    internalValues.AddRange(_intervalProcessess.Values);
+                var internalValues = new List<SchedulerItem>(_intervalProcesses.Values.Count);
+                lock (_intervalProcesses)
+                    internalValues.AddRange(_intervalProcesses.Values);
 
                 foreach (var item in internalValues)
                     if (item.MustRun())
@@ -285,10 +571,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <remarks>Also returns true of the process has been previously paused</remarks>
         public static bool PauseContinuousProcess(Guid processId)
         {
-            if (_intervalProcessess == null) return false;
-            if (_intervalProcessess.ContainsKey(processId))
+            if (_intervalProcesses == null) return false;
+            if (_intervalProcesses.ContainsKey(processId))
             {
-                _intervalProcessess[processId].IsPaused = true;
+                _intervalProcesses[processId].IsPaused = true;
                 return true;
             }
             return false;
@@ -300,10 +586,10 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <remarks>Also returns true of the process has previously been running</remarks>
         public static bool ResumeContinuousProcess(Guid processId)
         {
-            if (_intervalProcessess == null) return false;
-            if (_intervalProcessess.ContainsKey(processId))
+            if (_intervalProcesses == null) return false;
+            if (_intervalProcesses.ContainsKey(processId))
             {
-                _intervalProcessess[processId].IsPaused = false;
+                _intervalProcesses[processId].IsPaused = false;
                 return true;
             }
             return false;
@@ -313,25 +599,25 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="processId">The ID of the process that is to be triggered immediately</param>
         public static bool TriggerContinuousProcess(Guid processId)
         {
-            if (_intervalProcessess == null) return false;
-            if (_intervalProcessess.ContainsKey(processId))
+            if (_intervalProcesses == null) return false;
+            if (_intervalProcesses.ContainsKey(processId))
             {
-                _intervalProcessess[processId].QueueImmediately();
+                _intervalProcesses[processId].QueueImmediately();
                 return true;
             }
             return false;
         }
-        
+
         /// <summary>Stops (removes) an existing continuous process</summary>
         /// <param name="processId">The ID of the process that is to be stopped</param>
         /// <returns>True if a previously running process is stopped</returns>
         public static bool StopContinuousProcess(Guid processId)
         {
-            if (_intervalProcessess == null) return false;
-            if (_intervalProcessess.ContainsKey(processId))
+            if (_intervalProcesses == null) return false;
+            if (_intervalProcesses.ContainsKey(processId))
             {
-                lock (_intervalProcessess)
-                    _intervalProcessess.Remove(processId);
+                lock (_intervalProcesses)
+                    _intervalProcesses.Remove(processId);
                 return true;
             }
             return false;
@@ -354,17 +640,17 @@ namespace CODE.Framework.Wpf.Mvvm
 
             if (_backgroundProcess == null)
             {
-                _intervalProcessess = new Dictionary<Guid, SchedulerItem>();
+                _intervalProcesses = new Dictionary<Guid, SchedulerItem>();
                 _backgroundProcess = new Thread(SchedulerLoop) {IsBackground = true, Priority = threadPriority};
                 _backgroundProcess.Start();
             }
 
-            lock (_intervalProcessess)
-                _intervalProcessess.Add(processId, new SchedulerItem
-                    {
-                        Interval = interval,
-                        RunMethods = () => Execute(worker, completeMethod, statusObject, operationStatus)
-                    });
+            lock (_intervalProcesses)
+                _intervalProcesses.Add(processId, new SchedulerItem
+                {
+                    Interval = interval,
+                    RunMethods = () => Execute(worker, completeMethod, statusObject, operationStatus)
+                });
         }
 
         /// <summary>
@@ -379,17 +665,17 @@ namespace CODE.Framework.Wpf.Mvvm
             if (statusObject == null) return;
 
             Application.Current.Dispatcher.BeginInvoke(new Action<IModelStatus, ModelStatus, int, bool>((statusObject2, status2, operationCount2, autoSetReadyStatus2) =>
+            {
+                lock (statusObject2)
                 {
-                    lock (statusObject2)
-                    {
-                        if (status2 != ModelStatus.NotApplicable)
-                            statusObject2.ModelStatus = status2;
-                        if (operationCount2 != 0)
-                            statusObject2.OperationsInProgress += operationCount2;
-                        if (autoSetReadyStatus2 && statusObject2.OperationsInProgress == 0)
-                            statusObject2.ModelStatus = ModelStatus.Ready;
-                    }
-                }), new object[] { statusObject, status, operationCount, autoSetReadyStatus });
+                    if (status2 != ModelStatus.NotApplicable)
+                        statusObject2.ModelStatus = status2;
+                    if (operationCount2 != 0)
+                        statusObject2.OperationsInProgress += operationCount2;
+                    if (autoSetReadyStatus2 && statusObject2.OperationsInProgress == 0)
+                        statusObject2.ModelStatus = ModelStatus.Ready;
+                }
+            }), new object[] {statusObject, status, operationCount, autoSetReadyStatus});
         }
 
         private class SchedulerItem
@@ -432,6 +718,18 @@ namespace CODE.Framework.Wpf.Mvvm
                     LastRun = DateTime.MinValue;
             }
         }
+
+        /// <summary>
+        /// Funnels a call to the foreground thread and executes it there
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <param name="priority">The priority.</param>
+        public static void OnForegroundThread(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            if (Application.Current == null) return;
+            if (Application.Current.Dispatcher == null) return;
+            Application.Current.Dispatcher.BeginInvoke(action, priority);
+        }
     }
 
     /// <summary>
@@ -450,16 +748,19 @@ namespace CODE.Framework.Wpf.Mvvm
             Worker = worker;
             ResetEvent = manualResetEvent;
         }
+
         /// <summary>
         /// Background worker delegate.
         /// </summary>
         /// <value>The worker.</value>
         public Func<TResult> Worker { get; private set; }
+
         /// <summary>
         /// Manual reset event to enable wait-all
         /// </summary>
         /// <value>The reset event.</value>
         public ManualResetEvent ResetEvent { get; private set; }
+
         /// <summary>
         /// Result produced by the worker
         /// </summary>

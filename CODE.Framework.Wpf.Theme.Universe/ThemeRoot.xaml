@@ -1,0 +1,57 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <!-- Mechanical elements -->
+        <ResourceDictionary Source="Universe-StandardTypes.xaml" />
+        <ResourceDictionary Source="Universe-StandardDataTemplates.xaml" />
+
+        <!-- Standard settings (should always be merged in first -->
+        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Fonts.xaml"/>
+        <!--<ResourceDictionary Source="Universe-ApplicationLogos.xaml"/>-->
+
+        <!-- Control settings (automatic and explicit) -->
+        <ResourceDictionary Source="Universe-Control-Button.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Calendar.xaml"/>
+        <ResourceDictionary Source="Universe-Control-CheckBox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-ComboBox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-DatePicker.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Expander.xaml"/>
+        <!--<ResourceDictionary Source="Universe-Control-FlowDocumentReader.xaml"/>-->
+        <ResourceDictionary Source="Universe-Control-GroupBox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Label.xaml"/>
+        <ResourceDictionary Source="Universe-Control-ListBox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Menu.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Tiles.xaml"/>
+        <ResourceDictionary Source="Universe-Control-PasswordBox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-RadioButton.xaml"/>
+        <ResourceDictionary Source="Universe-Control-RichTextBox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-ScrollBar.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Slider.xaml"/>
+        <!--<ResourceDictionary Source="Universe-Control-TabControl.xaml"/>-->
+        <ResourceDictionary Source="Universe-Control-Textblock.xaml"/>
+        <ResourceDictionary Source="Universe-Control-Textbox.xaml"/>
+        <ResourceDictionary Source="Universe-Control-ViewActionItemsControl.xaml"/>
+
+        <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Universe-Layout-BladePanel.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-EditForm.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-FlowForm.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-MultiPanel.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-OneToManyPanel.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-PrimarySecondaryForm.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-SimpleForm.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-StandardForm.xaml"/>
+
+        <!-- Standard Icons -->
+        <ResourceDictionary Source="Universe-Icon-Arrow.xaml"/>
+        <ResourceDictionary Source="Universe-Icon-Standard.xaml"/>
+
+        <!-- Shell and other low-level UI elements -->
+        <ResourceDictionary Source="Universe-Shell.xaml"/>
+
+        <!-- Document features -->
+        <ResourceDictionary Source="Universe-Print.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

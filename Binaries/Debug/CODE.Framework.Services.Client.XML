@@ -64,6 +64,16 @@
             For internal use only
             </summary>
         </member>
+        <member name="F:CODE.Framework.Services.Client.MessageSize.VeryLarge">
+            <summary>
+            Very large (up to 1GB)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Client.MessageSize.Max">
+            <summary>
+            Maximum size (equal to int.MaxValue, about 2GB)
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Services.Client.RestHelper">
             <summary>
             Helper functionality needed for REST operations
@@ -141,21 +151,6 @@
             <param name="method">Information about the method being called.</param>
             <param name="args">The arguments passed to the method.</param>
             <returns>Result value from the proxy call</returns>
-        </member>
-        <member name="M:CODE.Framework.Services.Client.RestProxyHandler.SerializeToRestJson(System.Object)">
-            <summary>
-            Serializes to REST JSON.
-            </summary>
-            <param name="objectToSerialize">The object to serialize.</param>
-            <returns></returns>
-        </member>
-        <member name="M:CODE.Framework.Services.Client.RestProxyHandler.DeserializeFromRestJson(System.String,System.Type)">
-            <summary>
-            Deserializes from REST JSON.
-            </summary>
-            <param name="json">The json.</param>
-            <param name="resultType">Type of the result.</param>
-            <returns>Deserialized object</returns>
         </member>
         <member name="T:CODE.Framework.Services.Client.ServiceClient">
             <summary>
@@ -904,6 +899,11 @@
             Event fires before a channel opens (can be used to programmatically configure a channel if need be)
             </summary>
         </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.BeforeEndpointAdded">
+            <summary>
+            Fires before a new endpoint is added (can be used to manipulate the client before it is opened)
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.CreateChannel``1(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
             <summary>
             Creates a channel using a (potentially cached) channel factory
@@ -1330,6 +1330,32 @@
         <member name="P:CODE.Framework.Services.Client.OpenChannelInformation.ChannelType">
             <summary>
             Contract type of the channel
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.EndpointAddedEventArgs">
+            <summary>
+            Event arguments for added endpoints
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.EndpointAddedEventArgs.ServiceFullAddress">
+            <summary>
+            Full address the service will be hosted at
+            </summary>
+            <remarks>This address can be changed to change the actual address the service is hosted at</remarks>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.EndpointAddedEventArgs.Binding">
+            <summary>
+            Utilized binding
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.EndpointAddedEventArgs.ContractType">
+            <summary>
+            Service contract type
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.EndpointAddedEventArgs.ServiceId">
+            <summary>
+            Service ID (name of the interface, typically)
             </summary>
         </member>
         <member name="T:CODE.Framework.Services.Client.BeforeChannelOpensEventArgs">

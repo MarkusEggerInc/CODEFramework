@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
-                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
 
     <Style x:Key="Workplace-Control-TextBox" TargetType="TextBox">
         <Setter Property="BorderBrush" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
@@ -28,6 +29,7 @@
                 <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4"/>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="4"
                            Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
             </Grid>
         </Grid>
         <ControlTemplate.Triggers>
@@ -44,9 +46,14 @@
                 </MultiTrigger.Conditions>
                 <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
             </MultiTrigger>
+            <Trigger Property="val:InputValidation.IsValid" Value="False">
+                <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style TargetType="TextBox" BasedOn="{StaticResource Workplace-Control-TextBox}" />
+    <Style TargetType="controls:FilterHeaderTextBox" BasedOn="{StaticResource Workplace-Control-TextBox}" />
 
 </ResourceDictionary>

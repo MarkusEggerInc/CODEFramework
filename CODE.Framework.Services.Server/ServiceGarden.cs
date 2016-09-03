@@ -46,6 +46,10 @@ namespace CODE.Framework.Services.Server
                     return MessageSize.Medium;
                 case "large":
                     return MessageSize.Large;
+                case "verylarge":
+                    return MessageSize.VeryLarge;
+                case "max":
+                    return MessageSize.Max;
             }
             return MessageSize.Medium;
         }
@@ -365,10 +369,11 @@ namespace CODE.Framework.Services.Server
             ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(messageSize, binding);
 
             // Endpoint configuration
-            if (BeforeEndpointAdded != null)
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
             {
                 var endpointAddedArgs = new EndpointAddedEventArgs {Binding = binding, ContractType = contractType, ServiceFullAddress = serviceFullAddress};
-                BeforeEndpointAdded(null, endpointAddedArgs);
+                beforeEndpointAdded(null, endpointAddedArgs);
                 serviceFullAddress = endpointAddedArgs.ServiceFullAddress;
             }
             var endpoint = host.AddServiceEndpoint(contractType, binding, serviceFullAddress);
@@ -431,7 +436,7 @@ namespace CODE.Framework.Services.Server
         public static event EventHandler<HostAddedEventArgs> BeforeHostAdded;
 
         /// <summary>
-        /// Fires before a new host is added (can be used to manipulate the host before it is opened)
+        /// Fires before a new endpoint is added (can be used to manipulate the host before it is opened)
         /// </summary>
         public static event EventHandler<EndpointAddedEventArgs> BeforeEndpointAdded;
 
@@ -631,10 +636,11 @@ namespace CODE.Framework.Services.Server
             ServiceHelper.ConfigureMessageSizeOnBasicHttpBinding(messageSize, binding);
 
             // Endpoint configuration
-            if (BeforeEndpointAdded != null)
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
             {
                 var endpointAddedArgs = new EndpointAddedEventArgs { Binding = binding, ContractType = contractType, ServiceFullAddress = serviceFullAddress };
-                BeforeEndpointAdded(null, endpointAddedArgs);
+                beforeEndpointAdded(null, endpointAddedArgs);
                 serviceFullAddress = endpointAddedArgs.ServiceFullAddress;
             }
             var endpoint = host.AddServiceEndpoint(contractType, binding, serviceFullAddress);
@@ -1424,10 +1430,11 @@ namespace CODE.Framework.Services.Server
             ServiceHelper.ConfigureMessageSizeOnWsHttpBinding(messageSize, binding);
 
             // Endpoint configuration
-            if (BeforeEndpointAdded != null)
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
             {
                 var endpointAddedArgs = new EndpointAddedEventArgs { Binding = binding, ContractType = contractType, ServiceFullAddress = serviceFullAddress };
-                BeforeEndpointAdded(null, endpointAddedArgs);
+                beforeEndpointAdded(null, endpointAddedArgs);
                 serviceFullAddress = endpointAddedArgs.ServiceFullAddress;
             }
             var endpoint = host.AddServiceEndpoint(contractType, binding, serviceFullAddress);
@@ -1629,10 +1636,11 @@ namespace CODE.Framework.Services.Server
             ServiceHelper.ConfigureMessageSizeOnWebHttpBinding(messageSize, binding);
 
             // Endpoint configuration
-            if (BeforeEndpointAdded != null)
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
             {
                 var endpointAddedArgs = new EndpointAddedEventArgs { Binding = binding, ContractType = contractType, ServiceFullAddress = serviceFullAddress };
-                BeforeEndpointAdded(null, endpointAddedArgs);
+                beforeEndpointAdded(null, endpointAddedArgs);
                 serviceFullAddress = endpointAddedArgs.ServiceFullAddress;
             }
             var endpoint = host.AddServiceEndpoint(contractType, binding, serviceFullAddress);
@@ -1823,10 +1831,11 @@ namespace CODE.Framework.Services.Server
             ServiceHelper.ConfigureMessageSizeOnWebHttpBinding(messageSize, binding);
 
             // Endpoint configuration
-            if (BeforeEndpointAdded != null)
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
             {
                 var endpointAddedArgs = new EndpointAddedEventArgs { Binding = binding, ContractType = contractType, ServiceFullAddress = serviceFullAddress };
-                BeforeEndpointAdded(null, endpointAddedArgs);
+                beforeEndpointAdded(null, endpointAddedArgs);
                 serviceFullAddress = endpointAddedArgs.ServiceFullAddress;
             }
             var endpoint = host.AddServiceEndpoint(contractType, binding, serviceFullAddress);
@@ -1985,7 +1994,15 @@ namespace CODE.Framework.Services.Server
         /// <summary>
         /// For internal use only
         /// </summary>
-        Undefined
+        Undefined,
+        /// <summary>
+        /// Very large (up to 1GB)
+        /// </summary>
+        VeryLarge,
+        /// <summary>
+        /// Maximum size (equal to int.MaxValue, about 2GB)
+        /// </summary>
+        Max
     }
 
     /// <summary>

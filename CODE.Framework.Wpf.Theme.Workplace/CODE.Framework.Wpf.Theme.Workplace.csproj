@@ -54,6 +54,7 @@
     <Compile Include="..\_SharedFiles\Properties\AssemblyInfoShared.cs">
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
+    <Compile Include="Classes\ClearTextButton.cs" />
     <Compile Include="Classes\ScrollButtons.cs" />
     <Compile Include="Classes\ToUpperTextConverter.cs" />
     <Compile Include="Classes\WorkplaceStandardFeatures.cs" />
@@ -103,6 +104,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Workplace-Control-DockHost.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Workplace-Control-Expander.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -179,6 +184,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Workplace-Layout-StandardForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Workplace-Layout-BladePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

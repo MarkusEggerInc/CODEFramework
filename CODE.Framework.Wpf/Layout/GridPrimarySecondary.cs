@@ -84,7 +84,7 @@ namespace CODE.Framework.Wpf.Layout
             set { SetValue(SecondaryUIElementAlignmentChangeSizeProperty, value); }
         }
         /// <summary>Defines the size at which the layout automatically switches from primary (usually top/bottom) orientation to secondary (usually left/right) orientation</summary>
-        public static readonly DependencyProperty SecondaryUIElementAlignmentChangeSizeProperty = DependencyProperty.Register("SecondaryUIElementAlignmentChangeSize", typeof(double), typeof(GridPrimarySecondary), new UIPropertyMetadata(150d));
+        public static readonly DependencyProperty SecondaryUIElementAlignmentChangeSizeProperty = DependencyProperty.Register("SecondaryUIElementAlignmentChangeSize", typeof(double), typeof(GridPrimarySecondary), new UIPropertyMetadata(1d));
 
         /// <summary>Defines the logical orientaiton of primary and secondary UI elements</summary>
         /// <remarks>Each style/skin/theme can choose to interpret this setting differently</remarks>
@@ -276,7 +276,7 @@ namespace CODE.Framework.Wpf.Layout
             switch (layout)
             {
                 case PrimarySecondaryLayout.PrimaryLeftSecondaryRight:
-                    mustInvalidate = SetColumnWidth(0, star, mustInvalidate);
+                    mustInvalidate = SetColumnWidth(0, star, false);
                     mustInvalidate = SetColumnWidth(1, new GridLength(UIElementSpacing), mustInvalidate);
                     mustInvalidate = SetColumnWidth(2, secondaryUIElementSize, mustInvalidate);
                     mustInvalidate = SetRowHeight(0, star, mustInvalidate);
@@ -284,7 +284,7 @@ namespace CODE.Framework.Wpf.Layout
                     mustInvalidate = SetRowHeight(2, zero, mustInvalidate);
                     break;
                 case PrimarySecondaryLayout.SecondaryLeftPrimaryRight:
-                    mustInvalidate = SetColumnWidth(0, secondaryUIElementSize, mustInvalidate);
+                    mustInvalidate = SetColumnWidth(0, secondaryUIElementSize, false);
                     mustInvalidate = SetColumnWidth(1, new GridLength(UIElementSpacing), mustInvalidate);
                     mustInvalidate = SetColumnWidth(2, star, mustInvalidate);
                     mustInvalidate = SetRowHeight(0, star, mustInvalidate);
@@ -292,7 +292,7 @@ namespace CODE.Framework.Wpf.Layout
                     mustInvalidate = SetRowHeight(2, zero, mustInvalidate);
                     break;
                 case PrimarySecondaryLayout.PrimaryTopSecondaryBottom:
-                    mustInvalidate = SetRowHeight(0, star, mustInvalidate);
+                    mustInvalidate = SetRowHeight(0, star, false);
                     mustInvalidate = SetRowHeight(1, new GridLength(UIElementSpacing), mustInvalidate);
                     mustInvalidate = SetRowHeight(2, auto, mustInvalidate);
                     mustInvalidate = SetColumnWidth(0, star, mustInvalidate);
@@ -300,7 +300,7 @@ namespace CODE.Framework.Wpf.Layout
                     mustInvalidate = SetColumnWidth(2, zero, mustInvalidate);
                     break;
                 case PrimarySecondaryLayout.SecondaryTopPrimaryBottom:
-                    mustInvalidate = SetRowHeight(0, auto, mustInvalidate);
+                    mustInvalidate = SetRowHeight(0, auto, false);
                     mustInvalidate = SetRowHeight(1, new GridLength(UIElementSpacing), mustInvalidate);
                     mustInvalidate = SetRowHeight(2, star, mustInvalidate);
                     mustInvalidate = SetColumnWidth(0, star, mustInvalidate);
@@ -412,27 +412,25 @@ namespace CODE.Framework.Wpf.Layout
             foreach (var child in Children)
             {
                 var element = child as FrameworkElement;
-                if (element != null)
+                if (element == null) continue;
+                var mode = SimpleView.GetUIElementType(element);
+                if (mode == UIElementTypes.Primary)
                 {
-                    var mode = SimpleView.GetUIElementType(element);
-                    if (mode == UIElementTypes.Primary)
-                    {
-                        var localMargin = PrimaryUIElementMargin;
-                        if (localMargin != noMargin && element.Margin != localMargin)
-                            element.Margin = localMargin;
-                    }
-                    else if (mode == UIElementTypes.Secondary)
-                    {
-                        var localMargin = SecondaryUIElementMargin;
-                        if (localMargin != noMargin && element.Margin != localMargin)
-                            element.Margin = localMargin;
-                    }
+                    var localMargin = PrimaryUIElementMargin;
+                    if (localMargin != noMargin && element.Margin != localMargin)
+                        element.Margin = localMargin;
+                }
+                else if (mode == UIElementTypes.Secondary)
+                {
+                    var localMargin = SecondaryUIElementMargin;
+                    if (localMargin != noMargin && element.Margin != localMargin)
+                        element.Margin = localMargin;
                 }
             }
 
             var size = base.MeasureOverride(constraint);
 
-            var mustInvalidate = false; // Used to potentially trigger a secondary measure pass
+            bool mustInvalidate; // Used to potentially trigger a secondary measure pass
             var secondaryElementVisible = true;
 
             // We find the tallest secondary element. If it is taller than the threshold, we switch to horizontal layout
@@ -467,12 +465,10 @@ namespace CODE.Framework.Wpf.Layout
                 foreach (var child in Children)
                 {
                     var element = child as UIElement;
-                    if (element != null)
-                    {
-                        var type = SimpleView.GetUIElementType(element);
-                        if (type == UIElementTypes.Secondary) secondary.Add(element);
-                        else primary = element;
-                    }
+                    if (element == null) continue;
+                    var type = SimpleView.GetUIElementType(element);
+                    if (type == UIElementTypes.Secondary) secondary.Add(element);
+                    else primary = element;
                 }
                 mustInvalidate = AssignElements(CalculatedLayout, primary, secondary, mustInvalidate);
             }
@@ -489,12 +485,10 @@ namespace CODE.Framework.Wpf.Layout
                 foreach (var child in Children)
                 {
                     var element = child as UIElement;
-                    if (element != null)
-                    {
-                        var type = SimpleView.GetUIElementType(element);
-                        if (type == UIElementTypes.Secondary) secondary.Add(element);
-                        else primary = element;
-                    }
+                    if (element == null) continue;
+                    var type = SimpleView.GetUIElementType(element);
+                    if (type == UIElementTypes.Secondary) secondary.Add(element);
+                    else primary = element;
                 }
                 mustInvalidate = AssignElements(CalculatedLayout, primary, secondary, mustInvalidate);
             }

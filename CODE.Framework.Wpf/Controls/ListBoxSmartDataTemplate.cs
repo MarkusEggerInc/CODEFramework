@@ -56,15 +56,11 @@ namespace CODE.Framework.Wpf.Controls
                 listBox.DataContextChanged += (s2, a2) =>
                 {
                     var columns2 = ListEx.GetColumns(listBox);
-                    if (columns2 != null)
-                    {
-                        Columns = columns2;
-                        if (!string.IsNullOrEmpty(columns2.EditModeBindingPath))
-                        {
-                            BindingOperations.ClearBinding(this, IsManualEditEnabledProperty);
-                            SetBinding(IsManualEditEnabledProperty, new Binding(columns2.EditModeBindingPath));
-                        }
-                    }
+                    if (columns2 == null) return;
+                    Columns = columns2;
+                    if (string.IsNullOrEmpty(columns2.EditModeBindingPath)) return;
+                    BindingOperations.ClearBinding(this, IsManualEditEnabledProperty);
+                    SetBinding(IsManualEditEnabledProperty, new Binding(columns2.EditModeBindingPath));
                 };
 
                 RaiseEditModeChanged();
@@ -109,10 +105,10 @@ namespace CODE.Framework.Wpf.Controls
         {
             var item = o as ListBoxSmartDataTemplate;
             if (item == null) return;
-            item.RepopulateHeaders();
+            item.RepopulateColumns();
             var columns = args.NewValue as ListColumnsCollection;
             if (columns == null) return;
-            columns.CollectionChanged += (o2, a) => item.RepopulateHeaders();
+            columns.CollectionChanged += (o2, a) => item.RepopulateColumns();
         }
 
         /// <summary>Definition of default columns, which can be used in case the listbox itself does not define columns</summary>
@@ -301,7 +297,7 @@ namespace CODE.Framework.Wpf.Controls
             Ex.SetEventCommands(element, commands);
         }
 
-        private void RepopulateHeaders()
+        private void RepopulateColumns()
         {
             Children.Clear();
             ColumnDefinitions.Clear();
@@ -342,8 +338,16 @@ namespace CODE.Framework.Wpf.Controls
                                 SetEventCommands(text, column.ReadOnlyControlEventCommands);
                                 SetHorizontalAlignment(text, column.CellContentAlignment);
                                 text.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                                    text.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip))
+                                    text.ToolTip = column.ToolTip;
                                 if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
                                     text.Visibility = Visibility.Collapsed;
+                                if (column.CellForeground != null)
+                                    text.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
+                                    text.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                                 content.Children.Add(text);
                             }
                             if (column.EditMode != ListRowEditMode.ReadOnly)
@@ -352,7 +356,13 @@ namespace CODE.Framework.Wpf.Controls
                                 SetEventCommands(tb, column.WriteControlEventCommands);
                                 SetHorizontalContentAlignment(tb, column.CellContentAlignment, HorizontalAlignment.Stretch);
                                 tb.SetBinding(TextBox.TextProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                                    tb.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip))
+                                    tb.ToolTip = column.ToolTip;
                                 if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
+                                    tb.Visibility = Visibility.Visible;
+                                else if (column.EditMode == ListRowEditMode.ReadWriteAll)
                                     tb.Visibility = Visibility.Visible;
                                 else
                                     tb.Visibility = Visibility.Collapsed;
@@ -363,6 +373,10 @@ namespace CODE.Framework.Wpf.Controls
                                     tb.Padding = new Thickness(0);
                                     tb.BorderThickness = new Thickness(0);
                                 }
+                                if (column.CellForeground != null)
+                                    tb.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
+                                    tb.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                                 content.Children.Add(tb);
                             }
                             if (column.EditMode == ListRowEditMode.Manual)
@@ -376,9 +390,17 @@ namespace CODE.Framework.Wpf.Controls
                             var check = new CheckBox {VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Content = string.Empty, IsEnabled = false};
                             SetEventCommands(check, column.ReadOnlyControlEventCommands);
                             check.SetBinding(ToggleButton.IsCheckedProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) { UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat });
+                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                                check.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                            else if (!string.IsNullOrEmpty(column.ToolTip))
+                                check.ToolTip = column.ToolTip;
                             SetHorizontalAlignment(check, column.CellContentAlignment, HorizontalAlignment.Center);
                             if (column.EditCheckmarkStyle != null)
                                 check.Style = column.EditCheckmarkStyle;
+                            if (column.CellForeground != null)
+                                check.Foreground = column.CellForeground;
+                            else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
+                                check.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                             content.Children.Add(check);
                             if (column.EditMode == ListRowEditMode.Manual)
                             {
@@ -401,9 +423,17 @@ namespace CODE.Framework.Wpf.Controls
                                 text2 = new TextBlock {VerticalAlignment = VerticalAlignment.Center};
                                 SetEventCommands(text2, column.ReadOnlyControlEventCommands);
                                 SetHorizontalAlignment(text2, column.CellContentAlignment);
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                                    text2.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip))
+                                    text2.ToolTip = column.ToolTip;
                                 text2.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
                                 if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
                                     text2.Visibility = Visibility.Collapsed;
+                                if (column.CellForeground != null)
+                                    text2.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
+                                    text2.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                                 content.Children.Add(text2);
                             }
                             if (column.EditMode != ListRowEditMode.ReadOnly)
@@ -411,10 +441,15 @@ namespace CODE.Framework.Wpf.Controls
                                 combo = new ComboBox {VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Center};
                                 SetEventCommands(combo, column.WriteControlEventCommands);
                                 SetHorizontalContentAlignment(combo, column.CellContentAlignment, HorizontalAlignment.Stretch);
-                                combo.SetBinding(Selector.SelectedValueProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) { UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat });
+                                if (!string.IsNullOrEmpty(column.BindingPath) || !string.IsNullOrEmpty(column.EditControlBindingPath))
+                                    combo.SetBinding(Selector.SelectedValueProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
                                 combo.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(column.TextListItemsSourceBindingPath));
                                 combo.SelectedValuePath = column.TextListSelectedValuePath;
                                 combo.DisplayMemberPath = column.TextListDisplayMemberPath;
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                                    combo.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip))
+                                    combo.ToolTip = column.ToolTip;
                                 if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
                                     combo.Visibility = Visibility.Visible;
                                 else
@@ -426,6 +461,10 @@ namespace CODE.Framework.Wpf.Controls
                                     combo.Padding = new Thickness(0);
                                     combo.BorderThickness = new Thickness(0);
                                 }
+                                if (column.CellForeground != null)
+                                    combo.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
+                                    combo.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                                 content.Children.Add(combo);
                             }
                             if (column.EditMode == ListRowEditMode.Manual)
@@ -439,6 +478,10 @@ namespace CODE.Framework.Wpf.Controls
                             var image = new Image {VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch, Stretch = Stretch.UniformToFill};
                             SetEventCommands(image, column.ReadOnlyControlEventCommands);
                             image.SetBinding(Image.SourceProperty, new Binding(column.BindingPath) {Mode = BindingMode.OneWay});
+                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                                image.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                            else if (!string.IsNullOrEmpty(column.ToolTip))
+                                image.ToolTip = column.ToolTip;
                             content.Children.Add(image);
                             break;
                     }
@@ -452,6 +495,14 @@ namespace CODE.Framework.Wpf.Controls
                     var text = new TextBlock {VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, TextAlignment = TextAlignment.Right};
                     SetEventCommands(text, column.ReadOnlyControlEventCommands);
                     text.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
+                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                        text.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                    else if (!string.IsNullOrEmpty(column.ToolTip))
+                        text.ToolTip = column.ToolTip;
+                    if (column.CellForeground != null)
+                        text.Foreground = column.CellForeground;
+                    else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
+                        text.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                     content.Children.Add(text);
                     Children.Add(content);
                     SetColumn(content, columnCounter);
@@ -468,6 +519,10 @@ namespace CODE.Framework.Wpf.Controls
                     };
                     SetEventCommands(image, column.ReadOnlyControlEventCommands);
                     image.SetBinding(Shape.FillProperty, new Binding(column.BindingPath));
+                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
+                        image.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                    else if (!string.IsNullOrEmpty(column.ToolTip))
+                        image.ToolTip = column.ToolTip;
                     content.Children.Add(image);
                     Children.Add(content);
                     SetColumn(content, columnCounter);

@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:l="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf">
+
+    <Style TargetType="l:MultiPanelHeaderRenderer">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Largest}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}"/>
+        <Setter Property="CloseIcon" Value="{DynamicResource CODE.Framework-Icon-No}"/>
+        <Setter Property="UseTitleColorForBackground" Value="True"/>
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <l:MultiPanel/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ItemsControl" 
+           x:Key="CODE.Framework-Layout-MultiPanelVerticalLayout" 
+           BasedOn="{StaticResource CODE.Framework-Layout-MultiPanelLayout}"/>
+    
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelWithHeaderLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <l:MultiPanel>
+                        <l:MultiPanel.HeaderRenderer>
+                            <l:MultiPanelHeaderRenderer />
+                        </l:MultiPanel.HeaderRenderer>
+                    </l:MultiPanel>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ItemsControl" 
+           x:Key="CODE.Framework-Layout-MultiPanelVerticalWithHeaderLayout" 
+           BasedOn="{StaticResource CODE.Framework-Layout-MultiPanelWithHeaderLayout}"/>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelHorizontalLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <l:MultiPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelHorizontalWithHeaderLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <l:MultiPanel Orientation="Horizontal">
+                        <l:MultiPanel.HeaderRenderer>
+                            <l:MultiPanelHeaderRenderer Orientation="Horizontal" />
+                        </l:MultiPanel.HeaderRenderer>
+                    </l:MultiPanel>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

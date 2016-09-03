@@ -40,6 +40,28 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public IViewActionPolicy ViewActionPolicy
+        {
+            get { return (IViewActionPolicy)GetValue(ViewActionPolicyProperty); }
+            set { SetValue(ViewActionPolicyProperty, value); }
+        }
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public static readonly DependencyProperty ViewActionPolicyProperty = DependencyProperty.Register("ViewActionPolicy", typeof(IViewActionPolicy), typeof(ViewActionItemsControl), new PropertyMetadata(null));
+
+        /// <summary>
         /// If set to true, actions are sorted by group title, before they are sorted by order
         /// </summary>
         /// <value><c>true</c> if [order by group title]; otherwise, <c>false</c>.</value>
@@ -91,12 +113,12 @@ namespace CODE.Framework.Wpf.Mvvm
             if (actions == null || actions.Actions == null) return;
 
             var actionList = actions.Actions.ToList();
-            var rootCategories = ViewActionHelper.GetTopLevelActionCategories(actionList, EmptyGlobalCategoryTitle);
+            var rootCategories = ViewActionPolicy != null ? ViewActionPolicy.GetTopLevelActionCategories(actionList, EmptyGlobalCategoryTitle) : ViewActionHelper.GetTopLevelActionCategories(actionList, EmptyGlobalCategoryTitle);
 
             var viewActionCategories = rootCategories as ViewActionCategory[] ?? rootCategories.ToArray();
             foreach (var category in viewActionCategories)
             {
-                var matchingActions = ViewActionHelper.GetAllActionsForCategory(actionList, category, orderByGroupTitle: OrderByGroupTitle);
+                var matchingActions = ViewActionPolicy != null ? ViewActionPolicy.GetAllActionsForCategory(actionList, category, orderByGroupTitle: OrderByGroupTitle) : ViewActionHelper.GetAllActionsForCategory(actionList, category, orderByGroupTitle: OrderByGroupTitle);
                 foreach (var action in matchingActions)
                 {
                     var wrapper = new DependencyViewActionWrapper(action);

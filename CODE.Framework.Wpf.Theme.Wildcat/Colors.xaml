@@ -32,6 +32,8 @@
     <Color x:Key="CODE.Framework-Menu-SelectionColor">#222325</Color>
     <Color x:Key="CODE.Framework-Menu-ForegroundColor">White</Color>
 
+    <Color x:Key="CODE.Framework-Application-ValidationErrorColor">DarkRed</Color>
+
     <!-- Application status bar -->
     <Color x:Key="CODE.Framework-Wildcat-StatusBackgroundColor">Transparent</Color>
     <Color x:Key="CODE.Framework-Wildcat-StatusForegroundColor">White</Color>
@@ -67,6 +69,8 @@
     <SolidColorBrush x:Key="CODE.Framework-Menu-BackgroundBrush" Color="{DynamicResource CODE.Framework-Menu-BackgroundColor}"/>
     <SolidColorBrush x:Key="CODE.Framework-Menu-SelectionBrush" Color="{DynamicResource CODE.Framework-Menu-SelectionColor}"/>
     <SolidColorBrush x:Key="CODE.Framework-Menu-ForegroundBrush" Color="{DynamicResource CODE.Framework-Menu-ForegroundColor}"/>
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ValidationErrorBrush" Color="{DynamicResource CODE.Framework-Application-ValidationErrorColor}" />
 
     <!-- Application status bar -->
     <SolidColorBrush x:Key="CODE.Framework-Wildcat-StatusForegroundBrush" Color="{DynamicResource CODE.Framework-Wildcat-StatusForegroundColor}" />

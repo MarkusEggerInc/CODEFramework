@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Controls
 {
@@ -50,12 +57,14 @@ namespace CODE.Framework.Wpf.Controls
         /// <value>The parent ListBox.</value>
         public ListBox ParentListBox
         {
-            get { return (ListBox)GetValue(ParentListBoxProperty); }
+            get { return (ListBox) GetValue(ParentListBoxProperty); }
             set { SetValue(ParentListBoxProperty, value); }
         }
+
         /// <summary>Reference to the parent listbox this header belongs to</summary>
         /// <value>The parent ListBox.</value>
-        public static readonly DependencyProperty ParentListBoxProperty = DependencyProperty.Register("ParentListBox", typeof(ListBox), typeof(ListBoxGridHeader), new PropertyMetadata(null, ParentListBoxChanged));
+        public static readonly DependencyProperty ParentListBoxProperty = DependencyProperty.Register("ParentListBox", typeof (ListBox), typeof (ListBoxGridHeader), new PropertyMetadata(null, ParentListBoxChanged));
+
         /// <summary>Fires when the parent list box changes</summary>
         /// <param name="d">The d.</param>
         /// <param name="args">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
@@ -117,7 +126,7 @@ namespace CODE.Framework.Wpf.Controls
             if (Content == null) return;
             var content = Content as Grid;
             if (content == null) return;
-            content.Margin = new Thickness(HorizontalHeaderOffset * -1, 0, 0, 0);
+            content.Margin = new Thickness(HorizontalHeaderOffset*-1, 0, 0, 0);
         }
 
         private void ForceParentRefresh()
@@ -147,12 +156,12 @@ namespace CODE.Framework.Wpf.Controls
                 ForceParentRefresh();
             }
             var grid = new Grid
-                {
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Width = 100000,
-                    ClipToBounds = true
-                };
+            {
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 100000,
+                ClipToBounds = true
+            };
 
             _headerContentGrids.Clear();
             var columnCounter = -1;
@@ -163,14 +172,14 @@ namespace CODE.Framework.Wpf.Controls
 
                 var gridColumn = new ColumnDefinition();
                 gridColumn.SetBinding(ColumnDefinition.WidthProperty, new Binding("Width") {Source = column, Mode = BindingMode.TwoWay});
-                var descriptor = DependencyPropertyDescriptor.FromProperty(ColumnDefinition.WidthProperty, typeof(ColumnDefinition));
+                var descriptor = DependencyPropertyDescriptor.FromProperty(ColumnDefinition.WidthProperty, typeof (ColumnDefinition));
                 if (descriptor != null)
                 {
                     var localColumn = column;
-                    descriptor.AddValueChanged(gridColumn, (s2, e2) => { localColumn.ActualWidth = gridColumn.ActualWidth; });
-                    grid.LayoutUpdated += (s3, e3) => { localColumn.ActualWidth = gridColumn.ActualWidth; };
-                    grid.SizeChanged += (s4, e4) => { localColumn.ActualWidth = gridColumn.ActualWidth; };
-                    SizeChanged += (s4, e4) => { localColumn.ActualWidth = gridColumn.ActualWidth; };
+                    descriptor.AddValueChanged(gridColumn, (s2, e2) => localColumn.SetActualWidth(gridColumn.ActualWidth));
+                    grid.LayoutUpdated += (s3, e3) => { localColumn.SetActualWidth(gridColumn.ActualWidth); };
+                    grid.SizeChanged += (s4, e4) => { localColumn.SetActualWidth(gridColumn.ActualWidth); };
+                    SizeChanged += (s4, e4) => { localColumn.SetActualWidth(gridColumn.ActualWidth); };
                 }
                 grid.ColumnDefinitions.Add(gridColumn);
                 if (column.Width.GridUnitType == GridUnitType.Star) starColumnFound = true;
@@ -209,23 +218,42 @@ namespace CODE.Framework.Wpf.Controls
                             headerText.Text = column.Header.ToString();
                         else
                             column.Header = " ";
+                        if (column.HeaderForeground != null)
+                            headerText.SetBinding(TextBlock.ForegroundProperty, new Binding("HeaderForeground") {Source = column});
                         var sort = new SortOrderIndicator();
                         if (!string.IsNullOrEmpty(column.SortOrderBindingPath))
                             sort.SetBinding(SortOrderIndicator.OrderProperty, new Binding(column.SortOrderBindingPath));
                         else
-                            sort.Order = column.SortOrder;
+                            sort.SetBinding(SortOrderIndicator.OrderProperty, new Binding("SortOrder") {Source = column});
                         textPlusGraphic.Children.Add(sort);
                         Grid.SetRow(textPlusGraphic, 1);
                         contentGrid.Children.Add(textPlusGraphic);
                     }
+                    FrameworkElement headerEditControl = null;
+                    if (column.AutoFilter)
+                    {
+                        if (!column.ShowColumnHeaderEditControl) column.ShowColumnHeaderEditControl = true;
+                        if (string.IsNullOrEmpty(column.ColumnHeaderEditControlWatermarkText)) column.ColumnHeaderEditControlWatermarkText = "Filter " + column.Header;
+                        if (column.ColumnHeaderEditControlTemplate == null)
+                            headerEditControl = new FilterHeaderTextBox(column);
+                    }
                     if (column.ShowColumnHeaderEditControl)
                     {
-                        var headerTb = new TextBox();
-                        if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlBindingPath))
-                            headerTb.SetBinding(TextBox.TextProperty, new Binding(column.ColumnHeaderEditControlBindingPath) {UpdateSourceTrigger = column.ColumnHeaderEditControlUpdateTrigger});
+                        if (headerEditControl == null && column.ColumnHeaderEditControlTemplate != null)
+                            headerEditControl = column.ColumnHeaderEditControlTemplate.LoadContent() as FrameworkElement;
+                        if (headerEditControl == null)
+                        {
+                            headerEditControl = new TextBox();
+                            if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlBindingPath))
+                                headerEditControl.SetBinding(TextBox.TextProperty, new Binding(column.ColumnHeaderEditControlBindingPath) {UpdateSourceTrigger = column.ColumnHeaderEditControlUpdateTrigger});
+                        }
+                        if (column.ColumnHeaderEditControlDataContext != null)
+                            headerEditControl.DataContext = column.ColumnHeaderEditControlDataContext;
                         if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlWatermarkText))
-                            TextBoxEx.SetWatermarkText(headerTb, column.ColumnHeaderEditControlWatermarkText);
-                        contentGrid.Children.Add(headerTb);
+                            TextBoxEx.SetWatermarkText(headerEditControl, column.ColumnHeaderEditControlWatermarkText);
+
+                        contentGrid.Children.Add(headerEditControl);
+                        column.UtilizedHeaderEditControl = headerEditControl;
                     }
                     contentParent.Content = contentGrid;
                 }
@@ -242,7 +270,7 @@ namespace CODE.Framework.Wpf.Controls
                 {
                     var splitter = new GridSplitter
                     {
-                        VerticalAlignment = VerticalAlignment.Stretch, 
+                        VerticalAlignment = VerticalAlignment.Stretch,
                         HorizontalAlignment = HorizontalAlignment.Right,
                         Width = 3d,
                         Margin = new Thickness(0d, 0d, -1d, 0d),
@@ -265,6 +293,441 @@ namespace CODE.Framework.Wpf.Controls
 
             if (ParentListBox != null)
                 SetEditControlVisibility(ListEx.GetShowHeaderEditControls(ParentListBox));
+        }
+    }
+
+    /// <summary>For internal use only (implements header filtering in listboxes)</summary>
+    public class FilterHeaderTextBox : TextBox
+    {
+        /// <summary>
+        /// Column the textbox is associated with
+        /// </summary>
+        private readonly ListColumn _column;
+
+        /// <summary>
+        /// Internal dispatch timer
+        /// </summary>
+        private readonly DispatcherTimer _timer;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="column">Column this textbox is associated with</param>
+        public FilterHeaderTextBox(ListColumn column)
+        {
+            _column = column;
+            _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Normal, (s, e) =>
+            {
+                _timer.IsEnabled = false;
+                ListEx.SetInAutoFiltering(AssociatedList, true);
+                ExecuteFilter();
+                ListEx.SetInAutoFiltering(AssociatedList, false);
+            }, Dispatcher) {IsEnabled = false};
+
+            Loaded += (s, e) =>
+            {
+                var list = AssociatedList;
+                if (list == null) return;
+                list.DataContextChanged += (s2, e2) =>
+                {
+                    if (list.ItemsSource == null)
+                    {
+                        SetUnfilteredItemsSource(list, null);
+                        return;
+                    }
+                    var unfilteredSource = list.ItemsSource;
+                    var originalSource = unfilteredSource as dynamic;
+                    SetUnfilteredItemsSource(list, Enumerable.ToList(originalSource));
+                    HookDataSourceChanged(list);
+                };
+
+                HookDataSourceChanged(list);
+            };
+
+            MouseLeftButtonUp += (s, e) => { e.Handled = true; };
+        }
+
+        private void HookDataSourceChanged(ListBox list)
+        {
+            if (list.ItemsSource == null) return;
+            var listType = list.ItemsSource.GetType();
+            var eventInfo = listType.GetEvent("CollectionChanged");
+            if (eventInfo != null)
+                eventInfo.AddEventHandler(list.ItemsSource, Delegate.CreateDelegate(eventInfo.EventHandlerType, this, typeof (FilterHeaderTextBox).GetMethod(nameof(OriginalCollectionChangedHandler), BindingFlags.NonPublic | BindingFlags.Instance)));
+        }
+
+        private void OriginalCollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            var list = AssociatedList;
+            if (list == null) return;
+            if (ListEx.GetInAutoFiltering(list) || ListEx.GetInAutoSorting(list)) return; // The change is caused internally, so we ignore it
+
+            var unfilteredSource = list.ItemsSource;
+            var originalSource = unfilteredSource as dynamic;
+            SetUnfilteredItemsSource(list, Enumerable.ToList(originalSource));
+            WipeWithoutRefresh();
+        }
+
+        private void AssignItemsAsListItemSource(ItemsControl itemsControl, IEnumerable items)
+        {
+            if (itemsControl == null || itemsControl.ItemsSource == null) return;
+            var listTypeName = itemsControl.ItemsSource.GetType().Name;
+
+            if (listTypeName.StartsWith("ObservableCollection`1"))
+            {
+                // Since this is an observable collection, we can optimize change notification
+                var dynamicSource = itemsControl.ItemsSource as dynamic;
+                dynamicSource.Clear();
+
+                var itemsCollection = itemsControl.ItemsSource.GetType().GetProperty("Items", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dynamicSource, null);
+                if (itemsCollection != null)
+                    foreach (var item in items)
+                        itemsCollection.Add((dynamic) item);
+
+                var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+                GetCollectionChangedMethod(itemsControl.ItemsSource).Invoke(dynamicSource, new object[] { args });
+                return;
+            }
+            if (listTypeName.StartsWith("List`1"))
+            {
+                var dynamicSource = itemsControl.ItemsSource as dynamic;
+                dynamicSource.Clear();
+                foreach (dynamic item in items)
+                    dynamicSource.Add(item);
+            }
+        }
+
+        private static readonly Dictionary<Type, MethodInfo> OnCollectionChangedMethodCollections = new Dictionary<Type, MethodInfo>();
+
+        /// <summary>Returns collection changed method for a specific item in a cached fashion</summary>
+        /// <param name="collection">The collection object on which to get the change method</param>
+        /// <returns>MethodInfo.</returns>
+        private static MethodInfo GetCollectionChangedMethod(object collection)
+        {
+            var collectionType = collection.GetType();
+            if (OnCollectionChangedMethodCollections.ContainsKey(collectionType))
+                return OnCollectionChangedMethodCollections[collectionType];
+
+            var methods = collectionType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Where(m => (m.Name == "OnCollectionChanged") && (m.Attributes & MethodAttributes.Virtual) == MethodAttributes.Virtual);
+            var method = methods.FirstOrDefault();
+            if (method != null)
+            {
+                OnCollectionChangedMethodCollections.Add(collectionType, method);
+                return method;
+            }
+            throw new ArgumentNullException("OnCollectionChanged method not found on observable collection!");
+        }
+
+        /// <summary>
+        /// Performs the actual filtering
+        /// </summary>
+        protected virtual void ExecuteFilter()
+        {
+            var list = AssociatedList;
+            if (list == null) return;
+
+            var filterMode = ListEx.GetAutoFilterMode(list);
+
+            if (string.IsNullOrEmpty(Text) && filterMode == AutoFilterMode.OneColumnAtATime)
+            {
+                // Since we are only filtering based on this column, and since this column is empty, we get the original source back
+                if (_ignoreTextChange) return;
+                var unfilteredSource2 = GetUnfilteredItemsSource(list);
+                if (unfilteredSource2 != null)
+                    AssignItemsAsListItemSource(list, unfilteredSource2);
+                return;
+            }
+
+            // Clearing out all the other filters on the current list if that is the mode we are in
+            var columns = ListEx.GetColumns(list);
+            if (columns != null)
+            {
+                if (filterMode == AutoFilterMode.OneColumnAtATime)
+                    // Since we only want to filter one list at a time, we clear out the other lists
+                    foreach (var column in columns)
+                        if (column.UtilizedHeaderEditControl != null && column.UtilizedHeaderEditControl != this && column.UtilizedHeaderEditControl is FilterHeaderTextBox)
+                            ((FilterHeaderTextBox) column.UtilizedHeaderEditControl).WipeWithoutRefresh();
+            }
+
+            // We need the original source, so we can perform the filter
+            var unfilteredSource = GetUnfilteredItemsSource(list);
+            if (unfilteredSource == null)
+            {
+                // We do not have the original source yet, so we retrieve it and store it away for future (fast) use
+                unfilteredSource = list.ItemsSource;
+                SetUnfilteredItemsSource(list, Enumerable.ToList((dynamic) unfilteredSource));
+            }
+            if (unfilteredSource == null) return; // We do not have an unfiltered source, so there isn't anything we can filter
+
+            var sourceList = unfilteredSource.Cast<object>().ToList();
+            switch (filterMode)
+            {
+                case AutoFilterMode.OneColumnAtATime:
+                    PropertyInfo property = null;
+                    var filteredSource = sourceList.Where(i =>
+                    {
+                        if (property == null) property = i.GetType().GetProperty(_column.BindingPath);
+                        var propertyValue = property.GetValue(i, null).ToString().ToLower();
+
+                        switch (_column.FilterMode)
+                        {
+                            case FilterMode.ContainedString:
+                                return propertyValue.Contains(Text.ToLower());
+                            case FilterMode.StartsWithString:
+                                return propertyValue.StartsWith(Text.ToLower());
+                            case FilterMode.ExactMatchString:
+                                return propertyValue.Equals(Text.ToLower());
+                            case FilterMode.Number:
+                                var localText = Text.Trim();
+                                var comparison = GetComparisonOperator(ref localText);
+                                var decimalFilterValue = 0m;
+                                var decimalPropertyValue = 0m;
+                                if (decimal.TryParse(localText, out decimalFilterValue) && decimal.TryParse(propertyValue, out decimalPropertyValue))
+                                    return CompareNumbers(comparison, decimalPropertyValue, decimalFilterValue);
+                                break;
+                        }
+                        return false;
+                    });
+                    AssignItemsAsListItemSource(list, filteredSource);
+                    break;
+
+                case AutoFilterMode.AllColumnsAnd:
+                    var filterOptions = GetAutoFilterValues(columns);
+                    if (filterOptions.Keys.Count < 1)
+                    {
+                        // Nothing to filter, so we are back to showing everything
+                        var unfilteredSource2 = GetUnfilteredItemsSource(list);
+                        if (unfilteredSource2 != null)
+                            AssignItemsAsListItemSource(list, unfilteredSource2);
+                    }
+                    else
+                    {
+                        var filteredSource2 = sourceList.Where(i =>
+                        {
+                            var include = true;
+                            foreach (var key in filterOptions.Keys)
+                            {
+                                var option = filterOptions[key];
+                                if (option.PropertyInfo == null) option.PropertyInfo = i.GetType().GetProperty(key);
+                                var propertyValue = option.PropertyInfo.GetValue(i, null).ToString().ToLower();
+                                switch (option.FilterMode)
+                                {
+                                    case FilterMode.ContainedString:
+                                        if (!propertyValue.Contains(option.Text))
+                                            include = false;
+                                        break;
+                                    case FilterMode.StartsWithString:
+                                        if (!propertyValue.StartsWith(option.Text))
+                                            include = false;
+                                        break;
+                                    case FilterMode.ExactMatchString:
+                                        if (!propertyValue.Equals(option.Text))
+                                            include = false;
+                                        break;
+                                    case FilterMode.Number:
+                                        var localText = option.Text.Trim();
+                                        var comparison = GetComparisonOperator(ref localText);
+                                        var decimalFilterValue = 0m;
+                                        var decimalPropertyValue = 0m;
+                                        if (decimal.TryParse(localText, out decimalFilterValue) && decimal.TryParse(propertyValue, out decimalPropertyValue))
+                                            if (!CompareNumbers(comparison, decimalPropertyValue, decimalFilterValue))
+                                                include = false;
+                                        break;
+                                }
+                            }
+                            return include;
+                        });
+                        AssignItemsAsListItemSource(list, filteredSource2);
+                    }
+                    break;
+
+                case AutoFilterMode.AllColumnsOr:
+                    var filterOptions2 = GetAutoFilterValues(columns);
+                    if (filterOptions2.Keys.Count < 1)
+                    {
+                        // Nothing to filter, so we are back to showing everything
+                        var unfilteredSource2 = GetUnfilteredItemsSource(list);
+                        if (unfilteredSource2 != null)
+                            AssignItemsAsListItemSource(list, unfilteredSource2);
+                    }
+                    else
+                    {
+                        var filteredSource2 = sourceList.Where(i =>
+                        {
+                            foreach (var key in filterOptions2.Keys)
+                            {
+                                var option = filterOptions2[key];
+                                if (option.PropertyInfo == null) option.PropertyInfo = i.GetType().GetProperty(key);
+                                var propertyValue = option.PropertyInfo.GetValue(i, null).ToString().ToLower();
+                                switch (option.FilterMode)
+                                {
+                                    case FilterMode.ContainedString:
+                                        if (!propertyValue.Contains(option.Text))
+                                            return true;
+                                        break;
+                                    case FilterMode.StartsWithString:
+                                        if (!propertyValue.StartsWith(option.Text))
+                                            return true;
+                                        break;
+                                    case FilterMode.ExactMatchString:
+                                        if (!propertyValue.Equals(option.Text))
+                                            return true;
+                                        break;
+                                    case FilterMode.Number:
+                                        var localText = option.Text.Trim();
+                                        var comparison = GetComparisonOperator(ref localText);
+                                        var decimalFilterValue = 0m;
+                                        var decimalPropertyValue = 0m;
+                                        if (decimal.TryParse(localText, out decimalFilterValue) && decimal.TryParse(propertyValue, out decimalPropertyValue))
+                                            if (!CompareNumbers(comparison, decimalPropertyValue, decimalFilterValue))
+                                                return true;
+                                        break;
+                                }
+                            }
+                            return false;
+                        });
+                        AssignItemsAsListItemSource(list, filteredSource2);
+                    }
+                    break;
+            }
+        }
+
+        private static ComparisonOperators GetComparisonOperator(ref string localText)
+        {
+            var comparison = ComparisonOperators.Equals;
+            if (localText.StartsWith(">="))
+            {
+                comparison = ComparisonOperators.GreaterThanOrEqual;
+                localText = localText.Substring(2);
+            }
+            else if (localText.StartsWith(">"))
+            {
+                comparison = ComparisonOperators.GreaterThan;
+                localText = localText.Substring(1);
+            }
+            else if (localText.StartsWith("<="))
+            {
+                comparison = ComparisonOperators.LessThanOrEqual;
+                localText = localText.Substring(2);
+            }
+            else if (localText.StartsWith("<"))
+            {
+                comparison = ComparisonOperators.LessThan;
+                localText = localText.Substring(1);
+            }
+            return comparison;
+        }
+
+        private static bool CompareNumbers(ComparisonOperators comparison, decimal value1, decimal value)
+        {
+            switch (comparison)
+            {
+                case ComparisonOperators.Equals:
+                    return value1 == value;
+                case ComparisonOperators.GreaterThan:
+                    return value1 > value;
+                case ComparisonOperators.GreaterThanOrEqual:
+                    return value1 >= value;
+                case ComparisonOperators.LessThan:
+                    return value1 < value;
+                case ComparisonOperators.LessThanOrEqual:
+                    return value1 <= value;
+            }
+            return false;
+        }
+
+        private enum ComparisonOperators
+        {
+            Equals,
+            GreaterThan,
+            GreaterThanOrEqual,
+            LessThan,
+            LessThanOrEqual
+        }
+
+        private class FilterInformation
+        {
+            public string Text { get; set; }
+            public PropertyInfo PropertyInfo { get; set; }
+
+            public FilterMode FilterMode { get; set; }
+        }
+
+        private Dictionary<string, FilterInformation> GetAutoFilterValues(ListColumnsCollection columns)
+        {
+            var result = new Dictionary<string, FilterInformation>();
+
+            foreach (var column in columns)
+                if (column.UtilizedHeaderEditControl != null && column.UtilizedHeaderEditControl is FilterHeaderTextBox)
+                    if (!result.Keys.Contains(column.BindingPath))
+                    {
+                        var text = (FilterHeaderTextBox) column.UtilizedHeaderEditControl;
+                        if (!string.IsNullOrEmpty(text.Text))
+                            result.Add(column.BindingPath, new FilterInformation {Text = text.Text.Trim().ToLower(), FilterMode =  column.FilterMode});
+                    }
+
+            return result;
+        }
+
+        private bool _ignoreTextChange;
+
+        private void WipeWithoutRefresh()
+        {
+            _ignoreTextChange = true;
+            Text = string.Empty;
+            _ignoreTextChange = false;
+        }
+
+        private ListBox _associatedList;
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        private ListBox AssociatedList
+        {
+            get
+            {
+                if (_associatedList == null)
+                    _associatedList = ElementHelper.FindVisualTreeParent<ListBox>(this);
+                return _associatedList;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnTextChanged(TextChangedEventArgs e)
+        {
+            SetHeaderFilterMode(!string.IsNullOrEmpty(Text));
+            if (_ignoreTextChange) return;
+            _timer.IsEnabled = false; // Resetting the timespan before filtering kicks in
+            _timer.IsEnabled = true; // Triggering the search
+        }
+
+        private HeaderContentControl _headerContent;
+
+        private void SetHeaderFilterMode(bool isFiltered)
+        {
+            if (_headerContent == null)
+                _headerContent = ElementHelper.FindVisualTreeParent<HeaderContentControl>(this);
+            if (_headerContent != null)
+                _headerContent.ColumnIsFiltered = isFiltered;
+        }
+
+        /// <summary>For internal use (stores the internal, unfiltered data source)</summary>
+        public static readonly DependencyProperty UnfilteredItemsSourceProperty = DependencyProperty.RegisterAttached("UnfilteredItemsSource", typeof (IEnumerable), typeof (FilterHeaderTextBox), new PropertyMetadata(null));
+
+        /// <summary>For internal use (stores the internal, unfiltered data source)</summary>
+        public static IEnumerable GetUnfilteredItemsSource(DependencyObject d)
+        {
+            return (IEnumerable) d.GetValue(UnfilteredItemsSourceProperty);
+        }
+
+        /// <summary>For internal use (stores the internal, unfiltered data source)</summary>
+        public static void SetUnfilteredItemsSource(DependencyObject d, IEnumerable value)
+        {
+            d.SetValue(UnfilteredItemsSourceProperty, value);
         }
     }
 
@@ -300,11 +763,100 @@ namespace CODE.Framework.Wpf.Controls
                 var localContent = s as HeaderContentControl;
                 if (localContent == null) return;
                 if (e.ClickCount != 1) return;
+
+                if (HeaderClickCommand == null && Column.AutoSort)
+                    if (SortByColumn())
+                        return;
+
                 if (HeaderClickCommand == null) return;
                 var paras = new HeaderClickCommandParameters {Column = localContent.Column};
                 if (HeaderClickCommand.CanExecute(paras))
                     HeaderClickCommand.Execute(paras);
             };
+
+            Loaded += (s, e) =>
+            {
+                if (Column == null || !Column.AutoSort) return;
+                var list = ElementHelper.FindVisualTreeParent<ListBox>(this);
+                if (list == null) return;
+                list.DataContextChanged += (s2, e2) => { if (!_inResort && Column.SortOrder != SortOrder.Unsorted) SortByColumn(false); };
+                if (list.ItemsSource == null) return;
+
+                var itemSourceType = list.ItemsSource.GetType();
+                var changedEvent = itemSourceType.GetEvent("CollectionChanged");
+                if (changedEvent != null)
+                    changedEvent.AddEventHandler(list.ItemsSource, new NotifyCollectionChangedEventHandler((s3, e3) =>
+                    {
+                        if (_inResort || Column.SortOrder == SortOrder.Unsorted) return;
+                        if (Application.Current == null) return;
+                        if (Application.Current.Dispatcher == null) return;
+                        // Delaying until the collection changed is complete
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { SortByColumn(false); }), DispatcherPriority.Normal);
+                    }));
+            };
+        }
+
+        /// <summary>
+        /// Performs sorting the column
+        /// </summary>
+        /// <param name="toggleSort">Indicates whether we wan to toggle to the next order, or use the current one (false)</param>
+        /// <returns></returns>
+        protected virtual bool SortByColumn(bool toggleSort = true)
+        {
+            if (Column == null) return false;
+            var list = ElementHelper.FindVisualTreeParent<ListBox>(this);
+            if (list == null) return false;
+
+            if (list.ItemsSource == null) return false;
+
+            var source = list.ItemsSource.Cast<object>().ToList();
+
+            var newSortOrder = Column.SortOrder;
+            if (toggleSort) newSortOrder = Column.SortOrder != SortOrder.Ascending ? SortOrder.Ascending : SortOrder.Descending;
+            else if (Column.SortOrder == SortOrder.Unsorted) return true;
+
+            ListEx.SetInAutoSorting(list, true);
+            _inResort = true;
+
+            var fieldName = Column.BindingPath;
+            IOrderedEnumerable<object> sortedSource;
+            PropertyInfo property = null;
+            if (newSortOrder == SortOrder.Ascending)
+                sortedSource = source.OrderBy(i =>
+                {
+                    if (property == null) property = i.GetType().GetProperty(fieldName);
+                    return property.GetValue(i, null);
+                });
+            else
+                sortedSource = source.OrderByDescending(i =>
+                {
+                    if (property == null) property = i.GetType().GetProperty(fieldName);
+                    return property.GetValue(i, null);
+                });
+
+            if (list.ItemsSource.GetType().Name.StartsWith("ObservableCollection`1") || list.ItemsSource.GetType().Name.StartsWith("List`1"))
+            {
+                var dynamicSource = list.ItemsSource as dynamic;
+                //var selectedItem = list.SelectedItem;
+                dynamicSource.Clear();
+                foreach (dynamic item in sortedSource)
+                    dynamicSource.Add(item);
+                //if (selectedItem != null)
+                //    list.SelectedItem = selectedItem;
+            }
+            else
+                throw new Exception("Automatic sorting only works with observable data sources"); // Which a List<T> isn't, but we ignore that detail :-)
+
+            var columnDefinitions = ListEx.GetColumns(list);
+            if (columnDefinitions != null)
+                foreach (var column in columnDefinitions)
+                    column.SortOrder = SortOrder.Unsorted;
+            Column.SortOrder = newSortOrder;
+
+            ListEx.SetInAutoSorting(list, false);
+            _inResort = false;
+
+            return true;
         }
 
         /// <summary>List column associated with this header click content control</summary>
@@ -323,6 +875,22 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Header click command</summary>
         /// <remarks>This is usually populated by means of a binding</remarks>
         public static readonly DependencyProperty HeaderClickCommandProperty = DependencyProperty.Register("HeaderClickCommand", typeof (ICommand), typeof (HeaderContentControl), new PropertyMetadata(null));
+
+        private bool _inResort;
+
+        /// <summary>
+        /// Indicates whether the column is currently filtered
+        /// </summary>
+        public bool ColumnIsFiltered
+        {
+            get { return (bool) GetValue(ColumnIsFilteredProperty); }
+            set { SetValue(ColumnIsFilteredProperty, value); }
+        }
+
+        /// <summary>
+        /// Indicates whether the column is currently filtered
+        /// </summary>
+        public static readonly DependencyProperty ColumnIsFilteredProperty = DependencyProperty.Register("ColumnIsFiltered", typeof (bool), typeof (HeaderContentControl), new PropertyMetadata(false));
     }
 
     /// <summary>

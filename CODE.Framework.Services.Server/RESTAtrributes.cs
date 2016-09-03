@@ -398,6 +398,41 @@ namespace CODE.Framework.Services.Server
         }
 
         /// <summary>
+        /// Gets the request dispatch formatter.
+        /// </summary>
+        /// <param name="operationDescription">The operation description.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <returns>IDispatchMessageFormatter.</returns>
+        protected override IDispatchMessageFormatter GetRequestDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
+        {
+            if (IsGetOperation(operationDescription))
+                // no change for GET operations
+                return base.GetRequestDispatchFormatter(operationDescription, endpoint);
+
+            if (operationDescription.Messages[0].Body.Parts.Count == 0)
+                // nothing in the body, still use the default
+                return base.GetRequestDispatchFormatter(operationDescription, endpoint);
+
+            return new NewtonsoftJsonDispatchFormatter(operationDescription, true);
+        }
+
+        /// <summary>
+        /// Determines whether the operation is a GET operation.
+        /// </summary>
+        /// <param name="operation">The operation.</param>
+        /// <returns><c>true</c> if [is get operation] [the specified operation]; otherwise, <c>false</c>.</returns>
+        private static bool IsGetOperation(OperationDescription operation)
+        {
+            var wga = operation.Behaviors.Find<WebGetAttribute>();
+            if (wga != null) return true;
+
+            var wia = operation.Behaviors.Find<WebInvokeAttribute>();
+            if (wia != null) return wia.Method == "HEAD";
+
+            return false;
+        }
+
+        /// <summary>
         /// Tries to find a behavior attribute of a certain type and returns it
         /// </summary>
         /// <typeparam name="T">Type of behavior we are looking for</typeparam>
@@ -450,8 +485,9 @@ namespace CODE.Framework.Services.Server
             webInvoke.ResponseFormat = WebMessageFormat.Json;
             webInvoke.Method = RestHelper.GetHttpMethodFromOperationDescription(operationDescription);
 
-            var formatter = base.GetReplyDispatchFormatter(operationDescription, endpoint);
-            return formatter;
+            if (operationDescription.Messages.Count == 1 || operationDescription.Messages[1].Body.ReturnValue.Type == typeof(void))
+                return base.GetReplyDispatchFormatter(operationDescription, endpoint);
+            return new NewtonsoftJsonDispatchFormatter(operationDescription, false);
         }
 
         /// <summary>

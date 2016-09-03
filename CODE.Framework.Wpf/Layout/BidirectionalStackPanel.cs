@@ -17,28 +17,30 @@ namespace CODE.Framework.Wpf.Layout
     public class BidirectionalStackPanel : StackPanel
     {
         /// <summary>Additional margin added to each child item in this stack</summary>
-        public static readonly DependencyProperty ChildItemMarginProperty = DependencyProperty.Register("ChildItemMargin", typeof (Thickness), typeof (BidirectionalStackPanel), new UIPropertyMetadata(new Thickness(0), (s, e) => RerenderSender(s)));
+        public static readonly DependencyProperty ChildItemMarginProperty = DependencyProperty.Register("ChildItemMargin", typeof (Thickness), typeof (BidirectionalStackPanel), new FrameworkPropertyMetadata(new Thickness(0)) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>Defines whether the extra bottom child item margin for text elements (labels and textblocks) should be ignored</summary>
-        public static readonly DependencyProperty IgnoreChildItemBottomMarginForTextElementsProperty = DependencyProperty.Register("IgnoreChildItemBottomMarginForTextElements", typeof (bool), typeof (BidirectionalStackPanel), new UIPropertyMetadata(true, (s, e) => RerenderSender(s)));
+        public static readonly DependencyProperty IgnoreChildItemBottomMarginForTextElementsProperty = DependencyProperty.Register("IgnoreChildItemBottomMarginForTextElements", typeof (bool), typeof (BidirectionalStackPanel), new FrameworkPropertyMetadata(true) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>Indicates whether the last top (or left) item fills the remaining space</summary>
-        public static readonly DependencyProperty LastTopItemFillsSpaceProperty = DependencyProperty.Register("LastTopItemFillsSpace", typeof (bool), typeof (BidirectionalStackPanel), new UIPropertyMetadata(false, (s, e) => RerenderSender(s)));
+        public static readonly DependencyProperty LastTopItemFillsSpaceProperty = DependencyProperty.Register("LastTopItemFillsSpace", typeof (bool), typeof (BidirectionalStackPanel), new FrameworkPropertyMetadata(false) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>Defines how much of a margin is to be left below the last top item in case the last top item is set to fill the available space</summary>
-        public static readonly DependencyProperty LastTopItemFillMarginProperty = DependencyProperty.Register("LastTopItemFillMargin", typeof (double), typeof (BidirectionalStackPanel), new UIPropertyMetadata(10d, (s, e) => RerenderSender(s)));
+        public static readonly DependencyProperty LastTopItemFillMarginProperty = DependencyProperty.Register("LastTopItemFillMargin", typeof (double), typeof (BidirectionalStackPanel), new FrameworkPropertyMetadata(10d) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>Defines whether the stack panel automatically handles scrollbars</summary>
-        public static readonly DependencyProperty ScrollBarModeProperty = DependencyProperty.Register("ScrollBarMode", typeof (BidirectionalStackPanelScrollBarModes), typeof (BidirectionalStackPanel), new UIPropertyMetadata(BidirectionalStackPanelScrollBarModes.Automatic, (s, e) => InvalidateAllVisuals(s)));
+        public static readonly DependencyProperty ScrollBarModeProperty = DependencyProperty.Register("ScrollBarMode", typeof (BidirectionalStackPanelScrollBarModes), typeof (BidirectionalStackPanel), new FrameworkPropertyMetadata(BidirectionalStackPanelScrollBarModes.Automatic) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>Style used by the scroll bars</summary>
         public Style ScrollBarStyle
         {
-            get { return (Style)GetValue(ScrollBarStyleProperty); }
+            get { return (Style) GetValue(ScrollBarStyleProperty); }
             set { SetValue(ScrollBarStyleProperty, value); }
         }
+
         /// <summary>Style used by the scroll bars</summary>
-        public static readonly DependencyProperty ScrollBarStyleProperty = DependencyProperty.Register("ScrollBarStyle", typeof(Style), typeof(BidirectionalStackPanel), new PropertyMetadata(null, ScrollBarStyleChanged));
+        public static readonly DependencyProperty ScrollBarStyleProperty = DependencyProperty.Register("ScrollBarStyle", typeof (Style), typeof (BidirectionalStackPanel), new PropertyMetadata(null, ScrollBarStyleChanged));
+
         /// <summary>
         /// This method gets called whenever the ScrollBarStyle property is updated
         /// </summary>
@@ -53,8 +55,8 @@ namespace CODE.Framework.Wpf.Layout
             panel._scrollVertical.Style = style;
         }
 
-        private readonly ScrollBar _scrollHorizontal = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Horizontal};
-        private readonly ScrollBar _scrollVertical = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Vertical};
+        private readonly ScrollBar _scrollHorizontal = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Horizontal, SmallChange = 10};
+        private readonly ScrollBar _scrollVertical = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Vertical, SmallChange = 10};
         private AdornerLayer _adorner;
         private bool _scrollbarsCreated;
 
@@ -192,17 +194,6 @@ namespace CODE.Framework.Wpf.Layout
             panel.InvalidateVisual();
         }
 
-        private static void RerenderSender(DependencyObject sender)
-        {
-            var stack = sender as BidirectionalStackPanel;
-            if (stack != null)
-            {
-                stack.InvalidateArrange();
-                stack.InvalidateMeasure();
-                stack.InvalidateVisual();
-            }
-        }
-
         private double _calculatedContentHeight;
         private double _calculatedContentWidth;
 
@@ -244,7 +235,10 @@ namespace CODE.Framework.Wpf.Layout
             // starting with the bottom elements
             foreach (var element2 in bottomElements)
             {
-                element2.Measure(constraint);
+                if (Orientation == Orientation.Vertical)
+                    element2.Measure(new Size(constraint.Width, double.PositiveInfinity));
+                else
+                    element2.Measure(new Size(double.PositiveInfinity, constraint.Height));
                 var extraBottom = extraMargin.Bottom;
                 if (element2 is TextBlock || element2 is Label)
                     if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
@@ -269,6 +263,7 @@ namespace CODE.Framework.Wpf.Layout
                 var constraint2 = constraint;
                 var extraBottom = extraMargin.Bottom;
                 if (topCounter == topElements.Count && LastTopItemFillsSpace)
+                {
                     if (Orientation == Orientation.Vertical && !double.IsInfinity(constraint.Height) && constraint.Height > 0)
                     {
                         constraint2 = new Size(constraint.Width, Math.Max(element2.MinHeight, constraint.Height - topUsed - bottomUsed - LastTopItemFillMargin));
@@ -279,7 +274,14 @@ namespace CODE.Framework.Wpf.Layout
                         constraint2 = new Size(Math.Max(element2.MinWidth, constraint.Width - leftUsed - rightUsed - LastTopItemFillMargin), constraint.Height);
                         extraBottom = LastTopItemFillMargin;
                     }
-
+                }
+                else
+                {
+                    if (Orientation == Orientation.Vertical)
+                        constraint2 = new Size(constraint2.Width, double.PositiveInfinity);
+                    else
+                        constraint2 = new Size(double.PositiveInfinity, constraint2.Height);
+                }
                 element2.Measure(constraint2);
                 if (element2 is TextBlock || element2 is Label)
                     if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
@@ -304,7 +306,7 @@ namespace CODE.Framework.Wpf.Layout
             if (Orientation == Orientation.Horizontal && !double.IsInfinity(constraint.Width) && constraint.Width > 0 && widthUsed < constraint.Width)
                 widthUsed = Math.Min(constraint.Width, widthUsed); // In horizontal orientation, if we haven't used up the entire width yet, we occupy the entire available space
 
-            if (Orientation == Orientation.Horizontal && !double.IsInfinity(constraint.Height) && constraint.Height > 0) 
+            if (Orientation == Orientation.Horizontal && !double.IsInfinity(constraint.Height) && constraint.Height > 0)
                 heightUsed = Math.Min(constraint.Height, heightUsed); // In horizontal orientation, we use no more than the height available to us
             if (Orientation == Orientation.Vertical && !double.IsInfinity(constraint.Height) && constraint.Height > 0 && heightUsed < constraint.Height)
                 heightUsed = Math.Min(constraint.Height, heightUsed); // In vertical orientation, if we haven't used up the entire height yet, we occupy the entire available space
@@ -334,6 +336,7 @@ namespace CODE.Framework.Wpf.Layout
                     }
                     _scrollVertical.Maximum = _calculatedContentHeight - constraint.Height;
                     _scrollVertical.ViewportSize = constraint.Height;
+                    _scrollVertical.LargeChange = constraint.Height;
                     finalSize.Height = constraint.Height;
                 }
                 else if (heightUsed <= constraint.Height && _scrollVertical.Visibility != Visibility.Collapsed)
@@ -352,6 +355,7 @@ namespace CODE.Framework.Wpf.Layout
                         InvalidateAllVisuals(this); // Triggers recalculation of everything with a visible scroll bar
                     }
                     _scrollHorizontal.Maximum = _calculatedContentWidth - constraint.Width;
+                    _scrollHorizontal.LargeChange = constraint.Width;
                     _scrollHorizontal.ViewportSize = constraint.Width;
                     finalSize.Width = constraint.Width;
                 }
@@ -401,7 +405,7 @@ namespace CODE.Framework.Wpf.Layout
             }
             else if (Orientation == Orientation.Horizontal && _scrollHorizontal.Visibility == Visibility.Visible)
             {
-                left = _scrollHorizontal.Value * -1;
+                left = _scrollHorizontal.Value*-1;
                 usableHeight -= _scrollHorizontal.ActualHeight + 2;
             }
 

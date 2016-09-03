@@ -1,6 +1,7 @@
 ﻿<Window x:Class="CODE.Framework.Wpf.TestBench.StandardIcons"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
         Title="Standard Icons" Height="800" Width="700">
 
     <Window.Resources>
@@ -8,13 +9,17 @@
             <ResourceDictionary.MergedDictionaries>
                 <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Battleship;component/Battleship-Icon-Standard.xaml"/>-->
                 <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Geek;component/Geek-Icon-Standard.xaml"/>-->
-                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Icon-Standard.xaml"/>
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/Metro-Icon-Standard.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Newsroom;component/Newsroom-Icon-Standard.xaml"/>-->
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Universe-Icon-Standard.xaml"/>
                 <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Vapor;component/Vapor-Icon-Standard.xaml"/>-->
                 <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Wildcat;component/Wildcat-Icon-Standard.xaml"/>-->
                 <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Icon-Standard.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
 
             <SolidColorBrush x:Key="CODE.Framework-Metro-IconForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="CODE.Framework-Universe-IconForegroundBrush" Color="Black" />
+            <SolidColorBrush x:Key="CODE.Framework-Newsroom-IconForegroundBrush" Color="Black" />
             <SolidColorBrush x:Key="CODE.Framework-Battleship-IconForegroundBrush" Color="Black" />
             <SolidColorBrush x:Key="CODE.Framework-Vapor-IconForegroundBrush" Color="#C5C5C5" />
             <SolidColorBrush x:Key="CODE.Framework-Vapor-IconForegroundBrush2" Color="#6D6F71" />
@@ -71,8 +76,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Export All to Image" Click="ExportToImage" Padding="10,4" Margin="5"/>
+            <Button Content="Export to Image" Click="ExportToImage" Padding="10,4" Margin="5"/>
+            <Button Content="Create to CSS" Click="ExportToCss" Padding="10,4" Margin="5"/>
+            <Button Content="Create to JS" Click="ExportToOffsetJS" Padding="10,4" Margin="5"/>
             <Button Content="Create All-Themes HTML Table" Click="CreateHtmlTable" Padding="10,4" Margin="5"/>
+            <mvvm:ThemeIcon Height="25" Width="25" Margin="10,0,0,0" StandardIcon="Accounts" />
+            <mvvm:ThemeIcon Height="25" Width="25" Margin="10,0,0,0" IconResourceKey="CODE.Framework-Icon-User" />
+            <mvvm:ThemeIcon Height="25" Width="25" Margin="10,0,0,0" IconResourceKey="yadayada" />
         </StackPanel>
         <ListBox x:Name="icons" Grid.Row="1" Margin="5" Background="CornflowerBlue">
             <ListBox.ItemTemplate>
@@ -80,13 +90,15 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="400" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                    
-                        <Rectangle Fill="{Binding Icon}" Height="36" Width="36" Margin="5" />
-                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10" Grid.Column="1" />
-                        <Button Margin="20,10,0,10" Padding="5,2" Content="Copy Icon" Click="Button_Click" Grid.Column="2" />
+
+                        <mvvm:ThemeIcon IconResourceKey="{Binding Name}" Height="36" Width="36" Margin="5" />
+                        <Rectangle Fill="{Binding Icon}" Height="36" Width="36" Margin="5" Grid.Column="1" />
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10" Grid.Column="2" />
+                        <Button Margin="20,10,0,10" Padding="5,2" Content="Copy Icon" Click="Button_Click" Grid.Column="3" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

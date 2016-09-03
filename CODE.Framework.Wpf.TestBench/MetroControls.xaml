@@ -2,11 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" 
-        Title="MetroControls" Height="500" Width="300" Background="Navy">
+        Title="MetroControls" Height="700" Width="300" Background="#F2F2F2">
 	<Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/ThemeRoot.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Window.Resources>
@@ -26,8 +26,12 @@
                   ItemsSource="{Binding Items}" 
                   DisplayMemberPath="DisplayText"
                   />
+        <Label>Some Text boxes:</Label>
         <TextBox Text="Test" Margin="5" c:Ex.SelectOnEntry="True" />
         <TextBox Text="Test" Margin="5" c:Ex.SelectOnEntry="False" />
-        <TextBox Text="Test" Margin="5" c:Ex.SelectOnEntry="True" />
+        <PasswordBox c:PasswordBoxEx.Value="Test" Margin="5" c:Ex.SelectOnEntry="True" />
+        <GroupBox Header="Test">
+            <TextBox Margin="10" Text="Hello"/>
+        </GroupBox>
     </StackPanel>
 </Window>

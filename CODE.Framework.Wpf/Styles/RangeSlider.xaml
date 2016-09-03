@@ -1,0 +1,119 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls">
+
+    <Style TargetType="controls:RangeSlider">
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:RangeSlider">
+                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" controls:GridEx.RowHeights="Auto,*" x:Name="root" >
+                        <TextBlock Margin="0" Text="{Binding Minimum, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" Foreground="{TemplateBinding TickBrush}" FontSize="{TemplateBinding LabelFontSize}" x:Name="minText"/>
+                        <TextBlock Margin="0" Text="{Binding Maximum, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" HorizontalAlignment="Right" Foreground="{TemplateBinding TickBrush}" FontSize="{TemplateBinding LabelFontSize}" x:Name="maxText"/>
+                        <TextBlock Margin="0" Text="{Binding Minimum, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" HorizontalAlignment="Right" Foreground="{TemplateBinding TickBrush}" FontSize="{TemplateBinding LabelFontSize}" x:Name="minTextInverted" Visibility="Collapsed"/>
+                        <TextBlock Margin="0" Text="{Binding Maximum, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" Foreground="{TemplateBinding TickBrush}" FontSize="{TemplateBinding LabelFontSize}" x:Name="maxTextInverted" Visibility="Collapsed"/>
+                        <TextBlock Background="White" Text="{Binding LowValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" Foreground="Black" FontSize="{TemplateBinding LabelFontSize}" Margin="{Binding Margin, ElementName=PART_Track}" HorizontalAlignment="Left" x:Name="lowText"/>
+                        <TextBlock Background="White" Text="{Binding HighValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" Foreground="Black" FontSize="{TemplateBinding LabelFontSize}" Margin="{Binding Margin, ElementName=PART_Track}" HorizontalAlignment="Right" x:Name="highText"/>
+                        <TextBlock Background="White" Text="{Binding LowValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" Foreground="Black" FontSize="{TemplateBinding LabelFontSize}" Margin="{Binding Margin, ElementName=PART_Track}" HorizontalAlignment="Right" x:Name="lowTextInverted" Visibility="Collapsed"/>
+                        <TextBlock Background="White" Text="{Binding HighValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}, StringFormat=#####0}" Foreground="Black" FontSize="{TemplateBinding LabelFontSize}" Margin="{Binding Margin, ElementName=PART_Track}" HorizontalAlignment="Left" x:Name="highTextInverted" Visibility="Collapsed"/>
+                        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                        <Border Grid.Row="1" Grid.Column="1" Background="{TemplateBinding RangeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,5" CornerRadius="2" x:Name="fullTrack"/>
+                        <Grid x:Name="PART_Track" Grid.Row="1" Grid.Column="1">
+                            <Border Background="{TemplateBinding SelectedRangeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" x:Name="PART_SelectedRange" Cursor="Hand"/>
+                            <Border VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="8" Background="WhiteSmoke" BorderBrush="DarkGray" BorderThickness="1" x:Name="PART_Handle1" Cursor="Hand"/>
+                            <Border VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="8" Background="WhiteSmoke" BorderBrush="DarkGray" BorderThickness="1" x:Name="PART_Handle2" Cursor="Hand"/>
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter TargetName="root" Property="controls:GridEx.RowHeights" Value="*"/>
+                            <Setter TargetName="root" Property="controls:GridEx.ColumnWidths" Value="Auto,*"/>
+                            <Setter TargetName="minText" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="minText" Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter TargetName="minText" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="minTextInverted" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="minTextInverted" Property="VerticalAlignment" Value="Top"/>
+                            <Setter TargetName="minTextInverted" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="maxText" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="maxText" Property="VerticalAlignment" Value="Top"/>
+                            <Setter TargetName="maxText" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="maxTextInverted" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="maxTextInverted" Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter TargetName="maxTextInverted" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="lowText" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="lowText" Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter TargetName="lowText" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="lowTextInverted" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="lowTextInverted" Property="VerticalAlignment" Value="Top"/>
+                            <Setter TargetName="lowTextInverted" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="highText" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="highText" Property="VerticalAlignment" Value="Top"/>
+                            <Setter TargetName="highText" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="highTextInverted" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="highTextInverted" Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter TargetName="highTextInverted" Property="LayoutTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="fullTrack" Property="Margin" Value="5,0"/>
+                            <Setter TargetName="PART_Handle1" Property="Width" Value="NaN"/>
+                            <Setter TargetName="PART_Handle2" Property="Width" Value="NaN"/>
+                            <Setter TargetName="PART_Handle1" Property="Height" Value="8"/>
+                            <Setter TargetName="PART_Handle2" Property="Height" Value="8"/>
+                            <Setter TargetName="PART_Handle1" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="PART_Handle2" Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter TargetName="PART_Handle1" Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter TargetName="PART_Handle2" Property="VerticalAlignment" Value="Top"/>
+                        </Trigger>
+                        <Trigger Property="IsInverted" Value="True">
+                            <Setter TargetName="minText" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="maxText" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="lowText" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="highText" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="minTextInverted" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="maxTextInverted" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="lowTextInverted" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="highTextInverted" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Height" Value="NaN"/>
+                <Setter Property="Width" Value="30"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+</ResourceDictionary>

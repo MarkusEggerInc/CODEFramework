@@ -171,7 +171,9 @@ namespace CODE.Framework.Core.Utilities
             {
                 System.Diagnostics.Trace.WriteLine(type + ": " + logEvent);
             }
-            catch { }
+            catch
+            {
+            }
         }
     }
 
@@ -197,6 +199,7 @@ namespace CODE.Framework.Core.Utilities
         /// For internal use only
         /// </summary>
         private string _extension = "log";
+
         /// <summary>
         /// Log file extension
         /// </summary>
@@ -666,7 +669,10 @@ namespace CODE.Framework.Core.Utilities
             TruncateLog(xml);
 
             // We are ready to save the file
-            if (File.Exists(fileName)) { File.Delete(fileName); }
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
             using (var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.ReadWrite))
             {
                 var writer = new XmlTextWriter(stream, Encoding.UTF8) {Formatting = Formatting.Indented, Indentation = 2};
@@ -697,7 +703,7 @@ namespace CODE.Framework.Core.Utilities
                     xml = CreateXmlDocument();
                 }
             }
-            else 
+            else
                 xml = CreateXmlDocument();
             return xml;
         }
@@ -757,6 +763,7 @@ namespace CODE.Framework.Core.Utilities
         /// For internal use only
         /// </summary>
         private readonly EventLog _eventLog = new EventLog();
+
         /// <summary>
         /// Internal reference to the actual event log object
         /// </summary>
@@ -769,7 +776,9 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>
         /// Initializes a new instance of the <see cref="EventLogLogger"/> class.
         /// </summary>
-        public EventLogLogger() { }
+        public EventLogLogger()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventLogLogger"/> class.

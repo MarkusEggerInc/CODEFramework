@@ -55,7 +55,7 @@ namespace CODE.Framework.Core.Utilities
                         exceptionLogger.Log(exception, type);
                     else
                         logger.Log(exceptionText, type);
-        }
+                }
         }
 
         /// <summary>

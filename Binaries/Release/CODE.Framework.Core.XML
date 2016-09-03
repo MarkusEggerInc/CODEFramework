@@ -11239,11 +11239,6 @@
             <param name="fileName">File name the string is to be written to.</param>
             <example>"This is the line we want to insert in our file".ToFile(@"c:\My Folders\MyFile.txt");</example>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.Extensions.StringExtensions.ToStringSafe(System.Object)">
-            <summary>Returns a string representation of the provided value. Returns an empty string if the value is null</summary>
-            <param name="value">Value to be turned into a string</param>
-            <returns>String</returns>
-        </member>
         <member name="M:CODE.Framework.Core.Utilities.Extensions.StringExtensions.ToFile(System.String,System.String,System.Text.Encoding)">
             <summary>Receives a string and a file name as parameters and writes the contents of the string to that file</summary>
             <param name="expression">String to be written</param>
@@ -12760,7 +12755,10 @@
             <remarks>The strings are trimmed and compared in a case-insensitive, culture neutral fashion.</remarks>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.Proper(System.String)">
-            <summary>Receives a string as a parameter and returns the string in Proper format (makes each letter after a space capital)</summary>
+            <summary>
+            Receives a string as a parameter and returns the string in Proper format (makes each letter after a space
+            capital)
+            </summary>
             <example>StringHelper.Proper("joe doe is a good man");	//returns "Joe Doe Is A Good Man"</example>
             <param name="originalString">String</param>
             <returns>Proper string</returns>
@@ -12768,7 +12766,7 @@
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.SmartProper(System.String)">
             <summary>
             This method returns strings in proper case.
-            However, contrary to regular Proper() methods, 
+            However, contrary to regular Proper() methods,
             this method can be used to format names.
             For instance, "MacLeod" will remain "MacLeod",
             "macLeod" will be "MacLeod", "MACLEOD" will be turned into
@@ -12778,7 +12776,10 @@
             <returns>Properly formatted string</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.SpaceCamelCase(System.String)">
-            <summary>This method takes a camel-case string (such as one defined by an enum) and returns is with a space before every upper-case letter.</summary>
+            <summary>
+            This method takes a camel-case string (such as one defined by an enum) and returns is with a space before
+            every upper-case letter.
+            </summary>
             <example>StringHelper.SpaceCamelCase("CamelCaseWord"); // returns"Camel Case Word"</example>
             <param name="originalString">String</param>
             <returns>String with spaces</returns>
@@ -12788,7 +12789,8 @@
             <example>
             string text = "This is the line we want to insert in our file.";
             StringHelper.ToFile(text, @"c:\My Folders\MyFile.txt");
-            </example>:
+            </example>
+            :
             <param name="expression">String to be written</param>
             <param name="fileName">File name the string is to be written to.</param>
         </member>
@@ -12818,7 +12820,10 @@
             <returns>Decoded string</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.At(System.String,System.String)">
-            <summary>Receives two strings as parameters and searches for one string within another. If found, returns the beginning numeric position otherwise returns 0</summary>
+            <summary>
+            Receives two strings as parameters and searches for one string within another. If found, returns the beginning
+            numeric position otherwise returns 0
+            </summary>
             <example>StringHelper.At("D", "Joe Doe");	//returns 5</example>
             <param name="searchFor">String to search for</param>
             <param name="searchIn">String to search in</param>
@@ -12826,8 +12831,8 @@
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.At(System.String,System.String,System.Int32)">
             <summary>
-            Receives two strings and an occurrence position (1st, 2nd etc) as parameters and 
-            searches for one string within another for that position. 
+            Receives two strings and an occurrence position (1st, 2nd etc) as parameters and
+            searches for one string within another for that position.
             If found, returns the beginning numeric position otherwise returns 0
             </summary>
             <example>
@@ -12861,7 +12866,10 @@
             <returns>Word Count</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.GetWordNumb(System.String,System.Int32)">
-            <summary>Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the number of words in that string.</summary>
+            <summary>
+            Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the
+            number of words in that string.
+            </summary>
             <example>
             string lcString = "Joe Doe is a good man";
             StringHelper.GetWordNumber(lcString, 5); // returns "good"
@@ -12871,7 +12879,10 @@
             <returns>Word number</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.GetWordNumber(System.String,System.Int32)">
-            <summary>Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the number of words in that string.</summary>
+            <summary>
+            Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the
+            number of words in that string.
+            </summary>
             <example>
             string lcString = "Joe Doe is a good man";
             StringHelper.GetWordNumber(lcString, 5); // returns "good"
@@ -12904,7 +12915,10 @@
             <returns>Number of occurrences</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.Replicate(System.String,System.Int32)">
-            <summary>Receives a string expression and a numeric value indicating number of time and replicates that string for the specified number of times.</summary>
+            <summary>
+            Receives a string expression and a numeric value indicating number of time and replicates that string for the
+            specified number of times.
+            </summary>
             <example>StringHelper.Replicate("Joe", 5); // returns JoeJoeJoeJoeJoe</example>
             <param name="expression">Expression</param>
             <param name="times">Number of times the string is to be replicated</param>
@@ -12932,7 +12946,10 @@
             <returns>Line number</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.IsDigit(System.String)">
-            <summary>Receives a string as a parameter and returns a bool indicating if the left most character in the string is a valid digit.</summary>
+            <summary>
+                Receives a string as a parameter and returns a bool indicating if the left most character in the string is a
+                valid digit.
+            </summary>
             <example>if(StringHelper.IsDigit("1Kamal")){...}	//returns true</example>
             <param name="sourceString">Expression</param>
             <returns>True or False</returns>
@@ -12948,7 +12965,7 @@
             <returns>File name</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.StringHelper.AddBS(System.String)">
-            <summary>Makes sure the secified path ends with a back-slash</summary>
+            <summary>Makes sure the specified path ends with a back-slash</summary>
             <param name="path">Path</param>
             <returns>Path with BS</returns>
         </member>

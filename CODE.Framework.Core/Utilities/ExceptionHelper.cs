@@ -154,18 +154,18 @@ namespace CODE.Framework.Core.Utilities
                 // Exception attributes
                 sb.Append("  " + Resources.ExceptionAttributes + "\r\n");
                 // Message
-                sb.Append("    " + Resources.Message + " " + exception.Message.ToStringSafe() + "\r\n");
+                sb.Append("    " + Resources.Message + " " + StringHelper.ToStringSafe(exception.Message) + "\r\n");
                 // Exception type
-                sb.Append("    " + Resources.ExceptionType + " " + exception.GetType().ToStringSafe() + "\r\n");
+                sb.Append("    " + Resources.ExceptionType + " " + StringHelper.ToStringSafe(exception.GetType()) + "\r\n");
                 // Source
-                sb.Append("    " + Resources.Source + " " + exception.Source.ToStringSafe() + "\r\n");
+                sb.Append("    " + Resources.Source + " " + StringHelper.ToStringSafe(exception.Source) + "\r\n");
                 if (exception.TargetSite != null)
                 {
                     // Thrown by code in method
-                    sb.Append("    " + Resources.ThrownByMethod + " " + exception.TargetSite.Name.ToStringSafe() + "\r\n");
+                    sb.Append("    " + Resources.ThrownByMethod + " " + StringHelper.ToStringSafe(exception.TargetSite.Name) + "\r\n");
                     if (exception.TargetSite.DeclaringType != null)
                         // Thrown by code in method
-                        sb.Append("    " + Resources.ThrownByClass + " " + exception.TargetSite.DeclaringType.Name.ToStringSafe() + "\r\n");
+                        sb.Append("    " + Resources.ThrownByClass + " " + StringHelper.ToStringSafe(exception.TargetSite.DeclaringType.Name) + "\r\n");
                 }
 
                 // Stack Trace

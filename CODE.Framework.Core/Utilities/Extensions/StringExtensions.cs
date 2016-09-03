@@ -73,10 +73,11 @@ namespace CODE.Framework.Core.Utilities.Extensions
         /// <example>"This is the line we want to insert in our file".ToFile(@"c:\My Folders\MyFile.txt");</example>
         public static void ToFile(this string expression, string fileName) { StringHelper.ToFile(expression, fileName); }
 
-        /// <summary>Returns a string representation of the provided value. Returns an empty string if the value is null</summary>
-        /// <param name="value">Value to be turned into a string</param>
-        /// <returns>String</returns>
-        public static string ToStringSafe(this object value) { return StringHelper.ToStringSafe(value); }
+        // Removed due to conflicts with the extension method of the same name in DataHelper
+        ///// <summary>Returns a string representation of the provided value. Returns an empty string if the value is null</summary>
+        ///// <param name="value">Value to be turned into a string</param>
+        ///// <returns>String</returns>
+        //public static string ToStringSafe(this object value) { return StringHelper.ToStringSafe(value); }
 
         /// <summary>Receives a string and a file name as parameters and writes the contents of the string to that file</summary>
         /// <param name="expression">String to be written</param>

@@ -1,0 +1,12 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.RangeSliderTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="RangeSliderTest" Height="500" Width="700">
+    <Grid>
+        <controls:RangeSlider Margin="40,10,40,0" VerticalAlignment="Top" />
+        <controls:RangeSlider Margin="40,54,40,0" VerticalAlignment="Top" SelectedRangeBrush="ForestGreen" Maximum="150" IsInverted="True"/>
+        <controls:RangeSlider Margin="40,120,0,27" VerticalAlignment="Stretch" SelectedRangeBrush="ForestGreen" Maximum="150" HorizontalAlignment="Left" Orientation="Vertical" IsInverted="True"/>
+        <controls:RangeSlider Margin="90,120,0,27" VerticalAlignment="Stretch" SelectedRangeBrush="Red" Maximum="10000" HorizontalAlignment="Left" Orientation="Vertical" HighValue="9000" LowValue="0"/>
+    </Grid>
+</Window>

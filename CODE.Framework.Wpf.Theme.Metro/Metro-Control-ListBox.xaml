@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:layout="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf"
                     xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
-                    xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
+                    xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
 
     <Style TargetType="ListBox" x:Key="Metro-Control-ListBox">
         <Style.Resources>
@@ -214,6 +215,7 @@
                             <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}" Grid.Row="1" x:Name="scroll">
                                 <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                             </ScrollViewer>
+                            <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}" />
                         </c:GridEx>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -222,6 +224,10 @@
                         </Trigger>
                         <Trigger Property="IsGrouping" Value="true">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger Property="val:InputValidation.IsValid" Value="False">
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                            <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

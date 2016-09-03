@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing.Imaging;
@@ -263,7 +265,9 @@ namespace CODE.Framework.Services.Tools.Windows
                                     ManipulationTextBoxVisible = Visibility.Visible,
                                     TypeVisible = Visibility.Visible,
                                     Value = item,
-                                    IsRequired = dataMemberAttribute.IsRequired
+                                    IsRequired = dataMemberAttribute.IsRequired,
+                                    EnumIndex = itemCounter,
+                                    ParentCollection = enumerable
                                 };
                                 if (!itemType.IsValueType && itemType != typeof(Guid) && itemType != typeof(string) && itemType != typeof(byte[]))
                                     newParameter2.NodeType = ParameterNodeType.ComplexParameter;
@@ -527,31 +531,41 @@ namespace CODE.Framework.Services.Tools.Windows
         private void AddItemToList(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            if (button != null)
+            if (button == null) return;
+            var grid = button.Parent as FrameworkElement;
+            if (grid == null) return;
+            var item = grid.DataContext as ParameterItem;
+            if (item == null || item.NodeType != ParameterNodeType.List) return;
+            dynamic list = item.Value;
+            if (item.ListGenericType == null)
+                MessageBox.Show("Arrays cannot be resized on the fly.");
+            else if (item.ListGenericType == typeof (string))
+                list.Add("");
+            else if (item.ListGenericType == typeof (int))
+                list.Add(0);
+            else if (item.ListGenericType == typeof (decimal))
+                list.Add(0m);
+            else if (item.ListGenericType == typeof (double))
+                list.Add(0d);
+            else if (item.ListGenericType == typeof(float))
+                list.Add(0f);
+            else if (item.ListGenericType == typeof (bool))
+                list.Add(false);
+            else if (item.ListGenericType == typeof (Guid))
+                list.Add(Guid.Empty);
+            else
             {
-                var grid = button.Parent as FrameworkElement;
-                if (grid != null)
+                try
                 {
-                    var item = grid.DataContext as ParameterItem;
-                    if (item != null && item.NodeType == ParameterNodeType.List)
-                        if (item.ListGenericType != null)
-                        {
-                            try
-                            {
-                                dynamic newItem = Activator.CreateInstance(item.ListGenericType);
-                                dynamic list = item.Value;
-                                list.Add(newItem);
-                                var parameterItem = RequestContractTree.Items[0] as ParameterItem;
-                                if (parameterItem != null) RefreshSelectedOperations(parameterItem.DataContext);
-                            }
-                            catch
-                            {
-                            }
-                        }
-                        else
-                            MessageBox.Show("Arrays cannot be resized on the fly.");
+                    dynamic newItem = Activator.CreateInstance(item.ListGenericType);
+                    list.Add(newItem);
+                }
+                catch
+                {
                 }
             }
+            var parameterItem = RequestContractTree.Items[0] as ParameterItem;
+            if (parameterItem != null) RefreshSelectedOperations(parameterItem.DataContext);
         }
 
         private int _lastSelectedContractDisplayIndex;
@@ -617,12 +631,10 @@ namespace CODE.Framework.Services.Tools.Windows
             
             var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
             var dlg = new SaveFileDialog {InitialDirectory = currentFolderName, DefaultExt = "json", AddExtension = true, FileName = "Request.json", RestoreDirectory = true, SupportMultiDottedExtensions = true, Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*"};
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                var path = dlg.FileName.JustPath();
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                StringHelper.ToFile(JsonHelper.Format(JsonHelper.SerializeToRestJson(RequestContractTree.DataContext)), dlg.FileName);
-            }
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+            var path = dlg.FileName.JustPath();
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            StringHelper.ToFile(JsonHelper.Format(JsonHelper.SerializeToRestJson(RequestContractTree.DataContext)), dlg.FileName);
         }
 
         private void HandleLoad(object sender, RoutedEventArgs e)
@@ -635,18 +647,16 @@ namespace CODE.Framework.Services.Tools.Windows
             }
             var currentFolderName = GetFullPathForCurrentRequest(data.GetType());
             var dlg = new OpenFileDialog {InitialDirectory = currentFolderName, DefaultExt = "json", AddExtension = true, FileName = "Request.json", RestoreDirectory = true, SupportMultiDottedExtensions = true, Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*", CheckFileExists = true, CheckPathExists = true};
-            if (dlg.ShowDialog() == DialogResult.OK && File.Exists(dlg.FileName))
+            if (dlg.ShowDialog() != DialogResult.OK || !File.Exists(dlg.FileName)) return;
+            var json = StringHelper.FromFile(dlg.FileName);
+            var contractObject = JsonHelper.DeserializeFromRestJson(json, data.GetType());
+            if (contractObject == null)
             {
-                var json = StringHelper.FromFile(dlg.FileName);
-                var contractObject = JsonHelper.DeserializeFromRestJson(json, data.GetType());
-                if (contractObject == null)
-                {
-                    MessageBox.Show("The JSON file didn't contain valid JSON, or the structure didn't match the current request contract.");
-                    return;
-                }
-                RefreshSelectedOperations(contractObject);
-                RefreshJsonAndXmlFromTree();
+                MessageBox.Show("The JSON file didn't contain valid JSON, or the structure didn't match the current request contract.");
+                return;
             }
+            RefreshSelectedOperations(contractObject);
+            RefreshJsonAndXmlFromTree();
         }
 
         private void HandleQuickSave(object sender, RoutedEventArgs e)
@@ -854,7 +864,7 @@ namespace CODE.Framework.Services.Tools.Windows
     /// </summary>
     public class ParameterItem : INotifyPropertyChanged
     {
-        private readonly object _dataContext;
+        private object _dataContext;
 
         /// <summary>
         /// Gets the data context.
@@ -973,10 +983,57 @@ namespace CODE.Framework.Services.Tools.Windows
 
                 if (!string.IsNullOrEmpty(Name) && _dataContext != null)
                 {
-                    var contractType = _dataContext.GetType();
-                    var member = contractType.GetProperty(Name, BindingFlags.Public | BindingFlags.Instance);
-                    if (member != null)
-                        member.SetValue(_dataContext, value, null);
+                    if (ParentCollection != null)
+                    {
+                        _dataContext = value;
+                        if (ParentCollection is List<string>)
+                        {
+                            var collection = (List<string>)ParentCollection;
+                            collection[EnumIndex] = value.ToString();
+                        }
+                        else if (ParentCollection is List<int>)
+                        {
+                            var collection = (List<int>)ParentCollection;
+                            collection[EnumIndex] = (int)value;
+                        }
+                        else if (ParentCollection is List<decimal>)
+                        {
+                            var collection = (List<decimal>)ParentCollection;
+                            collection[EnumIndex] = (decimal)value;
+                        }
+                        else if (ParentCollection is List<float>)
+                        {
+                            var collection = (List<float>)ParentCollection;
+                            collection[EnumIndex] = (float)value;
+                        }
+                        else if (ParentCollection is List<DateTime>)
+                        {
+                            var collection = (List<DateTime>)ParentCollection;
+                            collection[EnumIndex] = (DateTime)value;
+                        }
+                        else if (ParentCollection is List<bool>)
+                        {
+                            var collection = (List<bool>)ParentCollection;
+                            collection[EnumIndex] = (bool)value;
+                        }
+                        else if (ParentCollection is List<double>)
+                        {
+                            var collection = (List<double>)ParentCollection;
+                            collection[EnumIndex] = (double)value;
+                        }
+                        else if (ParentCollection is List<Guid>)
+                        {
+                            var collection = (List<Guid>)ParentCollection;
+                            collection[EnumIndex] = (Guid)value;
+                        }
+                    }
+                    else
+                    {
+                        var contractType = _dataContext.GetType();
+                        var member = contractType.GetProperty(Name, BindingFlags.Public | BindingFlags.Instance);
+                        if (member != null)
+                            member.SetValue(_dataContext, value, null);
+                    }
                 }
 
                 NotifyChanged();
@@ -1222,10 +1279,26 @@ namespace CODE.Framework.Services.Tools.Windows
         /// <value>The type of the list's generic parameter.</value>
         public Type ListGenericType { get; set; }
 
+        /// <summary>
+        /// Gets or sets the index of the enum.
+        /// </summary>
+        /// <value>The index of the enum.</value>
+        public int EnumIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parent collection.
+        /// </summary>
+        /// <value>The parent collection.</value>
+        public object ParentCollection { get; set; }
+
+        /// <summary>
+        /// Notifies the changed.
+        /// </summary>
         private void NotifyChanged()
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(string.Empty));
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(string.Empty));
         }
 
         /// <summary>

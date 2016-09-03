@@ -11,12 +11,14 @@
                 <Setter Property="Background" Value="{x:Null}"/>
             </Style>
         </Style.Resources>
+        <Setter Property="RibbonThemeBrush" Value="{DynamicResource CODE.Framework-Application-RibbonBackgroundBrush}"/>
+        <Setter Property="RibbonSelectedPageBrush" Value="{DynamicResource CODE.Framework-Application-RibbonSelectedPageBackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="TabControl">
+                <ControlTemplate TargetType="mvvm:ViewActionRibbon">
                     <Grid ClipToBounds="False" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local" Height="117" controls:GridEx.RowHeights="Auto,*" 
-                          Background="{DynamicResource CODE.Framework-Application-RibbonSelectedPageBackgroundBrush}">
-                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonBackgroundBrush}"/>
+                          Background="{TemplateBinding RibbonSelectedPageBrush}">
+                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{TemplateBinding RibbonThemeBrush}"/>
                         <ScrollViewer Style="{DynamicResource RibbonTabItemHeaderScroll}" ClipToBounds="False" SnapsToDevicePixels="True"
                                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden">
                             <TabPanel IsItemsHost="true" Margin="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" ClipToBounds="False"/>
@@ -189,7 +191,7 @@
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="checkedIndicator"/>
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
-                        <Rectangle Height="32" Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
+                        <mvvm:ThemeIcon Height="32" Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" IconResourceKey="{Binding Command.BrushResourceKey, RelativeSource={RelativeSource TemplatedParent}}" />
                         <controls:ContentTextDisplay Content="{TemplateBinding Content}" Margin="3,0" Grid.Row="1" MaxLineCount="2" MinWidth="36" MaxWidth="200" />
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0" x:Name="AccessKey" Grid.Row="1"
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
@@ -233,7 +235,7 @@
                         <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="checkedIndicator"/>
                         <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="{DynamicResource CODE.Framework-Application-RibbonButtonHighlightBrush}" Visibility="Hidden" x:Name="highlight"/>
                         <Rectangle Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="Transparent" IsHitTestVisible="True" />
-                        <Rectangle Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Icon}" />
+                        <mvvm:ThemeIcon Height="18" Width="18" VerticalAlignment="Center" HorizontalAlignment="Center" IconResourceKey="{Binding Command.BrushResourceKey, RelativeSource={RelativeSource TemplatedParent}}" />
                         <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,0" Grid.Column="1" />
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0,0,0" x:Name="AccessKey"
                                    Background="#505050" Foreground="White" Padding="3,0" Visibility="Collapsed"
@@ -327,6 +329,7 @@
                 <ControlTemplate TargetType="mvvm:SpecialFirstPageRibbonButton">
                     <Grid Height="38">
                         <Rectangle Fill="Black" Opacity=".2" Visibility="Collapsed" x:Name="hover" />
+                        <Rectangle Fill="White" Opacity=".2" Visibility="Collapsed" x:Name="selected" />
                         <ContentPresenter TextElement.Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush2}"
                                           Margin="25,0,20,0" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,2,0,0" x:Name="AccessKey"
@@ -344,6 +347,9 @@
                         </MultiTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Visibility" Value="Visible" TargetName="hover" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Visibility" Value="Visible" TargetName="selected" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

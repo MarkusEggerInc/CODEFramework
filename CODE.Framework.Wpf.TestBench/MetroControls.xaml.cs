@@ -27,14 +27,15 @@ namespace CODE.Framework.Wpf.TestBench
         public ComboBoxModel()
         {
             Items = new ObservableCollection<ComboItems>
-                        {
-                            new ComboItems {DisplayText = "Item 1", Value = Guid.NewGuid()},
-                            new ComboItems {DisplayText = "Item 2", Value = Guid.NewGuid()},
-                            new ComboItems {DisplayText = "Item 3", Value = Guid.NewGuid()},
-                            new ComboItems {DisplayText = "Item 4", Value = Guid.NewGuid()},
-                            new ComboItems {DisplayText = "Item 5", Value = Guid.NewGuid()}
-                        };
+            {
+                new ComboItems {DisplayText = "Item 1", Value = Guid.NewGuid()},
+                new ComboItems {DisplayText = "Item 2", Value = Guid.NewGuid()},
+                new ComboItems {DisplayText = "Item 3", Value = Guid.NewGuid()},
+                new ComboItems {DisplayText = "Item 4", Value = Guid.NewGuid()},
+                new ComboItems {DisplayText = "Item 5", Value = Guid.NewGuid()}
+            };
         }
+
         public object SelectedItem { get; set; }
         public ObservableCollection<ComboItems> Items { get; set; }
     }

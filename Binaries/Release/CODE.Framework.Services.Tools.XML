@@ -346,6 +346,23 @@
             </summary>
             <value>The type of the list's generic parameter.</value>
         </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.EnumIndex">
+            <summary>
+            Gets or sets the index of the enum.
+            </summary>
+            <value>The index of the enum.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Tools.Windows.ParameterItem.ParentCollection">
+            <summary>
+            Gets or sets the parent collection.
+            </summary>
+            <value>The parent collection.</value>
+        </member>
+        <member name="M:CODE.Framework.Services.Tools.Windows.ParameterItem.NotifyChanged">
+            <summary>
+            Notifies the changed.
+            </summary>
+        </member>
         <member name="E:CODE.Framework.Services.Tools.Windows.ParameterItem.PropertyChanged">
             <summary>
             Occurs when a property value changes.

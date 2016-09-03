@@ -204,6 +204,21 @@
             <param name="endpoint"></param>
             <returns></returns>
         </member>
+        <member name="M:CODE.Framework.Services.Server.RestXmlHttpBehavior.GetRequestDispatchFormatter(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Gets the request dispatch formatter.
+            </summary>
+            <param name="operationDescription">The operation description.</param>
+            <param name="endpoint">The endpoint.</param>
+            <returns>IDispatchMessageFormatter.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.RestXmlHttpBehavior.IsGetOperation(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Determines whether the operation is a GET operation.
+            </summary>
+            <param name="operation">The operation.</param>
+            <returns><c>true</c> if [is get operation] [the specified operation]; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="M:CODE.Framework.Services.Server.RestXmlHttpBehavior.GetBehavior``1(System.ServiceModel.Description.OperationDescription)">
             <summary>
             Tries to find a behavior attribute of a certain type and returns it
@@ -454,7 +469,7 @@
         </member>
         <member name="E:CODE.Framework.Services.Server.ServiceGarden.BeforeEndpointAdded">
             <summary>
-            Fires before a new host is added (can be used to manipulate the host before it is opened)
+            Fires before a new endpoint is added (can be used to manipulate the host before it is opened)
             </summary>
         </member>
         <member name="M:CODE.Framework.Services.Server.ServiceGarden.TryAddServiceHostNetTcp(System.Type,System.Type,System.String,CODE.Framework.Services.Server.MessageSize)">
@@ -1208,6 +1223,16 @@
         <member name="F:CODE.Framework.Services.Server.MessageSize.Undefined">
             <summary>
             For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.MessageSize.VeryLarge">
+            <summary>
+            Very large (up to 1GB)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.MessageSize.Max">
+            <summary>
+            Maximum size (equal to int.MaxValue, about 2GB)
             </summary>
         </member>
         <member name="T:CODE.Framework.Services.Server.HostAddedEventArgs">

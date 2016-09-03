@@ -1,0 +1,52 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="RichTextBox" x:Key="Universe-Control-RichTextBox">
+        <Setter Property="BorderBrush">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" Opacity=".5"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" Opacity=".5"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" Value="{DynamicResource Universe-RichTextBox-Template}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
+    </Style>
+
+    <ControlTemplate x:Key="Universe-RichTextBox-Template" TargetType="RichTextBox">
+        <Grid>
+            <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" 
+                    Background="{TemplateBinding Background}" 
+                    SnapsToDevicePixels="True" x:Name="bd">
+                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="2"/>
+            </Border>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" TargetName="bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" Opacity="1"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" Opacity="1"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="RichTextBox" BasedOn="{StaticResource Universe-Control-RichTextBox}" />
+
+</ResourceDictionary>

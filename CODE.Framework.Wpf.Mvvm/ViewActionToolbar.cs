@@ -125,7 +125,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         /// <param name="actions">List of primary actions</param>
         /// <param name="actions2">List of view specific actions</param>
-        private void PopulateToolbar(IHaveActions actions, IHaveActions actions2 = null)
+        protected virtual void PopulateToolbar(IHaveActions actions, IHaveActions actions2 = null)
         {
             Children.Clear();
             if (actions == null) return;
@@ -138,12 +138,24 @@ namespace CODE.Framework.Wpf.Mvvm
             var actionCounter = 0;
             foreach (var action in actionList)
             {
+                if (!IncludeAction(action)) continue;
                 if (actionCounter > 0 && action.BeginGroup) Children.Add(new ViewActionToolbarSeparator());
                 Children.Add(new ViewActionToolbarButton(action));
                 actionCounter++;
             }
 
             Visibility = Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// This method is designed to be overridden in subclasses. It can be use to indicate 
+        /// whether a certain action should be included in the display, or not.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <returns><c>true</c> if the action is to be included, <c>false</c> otherwise.</returns>
+        protected virtual bool IncludeAction(IViewAction action)
+        {
+            return true;
         }
     }
 
@@ -200,10 +212,11 @@ namespace CODE.Framework.Wpf.Mvvm
             Command = action;
 
             SetBinding(VisibilityProperty, new Binding("Availability") { Source = Action, Converter = new AvailabilityToVisibleConverter() });
+            SetBinding(IsCheckedProperty, new Binding("IsChecked") {Source = Action});
         }
 
         /// <summary>
-        /// View action asociated with this button
+        /// View action associated with this button
         /// </summary>
         /// <value>The action.</value>
         public IViewAction Action
@@ -212,7 +225,7 @@ namespace CODE.Framework.Wpf.Mvvm
             set { SetValue(ActionProperty, value); }
         }
         /// <summary>
-        /// View action asociated with this button
+        /// View action associated with this button
         /// </summary>
         /// <value>The action.</value>
         public static readonly DependencyProperty ActionProperty = DependencyProperty.Register("Action", typeof(IViewAction), typeof(ViewActionToolbarButton), new PropertyMetadata(null));
@@ -278,6 +291,20 @@ namespace CODE.Framework.Wpf.Mvvm
         /// </summary>
         /// <value>The title.</value>
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(ViewActionToolbarButton), new PropertyMetadata(""));
+
+        /// <summary>
+        /// Indicates whether the associated action has its IsChecked property set
+        /// </summary>
+        /// <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+        public bool IsChecked
+        {
+            get { return (bool)GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether the associated action has its IsChecked property set
+        /// </summary>
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(ViewActionToolbarButton), new PropertyMetadata(false));
     }
 
     /// <summary>

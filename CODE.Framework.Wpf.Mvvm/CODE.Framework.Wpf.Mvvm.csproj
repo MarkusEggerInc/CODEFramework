@@ -84,6 +84,7 @@
     <Compile Include="StandardActions.cs" />
     <Compile Include="StandardViewModel.cs" />
     <Compile Include="StandardViewPlaceholder.cs" />
+    <Compile Include="ThemeIcon.cs" />
     <Compile Include="Tools\ViewVisualizer.xaml.cs">
       <DependentUpon>ViewVisualizer.xaml</DependentUpon>
     </Compile>
@@ -93,6 +94,7 @@
     <Compile Include="ViewActionItemsControl.cs" />
     <Compile Include="ViewActionMenu.cs" />
     <Compile Include="ViewActionMenuButton.cs" />
+    <Compile Include="ViewActionPolicy.cs" />
     <Compile Include="ViewActionRibbon.cs" />
     <Compile Include="ViewActionStackPanel.cs" />
     <Compile Include="ViewActionTabPanel.cs" />

@@ -1391,12 +1391,12 @@
         </member>
         <member name="T:CODE.Framework.Core.Utilities.DataHelper">
             <summary>
-            This class provides a number of methods that help with a number of standard data tasks.
+                This class provides a number of methods that help with a number of standard data tasks.
             </summary>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.CsvToTable(System.String,System.String)">
             <summary>
-            This method takes a csv string (comma separated) and turns into a DataTable.
+                This method takes a csv string (comma separated) and turns into a DataTable.
             </summary>
             <param name="csvString">The CSV string (comma separated).</param>
             <param name="tableName">Name of the table.</param>
@@ -1404,169 +1404,151 @@
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.TableToCsv(System.Data.DataTable)">
             <summary>
-            This method takes a data table and turns all its contents into a CSV formatted string.
+                This method takes a data table and turns all its contents into a CSV formatted string.
             </summary>
             <param name="table">Data Table</param>
             <returns>CSV String</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.TableToCsv(System.Data.DataView)">
             <summary>
-            This method takes a data view and turns all its contents into a CSV formatted string.
+                This method takes a data view and turns all its contents into a CSV formatted string.
             </summary>
             <param name="view">Data View</param>
             <returns>CSV String</returns>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToGuidSafe(System.Object)">
             <summary>
-            Safely converts a value into a Guid or returns Guid.Empty if the value is invalid.
+                Safely converts a value into a Guid or returns Guid.Empty if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns>Guid</returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            Guid myGuid = dataSet.Tables[0].Rows[0]["id"].ToGuidSave();
+                using EPS.Utilities;
+                // more code here
+                Guid myGuid = dataSet.Tables[0].Rows[0]["id"].ToGuidSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToStringSafe(System.Object)">
             <summary>
-            Safely converts a value into a string or returns string.Empty if the value is invalid.
+                Safely converts a value into a string or returns string.Empty if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            string myString = dataSet.Tables[0].Rows[0]["name"].ToStringSave();
+                using EPS.Utilities;
+                // more code here
+                string myString = dataSet.Tables[0].Rows[0]["name"].ToStringSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToBooleanSafe(System.Object)">
             <summary>
-            Safely converts a value into a boolean or returns false if the value is invalid.
+                Safely converts a value into a boolean or returns false if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            bool myBool = dataSet.Tables[0].Rows[0]["active"].ToBooleanSave();
+                using EPS.Utilities;
+                // more code here
+                bool myBool = dataSet.Tables[0].Rows[0]["active"].ToBooleanSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToDateTimeSafe(System.Object)">
             <summary>
-            Safely converts a value into a DateTime or returns DateTime.MinValue if the value is invalid.
+                Safely converts a value into a DateTime or returns DateTime.MinValue if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            DateTime myDate = dataSet.Tables[0].Rows[0]["timeStamp"].ToDateTimeSave();
+                using EPS.Utilities;
+                // more code here
+                DateTime myDate = dataSet.Tables[0].Rows[0]["timeStamp"].ToDateTimeSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToIntegerSafe(System.Object)">
             <summary>
-            Safely converts a value into an integer or returns 0 if the value is invalid.
+                Safely converts a value into an integer or returns 0 if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            int myInt = dataSet.Tables[0].Rows[0]["number"].ToIntegerSave();
+                using EPS.Utilities;
+                // more code here
+                int myInt = dataSet.Tables[0].Rows[0]["number"].ToIntegerSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToDoubleSafe(System.Object)">
             <summary>
-            Safely converts a value into a double or returns 0.0 if the value is invalid.
+                Safely converts a value into a double or returns 0.0 if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            int myDouble = dataSet.Tables[0].Rows[0]["number"].ToDoubleSave();
+                using EPS.Utilities;
+                // more code here
+                int myDouble = dataSet.Tables[0].Rows[0]["number"].ToDoubleSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToDecimalSafe(System.Object)">
             <summary>
-            Safely converts a value into a decimal or returns 0.0 if the value is invalid.
+                Safely converts a value into a decimal or returns 0.0 if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            decimal myDec = dataSet.Tables[0].Rows[0]["price"].ToDecimalSave();
+                using EPS.Utilities;
+                // more code here
+                decimal myDec = dataSet.Tables[0].Rows[0]["price"].ToDecimalSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToCharSafe(System.Object)">
             <summary>
-            Safely converts a value into a char or returns ' ' if the value is invalid.
+                Safely converts a value into a char or returns ' ' if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            char myChar = dataSet.Tables[0].Rows[0]["character"].ToCharSave();
+                using EPS.Utilities;
+                // more code here
+                char myChar = dataSet.Tables[0].Rows[0]["character"].ToCharSave();
             </example>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.DataHelper.ToByteArraySafe(System.Object)">
             <summary>
-            Safely converts a value into a byte array or returns an empty byte array if the value is invalid.
+                Safely converts a value into a byte array or returns an empty byte array if the value is invalid.
             </summary>
             <param name="value">The value.</param>
             <returns></returns>
             <remarks>
-            This method is an extension method
+                This method is an extension method
             </remarks>
             <example>
-            using EPS.Utilities;
-            
-            // more code here
-            
-            byte[] myBytes = dataSet.Tables[0].Rows[0]["image"].ToByteArraySave();
+                using EPS.Utilities;
+                // more code here
+                byte[] myBytes = dataSet.Tables[0].Rows[0]["image"].ToByteArraySave();
             </example>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.EmailHelper">

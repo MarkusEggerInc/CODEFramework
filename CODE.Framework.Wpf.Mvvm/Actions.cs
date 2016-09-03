@@ -58,7 +58,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 if (int.TryParse(id, out id3))
                     return base[id3];
 
-                throw new IndexOutOfBoundsException("ViewAction with Id '" + id + "' not found in collection.");
+                return null;
             }
         }
     }
@@ -279,6 +279,11 @@ namespace CODE.Framework.Wpf.Mvvm
         public char AccessKey { get; set; }
 
         /// <summary>
+        /// Icon resource key to be used for the category.
+        /// </summary>
+        public string BrushResourceKey { get; set; }
+
+        /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
         /// <param name="obj">An object to compare with this instance.</param>
@@ -491,6 +496,23 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         private string _brushResourceKey;
+        private string _fallbackBrushResource;
+
+        private string _categoryBrushResourceKey;
+
+        /// <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
+        public string CategoryBrushResourceKey
+        {
+            get
+            {
+                return string.IsNullOrEmpty(_categoryBrushResourceKey) ? BrushResourceKey : _categoryBrushResourceKey;
+            }
+            set
+            {
+                _categoryBrushResourceKey = value;
+                NotifyChanged("CategoryBrushResourceKey");
+            }
+        }
 
         /// <summary>Key of a visual XAML resource for Logo1 associated with this action (such as an icon)</summary>
         public string LogoBrushResourceKey
@@ -611,6 +633,28 @@ namespace CODE.Framework.Wpf.Mvvm
             return brush.Clone();
         }
 
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public Brush Color1
+        {
+            get { return _color1; }
+            set
+            {
+                _color1 = value;
+                NotifyChanged("Color1");
+            }
+        }
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public Brush Color2
+        {
+            get { return _color2; }
+            set
+            {
+                _color2 = value;
+                NotifyChanged("Color2");
+            }
+        }
+
         /// <summary>
         /// Returns a brush of a brush resource is defined.
         /// </summary>
@@ -622,7 +666,8 @@ namespace CODE.Framework.Wpf.Mvvm
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(BrushResourceKey))
+                    var brushResourceKey = !string.IsNullOrEmpty(BrushResourceKey) ? BrushResourceKey : _fallbackBrushResource;
+                    if (!string.IsNullOrEmpty(brushResourceKey))
                     {
                         var brushResources = new Dictionary<object, Brush>();
                         FrameworkElement resourceSearchContext = null;
@@ -649,13 +694,13 @@ namespace CODE.Framework.Wpf.Mvvm
                             ResourceHelper.GetBrushResources(resourceSearchContext, brushResources);
                         }
 
-                        var icon = resourceSearchContext != null ? resourceSearchContext.FindResource(BrushResourceKey) as Brush : Application.Current.FindResource(BrushResourceKey) as Brush;
+                        var icon = resourceSearchContext != null ? resourceSearchContext.FindResource(brushResourceKey) as Brush : Application.Current.FindResource(brushResourceKey) as Brush;
 
                         if (brushResources.Count > 0) // We may have some resources we need to replace
                             If.Real<DrawingBrush>(icon, drawing => ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources));
 
                         _latestBrush = icon;
-                        NotifyChanged();
+                        //NotifyChanged();
                     }
                     return _latestBrush;
                 }
@@ -684,7 +729,7 @@ namespace CODE.Framework.Wpf.Mvvm
                     if (string.IsNullOrEmpty(BrushResourceKey))
                     {
                         _latestBrush = null;
-                        _brushResourceKey = "CODE.Framework-Icon-MissingIcon"; // Must use internal field here, otherwise all kinds of stuff gets triggered!!!
+                        _fallbackBrushResource = StandardIconHelper.GetStandardIconKeyFromEnum(StandardIcons.MissingIcon);
                     }
                     return Brush;
                 }
@@ -761,7 +806,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Method used to execute an action
         /// </summary>
         /// <param name="parameter"></param>
-        public void Execute(object parameter)
+        public virtual void Execute(object parameter)
         {
             if (_executeDelegate != null)
             {
@@ -835,7 +880,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Indicates whether the action is to be considered "checked"
         /// </summary>
         /// <remarks>
-        /// Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+        /// Checked actions may be presented in various ways in different themes, such as having a check-mark in menus
         /// Most themes will only respect this property when ViewActionType = Toggle
         /// </remarks>
         public bool IsChecked
@@ -1142,6 +1187,8 @@ namespace CODE.Framework.Wpf.Mvvm
         private bool _isChecked;
         private bool _isPinned;
         private Visibility _visibility = Visibility.Visible;
+        private Brush _color2;
+        private Brush _color1;
 
         private void CheckAllBrushesForResources()
         {
@@ -1722,6 +1769,24 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return (Brush) GetValue(Logo2Property); }
             set { SetValue(Logo2Property, value); }
         }
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public Brush Color1
+        {
+            get { return (Brush)GetValue(Color1Property); }
+            set { SetValue(Color1Property, value); }
+        }
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public static readonly DependencyProperty Color1Property = DependencyProperty.Register("Color1", typeof(Brush), typeof(DependencyViewActionWrapper), new PropertyMetadata(null));
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public Brush Color2
+        {
+            get { return (Brush)GetValue(Color2Property); }
+            set { SetValue(Color2Property, value); }
+        }
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public static readonly DependencyProperty Color2Property = DependencyProperty.Register("Color2", typeof(Brush), typeof(DependencyViewActionWrapper), new PropertyMetadata(null));
 
         /// <summary>
         /// Logo Element 2
