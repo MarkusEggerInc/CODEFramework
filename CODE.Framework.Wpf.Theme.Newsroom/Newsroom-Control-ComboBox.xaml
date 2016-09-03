@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf">
+                    xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
 
     <Style x:Key="Newsroom-Control-ComboBox" TargetType="ComboBox">
         <Setter Property="Padding" Value="8,0"/>
@@ -23,7 +24,7 @@
                         <BindingConverters:LitBrushConverter x:Key="LitBrushConverter" />
                         <BindingConverters:TransparentBrushConverter x:Key="TransparentBrushConverter" />
                     </ControlTemplate.Resources>
-                    <Border Grid.ColumnSpan="2" x:Name="MainBorder"
+                    <Border x:Name="MainBorder"
                             BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=.66}" 
                             BorderThickness="{TemplateBinding BorderThickness}" 
                             Background="{Binding Background, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TransparentBrushConverter}, ConverterParameter=.90}" >
@@ -89,6 +90,7 @@
                                     </ControlTemplate>
                                 </TextBox.Template>
                             </TextBox>
+                            <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -109,6 +111,10 @@
                         <Trigger Property="IsEditable" Value="True">
                             <Setter Property="Visibility" Value="Visible" TargetName="PART_EditableTextBox"/>
                             <Setter Property="Visibility" Value="Collapsed" TargetName="MainContentPresenter"/>
+                        </Trigger>
+                        <Trigger Property="val:InputValidation.IsValid" Value="False">
+                            <Setter Property="BorderBrush" TargetName="MainBorder" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                            <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

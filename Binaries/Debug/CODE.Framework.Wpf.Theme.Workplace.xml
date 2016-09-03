@@ -4,6 +4,16 @@
         <name>CODE.Framework.Wpf.Theme.Workplace</name>
     </assembly>
     <members>
+        <member name="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ClearTextButton">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Workplace.Classes.ClearTextButton.OnClick">
+            <summary>
+            Constructor
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Theme.Workplace.Classes.ScrollRightButton">
             <summary>
             Button used to style the scroll-right button of a scroll bar
@@ -175,6 +185,31 @@
             <summary>
             Stops the animation.
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Theme.Workplace.Controls.ModelStatusLinearProgressAnimation">
+            <summary>Progress ring animation that sets itself visible whenever the associated model has a busy status.</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Workplace.Controls.ModelStatusLinearProgressAnimation.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Theme.Workplace.Controls.ModelStatusLinearProgressAnimation.Model">
+            <summary>
+            Model (must implement IModelStatus)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Theme.Workplace.Controls.ModelStatusLinearProgressAnimation.ModelProperty">
+            <summary>
+            Model (must implement IModelStatus)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Theme.Workplace.Controls.ModelStatusLinearProgressAnimation.OnModelChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the model changes
+            </summary>
+            <param name="d">Source object</param>
+            <param name="e">Event parameters</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Theme.Workplace.StandardViews.LargePeekImageAndText06">
             <summary>

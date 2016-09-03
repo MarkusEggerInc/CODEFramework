@@ -377,6 +377,23 @@ namespace CODE.Framework.Wpf.Layout
         /// <param name="value">The color (Brush).</param>
         public static void SetTitleColor(DependencyObject obj, Brush value) { obj.SetValue(TitleColorProperty, value); }
 
+        /// <summary>
+        /// Second color (such as background color) associated with the Title. (Note: Not all elements that respect the Title also respect the color. It's an optional setting)
+        /// </summary>
+        public static readonly DependencyProperty TitleColor2Property = DependencyProperty.RegisterAttached("TitleColor2", typeof(Brush), typeof(SimpleView), new PropertyMetadata(null));
+        /// <summary>
+        /// Gets the second color of the title.
+        /// </summary>
+        /// <param name="obj">The object to get the color for.</param>
+        /// <returns>Title color (brush)</returns>
+        public static Brush GetTitleColor2(DependencyObject obj) { return (Brush)obj.GetValue(TitleColor2Property); }
+        /// <summary>
+        /// Sets the second color of the title.
+        /// </summary>
+        /// <param name="obj">The object to set the value on.</param>
+        /// <param name="value">The color (Brush).</param>
+        public static void SetTitleColor2(DependencyObject obj, Brush value) { obj.SetValue(TitleColor2Property, value); }
+
         /// <summary>Attached property to set any view's group</summary>
         /// <remarks>This attached property can be attached to any UI Element to define a view group</remarks>
         public static readonly DependencyProperty GroupProperty = DependencyProperty.RegisterAttached("Group", typeof (string), typeof (SimpleView), new PropertyMetadata(""));
@@ -680,6 +697,86 @@ namespace CODE.Framework.Wpf.Layout
         public static void SetCloseAction(DependencyObject obj, ICommand value)
         {
             obj.SetValue(CloseActionProperty, value);
+        }
+
+        /// <summary>
+        /// <summary>Indicates the relative width of an alement compared to other elements</summary>
+        /// </summary>
+        public static readonly DependencyProperty RelativeWidthProperty = DependencyProperty.RegisterAttached("RelativeWidth", typeof(GridLength), typeof(SimpleView), new PropertyMetadata(new GridLength(1, GridUnitType.Star), OnRelativeWidthChanged));
+
+        /// <summary>
+        /// Handles the <see cref="E:RelativeWidthChanged" /> event.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnRelativeWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = d as FrameworkElement;
+            if (element == null) return;
+            if (element.Parent != null)
+            {
+                var parentElement = element.Parent as UIElement;
+                if (parentElement != null)
+                {
+                    parentElement.InvalidateMeasure();
+                    parentElement.InvalidateArrange();
+                }
+            }
+        }
+
+        /// <summary>Indicates the relative width of an alement compared to other elements</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <returns>True or false</returns>
+        public static GridLength GetRelativeWidth(DependencyObject obj)
+        {
+            return (GridLength)obj.GetValue(RelativeWidthProperty);
+        }
+        /// <summary>Indicates the relative width of an alement compared to other elements</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <param name="value">True or false</param>
+        public static void SetRelativeWidth(DependencyObject obj, GridLength value)
+        {
+            obj.SetValue(RelativeWidthProperty, value);
+        }
+
+        /// <summary>
+        /// <summary>Indicates the relative height of an alement compared to other elements</summary>
+        /// </summary>
+        public static readonly DependencyProperty RelativeHeightProperty = DependencyProperty.RegisterAttached("RelativeHeight", typeof(GridLength), typeof(SimpleView), new PropertyMetadata(new GridLength(1, GridUnitType.Star), OnRelativeHeightChanged));
+
+        /// <summary>
+        /// Handles the <see cref="E:RelativeHeightChanged" /> event.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnRelativeHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = d as FrameworkElement;
+            if (element == null) return;
+            if (element.Parent != null)
+            {
+                var parentElement = element.Parent as UIElement;
+                if (parentElement != null)
+                {
+                    parentElement.InvalidateMeasure();
+                    parentElement.InvalidateArrange();
+                }
+            }
+        }
+
+        /// <summary>Indicates the relative height of an alement compared to other elements</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <returns>True or false</returns>
+        public static GridLength GetRelativeHeight(DependencyObject obj)
+        {
+            return (GridLength)obj.GetValue(RelativeHeightProperty);
+        }
+        /// <summary>Indicates the relative height of an alement compared to other elements</summary>
+        /// <param name="obj">The object the property is set on.</param>
+        /// <param name="value">True or false</param>
+        public static void SetRelativeHeight(DependencyObject obj, GridLength value)
+        {
+            obj.SetValue(RelativeHeightProperty, value);
         }
 
         /// <summary>Invalidates everything in the UI and forces a refresh</summary>

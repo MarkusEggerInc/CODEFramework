@@ -1,0 +1,283 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
+
+    <Style TargetType="ListBox" x:Key="Universe-Control-ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Style.Resources>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="c:ListBoxItemEx.SelectItemWhenFocusWithin" Value="True" />
+                <Setter Property="Template" Value="{DynamicResource Universe-ListBoxItem}" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
+        </Style.Resources>
+
+        <Setter Property="c:ListBoxEx.CommandTrigger" Value="DoubleClick" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <c:ListBoxSmartDataTemplate Margin="4" TextElement.Foreground="{DynamicResource CODE.Framework-Application-ForegroundBrush3}">
+                        <c:ListBoxSmartDataTemplate.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush3}" />
+                            </Style>
+                            <Style TargetType="Image">
+                                <Style.Resources>
+                                    <SolidColorBrush x:Key="CODE.Framework-Universe-IconForegroundBrush" Color="{DynamicResource CODE.Framework-Application-ForegroundColor3}"/>
+                                </Style.Resources>
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid x:Name="MainGrid" SnapsToDevicePixels="true">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Margin="1" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
+                                                    <Border x:Name="DropDownBorder" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                                                        <ScrollViewer x:Name="DropDownScrollViewer">
+                                                            <Grid RenderOptions.ClearTypeHint="Enabled">
+                                                                <Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                                                    <Rectangle x:Name="OpaqueRect" Fill="{Binding Background, ElementName=DropDownBorder}" Height="{Binding ActualHeight, ElementName=DropDownBorder}" Width="{Binding ActualWidth, ElementName=DropDownBorder}"/>
+                                                                </Canvas>
+                                                                <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                            </Grid>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                                <ToggleButton Grid.ColumnSpan="2" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                                    <ToggleButton.Style>
+                                                        <Style TargetType="ToggleButton">
+                                                            <Setter Property="OverridesDefaultStyle" Value="true"/>
+                                                            <Setter Property="IsTabStop" Value="false"/>
+                                                            <Setter Property="Focusable" Value="false"/>
+                                                            <Setter Property="ClickMode" Value="Press"/>
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="ToggleButton">
+                                                                        <Grid HorizontalAlignment="Right" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" SnapsToDevicePixels="true" Background="Transparent">
+                                                                            <Path x:Name="Arrow" Data="M 0 0 L 3.5 4 L 7 0 Z" Fill="Black" HorizontalAlignment="Center" Margin="3,1,2,0" VerticalAlignment="Center"/>
+                                                                        </Grid>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </ToggleButton.Style>
+                                                </ToggleButton>
+                                                <ContentPresenter x:Name="content" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Content="{TemplateBinding SelectionBoxItem}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                                                <Border Grid.ColumnSpan="2" x:Name="bg" BorderThickness="0" BorderBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" Background="Transparent" IsHitTestVisible="False" SnapsToDevicePixels="True" Panel.ZIndex="20000" />
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="HasItems" Value="false">
+                                                    <Setter Property="Height" TargetName="DropDownBorder" Value="95"/>
+                                                </Trigger>
+                                                <Trigger Property="ScrollViewer.CanContentScroll" SourceName="DropDownScrollViewer" Value="false">
+                                                    <Setter Property="Canvas.Top" TargetName="OpaqueRect" Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}"/>
+                                                    <Setter Property="Canvas.Left" TargetName="OpaqueRect" Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderThickness" Value="2" TargetName="bg"/>
+                                                    <Setter Property="Margin" Value="4,0,0,0" TargetName="content"/>
+                                                    <Setter Property="Panel.ZIndex" Value="20000"/>
+                                                </Trigger>
+                                                <Trigger Property="IsDropDownOpen" Value="True">
+                                                    <Setter Property="BorderThickness" Value="2" TargetName="bg"/>
+                                                    <Setter Property="Margin" Value="4,0,0,0" TargetName="content"/>
+                                                    <Setter Property="Panel.ZIndex" Value="20000"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border x:Name="bg" BorderThickness="0" BorderBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" Background="#7EFFFFFF" Padding="1" SnapsToDevicePixels="True" Panel.ZIndex="20000">
+                                                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="True"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderThickness" Value="2" TargetName="bg"/>
+                                                    <Setter Property="Padding" Value="0" TargetName="bg"/>
+                                                    <Setter Property="Margin" Value="-1,-1,0,0" TargetName="bg"/>
+                                                    <Setter Property="Panel.ZIndex" Value="20000"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="CheckBox">
+                                            <Border x:Name="selection" BorderThickness="0" BorderBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="-1,-2,0,-1" Padding="0,2,1,1">
+                                                <Border BorderBrush="Black" BorderThickness="1" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="bg" IsHitTestVisible="True" Width="14" Height="14" IsManipulationEnabled="True">
+                                                    <Path Data="M 1.5,5.5 5.5,9.5 10.5,1.5" Stroke="Black" StrokeThickness="2" x:Name="content"/>
+                                                </Border>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsEnabled" Value="false">
+                                                    <Setter Property="BorderThickness" Value="0" TargetName="bg" />
+                                                </Trigger>
+                                                <Trigger Property="IsChecked" Value="false">
+                                                    <Setter Property="Visibility" Value="Collapsed" TargetName="content" />
+                                                </Trigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderThickness" Value="2" TargetName="selection"/>
+                                                    <Setter Property="Panel.ZIndex" Value="20000"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </c:ListBoxSmartDataTemplate.Resources>
+                    </c:ListBoxSmartDataTemplate>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <c:GridEx RowHeights="Auto,*" ClipToBounds="True">
+                        <Border x:Name="Bd" BorderBrush="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Padding="1" SnapsToDevicePixels="true" Grid.RowSpan="2" Visibility="Collapsed"/>
+                        <c:ListBoxGridHeader Columns="{Binding Path=(c:ListEx.Columns), RelativeSource={RelativeSource TemplatedParent}}" 
+                                             ParentListBox="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                             HorizontalHeaderOffset="{Binding ElementName=scroll, Path=ContentHorizontalOffset, Mode=OneWay}"
+                                             SnapsToDevicePixels="True">
+                            <c:ListBoxGridHeader.Template>
+                                <ControlTemplate TargetType="c:ListBoxGridHeader">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </c:ListBoxGridHeader.Template>
+                            <c:ListBoxGridHeader.Resources>
+                                <Style TargetType="ContentControl" BasedOn="{StaticResource {x:Type ContentControl}}">
+                                    <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+                                    <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ContentControl">
+                                                <Grid SnapsToDevicePixels="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#19000000" Margin="0,0,2,0">
+                                                    <ContentPresenter Margin="4,2,3,4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style TargetType="GridSplitter" BasedOn="{StaticResource {x:Type GridSplitter}}">
+                                    <Setter Property="Width" Value="3" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Margin" Value="0,2,-1,2" />
+                                </Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Margin" Value="0,4"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                    <Setter Property="FontSize" Value="{DynamicResource FontSize-Smallest}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush3}" />
+                                </Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                    <Setter Property="Margin" Value="0,2,-2,1"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                                                        Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                        <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="2"/>
+                                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="2"
+                                                                    Text="{TemplateBinding c:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                                                    </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                                            <Condition Property="Text" Value=""/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                                                    </MultiTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style TargetType="c:SortOrderIndicator">
+                                    <Setter Property="Height" Value="12"/>
+                                    <Setter Property="Width" Value="12"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="Margin" Value="5,0"/>
+                                    <Setter Property="AscendingBrush" Value="{DynamicResource CODE.Framework-Icon-SortAscending}" />
+                                    <Setter Property="DescendingBrush" Value="{DynamicResource CODE.Framework-Icon-SortDescending}" />
+                                </Style>
+                            </c:ListBoxGridHeader.Resources>
+                        </c:ListBoxGridHeader>
+                        <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}" Grid.Row="1" x:Name="scroll" SnapsToDevicePixels="True">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </ScrollViewer>
+                        <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
+                    </c:GridEx>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger Property="val:InputValidation.IsValid" Value="False">
+                            <Setter Property="Visibility" TargetName="Bd" Value="Visible"/>
+                            <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate TargetType="ListBoxItem" x:Key="Universe-ListBoxItem">
+        <ControlTemplate.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+        </ControlTemplate.Resources>
+        <Grid Margin="2,0,2,2">
+            <Border Background="{DynamicResource CODE.Framework-Application-BackgroundBrush3}" BorderThickness="2" BorderBrush="{DynamicResource CODE.Framework-Application-BackgroundBrush3}" x:Name="bd" />
+            <Border Background="{DynamicResource CODE.Framework-Application-HighlightBrush1}" BorderThickness="2" BorderBrush="{DynamicResource CODE.Framework-Application-HighlightBrush1}" x:Name="bd2" Opacity=".1" Visibility="Collapsed" />
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                              SnapsToDevicePixels="True" 
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="0,6"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True" >
+                <Setter Property="BorderBrush" TargetName="bd" Value="{DynamicResource CODE.Framework-Application-HighlightBrush1}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True" >
+                <Setter Property="Visibility" TargetName="bd2" Value="Visible" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="ListBox" BasedOn="{StaticResource Universe-Control-ListBox}" />
+</ResourceDictionary>

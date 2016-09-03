@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>Returns a culture-neutral to-lower operation on the string.</summary>
         /// <param name="originalString">Original string</param>
         /// <returns>Lower-case string</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static string Lower(string originalString)
         {
             return originalString.ToLower(CultureInfo.InvariantCulture);
@@ -26,7 +27,7 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>Returns a culture-neutral to-upper operation on the string.</summary>
         /// <param name="originalString">Original string</param>
         /// <returns>Upper-case string</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static string Upper(string originalString)
         {
             return originalString.ToUpper(CultureInfo.InvariantCulture);
@@ -57,8 +58,8 @@ namespace CODE.Framework.Core.Utilities
         /// <remarks>The strings are trimmed and compared in a case-insensitive, culture neutral fashion.</remarks>
         public static bool Compare(string firstString, string secondString)
         {
-            int pos = string.Compare(firstString.Trim(), secondString.Trim(), true, CultureInfo.InvariantCulture);
-            return (pos == 0);
+            var pos = string.Compare(firstString.Trim(), secondString.Trim(), true, CultureInfo.InvariantCulture);
+            return pos == 0;
         }
 
         /// <summary>Returns true if the two strings match.</summary>
@@ -69,15 +70,18 @@ namespace CODE.Framework.Core.Utilities
         /// <remarks>The strings are trimmed and compared in a case-insensitive, culture neutral fashion.</remarks>
         public static bool Compare(string firstString, string secondString, bool ignoreCase)
         {
-            int pos = string.Compare(firstString.Trim(), secondString.Trim(), ignoreCase, CultureInfo.InvariantCulture);
-            return (pos == 0);
+            var pos = string.Compare(firstString.Trim(), secondString.Trim(), ignoreCase, CultureInfo.InvariantCulture);
+            return pos == 0;
         }
 
-        /// <summary>Receives a string as a parameter and returns the string in Proper format (makes each letter after a space capital)</summary>
+        /// <summary>
+        /// Receives a string as a parameter and returns the string in Proper format (makes each letter after a space
+        /// capital)
+        /// </summary>
         /// <example>StringHelper.Proper("joe doe is a good man");	//returns "Joe Doe Is A Good Man"</example>
         /// <param name="originalString">String</param>
         /// <returns>Proper string</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static string Proper(string originalString)
         {
             var sb = new StringBuilder(originalString);
@@ -87,7 +91,7 @@ namespace CODE.Framework.Core.Utilities
 
             for (counter = 0; counter < length; counter++)
                 //look for a blank space and once found make the next character to uppercase
-                if ((counter == 0) || (char.IsWhiteSpace(originalString[counter])))
+                if ((counter == 0) || char.IsWhiteSpace(originalString[counter]))
                 {
                     //Handle the first character differently
                     int counter2;
@@ -98,14 +102,14 @@ namespace CODE.Framework.Core.Utilities
 
                     //Make the next character uppercase and update the stringBuilder
                     sb.Remove(counter2, 1);
-                    sb.Insert(counter2, Char.ToUpper(originalString[counter2], CultureInfo.InvariantCulture));
+                    sb.Insert(counter2, char.ToUpper(originalString[counter2], CultureInfo.InvariantCulture));
                 }
             return sb.ToString();
         }
 
         /// <summary>
         /// This method returns strings in proper case.
-        /// However, contrary to regular Proper() methods, 
+        /// However, contrary to regular Proper() methods,
         /// this method can be used to format names.
         /// For instance, "MacLeod" will remain "MacLeod",
         /// "macLeod" will be "MacLeod", "MACLEOD" will be turned into
@@ -113,17 +117,17 @@ namespace CODE.Framework.Core.Utilities
         /// </summary>
         /// <param name="originalString">String that is to be formatted</param>
         /// <returns>Properly formatted string</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static string SmartProper(string originalString)
         {
             var chars = originalString.Trim().ToCharArray();
 
             var sb = new StringBuilder();
-            var bLastWasNewWord = true;			// Indicated that the last character started a new word
+            var bLastWasNewWord = true; // Indicated that the last character started a new word
             bool bEncounteredLower = false, bEncounteredUpper = false;
-            for (int counter = 0; counter < chars.Length; counter++)
+            for (var counter = 0; counter < chars.Length; counter++)
             {
-                string dummy = chars[counter].ToString();
+                var dummy = chars[counter].ToString();
 
                 // We figure out whether this was a lower or upper case character
                 if (dummy.ToLower(CultureInfo.InvariantCulture) == dummy)
@@ -145,30 +149,31 @@ namespace CODE.Framework.Core.Utilities
                 }
 
                 // We check whether the current char starts a new word.
-                bLastWasNewWord = (dummy == " " || dummy == "-" || dummy == "'" || dummy == "." || dummy == "," || dummy == ";" || dummy == ":");
-                if (bLastWasNewWord)
-                {
-                    bEncounteredLower = false;
-                    bEncounteredUpper = false;
-                }
+                bLastWasNewWord = dummy == " " || dummy == "-" || dummy == "'" || dummy == "." || dummy == "," || dummy == ";" || dummy == ":";
+                if (!bLastWasNewWord) continue;
+                bEncounteredLower = false;
+                bEncounteredUpper = false;
             }
 
             return sb.ToString();
         }
 
 
-        /// <summary>This method takes a camel-case string (such as one defined by an enum) and returns is with a space before every upper-case letter.</summary>
+        /// <summary>
+        /// This method takes a camel-case string (such as one defined by an enum) and returns is with a space before
+        /// every upper-case letter.
+        /// </summary>
         /// <example>StringHelper.SpaceCamelCase("CamelCaseWord"); // returns"Camel Case Word"</example>
         /// <param name="originalString">String</param>
         /// <returns>String with spaces</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static string SpaceCamelCase(string originalString)
         {
             var chars = originalString.Trim().ToCharArray();
             var sb = new StringBuilder();
-            for (int counter = 0; counter < chars.Length; counter++)
+            for (var counter = 0; counter < chars.Length; counter++)
             {
-                string dummy = chars[counter].ToString();
+                var dummy = chars[counter].ToString();
                 if (counter > 0)
                     if (dummy.ToUpper(CultureInfo.InvariantCulture) == dummy)
                         sb.Append(" ");
@@ -181,7 +186,8 @@ namespace CODE.Framework.Core.Utilities
         /// <example>
         /// string text = "This is the line we want to insert in our file.";
         /// StringHelper.ToFile(text, @"c:\My Folders\MyFile.txt");
-        /// </example>:
+        /// </example>
+        /// :
         /// <param name="expression">String to be written</param>
         /// <param name="fileName">File name the string is to be written to.</param>
         public static void ToFile(string expression, string fileName)
@@ -236,25 +242,28 @@ namespace CODE.Framework.Core.Utilities
         /// <summary>Takes a base64 encoded string and converts it into a regular string</summary>
         /// <param name="encodedString">Base64 encoded string</param>
         /// <returns>Decoded string</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#", Justification = "This is a special case and the 'string' part is not identifying the type.")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#", Justification = "This is a special case and the 'string' part is not identifying the type.")]
         public static string Base64Decode(string encodedString)
         {
             return new ASCIIEncoding().GetString(Convert.FromBase64String(encodedString));
         }
 
-        /// <summary>Receives two strings as parameters and searches for one string within another. If found, returns the beginning numeric position otherwise returns 0</summary>
+        /// <summary>
+        /// Receives two strings as parameters and searches for one string within another. If found, returns the beginning
+        /// numeric position otherwise returns 0
+        /// </summary>
         /// <example>StringHelper.At("D", "Joe Doe");	//returns 5</example>
         /// <param name="searchFor">String to search for</param>
         /// <param name="searchIn">String to search in</param>
         /// <returns>Position</returns>
         public static int At(string searchFor, string searchIn)
         {
-            return searchIn.IndexOf(searchFor) + 1;
+            return searchIn.IndexOf(searchFor, StringComparison.Ordinal) + 1;
         }
 
         /// <summary>
-        /// Receives two strings and an occurrence position (1st, 2nd etc) as parameters and 
-        /// searches for one string within another for that position. 
+        /// Receives two strings and an occurrence position (1st, 2nd etc) as parameters and
+        /// searches for one string within another for that position.
         /// If found, returns the beginning numeric position otherwise returns 0
         /// </summary>
         /// <example>
@@ -268,20 +277,20 @@ namespace CODE.Framework.Core.Utilities
         public static int At(string searchFor, string searchIn, int occurrence)
         {
             int counter;
-            var occured = 0;
+            var occurred = 0;
             var position = 0;
 
             //Loop through the string and get the position of the requiref occurrence
             for (counter = 1; counter <= occurrence; counter++)
             {
-                position = searchIn.IndexOf(searchFor, position);
+                position = searchIn.IndexOf(searchFor, position, StringComparison.Ordinal);
 
                 if (position < 0) break;
-                //Increment the occured counter based on the current mode we are in
-                occured++;
+                //Increment the occurred counter based on the current mode we are in
+                occurred++;
 
                 //Check if this is the occurrence we are looking for
-                if (occured == occurrence) return position + 1;
+                if (occurred == occurrence) return position + 1;
                 position++;
             }
             return 0;
@@ -302,7 +311,7 @@ namespace CODE.Framework.Core.Utilities
         /// <returns>Char that corresponds with the ascii code</returns>
         public static char Chr(int ansiCode)
         {
-            return (char)ansiCode;
+            return (char) ansiCode;
         }
 
         /// <summary>Receives a string as a parameter and counts the number of words in that string</summary>
@@ -312,7 +321,7 @@ namespace CODE.Framework.Core.Utilities
         /// </example>
         /// <param name="sourceString">String</param>
         /// <returns>Word Count</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static long GetWordCount(string sourceString)
         {
             int counter;
@@ -320,12 +329,12 @@ namespace CODE.Framework.Core.Utilities
             long wordCount = 0;
 
             //Begin by checking for the first word
-            if (!Char.IsWhiteSpace(sourceString[0])) wordCount++;
+            if (!char.IsWhiteSpace(sourceString[0])) wordCount++;
 
             //Now look for white spaces and count each word
             for (counter = 0; counter < length; counter++)
                 //Check for a space to begin counting a word
-                if (Char.IsWhiteSpace(sourceString[counter]))
+                if (char.IsWhiteSpace(sourceString[counter]))
                     //We think we encountered a word
                     //Remove any following white spaces if any after this word
                     do
@@ -333,7 +342,7 @@ namespace CODE.Framework.Core.Utilities
                         //Check if we have reached the limit and if so then exit the loop
                         counter++;
                         if (counter >= length) break;
-                        if (!Char.IsWhiteSpace(sourceString[counter]))
+                        if (!char.IsWhiteSpace(sourceString[counter]))
                         {
                             wordCount++;
                             break;
@@ -343,7 +352,10 @@ namespace CODE.Framework.Core.Utilities
         }
 
 
-        /// <summary>Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the number of words in that string.</summary>
+        /// <summary>
+        /// Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the
+        /// number of words in that string.
+        /// </summary>
         /// <example>
         /// string lcString = "Joe Doe is a good man";
         /// StringHelper.GetWordNumber(lcString, 5); // returns "good"
@@ -359,7 +371,10 @@ namespace CODE.Framework.Core.Utilities
             return wordPosition <= words.Length ? words[wordPosition - 1] : string.Empty;
         }
 
-        /// <summary>Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the number of words in that string.</summary>
+        /// <summary>
+        /// Based on the position specified, returns a word from a string. Receives a string as a parameter and counts the
+        /// number of words in that string.
+        /// </summary>
         /// <example>
         /// string lcString = "Joe Doe is a good man";
         /// StringHelper.GetWordNumber(lcString, 5); // returns "good"
@@ -379,7 +394,7 @@ namespace CODE.Framework.Core.Utilities
         public static bool IsAlpha(string expression)
         {
             //Check if the first character is a letter
-            return Char.IsLetter(expression[0]);
+            return char.IsLetter(expression[0]);
         }
 
         /// <summary>Returns the number of occurrences of a character within a string</summary>
@@ -389,15 +404,15 @@ namespace CODE.Framework.Core.Utilities
         /// <returns>Number of occurrences</returns>
         public static int Occurs(char character, string expression)
         {
-            int counter, occured = 0;
+            int counter, occurred = 0;
 
             //Loop through the string
             for (counter = 0; counter < expression.Length; counter++)
                 //Check if each expression is equal to the one we want to check against
                 if (expression[counter] == character)
                     //if  so increment the counter
-                    occured++;
-            return occured;
+                    occurred++;
+            return occurred;
         }
 
         /// <summary>Returns the number of occurrences of one string within another string</summary>
@@ -410,24 +425,27 @@ namespace CODE.Framework.Core.Utilities
         /// <returns>Number of occurrences</returns>
         public static int Occurs(string searchString, string stringSearched)
         {
-            int position = 0;
-            int occured = 0;
+            var position = 0;
+            var occurred = 0;
             do
             {
                 //Look for the search string in the expression
-                position = stringSearched.IndexOf(searchString, position);
+                position = stringSearched.IndexOf(searchString, position, StringComparison.Ordinal);
 
                 if (position < 0) break;
-                //Increment the occured counter based on the current mode we are in
-                occured++;
+                //Increment the occurred counter based on the current mode we are in
+                occurred++;
                 position++;
             } while (true);
 
             //Return the number of occurrences
-            return occured;
+            return occurred;
         }
 
-        /// <summary>Receives a string expression and a numeric value indicating number of time and replicates that string for the specified number of times.</summary>
+        /// <summary>
+        /// Receives a string expression and a numeric value indicating number of time and replicates that string for the
+        /// specified number of times.
+        /// </summary>
         /// <example>StringHelper.Replicate("Joe", 5); // returns JoeJoeJoeJoeJoe</example>
         /// <param name="expression">Expression</param>
         /// <param name="times">Number of times the string is to be replicated</param>
@@ -457,7 +475,7 @@ namespace CODE.Framework.Core.Utilities
         public static string SubStr(string expression, int startPosition, int length)
         {
             if (startPosition >= expression.Length) return string.Empty;
-            return (length + startPosition - 1) > expression.Length ? expression.Substring(startPosition - 1) : expression.Substring(startPosition - 1, length);
+            return length + startPosition - 1 > expression.Length ? expression.Substring(startPosition - 1) : expression.Substring(startPosition - 1, length);
         }
 
         /// <summary>Receives a string and converts it to an integer</summary>
@@ -471,22 +489,25 @@ namespace CODE.Framework.Core.Utilities
             var position = At(searchExpression, expressionSearched);
             if (position > 0 && position < expressionSearched.Length)
             {
-                string text = SubStr(expressionSearched, 1, position - 1);
+                var text = SubStr(expressionSearched, 1, position - 1);
                 counter = Occurs(@"\r", text) + 1;
             }
             return counter;
         }
 
-        /// <summary>Receives a string as a parameter and returns a bool indicating if the left most character in the string is a valid digit.</summary>
+        /// <summary>
+        ///     Receives a string as a parameter and returns a bool indicating if the left most character in the string is a
+        ///     valid digit.
+        /// </summary>
         /// <example>if(StringHelper.IsDigit("1Kamal")){...}	//returns true</example>
         /// <param name="sourceString">Expression</param>
         /// <returns>True or False</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
         public static bool IsDigit(string sourceString)
         {
             //get the first character in the string
             var chr = sourceString[0];
-            return Char.IsDigit(chr);
+            return char.IsDigit(chr);
         }
 
         /// <summary>Takes a fully qualified file name, and returns just the path</summary>
@@ -508,7 +529,7 @@ namespace CODE.Framework.Core.Utilities
             return string.Empty;
         }
 
-        /// <summary>Makes sure the secified path ends with a back-slash</summary>
+        /// <summary>Makes sure the specified path ends with a back-slash</summary>
         /// <param name="path">Path</param>
         /// <returns>Path with BS</returns>
         public static string AddBS(string path)

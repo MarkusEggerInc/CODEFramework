@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -88,6 +87,28 @@ namespace CODE.Framework.Wpf.Mvvm
         public static readonly DependencyProperty AutoHideButtonWhenNoActionsAreAvailableProperty = DependencyProperty.Register("AutoHideButtonWhenNoActionsAreAvailable", typeof(bool), typeof(ViewActionMenuButton), new PropertyMetadata(true, InvalidateActions));
 
         /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public IViewActionPolicy ViewActionPolicy
+        {
+            get { return (IViewActionPolicy)GetValue(ViewActionPolicyProperty); }
+            set { SetValue(ViewActionPolicyProperty, value); }
+        }
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public static readonly DependencyProperty ViewActionPolicyProperty = DependencyProperty.Register("ViewActionPolicy", typeof(IViewActionPolicy), typeof(ViewActionMenuButton), new PropertyMetadata(null));
+
+        /// <summary>
         /// Called when a <see cref="T:System.Windows.Controls.Button" /> is clicked.
         /// </summary>
         protected override void OnClick()
@@ -103,16 +124,31 @@ namespace CODE.Framework.Wpf.Mvvm
             var isFirst = true;
             foreach (var action in actions.Where(a => a.Availability == ViewActionAvailabilities.Available && a.Visibility == Visibility.Visible))
             {
-                var menuItem = new ViewActionMenuItem {DataContext = action, Command = action, Header = GetMenuTitle(action)};
+                var menuItem = new ViewActionMenuItem {DataContext = action, Command = action};
+                if (action.ActionView == null)
+                    menuItem.Header = GetMenuTitle(action);
+                else
+                {
+                    ElementHelper.DetachElementFromParent(action.ActionView);
+                    menuItem.Header = action.ActionView;
+                    if (action.ActionViewModel != null)
+                        action.ActionView.DataContext = action.ActionViewModel;
+                }
+
                 if (!isFirst && action.BeginGroup) menu.Items.Add(new Separator());
                 if (action.ViewActionType == ViewActionTypes.Toggle)
                 {
                     menuItem.IsCheckable = true;
-                    menuItem.SetBinding(MenuItem.IsCheckedProperty, new Binding("IsChecked") { Source = action });
+                    menuItem.IsChecked = action.IsChecked;
+                    //menuItem.SetBinding(MenuItem.IsCheckedProperty, new Binding("IsChecked") {Source = action});
                 }
                 var realAction = action as ViewAction;
                 if (realAction != null && realAction.HasBrush)
-                    menuItem.Icon = new ViewActionMenuIcon(realAction.PopulatedBrush);
+                {
+                    var icon = new ThemeIcon {FallbackIconResourceKey = string.Empty};
+                    icon.SetBinding(ThemeIcon.IconResourceKeyProperty, new Binding("BrushResourceKey"));
+                    menuItem.Icon = icon;
+                }
                 HandleMenuShortcutKey(menuItem, action);
                 menu.Items.Add(menuItem);
                 isFirst = false;
@@ -123,7 +159,7 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
-        /// Detirmines the display title of a menu item
+        /// Determines the display title of a menu item
         /// </summary>
         /// <param name="action">The category.</param>
         /// <returns>Title</returns>
@@ -213,6 +249,7 @@ namespace CODE.Framework.Wpf.Mvvm
             if (Actions != null)
             {
                 if (AutoHideButtonWhenNoActionsAreAvailable && Visibility != Visibility.Visible) Visibility = Visibility.Visible;
+                if (ViewActionPolicy != null) return ViewActionPolicy.ProcessActions(Actions);
                 return Actions;
             }
 
@@ -222,6 +259,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 if (actions != null)
                 {
                     if (AutoHideButtonWhenNoActionsAreAvailable && Visibility != Visibility.Visible) Visibility = Visibility.Visible;
+                    if (ViewActionPolicy != null) return ViewActionPolicy.ProcessActions(actions);
                     return actions;
                 }
             }

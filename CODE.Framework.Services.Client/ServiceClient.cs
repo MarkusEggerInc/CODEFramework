@@ -214,6 +214,12 @@ namespace CODE.Framework.Services.Client
                 case "normal":
                     size = MessageSize.Normal;
                     break;
+                case "verylarge":
+                    size = MessageSize.VeryLarge;
+                    break;
+                case "max":
+                    size = MessageSize.Max;
+                    break;
             }
 
             if (CacheSettings)
@@ -1006,14 +1012,16 @@ namespace CODE.Framework.Services.Client
                     }
                     catch (Exception ex2)
                     {
-                        if (ChannelException != null)
-                            ChannelException(null, new ChannelExceptionEventArgs(null, ex2));
+                        var channelException = ChannelException;
+                        if (channelException != null)
+                            channelException(null, new ChannelExceptionEventArgs(null, ex2));
                         return null;
                     }
                 }
 
-                if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(null, ex));
+                var channelException2 = ChannelException;
+                if (channelException2 != null)
+                    channelException2(null, new ChannelExceptionEventArgs(null, ex));
 
                 return null;
             }
@@ -1763,6 +1771,8 @@ namespace CODE.Framework.Services.Client
         /// <returns>TCP/IP channel</returns>
         private static TServiceType GetInternalNetTcpChannel<TServiceType>(int port, string serviceId, MessageSize messageSize, string baseAddress, string basePath, bool useCachedChannel) where TServiceType : class
         {
+            var serviceFullAddress = GetSetting("ServiceUrl:" + serviceId);
+
             // Checking parameter values
             if (serviceId == null) serviceId = GetServiceId<TServiceType>();
             if (messageSize == MessageSize.Undefined) messageSize = GetMessageSize<TServiceType>();
@@ -1786,8 +1796,25 @@ namespace CODE.Framework.Services.Client
             ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(messageSize, binding);
 
             if (!string.IsNullOrEmpty(basePath) && !basePath.EndsWith("/")) basePath += "/";
-            var serviceFullAddress = "net.tcp://" + baseAddress + ":" + port + "/" + basePath + serviceId;
+            if (string.IsNullOrEmpty(serviceFullAddress))
+                serviceFullAddress = "net.tcp://" + baseAddress + ":" + port + "/" + basePath + serviceId;
 
+            // We allow fiddling of the endpoint address by means of an event
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
+            {
+                var endpointEventArgs = new EndpointAddedEventArgs
+                {
+                    ServiceFullAddress = serviceFullAddress,
+                    Binding = binding,
+                    ContractType = typeof (TServiceType),
+                    ServiceId = serviceId
+                };
+                beforeEndpointAdded(null, endpointEventArgs);
+                serviceFullAddress = endpointEventArgs.ServiceFullAddress;
+            }
+
+            // Finally, we create the new endpoint
             var endpoint = new EndpointAddress(serviceFullAddress);
 
             TServiceType proxy = null;
@@ -1798,8 +1825,9 @@ namespace CODE.Framework.Services.Client
                 var channel = proxy as IClientChannel;
                 if (channel != null)
                 {
-                    if (BeforeChannelOpens != null)
-                        BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
+                    var beforeChannelOpens = BeforeChannelOpens;
+                    if (beforeChannelOpens != null)
+                        beforeChannelOpens(null, new BeforeChannelOpensEventArgs
                             {
                                 Channel = channel,
                                 BaseAddress = baseAddress,
@@ -1834,6 +1862,11 @@ namespace CODE.Framework.Services.Client
         /// Event fires before a channel opens (can be used to programmatically configure a channel if need be)
         /// </summary>
         public static event EventHandler<BeforeChannelOpensEventArgs> BeforeChannelOpens;
+
+        /// <summary>
+        /// Fires before a new endpoint is added (can be used to manipulate the client before it is opened)
+        /// </summary>
+        public static event EventHandler<EndpointAddedEventArgs> BeforeEndpointAdded;
 
         /// <summary>
         /// Creates a channel using a (potentially cached) channel factory
@@ -2203,6 +2236,25 @@ namespace CODE.Framework.Services.Client
             var binding = new BasicHttpBinding(securityMode) {SendTimeout = new TimeSpan(0, 10, 0)};
             ServiceHelper.ConfigureMessageSizeOnBasicHttpBinding(messageSize, binding);
 
+            // We allow for an override of the URL
+            serviceFullAddress = GetSetting("ServiceFullUrl:" + interfaceName, defaultValue: serviceFullAddress);
+
+            // We allow fiddling of the endpoint address by means of an event
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
+            {
+                var endpointEventArgs = new EndpointAddedEventArgs
+                {
+                    ServiceFullAddress = serviceFullAddress,
+                    Binding = binding,
+                    ContractType = typeof(TServiceType),
+                    ServiceId = serviceId
+                };
+                beforeEndpointAdded(null, endpointEventArgs);
+                serviceFullAddress = endpointEventArgs.ServiceFullAddress;
+            }
+
+            // Finally, we create the new endpoint
             var endpoint = new EndpointAddress(serviceFullAddress);
 
             TServiceType proxy = null;
@@ -2468,7 +2520,6 @@ namespace CODE.Framework.Services.Client
 
                 return false;
             }
-            return false;
         }
 
         /// <summary>
@@ -2787,6 +2838,22 @@ namespace CODE.Framework.Services.Client
             var binding = new WSHttpBinding(securityMode) { SendTimeout = new TimeSpan(0, 10, 0) };
             ServiceHelper.ConfigureMessageSizeOnWsHttpBinding(messageSize, binding);
 
+            // We allow fiddling of the endpoint address by means of an event
+            var beforeEndpointAdded = BeforeEndpointAdded;
+            if (beforeEndpointAdded != null)
+            {
+                var endpointEventArgs = new EndpointAddedEventArgs
+                {
+                    ServiceFullAddress = serviceFullAddress,
+                    Binding = binding,
+                    ContractType = typeof(TServiceType),
+                    ServiceId = serviceId
+                };
+                beforeEndpointAdded(null, endpointEventArgs);
+                serviceFullAddress = endpointEventArgs.ServiceFullAddress;
+            }
+
+            // Finally, we create the new endpoint
             var endpoint = new EndpointAddress(serviceFullAddress);
 
             TServiceType proxy = null;
@@ -3094,6 +3161,33 @@ namespace CODE.Framework.Services.Client
         /// Contract type of the channel
         /// </summary>
         public Type ChannelType { get; set; }
+    }
+
+    /// <summary>
+    /// Event arguments for added endpoints
+    /// </summary>
+    public class EndpointAddedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Full address the service will be hosted at
+        /// </summary>
+        /// <remarks>This address can be changed to change the actual address the service is hosted at</remarks>
+        public string ServiceFullAddress { get; set; }
+
+        /// <summary>
+        /// Utilized binding
+        /// </summary>
+        public Binding Binding { get; internal set; }
+
+        /// <summary>
+        /// Service contract type
+        /// </summary>
+        public Type ContractType { get; internal set; }
+
+        /// <summary>
+        /// Service ID (name of the interface, typically)
+        /// </summary>
+        public string ServiceId { get; set; }
     }
 
     /// <summary>

@@ -111,7 +111,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Populates the current ribbon with items based on the actions collection
         /// </summary>
-        private void PopulateStack()
+        protected virtual void PopulateStack()
         {
             var actions = Model as IHaveActions;
             var viewResult = SelectedView as ViewResult;

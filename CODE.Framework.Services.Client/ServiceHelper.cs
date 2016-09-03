@@ -30,6 +30,22 @@ namespace CODE.Framework.Services.Client
                 binding.ReaderQuotas.MaxArrayLength = binding.MaxBufferSize;
                 binding.ReaderQuotas.MaxStringContentLength = binding.MaxBufferSize;
             }
+            else if (messageSize == MessageSize.VeryLarge)
+            {
+                binding.MaxBufferSize = 1024 * 1024 * 1024; // 1GB
+                binding.MaxBufferPoolSize = binding.MaxBufferSize;
+                binding.MaxReceivedMessageSize = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxArrayLength = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxStringContentLength = binding.MaxBufferSize;
+            }
+            else if (messageSize == MessageSize.Max)
+            {
+                binding.MaxBufferSize = int.MaxValue;
+                binding.MaxBufferPoolSize = binding.MaxBufferSize;
+                binding.MaxReceivedMessageSize = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxArrayLength = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxStringContentLength = binding.MaxBufferSize;
+            }
         }
 
         /// <summary>
@@ -55,6 +71,22 @@ namespace CODE.Framework.Services.Client
                 binding.ReaderQuotas.MaxArrayLength = binding.MaxBufferSize;
                 binding.ReaderQuotas.MaxStringContentLength = binding.MaxBufferSize;
             }
+            else if (messageSize == MessageSize.VeryLarge)
+            {
+                binding.MaxBufferSize = 1024 * 1024 * 1024; // 1GB
+                binding.MaxBufferPoolSize = binding.MaxBufferSize;
+                binding.MaxReceivedMessageSize = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxArrayLength = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxStringContentLength = binding.MaxBufferSize;
+            }
+            else if (messageSize == MessageSize.Max)
+            {
+                binding.MaxBufferSize = int.MaxValue;
+                binding.MaxBufferPoolSize = binding.MaxBufferSize;
+                binding.MaxReceivedMessageSize = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxArrayLength = binding.MaxBufferSize;
+                binding.ReaderQuotas.MaxStringContentLength = binding.MaxBufferSize;
+            }
         }
 
         /// <summary>
@@ -74,6 +106,20 @@ namespace CODE.Framework.Services.Client
             else if (messageSize == MessageSize.Large)
             {
                 binding.MaxBufferPoolSize = 1024 * 1024 * 100; // 100MB
+                binding.MaxReceivedMessageSize = binding.MaxBufferPoolSize;
+                binding.ReaderQuotas.MaxArrayLength = (int)binding.MaxBufferPoolSize;
+                binding.ReaderQuotas.MaxStringContentLength = (int)binding.MaxBufferPoolSize;
+            }
+            else if (messageSize == MessageSize.VeryLarge)
+            {
+                binding.MaxBufferPoolSize = 1024 * 1024 * 1024; // 1GB
+                binding.MaxReceivedMessageSize = binding.MaxBufferPoolSize;
+                binding.ReaderQuotas.MaxArrayLength = (int)binding.MaxBufferPoolSize;
+                binding.ReaderQuotas.MaxStringContentLength = (int)binding.MaxBufferPoolSize;
+            }
+            else if (messageSize == MessageSize.Max)
+            {
+                binding.MaxBufferPoolSize = int.MaxValue;
                 binding.MaxReceivedMessageSize = binding.MaxBufferPoolSize;
                 binding.ReaderQuotas.MaxArrayLength = (int)binding.MaxBufferPoolSize;
                 binding.ReaderQuotas.MaxStringContentLength = (int)binding.MaxBufferPoolSize;

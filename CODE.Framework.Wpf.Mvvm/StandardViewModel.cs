@@ -75,6 +75,15 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Logo Element 2</summary>
         Brush Logo2 { get; set; }
+
+        /// <summary>Checked or selected flag</summary>
+        bool IsChecked { get; set; }
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        Brush Color1 { get; set; }
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        Brush Color2 { get; set; }
     }
 
     /// <summary>Standard view model class based on IStandardViewModel</summary>
@@ -86,11 +95,33 @@ namespace CODE.Framework.Wpf.Mvvm
         public StandardViewModel()
         {
             PropertyChanged += (s, e) =>
-                                   {
-                                       if (_inBrushUpdating) return;
-                                       if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.StartsWith("Image") || e.PropertyName.StartsWith("Logo"))
-                                           CheckAllBrushesForResources(e.PropertyName);
-                                   };
+            {
+                if (_inBrushUpdating) return;
+                if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.StartsWith("Image") || e.PropertyName.StartsWith("Logo"))
+                    CheckAllBrushesForResources(e.PropertyName);
+            };
+
+            var appEx = Application.Current as ApplicationEx;
+            if (appEx != null)
+                appEx.ThemeSwitched += (s, e) =>
+                {
+                    if (DefaultBrushSharingContextCollection != null) DefaultBrushSharingContextCollection.Clear();
+
+                    if (!string.IsNullOrEmpty(_image1LoadedFromBrushResource))
+                        LoadSharedImage1FromBrushResource(_image1LoadedFromBrushResource);
+                    if (!string.IsNullOrEmpty(_image2LoadedFromBrushResource))
+                        LoadSharedImage2FromBrushResource(_image2LoadedFromBrushResource);
+                    if (!string.IsNullOrEmpty(_image3LoadedFromBrushResource))
+                        LoadSharedImage3FromBrushResource(_image3LoadedFromBrushResource);
+                    if (!string.IsNullOrEmpty(_image4LoadedFromBrushResource))
+                        LoadSharedImage4FromBrushResource(_image4LoadedFromBrushResource);
+                    if (!string.IsNullOrEmpty(_image5LoadedFromBrushResource))
+                        LoadSharedImage5FromBrushResource(_image5LoadedFromBrushResource);
+                    if (!string.IsNullOrEmpty(_logo1LoadedFromBrushResource))
+                        LoadSharedLogo1FromBrushResource(_logo1LoadedFromBrushResource);
+                    if (!string.IsNullOrEmpty(_logo2LoadedFromBrushResource))
+                        LoadSharedLogo2FromBrushResource(_logo2LoadedFromBrushResource);
+                };
         }
 
         private string _text1 = string.Empty;
@@ -132,12 +163,16 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Key 1 (not used for display but can be used as an internal identifier)</summary>
         public Guid Key1 { get; set; }
+
         /// <summary>Key 2 (not used for display but can be used as an internal identifier)</summary>
         public Guid Key2 { get; set; }
+
         /// <summary>Key 3 (not used for display but can be used as an internal identifier)</summary>
         public Guid Key3 { get; set; }
+
         /// <summary>Key 4 (not used for display but can be used as an internal identifier)</summary>
         public Guid Key4 { get; set; }
+
         /// <summary>Key 5 (not used for display but can be used as an internal identifier)</summary>
         public Guid Key5 { get; set; }
 
@@ -391,6 +426,42 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
+        /// Checked or selected flag
+        /// </summary>
+        /// <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+        public bool IsChecked
+        {
+            get { return _isChecked; }
+            set
+            {
+                _isChecked = value; 
+                NotifyChanged("IsChecked");
+            }
+        }
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public Brush Color1
+        {
+            get { return _color1; }
+            set
+            {
+                _color1 = value; 
+                NotifyChanged("Color1");
+            }
+        }
+
+        /// <summary>Generic color setting (expressed as a brush)</summary>
+        public Brush Color2
+        {
+            get { return _color2; }
+            set
+            {
+                _color2 = value; 
+                NotifyChanged("Color2");
+            }
+        }
+
+        /// <summary>
         /// Internal resource context (used to resolve XAML resources for icons)
         /// </summary>
         public FrameworkElement ResourceContextObject
@@ -419,53 +490,53 @@ namespace CODE.Framework.Wpf.Mvvm
 
             if (!_image1BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Image1"))
                 If.Real<DrawingBrush>(Image1, drawing =>
-                                                  {
-                                                      ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                      _image1BrushChecked = true;
-                                                      NotifyChanged("Image1");
-                                                  });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _image1BrushChecked = true;
+                    NotifyChanged("Image1");
+                });
             if (!_image2BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Image2"))
                 If.Real<DrawingBrush>(Image2, drawing =>
-                                                  {
-                                                      ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                      _image2BrushChecked = true;
-                                                      NotifyChanged("Image2");
-                                                  });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _image2BrushChecked = true;
+                    NotifyChanged("Image2");
+                });
             if (!_image3BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Image3"))
                 If.Real<DrawingBrush>(Image3, drawing =>
-                                                  {
-                                                      ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                      _image3BrushChecked = true;
-                                                      NotifyChanged("Image3");
-                                                  });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _image3BrushChecked = true;
+                    NotifyChanged("Image3");
+                });
             if (!_image4BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Image4"))
                 If.Real<DrawingBrush>(Image4, drawing =>
-                                                  {
-                                                      ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                      _image4BrushChecked = true;
-                                                      NotifyChanged("Image4");
-                                                  });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _image4BrushChecked = true;
+                    NotifyChanged("Image4");
+                });
             if (!_image5BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Image5"))
                 If.Real<DrawingBrush>(Image5, drawing =>
-                                                  {
-                                                      ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                      _image5BrushChecked = true;
-                                                      NotifyChanged("Image5");
-                                                  });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _image5BrushChecked = true;
+                    NotifyChanged("Image5");
+                });
             if (!_logo1BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Logo1"))
                 If.Real<DrawingBrush>(Logo1, drawing =>
-                                                 {
-                                                     ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                     _logo1BrushChecked = true;
-                                                     NotifyChanged("Logo1");
-                                                 });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _logo1BrushChecked = true;
+                    NotifyChanged("Logo1");
+                });
             if (!_logo2BrushChecked && (string.IsNullOrEmpty(propertyName) || propertyName == "Logo2"))
                 If.Real<DrawingBrush>(Logo2, drawing =>
-                                                 {
-                                                     ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
-                                                     _logo2BrushChecked = true;
-                                                     NotifyChanged("Logo2");
-                                                 });
+                {
+                    ResourceHelper.ReplaceDynamicDrawingBrushResources(drawing, brushResources);
+                    _logo2BrushChecked = true;
+                    NotifyChanged("Logo2");
+                });
 
             _inBrushUpdating = false;
         }
@@ -504,9 +575,12 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _image1BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
-            
+            _image1LoadedFromBrushResource = resourceName;
+
             Image1 = sharingContextCollection[resourceName];
         }
+
+        private string _image1LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image2</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -520,9 +594,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _image2BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
+            _image2LoadedFromBrushResource = resourceName;
 
             Image2 = sharingContextCollection[resourceName];
         }
+        private string _image2LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image3</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -536,9 +612,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _image3BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
+            _image3LoadedFromBrushResource = resourceName;
 
             Image3 = sharingContextCollection[resourceName];
         }
+        private string _image3LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image4</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -552,9 +630,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _image4BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
+            _image4LoadedFromBrushResource = resourceName;
 
             Image4 = sharingContextCollection[resourceName];
         }
+        private string _image4LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image5</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -568,9 +648,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _image5BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
+            _image5LoadedFromBrushResource = resourceName;
 
             Image5 = sharingContextCollection[resourceName];
         }
+        private string _image5LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -584,9 +666,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _logo1BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
+            _logo1LoadedFromBrushResource = resourceName;
 
             Logo1 = sharingContextCollection[resourceName];
         }
+        private string _logo1LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -600,11 +684,40 @@ namespace CODE.Framework.Wpf.Mvvm
                 sharingContextCollection.Add(resourceName, GetBrushFromResource(resourceName));
             else
                 _image2BrushChecked = true; // We are reusing an existing brush, so we do not need to re-check it again
+            _logo2LoadedFromBrushResource = resourceName;
 
-            Image2 = sharingContextCollection[resourceName];
+            Logo2 = sharingContextCollection[resourceName];
         }
+        private string _logo2LoadedFromBrushResource;
+        private bool _isChecked;
+        private Brush _color1;
+        private Brush _color2;
 
         /// <summary>Default sharing context collection</summary>
         private static readonly Dictionary<string, Brush> DefaultBrushSharingContextCollection = new Dictionary<string, Brush>();
+    }
+
+    /// <summary>
+    /// Standard view model class with an additional Data property that can be used to attach any kind of additional source data object
+    /// </summary>
+    /// <typeparam name="TData">The type of the Data property.</typeparam>
+    /// <seealso cref="CODE.Framework.Wpf.Mvvm.StandardViewModel" />
+    public class StandardViewModel<TData> : StandardViewModel
+    {
+        private TData _data;
+
+        /// <summary>
+        /// Original data object
+        /// </summary>
+        /// <value>The data.</value>
+        public TData Data
+        {
+            get { return _data; }
+            set
+            {
+                _data = value; 
+                NotifyChanged("Data");
+            }
+        }
     }
 }

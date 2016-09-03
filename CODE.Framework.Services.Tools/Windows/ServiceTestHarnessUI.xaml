@@ -114,7 +114,7 @@
                                 <Border Background="Red" Opacity=".2" Grid.ColumnSpan="6" Visibility="{Binding NullElementVisible}" />
                                 <Rectangle Fill="{DynamicResource CollectionPropertyIcon}" Height="16" Width="16" Grid.Column="0" />
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Name}" Grid.Column="1" />
-                                <Button Content="+" Margin="0,1,0,1" ToolTip="Add item to list" Width="22" Grid.Column="3" HorizontalAlignment="Left"  Click="AddItemToList" />
+                                <Button Content="+" Margin="0,1,0,1" ToolTip="Add item to list" Width="22" Grid.Column="3" HorizontalAlignment="Left" Click="AddItemToList" />
                                 <TextBlock VerticalAlignment="Center" Text="{Binding MemberTypeFullText}" Grid.Column="4" Visibility="{Binding TypeVisible}" Margin="0,0,8,0" />
                                 <Rectangle Fill="{DynamicResource WarningIcon}" Height="22" Width="22" Margin="2,1,4,1" Grid.Column="5" Visibility="{Binding NullElementVisible}" ToolTip="The value of this member is NULL. This element should be set to a proper default value in the contract." />
                             </Grid>

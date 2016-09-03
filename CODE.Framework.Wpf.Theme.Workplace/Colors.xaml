@@ -20,6 +20,8 @@
     <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">#262626</Color>
     <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Transparent</Color>
 
+    <Color x:Key="CODE.Framework-Application-ValidationErrorColor">DarkRed</Color>
+
     <!-- Ribbon Colors -->
     <Color x:Key="CODE.Framework-Application-RibbonSelectedPageBackgroundColor">#F0F0F0</Color>
     <Color x:Key="CODE.Framework-Application-RibbonUnselectedHeaderForegroundColor">#F8F8F8</Color>
@@ -37,6 +39,24 @@
     <Color x:Key="CODE.Framework-Workplace-StatusWarningForegroundColor">White</Color>
     <Color x:Key="CODE.Framework-Workplace-StatusErrorBackgroundColor">DarkRed</Color>
     <Color x:Key="CODE.Framework-Workplace-StatusErrorForegroundColor">White</Color>
+
+    <!-- Standard Office Colors -->
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Blue">#99BFE5</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Yellow">#F2D175</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Green">#89D19F</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Red">#F3A5A5</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Purple">#D5A5D2</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Cyan">#98CFDE</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Orange">#F0B77F</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Magenta">#F1A7D0</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-BlueMist">#9EB1E0</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-PurpleMist">#B3AEDE</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Tan">#D3B197</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-LemonLime">#C0D981</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Apple">#AAD48A</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Teal">#87D3C1</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-RedChalk">#F0B4B4</Color>
+    <Color x:Key="CODE.Framework-Workplace-StandardColor-Silver">#C2C8CE</Color>
 
 
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
@@ -57,6 +77,8 @@
 
     <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ValidationErrorBrush" Color="{DynamicResource CODE.Framework-Application-ValidationErrorColor}" />
 
     <!-- Application status bar -->
     <SolidColorBrush x:Key="CODE.Framework-Workplace-StatusReadyForegroundBrush" Color="{DynamicResource CODE.Framework-Workplace-StatusReadyForegroundColor}" />

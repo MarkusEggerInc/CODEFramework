@@ -107,7 +107,7 @@
                                 <controls:CloseButton/>
                             </StackPanel>
                         </Grid>
-                        <mvvm:ViewActionMenu Model="{Binding}" SelectedView="{Binding Path=SelectedItem, ElementName=OpenViews, Mode=OneWay}" Grid.Row="1" ForceTopLevelMenuItemsUpperCase="True" />
+                        <mvvm:ViewActionMenu Model="{Binding}" SelectedView="{Binding Path=SelectedItem, ElementName=OpenViews, Mode=OneWay}" Grid.Row="1" ForceTopLevelMenuItemsUpperCase="False" />
                         <mvvm:ViewActionToolbar Model="{Binding}" SelectedView="{Binding Path=SelectedItem, ElementName=OpenViews, Mode=OneWay}" Grid.Row="2" x:Name="toolbar" Margin="7,2,2,2" />
                         <mvvm:ViewHostTabControl x:Name="OpenViews" Grid.Row="3" Margin="2,4,2,2"
                                                  ItemsSource="{TemplateBinding NormalViews}"
@@ -324,7 +324,7 @@
                 <ControlTemplate TargetType="mvvm:ViewActionToolbarButton">
                     <Grid controls:GridEx.ColumnWidths="Auto,Auto">
                         <Border x:Name="highlight" Background="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush1}" BorderBrush="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush2}" BorderThickness="1" Visibility="Hidden" Grid.ColumnSpan="2" />
-                        <Rectangle Height="14" Width="14" Fill="{Binding Action.Brush, RelativeSource={RelativeSource TemplatedParent}}" x:Name="icon" Margin="4" />
+                        <mvvm:ThemeIcon IconResourceKey="{Binding Action.BrushResourceKey, RelativeSource={RelativeSource TemplatedParent}}" Height="14" Width="14" x:Name="icon" Margin="4" />
                         <TextBlock Text="{TemplateBinding Title}" FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}" Grid.Column="1" VerticalAlignment="Center" Margin="4,2" x:Name="title" />
                     </Grid>
                     <ControlTemplate.Triggers>

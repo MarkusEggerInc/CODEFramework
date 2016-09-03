@@ -27,7 +27,5 @@
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
     </Style>
-
-    <Style TargetType="mvvm:ViewActionMenuIcon"/>
     
 </ResourceDictionary>

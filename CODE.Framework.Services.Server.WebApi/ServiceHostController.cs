@@ -30,7 +30,6 @@ namespace CODE.Framework.Services.Server.WebApi
             _host = new TServiceImplementation();
         }
 
-
         /// <summary>
         /// Returns the first contract (interface) implemented by TServiceImplementation.
         /// Override this method to specify a different interface.
@@ -41,7 +40,6 @@ namespace CODE.Framework.Services.Server.WebApi
         {
             return null;
         }
-
 
         /// <summary>
         /// execute as an asynchronous operation.

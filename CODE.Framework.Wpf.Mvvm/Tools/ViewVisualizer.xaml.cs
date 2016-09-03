@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using CODE.Framework.Core.Utilities;
-using CODE.Framework.Core.Utilities.Extensions;
 
 namespace CODE.Framework.Wpf.Mvvm.Tools
 {
@@ -455,7 +454,7 @@ namespace CODE.Framework.Wpf.Mvvm.Tools
                 var result = new List<ResourceItem>();
                 if (ViewObject != null && ViewObject.Resources != null)
                     foreach (var dictionary in ViewObject.Resources.MergedDictionaries)
-                        result.Add(new ResourceItem {Name = dictionary.Source.ToStringSafe()});
+                        result.Add(new ResourceItem {Name = StringHelper.ToStringSafe(dictionary.Source)});
                 return result;
             }
         }

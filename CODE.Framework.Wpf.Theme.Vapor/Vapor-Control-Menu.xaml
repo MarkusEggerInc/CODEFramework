@@ -116,8 +116,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="mvvm:ViewActionMenuIcon"/>
-
     <!-- This is a regular menu item -->
     <ControlTemplate x:Key="VaporSubmenuItem" TargetType="MenuItem">
         <Grid SnapsToDevicePixels="true">

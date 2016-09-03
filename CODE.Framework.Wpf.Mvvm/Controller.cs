@@ -105,13 +105,14 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="action">Action to be called on the controller</param>
         /// <param name="routeValues">Additional parameters passed to the controller</param>
         /// <param name="eventSinks">Object containing the event handlers that are to be attached to the view result (if the result is in fact a view result)</param>
+        /// <param name="executeViewHandlers">Defines whether registered view-handlers are to immediately execute and thus try to show the new result</param>
         /// <returns>Request context (can be ignored except for special cases)</returns>
         /// <example>
         /// Controller.Action("Customer", "List"); // Invokes CustomerController.List
         /// var context = Controller.Action("Customer", "List"); // Invokes CustomerController.List and retrieves the context
         /// Controller.Action("Customer", "Detail", new {id = x}); // Invokes CustomerController.Detail(id) and passes a parameter called "id")
         /// </example>
-        public static RequestContext Action(string controller = "Home", string action = "Index", dynamic routeValues = null, ViewResultEventSinks eventSinks = null)
+        public static RequestContext Action(string controller = "Home", string action = "Index", dynamic routeValues = null, ViewResultEventSinks eventSinks = null, bool executeViewHandlers = true)
         {
             if (!controller.EndsWith("Controller")) controller += "Controller";
 
@@ -139,7 +140,7 @@ namespace CODE.Framework.Wpf.Mvvm
                         openable.RaiseOpeningEvent();
                 }
 
-                ExecuteViewHandlers(context);
+                if (executeViewHandlers) ExecuteViewHandlers(context);
 
                 if (viewResult != null)
                 {
@@ -1285,6 +1286,22 @@ namespace CODE.Framework.Wpf.Mvvm
             {
                 _viewTitle = value;
                 OnPropertyChanged("ViewTitle");
+            }
+        }
+
+        /// <summary>
+        /// Group title
+        /// </summary>
+        /// <value>The group title.</value>
+        public string GroupTitle
+        {
+            get
+            {
+                if (View == null) return ViewTitle;
+                var groupTitle = SimpleView.GetGroupTitle(View);
+                if (string.IsNullOrEmpty(groupTitle)) groupTitle = SimpleView.GetGroup(View);
+                if (string.IsNullOrEmpty(groupTitle)) return ViewTitle;
+                return groupTitle;
             }
         }
 

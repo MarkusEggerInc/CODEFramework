@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using CODE.Framework.Wpf.Layout;
@@ -32,28 +33,28 @@ namespace CODE.Framework.Wpf.Controls
             if ((bool)args.NewValue)
             {
                 // Switching back into docked mode
-                if (host._floatWindow == null) return;
-                var content = host._floatWindow.Content;
-                host._floatWindow.Content = null;
+                if (host.FloatWindow == null) return;
+                var content = host.FloatWindow.Content;
+                host.FloatWindow.Content = null;
                 if (content != null)
                 {
                     host.Content = content;
                     host.Visibility = host.ContentVisibility;
                 }
-                if (!host._windowClosing)
+                if (!host.WindowClosing)
                 {
-                    host._floatWindow.Close();
-                    host._floatWindow = null;
+                    host.FloatWindow.Close();
+                    host.FloatWindow = null;
                 }
             }
             else
             {
                 // Switching into float mode
-                if (host._floatWindow == null)
+                if (host.FloatWindow == null)
                 {
-                    host._floatWindow = new FloatingDockWindow(host);
+                    host.FloatWindow = new FloatingDockWindow(host);
                     if (host.FloatWindowStyle != null)
-                        host._floatWindow.Style = host.FloatWindowStyle;
+                        host.FloatWindow.Style = host.FloatWindowStyle;
                 }
 
                 var content = host.Content;
@@ -61,46 +62,22 @@ namespace CODE.Framework.Wpf.Controls
                 host.Visibility = Visibility.Collapsed;
                 if (content != null)
                 {
-                    host._floatWindow.Content = content;
-                    host._floatWindow.Show();
+                    host.FloatWindow.Content = content;
+                    host.FloatWindow.Show();
                 }
             }
         }
 
-        private FloatingDockWindow _floatWindow;
-
         /// <summary>
         /// Potential reference to the window used to host the floating content
         /// </summary>
-        public FloatingDockWindow FloatWindow
-        {
-            get
-            {
-                return _floatWindow;
-            }
-            set
-            {
-                _floatWindow = value;
-            }
-        }
-
-        private bool _windowClosing;
+        public FloatingDockWindow FloatWindow { get; set; }
 
         /// <summary>
         /// True when the window is in the process of being closed
         /// </summary>
         /// <value><c>true</c> if [window closing]; otherwise, <c>false</c>.</value>
-        public bool WindowClosing
-        {
-            get
-            {
-                return _windowClosing;
-            }
-            set
-            {
-                _windowClosing = value;
-            }
-        }
+        public bool WindowClosing { get; set; }
 
         /// <summary>Gets or sets the title.</summary>
         /// <value>The title.</value>
@@ -118,7 +95,7 @@ namespace CODE.Framework.Wpf.Controls
         {
             var host = d as DockHost;
             if (host == null) return;
-            if (host._floatWindow != null) host._floatWindow.Title = args.NewValue.ToString();
+            if (host.FloatWindow != null) host.FloatWindow.Title = args.NewValue.ToString();
         }
 
         /// <summary>Style for the floating window</summary>
@@ -162,8 +139,8 @@ namespace CODE.Framework.Wpf.Controls
                 var newVisibility = (Visibility)args.NewValue;
                 if (newVisibility == Visibility.Visible)
                 {
-                    if (host._floatWindow != null)
-                        host._floatWindow.Show();
+                    if (host.FloatWindow != null)
+                        host.FloatWindow.Show();
                     else
                     {
                         // We do not have a window yet, so we simply take the content back in place (this is unlikely to happen)
@@ -210,10 +187,16 @@ namespace CODE.Framework.Wpf.Controls
         /// <param name="multiPanel">The multi panel parent container.</param>
         /// <param name="title">The title.</param>
         /// <param name="oldChildIndex">Old index of the child in the multi panel.</param>
-        public FloatingDockWindow(MultiPanel multiPanel, string title, int oldChildIndex)
+        /// <param name="originalParent">The panel the child was originally in</param>
+        /// <param name="mergedDictionaries">Potential mergedDictionaries to be added to the new window's resources</param>
+        public FloatingDockWindow(Panel multiPanel, string title, int oldChildIndex, ItemsControl originalParent, IEnumerable<ResourceDictionary> mergedDictionaries = null)
         {
             DataContext = multiPanel.DataContext;
             Title = title;
+
+            if (mergedDictionaries != null)
+                foreach (var mergedDictionary in mergedDictionaries)
+                    Resources.MergedDictionaries.Add(mergedDictionary);
 
             Closing += (o, e) =>
             {
@@ -223,11 +206,32 @@ namespace CODE.Framework.Wpf.Controls
                     Content = null;
                     if (content != null)
                     {
-                        multiPanel.Children.Insert(oldChildIndex, content);
-                        multiPanel.InvalidateArrange();
-                        multiPanel.InvalidateMeasure();
-                        multiPanel.InvalidateVisual();
+                        if (originalParent == null)
+                        {
+                            if (oldChildIndex <= multiPanel.Children.Count)
+                                multiPanel.Children.Insert(oldChildIndex, content);
+                            else
+                                multiPanel.Children.Add(content);
+                            multiPanel.InvalidateArrange();
+                            multiPanel.InvalidateMeasure();
+                            multiPanel.InvalidateVisual();
+                        }
+                        else
+                        {
+                            // The panels appears to be used as a items panel template
+                            if (oldChildIndex <= originalParent.Items.Count)
+                                originalParent.Items.Insert(oldChildIndex, content);
+                            else
+                                originalParent.Items.Add(content);
+                            originalParent.InvalidateArrange();
+                            originalParent.InvalidateMeasure();
+                            originalParent.InvalidateVisual();
+                        }
                     }
+
+                    var dockResponder = Content as IDockResponder;
+                    if (dockResponder != null)
+                        dockResponder.OnDocked();
                 }
             };
         }
@@ -266,5 +270,21 @@ namespace CODE.Framework.Wpf.Controls
 
             base.OnClick();
         }
+    }
+
+    /// <summary>
+    /// This interface can be implemented by elements that want to respond to docking scenarios
+    /// </summary>
+    public interface IDockResponder
+    {
+        /// <summary>
+        /// Fires when the element is undocked
+        /// </summary>
+        void OnUndocked();
+
+        /// <summary>
+        /// Fires when the element is docked
+        /// </summary>
+        void OnDocked();
     }
 }

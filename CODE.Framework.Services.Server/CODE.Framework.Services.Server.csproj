@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -52,6 +53,7 @@
     </Compile>
     <Compile Include="Contracts\ClientAccessPolicy.cs" />
     <Compile Include="CrossDomainScriptBehavior.cs" />
+    <Compile Include="JsonBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RESTAtrributes.cs" />
     <Compile Include="ServiceGarden.cs" />
@@ -68,7 +70,9 @@
       <Name>CODE.Framework.Services.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

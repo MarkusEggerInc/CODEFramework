@@ -25,12 +25,12 @@ namespace CODE.Framework.Wpf.Controls
         private static void AutoWindowDragEnabledChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             If.Real<Window>(dependencyObject, win =>
-                {
-                    if (GetAutoWindowDragEnabled(win))
-                        win.MouseLeftButtonDown += WindowDragHandler;
-                    else
-                        win.MouseLeftButtonDown -= WindowDragHandler;
-                });
+            {
+                if (GetAutoWindowDragEnabled(win))
+                    win.MouseLeftButtonDown += WindowDragHandler;
+                else
+                    win.MouseLeftButtonDown -= WindowDragHandler;
+            });
         }
 
         /// <summary>Handler for window drag operations</summary>
@@ -70,12 +70,12 @@ namespace CODE.Framework.Wpf.Controls
         private static void AutoWindowMaximizeEnabledChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             If.Real<Window>(dependencyObject, win =>
-                {
-                    if (GetAutoWindowMaximizeEnabled(win))
-                        win.MouseDoubleClick += WindowMaximizeHandler;
-                    else
-                        win.MouseDoubleClick -= WindowMaximizeHandler;
-                });
+            {
+                if (GetAutoWindowMaximizeEnabled(win))
+                    win.MouseDoubleClick += WindowMaximizeHandler;
+                else
+                    win.MouseDoubleClick -= WindowMaximizeHandler;
+            });
         }
 
         /// <summary>Handler for window maximize operations</summary>
@@ -146,34 +146,34 @@ namespace CODE.Framework.Wpf.Controls
         private static void AutoWindowResizingEnabledChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             If.Real<Window>(dependencyObject, win =>
+            {
+                if (GetAutoWindowResizingEnabled(win))
                 {
-                    if (GetAutoWindowResizingEnabled(win))
-                    {
-                        win.MouseMove += WindowResizeMouseOverHandler;
-                        win.MouseLeftButtonDown += WindowResizeMouseDownHandler;
-                    }
-                    else
-                    {
-                        win.MouseMove -= WindowResizeMouseOverHandler;
-                        win.MouseLeftButtonDown -= WindowResizeMouseDownHandler;
-                    }
-                    win.MouseUp += (s, a) =>
-                        {
-                            // Makes sure that when the mouse is released, the resize mover event is disconnected as well
-                            var win2 = Mouse.Captured as Window;
-                            if (win2 != null)
-                                Mouse.Capture(null);
-                            win.MouseMove -= WindowResizeMouseDownMoveHandler;
-                        };
-                    win.Deactivated += (s2, a2) =>
-                        {
-                            // Makes sure that when the mouse is released, the resize mover event is disconnected as well
-                            var win2 = Mouse.Captured as Window;
-                            if (win2 != null)
-                                Mouse.Capture(null);
-                            win.MouseMove -= WindowResizeMouseDownMoveHandler;
-                        };
-                });
+                    win.MouseMove += WindowResizeMouseOverHandler;
+                    win.MouseLeftButtonDown += WindowResizeMouseDownHandler;
+                }
+                else
+                {
+                    win.MouseMove -= WindowResizeMouseOverHandler;
+                    win.MouseLeftButtonDown -= WindowResizeMouseDownHandler;
+                }
+                win.MouseUp += (s, a) =>
+                {
+                    // Makes sure that when the mouse is released, the resize mover event is disconnected as well
+                    var win2 = Mouse.Captured as Window;
+                    if (win2 != null)
+                        Mouse.Capture(null);
+                    win.MouseMove -= WindowResizeMouseDownMoveHandler;
+                };
+                win.Deactivated += (s2, a2) =>
+                {
+                    // Makes sure that when the mouse is released, the resize mover event is disconnected as well
+                    var win2 = Mouse.Captured as Window;
+                    if (win2 != null)
+                        Mouse.Capture(null);
+                    win.MouseMove -= WindowResizeMouseDownMoveHandler;
+                };
+            });
         }
 
         /// <summary>Window icon path (set dynamically, which means it doesn't have to exist during design time)</summary>
@@ -243,12 +243,12 @@ namespace CODE.Framework.Wpf.Controls
                 window.ResizeMode = ResizeMode.NoResize;
 
                 window.SourceInitialized += (o, e) =>
-                    {
-                        if (!GetIsBorderless(window)) return;
-                        var handle = (new WindowInteropHelper(window)).Handle;
-                        var hwndSource = HwndSource.FromHwnd(handle);
-                        if (hwndSource != null) hwndSource.AddHook(WindowHook);
-                    };
+                {
+                    if (!GetIsBorderless(window)) return;
+                    var handle = (new WindowInteropHelper(window)).Handle;
+                    var hwndSource = HwndSource.FromHwnd(handle);
+                    if (hwndSource != null) hwndSource.AddHook(WindowHook);
+                };
             }
             else
             {
@@ -260,7 +260,7 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Indicates whether the window should switch into special borderless mode</summary>
         public static bool GetIsBorderless(DependencyObject obj)
         {
-            return (bool)obj.GetValue(IsBorderlessProperty);
+            return (bool) obj.GetValue(IsBorderlessProperty);
         }
 
         /// <summary>Indicates whether the window should switch into special borderless mode</summary>
@@ -308,7 +308,7 @@ namespace CODE.Framework.Wpf.Controls
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        static void WindowDeactivatedForDropShadow(object sender, EventArgs e)
+        private static void WindowDeactivatedForDropShadow(object sender, EventArgs e)
         {
             var window = sender as Window;
             if (window == null) return;
@@ -333,7 +333,7 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         public static EffectActiveStates GetHasDropShadow(DependencyObject obj)
         {
-            return (EffectActiveStates)obj.GetValue(HasDropShadowProperty);
+            return (EffectActiveStates) obj.GetValue(HasDropShadowProperty);
         }
 
         /// <summary>
@@ -525,6 +525,24 @@ namespace CODE.Framework.Wpf.Controls
         private static double _previousWindowHeight;
         private static double _previousWindowWidth;
 
+        private static Point? _screenScale;
+
+        private static Point GetScreenScale(Visual visual)
+        {
+            // Checking for scaled screen
+            if (_screenScale.HasValue) return _screenScale.Value;
+            _screenScale = new Point(1d, 1d);
+            var source = PresentationSource.FromVisual(visual);
+            if (source != null && source.CompositionTarget != null)
+            {
+                var dpiX = source.CompositionTarget.TransformToDevice.M11;
+                var dpiY = source.CompositionTarget.TransformToDevice.M22;
+                if (dpiX > 1 || dpiX < 1 || dpiY > 1 || dpiY < 1)
+                    _screenScale = new Point(dpiX, dpiY);
+            }
+            return _screenScale.Value;
+        }
+
         /// <summary>Mouse down handler for resize behavior</summary>
         /// <param name="sender">The sender.</param>
         /// <param name="mouseButtonEventArgs">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
@@ -584,6 +602,10 @@ namespace CODE.Framework.Wpf.Controls
             var screenPosition = window.PointToScreen(position);
             var delta = new Point(_lastResizeDownPosition.X - screenPosition.X, _lastResizeDownPosition.Y - screenPosition.Y);
 
+            var scale = GetScreenScale(window);
+            if (scale.X > 1 || scale.X < 1 || scale.Y > 1 || scale.Y < 1)
+                delta = new Point(delta.X/scale.X, delta.Y/scale.Y);
+
             if (_resizeRight) window.Width = Math.Max(_previousWindowWidth - delta.X, window.MinWidth);
             if (_resizeDown) window.Height = Math.Max(_previousWindowHeight - delta.Y, window.MinHeight);
 
@@ -622,12 +644,12 @@ namespace CODE.Framework.Wpf.Controls
             var deviceBottomRight = mainWindowSource.CompositionTarget.TransformToDevice.Transform(windowRectangle.BottomRight);
 
             NativeMethods.SetWindowPos(mainWindowSource.Handle,
-                                       IntPtr.Zero,
-                                       (int) (deviceTopLeft.X),
-                                       (int) (deviceTopLeft.Y),
-                                       (int) (Math.Abs(deviceBottomRight.X - deviceTopLeft.X)),
-                                       (int) (Math.Abs(deviceBottomRight.Y - deviceTopLeft.Y)),
-                                       0);
+                IntPtr.Zero,
+                (int) (deviceTopLeft.X),
+                (int) (deviceTopLeft.Y),
+                (int) (Math.Abs(deviceBottomRight.X - deviceTopLeft.X)),
+                (int) (Math.Abs(deviceBottomRight.Y - deviceTopLeft.Y)),
+                0);
         }
 
         private static class NativeMethods
@@ -740,7 +762,7 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private static void OnWindowSourceInitialized(object sender , EventArgs e)
+        private static void OnWindowSourceInitialized(object sender, EventArgs e)
         {
             var window = sender as Window;
             if (window == null) return;
@@ -788,10 +810,12 @@ namespace CODE.Framework.Wpf.Controls
         /// Never
         /// </summary>
         Never,
+
         /// <summary>
         /// Only then element the effect applies to is activated
         /// </summary>
         OnlyIfElementActive,
+
         /// <summary>
         /// Always
         /// </summary>

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using CODE.Framework.Core.Utilities;
@@ -384,5 +386,55 @@ namespace CODE.Framework.Wpf.Controls
             }
             catch (Exception ex) { LoggingMediator.Log(ex); }
         }
+
+        /// <summary>
+        /// If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
+        /// text element is otherwise only updated on LostFocus or Explicit
+        /// </summary>
+        public static readonly DependencyProperty UpdateSourceOnEnterKeyProperty = DependencyProperty.RegisterAttached("UpdateSourceOnEnterKey", typeof(bool), typeof(TextBoxEx), new PropertyMetadata(false, OnUpdateSourceOnEnterKeyChanged));
+
+        /// <summary>
+        /// Fires when the UpdateSourceOnEnterKey property changes
+        /// </summary>
+        /// <param name="d">The object the property is set on</param>
+        /// <param name="e">Event arguments</param>
+        private static void OnUpdateSourceOnEnterKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool) e.NewValue) return;
+
+            var text = d as TextBox;
+            if (text == null) return;
+
+            text.PreviewKeyDown += (s2, e2) =>
+            {
+                if (e2.Key == Key.Enter)
+                {
+                    var binding = BindingOperations.GetBindingExpression(text, TextProperty);
+                    if (binding != null)
+                        binding.UpdateSource();
+                }
+            };
+        }
+
+        /// <summary>
+        /// If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
+        /// text element is otherwise only updated on LostFocus or Explicit
+        /// </summary>
+        /// <param name="d">The object the property is set on</param>
+        public static bool GetUpdateSourceOnEnterKey(DependencyObject d)
+        {
+            return (bool) d.GetValue(UpdateSourceOnEnterKeyProperty);
+        }
+        /// <summary>
+        /// If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
+        /// text element is otherwise only updated on LostFocus or Explicit
+        /// </summary>
+        /// <param name="d">The object the property is set on</param>
+        /// <param name="value">The new value that is to be set</param>
+        public static void SetUpdateSourceOnEnterKey(DependencyObject d, bool value)
+        {
+            d.SetValue(UpdateSourceOnEnterKeyProperty, value);
+        }
+
     }
 }

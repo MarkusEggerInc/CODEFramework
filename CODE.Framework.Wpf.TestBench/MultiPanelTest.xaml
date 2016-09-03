@@ -5,7 +5,7 @@
         xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
         Title="MultiPanelTest" Height="600" Width="900">
     
-    <l:MultiPanel>
+    <l:MultiPanel Orientation="Horizontal">
         <l:MultiPanel.HeaderRenderer>
             <l:MultiPanelHeaderRenderer Background="CornflowerBlue" Foreground="White" FontSize="24" Orientation="Vertical" FontWeight="Light">
                 <l:MultiPanelHeaderRenderer.CloseIcon>
@@ -23,9 +23,9 @@
                 </l:MultiPanelHeaderRenderer.CloseIcon>
             </l:MultiPanelHeaderRenderer>
         </l:MultiPanel.HeaderRenderer>
-        <Rectangle mvvm:View.Title="One" mvvm:View.Closable="True" mvvm:View.CloseAction="{Binding CloseAction}" Visibility="{Binding Panel1Visible}" Fill="Red" Stroke="Green" StrokeThickness="2"/>
-        <Rectangle mvvm:View.Title="One B" mvvm:View.Closable="True" Fill="Maroon" Stroke="Green" StrokeThickness="2" mvvm:View.FlowsWithPrevious="True" Width="150"/>
-        <Rectangle mvvm:View.Title="Two" mvvm:View.TitleColor="Maroon" mvvm:View.SupportsDocking="True"  Fill="Blue" Stroke="Green" StrokeThickness="2"/>
+        <Rectangle mvvm:View.Title="One" mvvm:View.Closable="True" mvvm:View.RelativeHeight="2*" mvvm:View.RelativeWidth="2*" mvvm:View.CloseAction="{Binding CloseAction}" Visibility="{Binding Panel1Visible}" Fill="Red" Stroke="Green" StrokeThickness="2"/>
+        <Rectangle mvvm:View.Title="One B" mvvm:View.Closable="True" Fill="Maroon" Stroke="Green" StrokeThickness="2" mvvm:View.FlowsWithPrevious="True" Height="150" />
+        <Rectangle mvvm:View.Title="Two" mvvm:View.TitleColor="Maroon" mvvm:View.SupportsDocking="True" Fill="Blue" Stroke="Green" StrokeThickness="2"/>
         <Rectangle mvvm:View.Title="And Three" mvvm:View.Closable="True" Fill="Yellow" Stroke="Green" StrokeThickness="2"/>
     </l:MultiPanel>
 </Window>

@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -58,9 +59,11 @@
     <Compile Include="Behavior\AttachedObject.cs" />
     <Compile Include="Behavior\Behavior.cs" />
     <Compile Include="BindingConverters\BooleanToVisibleConverter.cs" />
+    <Compile Include="BindingConverters\ColorToBrushWithFallbackConverter.cs" />
     <Compile Include="BindingConverters\LitBrushConverter.cs" />
     <Compile Include="BindingConverters\LitColorConverter.cs" />
     <Compile Include="BindingConverters\NullToVisibleConverter.cs" />
+    <Compile Include="BindingConverters\ReplaceBrushConverter.cs" />
     <Compile Include="BindingConverters\StringToVisibleConverter.cs" />
     <Compile Include="BindingConverters\TransparentBrushConverter.cs" />
     <Compile Include="BindingConverters\TransparentColorConverter.cs" />
@@ -77,6 +80,7 @@
     <Compile Include="Controls\ListBoxSmartDataTemplate.cs" />
     <Compile Include="Controls\ListEx.cs" />
     <Compile Include="Controls\PasswordBoxEx.cs" />
+    <Compile Include="Controls\RangeSlider.cs" />
     <Compile Include="Controls\RichTextBoxEx.cs" />
     <Compile Include="Controls\SortOrderIndicator.cs" />
     <Compile Include="Controls\TextBlockEx.cs" />
@@ -93,6 +97,7 @@
     <Compile Include="Interfaces\ITitle.cs" />
     <Compile Include="Interfaces\IUserInterfaceActivation.cs" />
     <Compile Include="Layout\BidirectionalStackPanel.cs" />
+    <Compile Include="Layout\BladePanel.cs" />
     <Compile Include="Layout\ColumnPanel.cs" />
     <Compile Include="Layout\DockContainer.cs" />
     <Compile Include="Layout\EditForm.cs" />
@@ -108,6 +113,8 @@
     <Compile Include="Layout\PropertySheet.cs" />
     <Compile Include="Layout\ScrollAwareItemsPresenter.cs" />
     <Compile Include="Layout\View.cs" />
+    <Compile Include="MarkupExtensions\AttributeBinding.cs" />
+    <Compile Include="MarkupExtensions\Bind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -121,13 +128,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Security\Security.cs" />
+    <Compile Include="Security\SecurityAttribute.cs" />
     <Compile Include="Utilities\AutoLayoutHeaderRenderer.cs" />
     <Compile Include="Utilities\ElementHelper.cs" />
     <Compile Include="Utilities\FocusHelper.cs" />
     <Compile Include="Utilities\ImageHelper.cs" />
+    <Compile Include="Utilities\ObservableResourceDictionary.cs" />
     <Compile Include="Utilities\ResourceHelper.cs" />
     <Compile Include="Utilities\SpellCheckHelper.cs" />
     <Compile Include="Utilities\VisualHelper.cs" />
+    <Compile Include="Validation\InputValidation.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -146,6 +157,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Styles\MultiColumnList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\RangeSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

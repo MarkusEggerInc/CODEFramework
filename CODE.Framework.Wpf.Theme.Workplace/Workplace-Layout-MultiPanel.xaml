@@ -29,6 +29,16 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
+                    <l:MultiPanel/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelWithHeaderLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
                     <l:MultiPanel>
                         <l:MultiPanel.HeaderRenderer>
                             <l:MultiPanelHeaderRenderer/>

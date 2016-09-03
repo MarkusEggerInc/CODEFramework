@@ -306,7 +306,7 @@ namespace CODE.Framework.Wpf.Layout
     }
 
     /// <summary>
-    /// Spezialized collection class for column definitions on the ColumnPanel class
+    /// Specialized collection class for column definitions on the ColumnPanel class
     /// </summary>
     public class ColumnPanelColumnsCollection : ObservableCollection<ColumnPanelColumnDefinition>
     {

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using CODE.Framework.Core.Utilities;
 
@@ -62,62 +60,22 @@ namespace CODE.Framework.Services.Client
                     switch (httpMethod)
                     {
                         case "POST":
-                            restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, SerializeToRestJson(data));
+                            restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, JsonHelper.SerializeToRestJson(data));
                             break;
                         case "GET":
                             var serializedData = RestHelper.SerializeToUrlParameters(data);
                             restResponse = client.DownloadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName + serializedData);
                             break;
                         default:
-                            restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, httpMethod, SerializeToRestJson(data));
+                            restResponse = client.UploadString(_serviceUri.AbsoluteUri + "/" + exposedMethodName, httpMethod, JsonHelper.SerializeToRestJson(data));
                             break;
                     }
-                    return DeserializeFromRestJson(restResponse, method.ReturnType);
+                    return JsonHelper.DeserializeFromRestJson(restResponse, method.ReturnType);
                 }
             }
             catch (Exception ex)
             {
                 throw new CommunicationException("Unable to communicate with REST service.", ex);
-            }
-        }
-
-        /// <summary>
-        /// Serializes to REST JSON.
-        /// </summary>
-        /// <param name="objectToSerialize">The object to serialize.</param>
-        /// <returns></returns>
-        private static string SerializeToRestJson(object objectToSerialize)
-        {
-            var stream = new MemoryStream();
-            var serializer = new DataContractJsonSerializer(objectToSerialize.GetType());
-            try
-            {
-                serializer.WriteObject(stream, objectToSerialize);
-                return StreamHelper.ToString(stream);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHelper.GetExceptionText(ex);
-            }
-        }
-
-        /// <summary>
-        /// Deserializes from REST JSON.
-        /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="resultType">Type of the result.</param>
-        /// <returns>Deserialized object</returns>
-        private static object DeserializeFromRestJson(string json, Type resultType)
-        {
-            try
-            {
-                var serializer = new DataContractJsonSerializer(resultType);
-                using (var stream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes(json)))
-                    return serializer.ReadObject(stream);
-            }
-            catch
-            {
-                return null;
             }
         }
     }

@@ -2,7 +2,8 @@
                     xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
-                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
     
     <Style TargetType="DatePicker">
         <Setter Property="BorderBrush" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
@@ -55,6 +56,7 @@
                     <Rectangle Fill="#A5FFFFFF" RadiusY="1" RadiusX="1"/>
                     <Rectangle Grid.Column="1" Fill="#A5FFFFFF" VerticalAlignment="Stretch" Margin="0" RadiusY="1" RadiusX="1" Width="19"/>
                     <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" PlacementTarget="{Binding ElementName=PART_TextBox}" StaysOpen="False"/>
+                    <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
                 </Grid>
             </Grid>
         </Border>
@@ -64,6 +66,10 @@
             </Trigger>
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
                 <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}"/>
+            </Trigger>
+            <Trigger Property="val:InputValidation.IsValid" Value="False">
+                <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

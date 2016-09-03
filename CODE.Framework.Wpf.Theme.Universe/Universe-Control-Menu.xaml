@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                    xmlns:controls1="clr-namespace:CODE.Framework.Wpf.Theme.Universe.Controls">
+
+    <Style TargetType="ContextMenu">
+        <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush2}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush2}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+    </Style>
+
+    <Style TargetType="mvvm:ViewActionMenuItem">
+        <Setter Property="Template" Value="{DynamicResource UniverseActionSubmenuItem}"/>
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+    </Style>
+
+    <Style TargetType="controls1:SelectViewMenuItem">
+        <Setter Property="Template" Value="{DynamicResource UniverseSelectViewMenuItem}"/>
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush2}" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+    </Style>
+
+    <ControlTemplate x:Key="UniverseSelectViewMenuItem" TargetType="MenuItem">
+        <Grid SnapsToDevicePixels="true" Background="{TemplateBinding Background}" Height="48">
+            <Rectangle Fill="#19FFFFFF" Visibility="Collapsed" x:Name="highlight" />
+            <ContentPresenter Content="{TemplateBinding Header}" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1" Margin="20,3,15,5"
+                              TextElement.FontFamily="{DynamicResource DefaultFont}" TextElement.FontSize="{DynamicResource FontSize-Normal}" TextElement.Foreground="White" />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsHighlighted" Value="true">
+                <Setter Property="Visibility" TargetName="highlight" Value="Visible" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="UniverseActionSubmenuItem" TargetType="MenuItem">
+        <Grid SnapsToDevicePixels="true" Background="{DynamicResource CODE.Framework-Application-BackgroundBrush2}" Height="48" ToolTip="{Binding ToolTipText}" controls:GridEx.ColumnWidths="48,*">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="CODE.Framework-Universe-IconForegroundBrush" Color="White" />
+            </Grid.Resources>
+            <Rectangle Grid.ColumnSpan="2" Fill="{DynamicResource CODE.Framework-Application-ThemeBrush1}" Visibility="Collapsed" x:Name="highlight2" Opacity=".3" />
+            <Rectangle Grid.ColumnSpan="2" Fill="#19FFFFFF" Visibility="Collapsed" x:Name="highlight" />
+            <ContentPresenter Content="{TemplateBinding Icon}" x:Name="icon" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="14" />
+            <ContentPresenter Content="{Binding Text1}" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1" Margin="5,3,15,5"
+                              TextElement.FontFamily="{DynamicResource DefaultFont}" TextElement.FontSize="{DynamicResource FontSize-Normal}" TextElement.Foreground="White" />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsHighlighted" Value="true">
+                <Setter Property="Visibility" TargetName="highlight" Value="Visible" />
+            </Trigger>  
+            <Trigger Property="IsChecked" Value="true">
+                <Setter Property="Visibility" TargetName="highlight2" Value="Visible" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="Separator" x:Key="{x:Static MenuItem.SeparatorStyleKey}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

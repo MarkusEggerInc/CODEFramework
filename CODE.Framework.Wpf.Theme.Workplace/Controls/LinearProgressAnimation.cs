@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using CODE.Framework.Wpf.Mvvm;
 
 namespace CODE.Framework.Wpf.Theme.Workplace.Controls
 {
@@ -208,5 +210,61 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         }
 
         private readonly List<Storyboard> _storyboards = new List<Storyboard>();
+    }
+
+    /// <summary>Progress ring animation that sets itself visible whenever the associated model has a busy status.</summary>
+    public class ModelStatusLinearProgressAnimation : LinearProgressAnimation
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ModelStatusLinearProgressAnimation()
+        {
+            Visibility = Visibility.Collapsed;
+            IsActive = true;
+        }
+
+        /// <summary>
+        /// Model (must implement IModelStatus)
+        /// </summary>
+        public IModelStatus Model
+        {
+            get { return (IModelStatus)GetValue(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        /// <summary>
+        /// Model (must implement IModelStatus)
+        /// </summary>
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(IModelStatus), typeof(ModelStatusLinearProgressAnimation), new PropertyMetadata(null, OnModelChanged));
+
+        /// <summary>
+        /// Fires when the model changes
+        /// </summary>
+        /// <param name="d">Source object</param>
+        /// <param name="e">Event parameters</param>
+        private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var progress = d as ModelStatusLinearProgressAnimation;
+            if (progress == null) return;
+            var status = e.NewValue as IModelStatus;
+            if (status == null)
+            {
+                progress.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            progress.Visibility = status.ModelStatus == ModelStatus.Loading || status.ModelStatus == ModelStatus.Saving ? Visibility.Visible : Visibility.Collapsed;
+
+            var inpc = status as INotifyPropertyChanged;
+            if (inpc != null)
+            {
+                inpc.PropertyChanged += (s, e2) =>
+                {
+                    if (e2.PropertyName == "ModelStatus")
+                        progress.Visibility = status.ModelStatus == ModelStatus.Loading || status.ModelStatus == ModelStatus.Saving ? Visibility.Visible : Visibility.Collapsed;
+                };
+            }
+        }
     }
 }

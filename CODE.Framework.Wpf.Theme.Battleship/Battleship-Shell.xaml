@@ -1,4 +1,5 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿
+    <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
                     xmlns:controls="clr-namespace:CODE.Framework.Wpf.Theme.Battleship.Controls"
@@ -179,7 +180,7 @@
                 <ControlTemplate TargetType="mvvm:ViewActionToolbarButton">
                     <Grid controls1:GridEx.ColumnWidths="Auto,Auto">
                         <Border x:Name="highlight" Background="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush2}" BorderBrush="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush1}" BorderThickness="1" Visibility="Hidden" Opacity=".5" Grid.ColumnSpan="2" />
-                        <Rectangle Height="23" Width="23" Fill="{Binding Action.Brush, RelativeSource={RelativeSource TemplatedParent}}" x:Name="icon" Margin="2" />
+                        <mvvm:ThemeIcon IconResourceKey="{Binding Action.BrushResourceKey, RelativeSource={RelativeSource TemplatedParent}}" Height="23" Width="23" x:Name="icon" Margin="2" />
                         <TextBlock Text="{TemplateBinding Title}" FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}" Grid.Column="1" VerticalAlignment="Center" Margin="4,2" x:Name="title" />
                     </Grid>
                     <ControlTemplate.Triggers>

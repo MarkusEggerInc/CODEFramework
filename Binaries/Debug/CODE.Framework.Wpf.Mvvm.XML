@@ -48,6 +48,24 @@
             <param name="d">The dependency object that triggered this change.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ActionItemsControl.ViewActionPolicy">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ActionItemsControl.ViewActionPolicyProperty">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ActionItemsControl.OnRepopulateItems(System.Collections.Generic.List{CODE.Framework.Wpf.Mvvm.IViewAction})">
             <summary>
             This method is designed to be overridden in subclasses
@@ -329,6 +347,11 @@
             Access key for this category
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionCategory.BrushResourceKey">
+            <summary>
+            Icon resource key to be used for the category.
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionCategory.CompareTo(System.Object)">
             <summary>
             Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
@@ -424,6 +447,9 @@
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.BrushResourceKey">
             <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.CategoryBrushResourceKey">
+            <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.LogoBrushResourceKey">
             <summary>Key of a visual XAML resource for Logo1 associated with this action (such as an icon)</summary>
         </member>
@@ -460,6 +486,12 @@
             <param name="resourceName">Name of the resource.</param>
             <returns>Brush or null</returns>
             <remarks>The returned brush is a clone, so it can be manipulated at will without impacting other users of the same brush.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.Color1">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.Color2">
+            <summary>Generic color setting (expressed as a brush)</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.Brush">
             <summary>
@@ -539,7 +571,7 @@
             Indicates whether the action is to be considered "checked"
             </summary>
             <remarks>
-            Cecked actions may be presented in various ways in different themes, such as having a check-mark in menus
+            Checked actions may be presented in various ways in different themes, such as having a check-mark in menus
             Most themes will only respect this property when ViewActionType = Toggle
             </remarks>
         </member>
@@ -973,6 +1005,18 @@
             </summary>
             <value>The logo2.</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.DependencyViewActionWrapper.Color1">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.DependencyViewActionWrapper.Color1Property">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.DependencyViewActionWrapper.Color2">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.DependencyViewActionWrapper.Color2Property">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.DependencyViewActionWrapper.Logo2Property">
             <summary>
             Logo Element 2
@@ -1338,29 +1382,60 @@
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ApplicationEx">
             <summary>
-            Extended version of the windows application object
+                Extended version of the windows application object
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ApplicationEx.StandardThemeFeatures">
+            <summary>
+            The standard theme features (internal use only)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ApplicationEx.RegisteredThemes">
+            <summary>
+            Internal list of registered themes
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ApplicationEx.SecondaryAssemblies">
+            <summary>
+                List of secondary assemblies the current app references.
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.#ctor">
             <summary>
-            Constructor
+                Constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:CODE.Framework.Wpf.Mvvm.ApplicationEx"/> class.
             </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ApplicationEx.Theme">
             <summary>Attached property to set application theme</summary>
             <remarks>
-            Setting an application theme has a number of consequences. For one, the system tried to load built-in themes the CODE Framework is aware of. Currently supported are: "Metro", "Battleship".
-            In addition, the system will try to load resource dictionaries in Theme folders. For instance, if the theme is set to "MyTheme", the system will try to load Themes/MyTheme/MyTheme.xaml resource dictionaries. It will also search in Theme/MyTheme, Style/MyTheme, and Styles/MyTheme for MyTheme.xaml.
+                Setting an application theme has a number of consequences. For one, the system tried to load built-in themes the
+                CODE Framework is aware of. Currently supported are: "Metro", "Battleship".
+                In addition, the system will try to load resource dictionaries in Theme folders. For instance, if the theme is set
+                to "MyTheme", the system will try to load Themes/MyTheme/MyTheme.xaml resource dictionaries. It will also search in
+                Theme/MyTheme, Style/MyTheme, and Styles/MyTheme for MyTheme.xaml.
             </remarks>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.LoadTheme">
             <summary>
-            Forces a re-load of the current theme
+                Forces a re-load of the current theme
             </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.RegisterTheme(System.String,System.String)">
+            <summary>
+            Registers a new theme.
+            </summary>
+            <param name="themeName">Name of the theme.</param>
+            <param name="absoluteResourceDictionarySourceUrl">The absolute resource dictionary source URL.</param>
+            <example>ApplicationEx.RegisterTheme("RedTheme", "pack://application:,,,/RedThemeAssembly;component/ThemeRoot.xaml");</example>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.TryLoadAndMergeResourceDictionary(System.String)">
             <summary>
-            Attempts to load the specified resource dictionary from the specified location
+                Attempts to load the specified resource dictionary from the specified location
             </summary>
             <param name="searchPath">Search path</param>
             <returns>True if found</returns>
@@ -1369,16 +1444,38 @@
             <summary>Returns a theme feature object for internal use</summary>
             <returns>IThemeStandardFeatures implementation specific to the provided theme</returns>
         </member>
-        <member name="F:CODE.Framework.Wpf.Mvvm.ApplicationEx.SecondaryAssemblies">
-            <summary>
-            List of secondary assemblies the current app references.
-            </summary>
-        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationEx.RegisterSecondaryAssembly(System.String)">
             <summary>
-            Registers a secondary assembly so the elements within that assembly are found as if they were in the local assembly
+                Registers a secondary assembly so the elements within that assembly are found as if they were in the local assembly
             </summary>
             <param name="assemblyString">The assembly string (assembly name).</param>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Mvvm.ApplicationEx.BeforeThemeSwitch">
+            <summary>
+            Fires just before a theme switching operation is initialized
+            </summary>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Mvvm.ApplicationEx.ThemeSwitched">
+            <summary>
+            Fires just after a theme switching operation is completed
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.ThemeSwitchEventArgs">
+            <summary>
+            Event args for theme switching events
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeSwitchEventArgs.OldTheme">
+            <summary>
+            Old theme name.
+            </summary>
+            <value>The old theme.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeSwitchEventArgs.NewTheme">
+            <summary>
+            New theme name.
+            </summary>
+            <value>The new theme.</value>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.AsyncWorker">
             <summary>
@@ -1474,8 +1571,128 @@
             <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
             <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``6(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Action{``0,``1,``2,``3,``4,``5},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``7(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Action{``0,``1,``2,``3,``4,``5,``6},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``8(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Action{``0,``1,``2,``3,``4,``5,``6,``7},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eigth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``9(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``10(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Func{``9},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="worker10">The tenth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.ExecuteDispatch``1(System.Action{``0},``0,CODE.Framework.Wpf.Mvvm.IModelStatus)">
-            <summary>Performs exacution of the loaded method back on the main thread and resets the status if need be</summary>
+            <summary>Performs execution of the loaded method back on the main thread and resets the status if need be</summary>
             <typeparam name="TResult">The type of the result.</typeparam>
             <param name="completeMethod">The complete method.</param>
             <param name="parameter">The parameter.</param>
@@ -1523,6 +1740,13 @@
             <param name="status">The status.</param>
             <param name="operationCount">The operation count (usually -1, 0, or 1 depending on whether the count is to be increased, decreased, or left alone).</param>
             <param name="autoSetReadyStatus">if set to <c>true</c> the status is automatically set to Ready whenever the operation count reaches 0.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.OnForegroundThread(System.Action,System.Windows.Threading.DispatcherPriority)">
+            <summary>
+            Funnels a call to the foreground thread and executes it there
+            </summary>
+            <param name="action">The action.</param>
+            <param name="priority">The priority.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.MultiExecuteState`1">
             <summary>
@@ -1598,7 +1822,7 @@
             Unregisters all registered view handlers
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.Controller.Action(System.String,System.String,System.Object,CODE.Framework.Wpf.Mvvm.ViewResultEventSinks)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.Controller.Action(System.String,System.String,System.Object,CODE.Framework.Wpf.Mvvm.ViewResultEventSinks,System.Boolean)">
             <summary>
             Triggers an action on the specified controller
             </summary>
@@ -1606,6 +1830,7 @@
             <param name="action">Action to be called on the controller</param>
             <param name="routeValues">Additional parameters passed to the controller</param>
             <param name="eventSinks">Object containing the event handlers that are to be attached to the view result (if the result is in fact a view result)</param>
+            <param name="executeViewHandlers">Defines whether registered view-handlers are to immediately execute and thus try to show the new result</param>
             <returns>Request context (can be ignored except for special cases)</returns>
             <example>
             Controller.Action("Customer", "List"); // Invokes CustomerController.List
@@ -2073,6 +2298,12 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewResult.ViewTitle">
             <summary>Display title for the view</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewResult.GroupTitle">
+            <summary>
+            Group title
+            </summary>
+            <value>The group title.</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewResult.ViewIconResourceKey">
             <summary>XAML resource key (x:Key) for a brush used as the visual representation of this view</summary>
@@ -3349,6 +3580,47 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ToggleViewAction"/> class.
             </summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction">
+            <summary>
+            Special view-action associated with a custom view defined by a controller action.
+            The custom view is typically loaded the first time the action is invoked.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.#ctor(System.String,System.String,System.String,System.Object)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="caption">Caption</param>
+            <param name="controller">Controller name</param>
+            <param name="action">Action name (method on the controller)</param>
+            <param name="routeValues">Optional route values (parameters) to be passed to the controller</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.Execute(System.Object)">
+            <summary>
+            Custom *synchronous* implementation of the execute method to load the view on the spot
+            </summary>
+            <param name="parameter"></param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.Controller">
+            <summary>
+            Controller name
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.Action">
+            <summary>
+            Action name
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.RouteValues">
+            <summary>
+            Route values (parameters) to be passed to the controller
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.IsInitiallySelected">
+            <summary>
+            If set to true, this action is the one that gets executed by default
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.IStandardViewModel">
             <summary>Standard view model interface, which can be used with all the standard data templates</summary>
         </member>
@@ -3417,6 +3689,15 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.IStandardViewModel.Logo2">
             <summary>Logo Element 2</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.IStandardViewModel.IsChecked">
+            <summary>Checked or selected flag</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.IStandardViewModel.Color1">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.IStandardViewModel.Color2">
+            <summary>Generic color setting (expressed as a brush)</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.StandardViewModel">
             <summary>Standard view model class based on IStandardViewModel</summary>
@@ -3507,6 +3788,18 @@
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Logo2">
             <summary>Logo Element 2</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.IsChecked">
+            <summary>
+            Checked or selected flag
+            </summary>
+            <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Color1">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Color2">
+            <summary>Generic color setting (expressed as a brush)</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.ResourceContextObject">
             <summary>
             Internal resource context (used to resolve XAML resources for icons)
@@ -3556,6 +3849,19 @@
         <member name="F:CODE.Framework.Wpf.Mvvm.StandardViewModel.DefaultBrushSharingContextCollection">
             <summary>Default sharing context collection</summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.StandardViewModel`1">
+            <summary>
+            Standard view model class with an additional Data property that can be used to attach any kind of additional source data object
+            </summary>
+            <typeparam name="TData">The type of the Data property.</typeparam>
+            <seealso cref="T:CODE.Framework.Wpf.Mvvm.StandardViewModel" />
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel`1.Data">
+            <summary>
+            Original data object
+            </summary>
+            <value>The data.</value>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.StandardViewPlaceholder">
             <summary>Placeholder for a standard view that is to be loaded dynamically</summary>
         </member>
@@ -3585,6 +3891,666 @@
             <summary>Fires when the standard view changed</summary>
             <param name="s">Source</param>
             <param name="a">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.ThemeIcon">
+            <summary>
+            Displays an icon control and is aware of theme specific icons (and switches icons as themes switch)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ThemeIcon"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.LoadIcon">
+            <summary>
+            Loads (or re-loads) the icon from resources
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeIcon.IconResourceKey">
+            <summary>
+            Defines the resource key (name) of the icon that is to be loaded
+            </summary>
+            <value>The icon resource key.</value>
+            <remarks>
+            While this isn't strictly a requirement, the resource name of the icon is designed to be theme specific, and the icon will be reloaded when the theme switches.
+            </remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ThemeIcon.IconResourceKeyProperty">
+            <summary>
+            Defines the resource key (name) of the icon that is to be loaded
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.OnIconResourceKeyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the icon resource changes
+            </summary>
+            <param name="d">The icon object</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeIcon.StandardIcon">
+            <summary>
+            Defines a standard icon to be used
+            </summary>
+            <value>The standard icon.</value>
+            <remarks>This automatically sets the associated icon resource key</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ThemeIcon.StandardIconProperty">
+            <summary>
+            Defines a standard icon to be used
+            </summary>
+            <value>The standard icon.</value>
+            <remarks>This automatically sets the associated icon resource key</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.OnStandardIconChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the StandardIconChanged event event.
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeIcon.FallbackIconResourceKey">
+            <summary>
+            The fallback icon resource key is used when the references icon is not found (perhaps because it isn't available in the current theme)
+            </summary>
+            <value>The fallback icon resource key.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ThemeIcon.FallbackIconResourceKeyProperty">
+            <summary>
+            The fallback icon resource key is used when the references icon is not found (perhaps because it isn't available in the current theme)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.OnFallbackIconResourceKeyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the fallback icon resource key changes.
+            </summary>
+            <param name="d">The icon object</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeIcon.UseFallbackIcon">
+            <summary>
+            Defines whether the fallback icon setting should be used (true) or ignored (false)
+            </summary>
+            <value>True if fallback is to be used</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ThemeIcon.UseFallbackIconProperty">
+            <summary>
+            Defines whether the fallback icon setting should be used (true) or ignored (false)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.OnUseFallbackIconChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the UseFallbackIconChanged event
+            </summary>
+            <param name="d">The object the setting was set on</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ThemeIcon.ReplacementBrushes">
+            <summary>
+            If set, this can be a dictionary of brushes that replace brushes of the same resource name within the icon
+            </summary>
+            <value>The replacement brushes.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ThemeIcon.ReplacementBrushesProperty">
+            <summary>
+            If set, this can be a dictionary of brushes that replace brushes of the same resource name within the icon
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ThemeIcon.OnReplacementBrushesChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the OnReplacementBrushesChanged event
+            </summary>
+            <param name="d">The object the setting was set on</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.StandardIconHelper">
+            <summary>
+            Helper features related to standard icons
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIconHelper.StandardIconMapsBackward">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIconHelper.StandardIconMaps">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardIconHelper.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:CODE.Framework.Wpf.Mvvm.StandardIconHelper"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardIconHelper.GetStandardIconEnumFromKey(System.String)">
+            <summary>
+            Returns a standard icon enum value from the provided key (or StandardIcons.None, if the key is not valid)
+            </summary>
+            <param name="iconKey">The icon key.</param>
+            <returns>Standard Icon</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardIconHelper.GetStandardIconKeyFromEnum(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Returns a standard icon string/key from the provided enum value (or string.Empty, if the key is not valid)
+            </summary>
+            <param name="icon">The icon key.</param>
+            <returns>Standard icon resource key name</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.StandardIcons">
+            <summary>
+            List defining all standard CODE Framework icons
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.None">
+            <summary>No standard icon</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Accounts">
+            Accounts icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Add">
+            Add icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Admin">
+            Admin icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.AlignCenter">
+            AlignCenter icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.AlignLeft">
+            AlignLeft icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.AlignRight">
+            AlignRight icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowDown">
+            ArrowDown icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowDownLeft">
+            ArrowDownLeft icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowDownRight">
+            ArrowDownRight icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowLeft">
+            ArrowLeft icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowRight">
+            ArrowRight icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowUp">
+            ArrowUp icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowUpLeft">
+            ArrowUpLeft icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ArrowUpRight">
+            ArrowUpRight icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Attach">
+            Attach icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.AttachCamera">
+            AttachCamera icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Audio">
+            Audio icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Bold">
+            Bold icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Bookmarks">
+            Bookmarks icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.BrowsePhotos">
+            BrowsePhotos icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Bullets">
+            Bullets icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Calendar">
+            Calendar icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Caption">
+            Caption icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Cc">
+            Cc icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Characters">
+            Characters icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Clock">
+            Clock icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ClosePane">
+            ClosePane icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Collapsed">
+            Collapsed icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Comment">
+            Comment icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Contact">
+            Contact icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Contact2">
+            Contact2 icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ContactInfo">
+            ContactInfo icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Copy">
+            Copy icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Crop">
+            Crop icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Cut">
+            Cut icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Data">
+            Data icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Data2">
+            Data2 icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Data3">
+            Data3 icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Day">
+            Day icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.DisableUpdates">
+            DisableUpdates icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Discard">
+            Discard icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Dislike">
+            Dislike icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.DockBottom">
+            DockBottom icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.DockLeft">
+            DockLeft icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.DockRight">
+            DockRight icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Document">
+            Document icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Download">
+            Download icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Edit">
+            Edit icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Emoji">
+            Emoji icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Emoji2">
+            Emoji2 icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Expanded">
+            Expanded icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Favorite">
+            Favorite icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Filter">
+            Filter icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Flag">
+            Flag icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Folder">
+            Folder icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Font">
+            Font icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.FontColor">
+            FontColor icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Globe">
+            Globe icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Go">
+            Go icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.HangUp">
+            HangUp icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Help">
+            Help icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.HideBcc">
+            HideBcc icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Highlight">
+            Highlight icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Home">
+            Home icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Import">
+            Import icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ImportAll">
+            ImportAll icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Important">
+            Important icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Italic">
+            Italic icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Keyboard">
+            Keyboard icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Like">
+            Like icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.LikeDislike">
+            LikeDislike icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Link">
+            Link icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.List">
+            List icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Login">
+            Login icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Mail">
+            Mail icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Mail2">
+            Mail2 icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MailForward">
+            MailForward icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MailReply">
+            MailReply icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MailReplyAll">
+            MailReplyAll icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MapPin">
+            MapPin icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Menu">
+            Menu icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Message">
+            Message icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MissingIcon">
+            MissingIcon icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Money">
+            Money icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.More">
+            More icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MoveToFolder">
+            MoveToFolder icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.MusicInfo">
+            MusicInfo icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Mute">
+            Mute icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Next">
+            Next icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.No">
+            No icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.OpenFile">
+            OpenFile icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.OpenLocal">
+            OpenLocal icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Orientation">
+            Orientation icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.OtherUser">
+            OtherUser icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Out">
+            Out icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Page">
+            Page icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Page2">
+            Page2 icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Paste">
+            Paste icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Pause">
+            Pause icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.People">
+            People icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Permissions">
+            Permissions icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Phone">
+            Phone icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Photo">
+            Photo icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Pictures">
+            Pictures icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Pin">
+            Pin icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Placeholder">
+            Placeholder icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Play">
+            Play icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Presence">
+            Presence icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Preview">
+            Preview icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.PreviewLink">
+            PreviewLink icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Previous">
+            Previous icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Print">
+            Print icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Priority">
+            Priority icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ProtectedDocument">
+            ProtectedDocument icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Read">
+            Read icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Redo">
+            Redo icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Refresh">
+            Refresh icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Remote">
+            Remote icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Remove">
+            Remove icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Rename">
+            Rename icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Repair">
+            Repair icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.RotateCamera">
+            RotateCamera icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Save">
+            Save icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SaveLocal">
+            SaveLocal icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Search">
+            Search icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SelectAll">
+            SelectAll icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Send">
+            Send icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SetLockscreen">
+            SetLockscreen icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Settings">
+            Settings icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SetTitle">
+            SetTitle icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Shop">
+            Shop icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ShowBcc">
+            ShowBcc icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ShowResults">
+            ShowResults icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Shuffle">
+            Shuffle icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SkipAhead">
+            SkipAhead icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SkipBack">
+            SkipBack icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Skydrive">
+            Skydrive icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Slideshow">
+            Slideshow icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Sort">
+            Sort icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SortAscending">
+            SortAscending icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.SortDescending">
+            SortDescending icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Stop">
+            Stop icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.StopSlideshow">
+            StopSlideshow icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Switch">
+            Switch icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Sync">
+            Sync icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Today">
+            Today icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Trim">
+            Trim icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.TwoPage">
+            TwoPage icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Underline">
+            Underline icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Undo">
+            Undo icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Unfavorite">
+            Unfavorite icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.UnPin">
+            UnPin icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Upload">
+            Upload icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.User">
+            User icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.UserRights">
+            UserRights icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.UserRoles">
+            UserRoles icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Users">
+            Users icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Video">
+            Video icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.VideoChat">
+            VideoChat icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.View">
+            View icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ViewAll">
+            ViewAll icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Volume">
+            Volume icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Webcam">
+            Webcam icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Week">
+            Week icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.World">
+            World icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Yes">
+            Yes icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.Zoom">
+            Zoom icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ZoomIn">
+            ZoomIn icon
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardIcons.ZoomOut">
+            ZoomOut icon
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.Tools.ViewVisualizer">
             <summary>
@@ -4499,7 +5465,7 @@
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionDisplayMode.BelowNormalSignificanceAndHigher">
-            <summary>
+                <summary>
             Anything that is at least low significance
             </summary>
         </member>
@@ -4524,6 +5490,24 @@
             </summary>
             <param name="d">The dependency object that triggered this change.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionItemsControl.ViewActionPolicy">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionItemsControl.ViewActionPolicyProperty">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionItemsControl.OrderByGroupTitle">
             <summary>
@@ -4606,6 +5590,26 @@
             <param name="d">The dependency object that triggered this change.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionMenu.Actions">
+            <summary>
+            A directly populated collection of actions. 
+            Note: This is an alternative approach to binding the entire Model. 
+            </summary>
+            <value>The actions.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionMenu.ActionsProperty">
+            <summary>
+            A directly populated collection of actions. 
+            Note: This is an alternative approach to binding the entire Model. 
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenu.OnActionsChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Change handler for actions collection
+            </summary>
+            <param name="d">The dependency object that triggered this change.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionMenu.ForceTopLevelMenuItemsUpperCase">
             <summary>
             If set to true, the top level menu items will be forced to be upper case
@@ -4617,12 +5621,36 @@
             If set to true, the top level menu items will be forced to be upper case
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionMenu.ViewActionPolicy">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionMenu.ViewActionPolicyProperty">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenu.PopulateMenu(CODE.Framework.Wpf.Mvvm.IHaveActions,CODE.Framework.Wpf.Mvvm.IHaveActions)">
             <summary>
             Populates the current menu with items based on the actions collection
             </summary>
             <param name="actions">List of primary actions</param>
             <param name="actions2">List of view specific actions</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenu.PopulateMenu(System.Collections.ObjectModel.ObservableCollection{CODE.Framework.Wpf.Mvvm.IViewAction})">
+            <summary>
+            Populates the current menu with items based on the actions collection
+            </summary>
+            <param name="actions">List of actions</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenu.PopulateSubCategories(System.Windows.Controls.MenuItem,CODE.Framework.Wpf.Mvvm.ViewActionCategory,System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},System.Int32)">
             <summary>
@@ -4652,14 +5680,14 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenu.GetMenuTitle(CODE.Framework.Wpf.Mvvm.IViewAction)">
             <summary>
-            Detirmines the display title of a menu item
+            Determines the display title of a menu item
             </summary>
             <param name="action">The category.</param>
             <returns>Title</returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenu.GetMenuTitle(CODE.Framework.Wpf.Mvvm.ViewActionCategory)">
             <summary>
-            Detirmines the display title of a menu item
+            Determines the display title of a menu item
             </summary>
             <param name="category">The category.</param>
             <returns>Title</returns>
@@ -4673,17 +5701,6 @@
             <summary>
             Standard menu item used by view category menus
             </summary>
-        </member>
-        <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionMenuIcon">
-            <summary>
-            Icon placeholder for menu items in view category menus
-            </summary>
-        </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenuIcon.#ctor(System.Windows.Media.Brush)">
-            <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ViewActionMenuIcon"/> class.
-            </summary>
-            <param name="icon">The icon.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionMenuKeyBinding">
             <summary>
@@ -4751,6 +5768,24 @@
             </summary>
             <value>True (default) or false</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionMenuButton.ViewActionPolicy">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionMenuButton.ViewActionPolicyProperty">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenuButton.OnClick">
             <summary>
             Called when a <see cref="T:System.Windows.Controls.Button" /> is clicked.
@@ -4758,7 +5793,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionMenuButton.GetMenuTitle(CODE.Framework.Wpf.Mvvm.IViewAction)">
             <summary>
-            Detirmines the display title of a menu item
+            Determines the display title of a menu item
             </summary>
             <param name="action">The category.</param>
             <returns>Title</returns>
@@ -4781,6 +5816,105 @@
             </summary>
             <returns>IEnumerable&lt;IViewAction&gt;.</returns>
         </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.IViewActionPolicy">
+            <summary>
+            Interface IViewActionPolicy
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewActionPolicy.ProcessActions(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},System.Object,System.String)">
+            <summary>
+            Provides a way to impact a collection of view-actions before they are used by the UI.
+            </summary>
+            <param name="originalActions">The original list of actions.</param>
+            <param name="viewModel">Optional view model.</param>
+            <param name="tag">An additional (optional) tag that can be used to identify where the call comes from, or what it is used for. (For instance "MenuButton" indicates that the list of actions is used for actions in the menu of a menu button).</param>
+            <returns>IEnumerable&lt;IViewAction&gt;.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewActionPolicy.GetConsolidatedActions(CODE.Framework.Wpf.Mvvm.IHaveActions,CODE.Framework.Wpf.Mvvm.IHaveActions,System.String,CODE.Framework.Wpf.Mvvm.ViewActionDisplayMode,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionDisplayMode,System.Object)">
+            <summary>
+            Returns a list of consolidated actions from two different action lists.
+            </summary>
+            <param name="actions">The first set of actions.</param>
+            <param name="actions2">The second set of actions.</param>
+            <param name="defaultEmptyCategory">The default empty category.</param>
+            <param name="actionsDisplayFilter">The actions display filter.</param>
+            <param name="flagFirstSecondaryActionAsNewGroup">Defines whether the first secondary action is to be flagged as a new group.</param>
+            <param name="actions2DisplayFilter">Display filter for the secondary set of actions</param>
+            <param name="viewModel">Optional view model object</param>
+            <returns>ObservableCollection&lt;IViewAction&gt;.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewActionPolicy.GetTopLevelActionCategories(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},System.String,System.String,System.Object)">
+            <summary>
+            Gets the top level action categories.
+            </summary>
+            <param name="actions">The actions.</param>
+            <param name="emptyGlobalCategoryTitle">The empty global category title.</param>
+            <param name="emptyLocalCategoryTitle">The empty local category title.</param>
+            <param name="viewModel">Optional view model object</param>
+            <returns>IEnumerable&lt;ViewActionCategory&gt;.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewActionPolicy.GetAllActionsForCategory(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},CODE.Framework.Wpf.Mvvm.ViewActionCategory,System.Int32,System.String,System.Boolean,System.Object)">
+            <summary>
+            Gets all actions for the specified category.
+            </summary>
+            <param name="actions">The actions.</param>
+            <param name="category">The category.</param>
+            <param name="indentLevel">The indent level.</param>
+            <param name="emptyCategory">The empty category.</param>
+            <param name="orderByGroupTitle">if set to <c>true</c> [order by group title].</param>
+            <param name="viewModel">Optional view model object</param>
+            <returns>IEnumerable&lt;IViewAction&gt;.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.DefaultViewActionPolicy">
+            <summary>
+            Default implementation for view-action policies
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.Mvvm.IViewActionPolicy" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.DefaultViewActionPolicy.ProcessActions(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},System.Object,System.String)">
+            <summary>
+            Provides a way to impact a collection of view-actions before they are used by the UI.
+            </summary>
+            <param name="originalActions">The original list of actions.</param>
+            <param name="viewModel">Optional view model.</param>
+            <param name="tag">An additional (optional) tag that can be used to identify where the call comes from, or what it is used for. (For instance "MenuButton" indicates that the list of actions is used for actions in the menu of a menu button).</param>
+            <returns>IEnumerable&lt;IViewAction&gt;.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.DefaultViewActionPolicy.GetConsolidatedActions(CODE.Framework.Wpf.Mvvm.IHaveActions,CODE.Framework.Wpf.Mvvm.IHaveActions,System.String,CODE.Framework.Wpf.Mvvm.ViewActionDisplayMode,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionDisplayMode,System.Object)">
+            <summary>
+            Returns a list of consolidated actions from two different action lists.
+            </summary>
+            <param name="actions">The first set of actions.</param>
+            <param name="actions2">The second set of actions.</param>
+            <param name="defaultEmptyCategory">The default empty category.</param>
+            <param name="actionsDisplayFilter">The actions display filter.</param>
+            <param name="flagFirstSecondaryActionAsNewGroup">Defines whether the first secondary action is to be flagged as a new group.</param>
+            <param name="actions2DisplayFilter">Display filter for the secondary set of actions</param>
+            <param name="viewModel">Optional view model object</param>
+            <returns>ObservableCollection&lt;IViewAction&gt;.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.DefaultViewActionPolicy.GetTopLevelActionCategories(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},System.String,System.String,System.Object)">
+            <summary>
+            Gets the top level action categories.
+            </summary>
+            <param name="actions">The actions.</param>
+            <param name="emptyGlobalCategoryTitle">The empty global category title.</param>
+            <param name="emptyLocalCategoryTitle">The empty local category title.</param>
+            <param name="viewModel">Optional view model object</param>
+            <returns>IEnumerable&lt;ViewActionCategory&gt;.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.DefaultViewActionPolicy.GetAllActionsForCategory(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.IViewAction},CODE.Framework.Wpf.Mvvm.ViewActionCategory,System.Int32,System.String,System.Boolean,System.Object)">
+            <summary>
+            Gets all actions for the specified category.
+            </summary>
+            <param name="actions">The actions.</param>
+            <param name="category">The category.</param>
+            <param name="indentLevel">The indent level.</param>
+            <param name="emptyCategory">The empty category.</param>
+            <param name="orderByGroupTitle">if set to <c>true</c> [order by group title].</param>
+            <param name="viewModel">Optional view model object</param>
+            <returns>IEnumerable&lt;IViewAction&gt;.</returns>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionRibbon">
             <summary>
             Special menu object that can be bound to a collection of view actions to automatically and dynamically populate the menu.
@@ -4789,6 +5923,28 @@
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ViewActionRibbon" /> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.RibbonThemeBrush">
+            <summary>
+            Background/theme brush used by the ribbon
+            </summary>
+            <value>The ribbon theme brush.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.RibbonThemeBrushProperty">
+            <summary>
+            Background/theme brush used by the ribbon
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.RibbonSelectedPageBrush">
+            <summary>
+            Background brush for the selected ribbon page
+            </summary>
+            <value>The ribbon selected page brush.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.RibbonSelectedPageBrushProperty">
+            <summary>
+            Background brush for the selected ribbon page
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.ReadyForStatusChange">
@@ -4954,6 +6110,24 @@
             <param name="d">The dependency object the item is set on</param>
             <param name="value">The value.</param>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.ViewActionPolicy">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.ViewActionPolicyProperty">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.PopulateRibbon(CODE.Framework.Wpf.Mvvm.IHaveActions,CODE.Framework.Wpf.Mvvm.IHaveActions,System.String)">
             <summary>
             Populates the current ribbon with items based on the actions collection
@@ -4987,6 +6161,11 @@
             <param name="ribbonPage">The ribbon page.</param>
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.MenuKeyBindings">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionRibbon._setSelectedIndexOnLoadComplete">
             <summary>
             For internal use only
             </summary>
@@ -5044,16 +6223,6 @@
         <member name="T:CODE.Framework.Wpf.Mvvm.RibbonButton">
             <summary>
             Default ribbon button
-            </summary>
-        </member>
-        <member name="P:CODE.Framework.Wpf.Mvvm.RibbonButton.Icon">
-            <summary>
-            Button Icon
-            </summary>
-        </member>
-        <member name="F:CODE.Framework.Wpf.Mvvm.RibbonButton.IconProperty">
-            <summary>
-            Button Icon
             </summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.RibbonButton.AccessKey">
@@ -5185,6 +6354,36 @@
             List of action items for first page controls
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.ViewActionPolicy">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.ViewActionPolicyProperty">
+            <summary>
+            Policy that can be applied to view-actions displayed in the ribbon.
+            </summary>
+            <remarks>
+            This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+            </remarks>
+            <value>The view action policy.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.ActiveView">
+            <summary>
+            Current active view associated with the current action list
+            </summary>
+            <value>The active view.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.ActiveViewProperty">
+            <summary>
+            Current active view associated with the current action list
+            </summary>
+            <value>The active view.</value>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.ArrangeOverride(System.Windows.Size)">
             <summary>
             When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
@@ -5225,6 +6424,23 @@
             <summary>
             Selected view dependency property
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.IsActivating">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.IsActivatingProperty">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.OnIsActivatingChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when IsActivating changes
+            </summary>
+            <param name="d">The list object</param>
+            <param name="e">Event args</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.SelectedViewChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>
@@ -5376,6 +6592,40 @@
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.AccessKeySetProperty">
             <summary>Indicates whether a page access key has been set</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.IsSelected">
+            <summary>
+            Indicates whether the current button is considered to be "selected"
+            </summary>
+            <value><c>true</c> if this instance is selected; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.IsSelectedProperty">
+            <summary>
+            Indicates whether the current button is considered to be "selected"
+            </summary>
+            <value><c>true</c> if this instance is selected; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.ActionView">
+            <summary>
+            Custom view associated with this button
+            </summary>
+            <value>The action view.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.ActionViewModel">
+            <summary>
+            Custom view-model associated with this action
+            </summary>
+            <value>The action view model.</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.OnClick">
+            <summary>
+            Called when the button is clicked
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.ActivateButton">
+            <summary>
+            Activates the button
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel">
             <summary>
@@ -5579,6 +6829,14 @@
             <param name="actions">List of primary actions</param>
             <param name="actions2">List of view specific actions</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionToolbar.IncludeAction(CODE.Framework.Wpf.Mvvm.IViewAction)">
+            <summary>
+            This method is designed to be overridden in subclasses. It can be use to indicate 
+            whether a certain action should be included in the display, or not.
+            </summary>
+            <param name="action">The action.</param>
+            <returns><c>true</c> if the action is to be included, <c>false</c> otherwise.</returns>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton">
             <summary>
             Button class used for view action toolbars
@@ -5592,13 +6850,13 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton.Action">
             <summary>
-            View action asociated with this button
+            View action associated with this button
             </summary>
             <value>The action.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton.ActionProperty">
             <summary>
-            View action asociated with this button
+            View action associated with this button
             </summary>
             <value>The action.</value>
         </member>
@@ -5651,6 +6909,17 @@
             Title of the button
             </summary>
             <value>The title.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton.IsChecked">
+            <summary>
+            Indicates whether the associated action has its IsChecked property set
+            </summary>
+            <value><c>true</c> if this instance is checked; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton.IsCheckedProperty">
+            <summary>
+            Indicates whether the associated action has its IsChecked property set
+            </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionToolbarSeparator">
             <summary>
@@ -5961,6 +7230,11 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ViewHostTabControl"/> class.
             </summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewHostTabControl.HandleSelectionChanged">
+            <summary>
+            Updates all properties related to changing view selection
+            </summary>
+        </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.ViewHostTabControl.NextViewSelectedEvent">
             <summary>
             Fires when the next view is selected (either a new view, or a view with a higher index than the previously selected one)
@@ -6034,6 +7308,262 @@
             <summary>
             Indicates whether local child views are visible
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl">
+            <summary>
+            Specialized version of the view-host tab control class capable of creating hierarchies of tabs
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.Mvvm.ViewHostTabControl" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.HandleSelectionChanged">
+            <summary>
+            Updates all properties related to changing view selection
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.SelectedViewResult">
+            <summary>
+            References the selected view result
+            </summary>
+            <value>The selected view result.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.SelectedViewResultProperty">
+            <summary>
+            References the selected view result
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.EmptyGroupTitle">
+            <summary>
+            Defines the title/label that is to be used for empty groups
+            </summary>
+            <value>The empty group title.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.EmptyGroupTitleProperty">
+            <summary>
+            Defines the title/label that is to be used for empty groups
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.CombineAllEmptyGroups">
+            <summary>
+            If set to true, all views that do not have a group defined will be rolled up into a single category
+            Note: The title of that category is defined through the EmptyGroupTitle property.
+            </summary>
+            <value><c>true</c> if [combine all empty groups]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.CombineAllEmptyGroupsProperty">
+            <summary>
+            If set to true, all views that do not have a group defined will be rolled up into a single category
+            Note: The title of that category is defined through the EmptyGroupTitle property.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.AssociatedGroupNameProperty">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.GetAssociatedGroupName(System.Windows.DependencyObject)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="dep">The object the property was set on</param>
+            <returns>Associated group name</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.SetAssociatedGroupName(System.Windows.DependencyObject,System.String)">
+            <summary>
+            For internal use only
+            </summary>
+            <param name="dep">The object the property was set on</param>
+            <param name="value">The associated group name.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.HierarchicalViews">
+            <summary>
+            Collection of open views
+            </summary>
+            <value>The hierarchical views.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.HierarchicalViewsProperty">
+            <summary>
+            Collection of open views
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.SubTabControlStyle">
+            <summary>
+            Style applied to the hierarchical sub-TabControl
+            </summary>
+            <value>The sub tab control style.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.SubTabControlStyleProperty">
+            <summary>
+            Style applied to the hierarchical sub-TabControl
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.OnHierarchicalViewsChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the views collection changes
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.RemoveViews(System.Collections.Generic.List{CODE.Framework.Wpf.Mvvm.ViewResult})">
+            <summary>
+            Closes the specified views
+            </summary>
+            <param name="removedViewResults"></param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.AddViews(System.Collections.Generic.List{CODE.Framework.Wpf.Mvvm.ViewResult})">
+            <summary>
+            Adds new views to the current list of open views
+            </summary>
+            <param name="addedViews">The added views.</param>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.RepopulateViews">
+            <summary>
+            Repopulates the views from scratch.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.PopulateNewViews(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{CODE.Framework.Wpf.Mvvm.ViewResult}})">
+            <summary>
+            Adds new views into the tabs.
+            </summary>
+            <param name="groups">The groups.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.GetNewOrExistingGroupTab(System.Collections.Generic.IList{CODE.Framework.Wpf.Mvvm.ViewResult},System.String)">
+            <summary>
+            Creates a new tab, or returns the existing tab for the group
+            </summary>
+            <param name="group">The group.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns>TabItem.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.GetGroupedViews(System.Collections.Generic.IEnumerable{CODE.Framework.Wpf.Mvvm.ViewResult})">
+            <summary>
+            Returns a list of grouped views.
+            </summary>
+            <param name="views">The views.</param>
+            <returns>Dictionary&lt;System.String, List&lt;ViewResult&gt;&gt;.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem">
+            <summary>
+            Specific tab item class used for hierarchical view hosts
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.UndockWindowStyle">
+            <summary>
+            Style used for the window that hosts the undock content
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.UndockWindowStyleProperty">
+            <summary>
+            Style used for the window that hosts the undock content
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.UndockContent">
+            <summary>
+            Undocks the current content into its own window
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.DockContent">
+            <summary>
+            Docks the content back into the tab.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.SetParentTabItemVisibility(System.Windows.Controls.TabControl,System.Windows.Visibility)">
+            <summary>
+            Sets the visibility of the parent tab control of the current main tab within the hierarchy
+            </summary>
+            <param name="containedTabControl">The contained tab control.</param>
+            <param name="visibility">The visibility.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.GetItemIndex(System.Windows.Controls.ItemsControl,System.Windows.Controls.TabItem)">
+            <summary>
+            Finds the index of the specified item in the items control
+            </summary>
+            <param name="itemsControl">The items control.</param>
+            <param name="tabToSearch">The tab to search.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.GetNextVisibleItemIndex(System.Windows.Controls.ItemsControl,System.Int32)">
+            <summary>
+            Gets the index of the next visible item within an items control, relative to the index passed along.
+            </summary>
+            <param name="itemsControl">The items control.</param>
+            <param name="referenceIndex">Index of the reference item.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem.GetPreviousVisibleItemIndex(System.Windows.Controls.ItemsControl,System.Int32)">
+            <summary>
+            Gets the index of the previous visible item within an items control, relative to the index passed along.
+            </summary>
+            <param name="itemsControl">The items control.</param>
+            <param name="referenceIndex">Index of the reference item.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.UndockedHierarchicalViewWindow">
+            <summary>
+            Special window class used to host undocked views
+            </summary>
+            <seealso cref="T:System.Windows.Window" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.UndockedHierarchicalViewWindow.#ctor(CODE.Framework.Wpf.Mvvm.ViewResult,CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabItem)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.UndockedHierarchicalViewWindow"/> class.
+            </summary>
+            <param name="viewResult">The view result.</param>
+            <param name="hierarchicalViewHostTabItem">The hierarchical view host tab item.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.UndockedHierarchicalViewWindow.DockContent">
+            <summary>
+            Docks the content back into the parent tab control.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.UndockIcon">
+            <summary>
+            Special undock icon for undocking the hierarchical tab control
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.Mvvm.ThemeIcon" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.UndockIcon.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.UndockIcon"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.UndockIcon.OnMouseDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Handles the <see cref="E:MouseDown" /> event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon">
+            <summary>
+            Special class that is able to close the current view (assuming it exposes a CloseViewAction)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon.CanClose">
+            <summary>
+            Indicates whether the object is able to close the current view
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon.CanCloseProperty">
+            <summary>
+            Indicates whether the object is able to close the current view
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon.GetActionsHost">
+            <summary>
+            Retrieves the model that contains a list of actions (if applicable)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.CloseViewTabIcon.OnMouseDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Handles the <see cref="E:MouseDown" /> event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.TopLevelViewHostTabControl">
             <summary>

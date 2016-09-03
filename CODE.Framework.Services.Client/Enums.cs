@@ -51,7 +51,15 @@
         /// <summary>
         /// For internal use only
         /// </summary>
-        Undefined
+        Undefined,
+        /// <summary>
+        /// Very large (up to 1GB)
+        /// </summary>
+        VeryLarge,
+        /// <summary>
+        /// Maximum size (equal to int.MaxValue, about 2GB)
+        /// </summary>
+        Max
     }
 
 }

@@ -24,6 +24,8 @@
     <Color x:Key="CODE.Framework-Application-StandardViewModelForegroundColor">White</Color>
     <Color x:Key="CODE.Framework-Application-StandardViewModelBackgroundColor">Orange</Color>
 
+    <Color x:Key="CODE.Framework-Application-ValidationErrorColor">DarkRed</Color>
+
 
     <!-- Standard theme brushes -->
     <SolidColorBrush x:Key="CODE.Framework-Application-BackgroundBrush1" Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" />
@@ -47,6 +49,8 @@
 
     <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelForegroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelForegroundColor}" />
     <SolidColorBrush x:Key="CODE.Framework-Application-StandardViewModelBackgroundBrush" Color="{DynamicResource CODE.Framework-Application-StandardViewModelBackgroundColor}" />
+
+    <SolidColorBrush x:Key="CODE.Framework-Application-ValidationErrorBrush" Color="{DynamicResource CODE.Framework-Application-ValidationErrorColor}" />
 
     <!-- Special colors only used in Newsroom -->
     <!-- Tile selection -->

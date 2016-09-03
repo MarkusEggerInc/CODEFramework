@@ -65,8 +65,17 @@
     <Compile Include="BiStackTest.xaml.cs">
       <DependentUpon>BiStackTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BiStackTest2.xaml.cs">
+      <DependentUpon>BiStackTest2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BladeTest.xaml.cs">
+      <DependentUpon>BladeTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ButtonMenuTest.xaml.cs">
       <DependentUpon>ButtonMenuTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CalendarTest.xaml.cs">
+      <DependentUpon>CalendarTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="CanExecuteChangedTest.xaml.cs">
       <DependentUpon>CanExecuteChangedTest.xaml</DependentUpon>
@@ -131,6 +140,9 @@
     <Compile Include="PropertySheetTest.xaml.cs">
       <DependentUpon>PropertySheetTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RangeSliderTest.xaml.cs">
+      <DependentUpon>RangeSliderTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RibbonTest.xaml.cs">
       <DependentUpon>RibbonTest.xaml</DependentUpon>
     </Compile>
@@ -173,6 +185,9 @@
     <Compile Include="ViewActionItemsControlTest.xaml.cs">
       <DependentUpon>ViewActionItemsControlTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewActionMenuTest.xaml.cs">
+      <DependentUpon>ViewActionMenuTest.xaml</DependentUpon>
+    </Compile>
     <Page Include="AsyncTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,7 +200,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="BiStackTest2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BladeTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ButtonMenuTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CalendarTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -307,6 +334,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="RangeSliderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="RibbonTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -363,6 +394,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ViewActionMenuTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -398,6 +433,10 @@
       <Project>{B5C5D3E2-79DB-4839-8375-C0D1B5D832C8}</Project>
       <Name>CODE.Framework.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Documents\CODE.Framework.Wpf.Documents.csproj">
+      <Project>{7214ebb7-e439-4f4b-ba04-854910a6687a}</Project>
+      <Name>CODE.Framework.Wpf.Documents</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CODE.Framework.Wpf.Mvvm\CODE.Framework.Wpf.Mvvm.csproj">
       <Project>{F0FBB452-A6BF-4DFB-8EAB-6DBD9BBDBEF0}</Project>
       <Name>CODE.Framework.Wpf.Mvvm</Name>
@@ -413,6 +452,14 @@
     <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Metro\CODE.Framework.Wpf.Theme.Metro.csproj">
       <Project>{52044FE1-233E-45DF-9548-468F79110AA0}</Project>
       <Name>CODE.Framework.Wpf.Theme.Metro</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Newsroom\CODE.Framework.Wpf.Theme.Newsroom.csproj">
+      <Project>{5d510847-913e-4529-8abd-37787619c5bf}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Newsroom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Universe\CODE.Framework.Wpf.Theme.Universe.csproj">
+      <Project>{16139894-a035-4aa8-aaa1-8174adc293da}</Project>
+      <Name>CODE.Framework.Wpf.Theme.Universe</Name>
     </ProjectReference>
     <ProjectReference Include="..\CODE.Framework.Wpf.Theme.Vapor\CODE.Framework.Wpf.Theme.Vapor.csproj">
       <Project>{dbd7b756-0aeb-4e71-8b9a-3536c70f3bca}</Project>

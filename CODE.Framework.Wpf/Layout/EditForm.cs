@@ -27,7 +27,7 @@ namespace CODE.Framework.Wpf.Layout
             VerticalAlignment = VerticalAlignment.Stretch;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             ClipToBounds = true;
-
+            
             Loaded += (s, e) => CreateScrollbars();
         }
 
@@ -843,6 +843,8 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The actual size used once the element is arranged.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
+            InvalidateVisual();
+
             _groupBackgrounds.Clear();
             _headers.Clear();
             _controlPairPositionedRectangles.Clear();

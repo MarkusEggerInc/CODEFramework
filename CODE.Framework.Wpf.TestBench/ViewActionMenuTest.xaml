@@ -1,0 +1,21 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.ViewActionMenuTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+        Title="ViewActionMenuTest" Height="300" Width="600">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-Ribbon.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid controls:GridEx.RowHeights="Auto,50,Auto,*">
+        <mvvm:ViewActionMenu x:Name="menu" />
+        <mvvm:ViewActionRibbon x:Name="ribbon" Grid.Row="2" MinHeight="100" FirstPageIsSpecial="False" ForceTopLevelTitlesUpperCase="False" />
+        <mvvm:ViewActionMenuButton x:Name="button" Grid.Row="3" />
+    </Grid>
+</Window>

@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Mvvm
@@ -25,10 +26,21 @@ namespace CODE.Framework.Wpf.Mvvm
             {
                 if (!FirstPageIsSpecial) return;
                 if (SelectedIndex == 0)
+                {
                     IsSpecialFirstPageActive = true;
+                    if (!IsLoaded && !_mustRaiseSpecialFirstPageActivateEventOnLoad)
+                        _mustRaiseSpecialFirstPageActivateEventOnLoad = true;
+                    if (!IsLoaded && _mustRaiseSpecialFirstPageDeactivateEventOnLoad)
+                        _mustRaiseSpecialFirstPageDeactivateEventOnLoad = false;
+                }
                 else
                 {
                     IsSpecialFirstPageActive = false;
+                    if (!IsLoaded && _mustRaiseSpecialFirstPageActivateEventOnLoad)
+                        _mustRaiseSpecialFirstPageActivateEventOnLoad = false;
+                    if (!IsLoaded && !_mustRaiseSpecialFirstPageDeactivateEventOnLoad)
+                        _mustRaiseSpecialFirstPageDeactivateEventOnLoad = true;
+
                     if (SelectedIndex > -1)
                         LastRegularIndex = SelectedIndex;
                 }
@@ -41,6 +53,11 @@ namespace CODE.Framework.Wpf.Mvvm
                     RaiseEvent(new RoutedEventArgs(SpecialFirstPageDeactivateEvent));
                 if (_mustRaiseSpecialFirstPageActivateEventOnLoad)
                     RaiseEvent(new RoutedEventArgs(SpecialFirstPageActivateEvent));
+                if (_setSelectedIndexOnLoadComplete > -1)
+                {
+                    SelectedIndex = _setSelectedIndexOnLoadComplete;
+                    _setSelectedIndexOnLoadComplete = -1;
+                }
             };
 
             Initialized += (o, e) =>
@@ -80,10 +97,23 @@ namespace CODE.Framework.Wpf.Mvvm
                     }
                     else if (key == Key.Escape)
                     {
+                        if (!GetKeyboardShortcutsActive(this)) return;
                         SetKeyboardShortcutsActive(window, false);
                         ReadyForStatusChange = true;
                         a.Handled = true;
                     }
+                };
+                PreviewMouseDown += (s, a) =>
+                {
+                    if (!GetKeyboardShortcutsActive(this)) return;
+                    SetKeyboardShortcutsActive(window, false);
+                    ReadyForStatusChange = true;
+                };
+                window.PreviewMouseDown += (s, a) =>
+                {
+                    if (!GetKeyboardShortcutsActive(this)) return;
+                    SetKeyboardShortcutsActive(window, false);
+                    ReadyForStatusChange = true;
                 };
                 window.PreviewKeyUp += (s, a) =>
                 {
@@ -94,6 +124,34 @@ namespace CODE.Framework.Wpf.Mvvm
                 };
             };
         }
+
+        /// <summary>
+        /// Background/theme brush used by the ribbon
+        /// </summary>
+        /// <value>The ribbon theme brush.</value>
+        public Brush RibbonThemeBrush
+        {
+            get { return (Brush)GetValue(RibbonThemeBrushProperty); }
+            set { SetValue(RibbonThemeBrushProperty, value); }
+        }
+        /// <summary>
+        /// Background/theme brush used by the ribbon
+        /// </summary>
+        public static readonly DependencyProperty RibbonThemeBrushProperty = DependencyProperty.Register("RibbonThemeBrush", typeof(Brush), typeof(ViewActionRibbon), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Background brush for the selected ribbon page
+        /// </summary>
+        /// <value>The ribbon selected page brush.</value>
+        public Brush RibbonSelectedPageBrush
+        {
+            get { return (Brush)GetValue(RibbonSelectedPageBrushProperty); }
+            set { SetValue(RibbonSelectedPageBrushProperty, value); }
+        }
+        /// <summary>
+        /// Background brush for the selected ribbon page
+        /// </summary>
+        public static readonly DependencyProperty RibbonSelectedPageBrushProperty = DependencyProperty.Register("RibbonSelectedPageBrush", typeof(Brush), typeof(ViewActionRibbon), new PropertyMetadata(null));
 
         /// <summary>
         /// For internal use only
@@ -380,6 +438,28 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public IViewActionPolicy ViewActionPolicy
+        {
+            get { return (IViewActionPolicy)GetValue(ViewActionPolicyProperty); }
+            set { SetValue(ViewActionPolicyProperty, value); }
+        }
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public static readonly DependencyProperty ViewActionPolicyProperty = DependencyProperty.Register("ViewActionPolicy", typeof(IViewActionPolicy), typeof(ViewActionRibbon), new PropertyMetadata(null));
+
+        /// <summary>
         /// Populates the current ribbon with items based on the actions collection
         /// </summary>
         /// <param name="actions">List of primary actions</param>
@@ -393,8 +473,8 @@ namespace CODE.Framework.Wpf.Mvvm
             Items.Clear();
             if (actions == null) return;
 
-            var actionList = ViewActionHelper.GetConsolidatedActions(actions, actions2, selectedViewTitle);
-            var rootCategories = ViewActionHelper.GetTopLevelActionCategories(actionList, EmptyGlobalCategoryTitle, EmptyLocalCategoryTitle);
+            var actionList = ViewActionPolicy != null ? ViewActionPolicy.GetConsolidatedActions(actions, actions2, selectedViewTitle, viewModel: Model) : ViewActionHelper.GetConsolidatedActions(actions, actions2, selectedViewTitle);
+            var rootCategories = ViewActionPolicy != null ? ViewActionPolicy.GetTopLevelActionCategories(actionList, EmptyGlobalCategoryTitle, EmptyLocalCategoryTitle, viewModel: Model) : ViewActionHelper.GetTopLevelActionCategories(actionList, EmptyGlobalCategoryTitle, EmptyLocalCategoryTitle);
 
             var pageCounter = 0;
             var selectedIndex = -1;
@@ -408,7 +488,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 var tabVisibilityBinding = new MultiBinding {Converter = new MaximumVisibilityMultiConverter()};
                 if (category.IsLocalCategory && HighlightLocalCategories)
                 {
-                    var caption = category.Caption.ToUpper();
+                    var caption = category.Caption;
                     if (string.IsNullOrEmpty(caption)) caption = ForceTopLevelTitlesUpperCase ? selectedViewTitle.Trim().ToUpper() : selectedViewTitle.Trim();
                     tab = new RibbonSpecialPage {Header = caption};
                     if (!specialSelectedIndexSet)
@@ -464,7 +544,7 @@ namespace CODE.Framework.Wpf.Mvvm
             if (actionList.Count(a => a.IsDefaultSelection) > 0)
                 foreach (var category in viewActionCategories)
                 {
-                    var matchingActions = ViewActionHelper.GetAllActionsForCategory(actionList, category);
+                    var matchingActions = ViewActionPolicy != null ? ViewActionPolicy.GetAllActionsForCategory(actionList, category, viewModel: Model) : ViewActionHelper.GetAllActionsForCategory(actionList, category);
                     foreach (var matchingAction in matchingActions)
                         if (matchingAction.IsDefaultSelection)
                         {
@@ -480,6 +560,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
             LastRegularIndex = selectedIndex;
             SelectedIndex = selectedIndex;
+            _setSelectedIndexOnLoadComplete = !IsLoaded ? SelectedIndex : -1;
 
             CreateAllMenuKeyBindings();
         }
@@ -506,48 +587,53 @@ namespace CODE.Framework.Wpf.Mvvm
             var populatedCategories = new List<string>();
             if (actions == null) return;
             var viewActions = actions as IViewAction[] ?? actions.ToArray();
-            var matchingActions = ViewActionHelper.GetAllActionsForCategory(viewActions, category, indentLevel, EmptyGlobalCategoryTitle);
-            var addedMenuItems = 0;
+            var matchingActions = ViewActionPolicy != null ? ViewActionPolicy.GetAllActionsForCategory(viewActions, category, indentLevel, EmptyGlobalCategoryTitle, false, Model) : ViewActionHelper.GetAllActionsForCategory(viewActions, category, indentLevel, EmptyGlobalCategoryTitle, false);
+            var addedRibbonItems = 0;
             foreach (var matchingAction in matchingActions)
             {
-                if (addedMenuItems > 0 && matchingAction.BeginGroup) parentPanel.Children.Add(new RibbonSeparator());
+                if (addedRibbonItems > 0 && matchingAction.BeginGroup) parentPanel.Children.Add(new RibbonSeparator());
 
                 if (matchingAction.Categories != null && matchingAction.Categories.Count > indentLevel + 1 && !populatedCategories.Contains(matchingAction.Categories[indentLevel].Id)) // This is further down in a sub-category even
                 {
+                    // TODO: Add a drop-down menu capable button
                     populatedCategories.Add(matchingAction.Categories[indentLevel].Id);
-                    var newRibbonButton = new RibbonButtonLarge {Content = matchingAction.Categories[indentLevel].Caption, Visibility = matchingAction.Visibility};
+                    var newRibbonButton = new RibbonButtonLarge {Content = matchingAction.Categories[indentLevel + 1].Caption, Visibility = matchingAction.Visibility};
                     CreateMenuItemBinding(matchingAction, newRibbonButton);
                     if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = newRibbonButton});
                     PopulateSubCategories(parentPanel, matchingAction.Categories[indentLevel], viewActions, indentLevel + 1);
                     newRibbonButton.AccessKey = matchingAction.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper();
                     parentPanel.Children.Add(newRibbonButton);
-                    addedMenuItems++;
+                    addedRibbonItems++;
                 }
                 else
                 {
-                    var realAction = matchingAction as ViewAction;
-                    Brush iconBrush = Brushes.Transparent;
-                    if (realAction != null) iconBrush = realAction.Brush;
-
                     if (matchingAction.ActionView != null)
                     {
                         if (matchingAction.ActionViewModel != null && matchingAction.ActionView.DataContext == null) matchingAction.ActionView.DataContext = matchingAction.ActionViewModel;
                         var command = GetRibbonItemCommand(matchingAction.ActionView);
                         if (command == null) SetRibbonItemCommand(matchingAction.ActionView, matchingAction);
                         if (visibilityBinding != null) visibilityBinding.Bindings.Add(new Binding("Visibility") {Source = matchingAction.ActionView});
-                        ElementHelper.DetachElementFromParent(matchingAction.ActionView);
-                        if (matchingAction.ActionView.Style == null)
-                        {
-                            var resource = TryFindResource("CODE.Framework-Ribbon-CustomControlContainerStyle");
-                            if (resource != null)
-                            {
-                                var genericStyle = resource as Style;
-                                if (genericStyle != null)
-                                    matchingAction.ActionView.Style = genericStyle;
-                            }
-                        }
                         matchingAction.ActionView.IsVisibleChanged += (s, e) => InvalidateAll();
-                        parentPanel.Children.Add(matchingAction.ActionView);
+
+                        var isInFirstPage = false;
+                        if (ribbonPage != null)
+                            isInFirstPage = ribbonPage is RibbonFirstPage;
+
+                        if (!isInFirstPage)
+                        {
+                            ElementHelper.DetachElementFromParent(matchingAction.ActionView);
+                            if (matchingAction.ActionView.Style == null)
+                            {
+                                var resource = TryFindResource("CODE.Framework-Ribbon-CustomControlContainerStyle");
+                                if (resource != null)
+                                {
+                                    var genericStyle = resource as Style;
+                                    if (genericStyle != null)
+                                        matchingAction.ActionView.Style = genericStyle;
+                                }
+                            }
+                            parentPanel.Children.Add(matchingAction.ActionView);
+                        }
                     }
                     else
                     {
@@ -557,7 +643,6 @@ namespace CODE.Framework.Wpf.Mvvm
                             {
                                 Content = matchingAction.Caption,
                                 Command = matchingAction,
-                                Icon = iconBrush,
                                 Visibility = matchingAction.Visibility
                             };
                         else
@@ -565,7 +650,6 @@ namespace CODE.Framework.Wpf.Mvvm
                             {
                                 Content = matchingAction.Caption,
                                 Command = matchingAction,
-                                Icon = iconBrush,
                                 Visibility = matchingAction.Visibility
                             };
                         newRibbonButton.IsVisibleChanged += (s, e) => InvalidateAll();
@@ -577,10 +661,10 @@ namespace CODE.Framework.Wpf.Mvvm
                         parentPanel.Children.Add(newRibbonButton);
                         HandleRibbonShortcutKey(newRibbonButton, matchingAction, ribbonPage);
                     }
-                    addedMenuItems++;
+                    addedRibbonItems++;
                 }
             }
-            if (addedMenuItems > 0) parentPanel.Children.Add(new RibbonSeparator());
+            if (addedRibbonItems > 0) parentPanel.Children.Add(new RibbonSeparator());
         }
 
         private void InvalidateAll()
@@ -621,6 +705,11 @@ namespace CODE.Framework.Wpf.Mvvm
         /// For internal use only
         /// </summary>
         protected readonly List<ViewActionMenuKeyBinding> MenuKeyBindings = new List<ViewActionMenuKeyBinding>();
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        private int _setSelectedIndexOnLoadComplete = -1;
 
         /// <summary>
         /// Removes all key bindings from the current window that were associated with a view category menu
@@ -726,20 +815,6 @@ namespace CODE.Framework.Wpf.Mvvm
     /// </summary>
     public class RibbonButton : Button
     {
-        /// <summary>
-        /// Button Icon
-        /// </summary>
-        public Brush Icon
-        {
-            get { return (Brush) GetValue(IconProperty); }
-            set { SetValue(IconProperty, value); }
-        }
-
-        /// <summary>
-        /// Button Icon
-        /// </summary>
-        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof (Brush), typeof (RibbonButton), new PropertyMetadata(Brushes.Transparent));
-
         /// <summary>Access key to be displayed for the button</summary>
         public string AccessKey
         {
@@ -1171,7 +1246,10 @@ namespace CODE.Framework.Wpf.Mvvm
 
             if (Ribbon == null) return;
             if (Ribbon.Items.Count > 1)
+            {
+                if (!Ribbon.IsSpecialFirstPageActive) Ribbon.IsSpecialFirstPageActive = true; // This can happen in theme switching scenarios. We trigger the change here so everything associated with this property changing actually fires.
                 Ribbon.IsSpecialFirstPageActive = false;
+            }
         }
     }
 
@@ -1181,6 +1259,44 @@ namespace CODE.Framework.Wpf.Mvvm
     public class SpecialFirstPageActionList : Panel
     {
         private double _widest;
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public IViewActionPolicy ViewActionPolicy
+        {
+            get { return (IViewActionPolicy)GetValue(ViewActionPolicyProperty); }
+            set { SetValue(ViewActionPolicyProperty, value); }
+        }
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public static readonly DependencyProperty ViewActionPolicyProperty = DependencyProperty.Register("ViewActionPolicy", typeof(IViewActionPolicy), typeof(SpecialFirstPageActionList), new PropertyMetadata(null));
+
+
+        /// <summary>
+        /// Current active view associated with the current action list
+        /// </summary>
+        /// <value>The active view.</value>
+        public FrameworkElement ActiveView
+        {
+            get { return (FrameworkElement)GetValue(ActiveViewProperty); }
+            set { SetValue(ActiveViewProperty, value); }
+        }
+        /// <summary>
+        /// Current active view associated with the current action list
+        /// </summary>
+        /// <value>The active view.</value>
+        public static readonly DependencyProperty ActiveViewProperty = DependencyProperty.Register("ActiveView", typeof(FrameworkElement), typeof(SpecialFirstPageActionList), new PropertyMetadata(null));
 
         /// <summary>
         /// When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
@@ -1272,6 +1388,46 @@ namespace CODE.Framework.Wpf.Mvvm
         public static readonly DependencyProperty SelectedViewProperty = DependencyProperty.Register("SelectedView", typeof (object), typeof (SpecialFirstPageActionList), new UIPropertyMetadata(null, SelectedViewChanged));
 
         /// <summary>
+        /// For internal use only
+        /// </summary>
+        public bool IsActivating
+        {
+            get { return (bool)GetValue(IsActivatingProperty); }
+            set { SetValue(IsActivatingProperty, value); }
+        }
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        public static readonly DependencyProperty IsActivatingProperty = DependencyProperty.Register("IsActivating", typeof(bool), typeof(SpecialFirstPageActionList), new PropertyMetadata(false, OnIsActivatingChanged));
+        /// <summary>
+        /// Fires when IsActivating changes
+        /// </summary>
+        /// <param name="d">The list object</param>
+        /// <param name="e">Event args</param>
+        private static void OnIsActivatingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool) e.NewValue) return; // Nothing to do
+            var list = d as SpecialFirstPageActionList;
+            if (list == null) return;
+            var selectedItem = list.Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b => b.IsSelected);
+            if (selectedItem == null || list.ActiveView == null || list.ActiveView != selectedItem.ActionView)
+            {
+                var initialButton = list.Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b =>
+                {
+                    var command = b.Command as OnDemandLoadCustomViewViewAction;
+                    if (command == null) return false;
+                    return command.IsInitiallySelected;
+                });
+                if (initialButton != null)
+                {
+                    if (list.ActiveView != null)
+                        list.ActiveView = null;
+                    initialButton.ActivateButton();
+                }
+            }
+        }
+
+        /// <summary>
         /// Change handler for selected view property
         /// </summary>
         /// <param name="d">The dependency object that triggered this change.</param>
@@ -1307,31 +1463,60 @@ namespace CODE.Framework.Wpf.Mvvm
         private void PopulateList(IHaveActions actions, IHaveActions actions2 = null, string selectedViewTitle = "")
         {
             Children.Clear();
+            //ActiveView = null;
+
             if (actions == null) return;
-            var actionList = ViewActionHelper.GetConsolidatedActions(actions, actions2, selectedViewTitle);
+            var actionList = ViewActionPolicy != null ? ViewActionPolicy.GetConsolidatedActions(actions, actions2, selectedViewTitle, viewModel: this) : ViewActionHelper.GetConsolidatedActions(actions, actions2, selectedViewTitle);
 
             var globalCategory = "File";
             var ribbon = ElementHelper.FindParent<ViewActionRibbon>(this);
             if (ribbon != null)
                 globalCategory = ribbon.EmptyGlobalCategoryTitle;
-            var rootCategories = ViewActionHelper.GetTopLevelActionCategories(actionList, globalCategory, globalCategory);
+            var rootCategories = ViewActionPolicy != null ? ViewActionPolicy.GetTopLevelActionCategories(actionList, globalCategory, globalCategory, this) : ViewActionHelper.GetTopLevelActionCategories(actionList, globalCategory, globalCategory);
 
             var viewActionCategories = rootCategories as ViewActionCategory[] ?? rootCategories.ToArray();
             if (viewActionCategories.Length > 0)
             {
                 var category = viewActionCategories[0];
-                var matchingActions = ViewActionHelper.GetAllActionsForCategory(actionList, category);
-                foreach (var action in matchingActions)
-                {
-                    var button = new SpecialFirstPageRibbonButton
+                var matchingActions = ViewActionPolicy != null ? ViewActionPolicy.GetAllActionsForCategory(actionList, category, orderByGroupTitle: false, viewModel: this) : ViewActionHelper.GetAllActionsForCategory(actionList, category, orderByGroupTitle: false);
+                var matchingActionsArray = matchingActions as IViewAction[] ?? matchingActions.ToArray(); // Prevents multiple enumeration
+                foreach (var action in matchingActionsArray)
+                    if (action.ActionView == null && action.ActionViewModel == null && !(action is OnDemandLoadCustomViewViewAction))
                     {
-                        Content = action.Caption,
-                        Command = action,
-                        AccessKey = action.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper()
-                    };
-                    CreateMenuItemBinding(action, button);
-                    Children.Add(button);
-                }
+                        // This is a standard button which triggers the associated action
+                        var button = new SpecialFirstPageRibbonButton
+                        {
+                            Content = action.Caption,
+                            Command = action,
+                            AccessKey = action.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper()
+                        };
+                        CreateMenuItemBinding(action, button);
+                        Children.Add(button);
+                    }
+                    else
+                    {
+                        // This action has a custom view associated which is displayed when the button is clicked
+                        var button = new SpecialFirstPageRibbonButton
+                        {
+                            Content = action.Caption,
+                            Command = action,
+                            AccessKey = action.AccessKey.ToString(CultureInfo.CurrentUICulture).Trim().ToUpper(),
+                            ActionView = action.ActionView,
+                            ActionViewModel = action.ActionViewModel
+                        };
+                        CreateMenuItemBinding(action, button);
+                        Children.Add(button);
+                    }
+
+                //var selectedActionButton = Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b =>
+                //{
+                //    if (b.IsSelected) return false;
+                //    var command = b.Command as OnDemandLoadCustomViewViewAction;
+                //    if (command == null) return false;
+                //    return command.IsInitiallySelected;
+                //});
+                //if (selectedActionButton != null)
+                //    selectedActionButton.ActivateButton();
             }
         }
 
@@ -1490,7 +1675,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // We are bound to a property of the items collection, but we do not really care and always go after the items colletion itself to detirmined visibility
+            // We are bound to a property of the items collection, but we do not really care and always go after the items collection itself to determined visibility
             if (_children == null) return Visibility.Collapsed;
             foreach (var item in _children)
             {
@@ -1551,6 +1736,89 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>Indicates whether a page access key has been set</summary>
-        public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof (bool), typeof (SpecialFirstPageRibbonButton), new PropertyMetadata(false));
+        public static readonly DependencyProperty AccessKeySetProperty = DependencyProperty.Register("AccessKeySet", typeof(bool), typeof(SpecialFirstPageRibbonButton), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Indicates whether the current button is considered to be "selected"
+        /// </summary>
+        /// <value><c>true</c> if this instance is selected; otherwise, <c>false</c>.</value>
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether the current button is considered to be "selected"
+        /// </summary>
+        /// <value><c>true</c> if this instance is selected; otherwise, <c>false</c>.</value>
+        public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register("IsSelected", typeof(bool), typeof(SpecialFirstPageRibbonButton), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Custom view associated with this button
+        /// </summary>
+        /// <value>The action view.</value>
+        public FrameworkElement ActionView { get; set; }
+
+        /// <summary>
+        /// Custom view-model associated with this action
+        /// </summary>
+        /// <value>The action view model.</value>
+        public object ActionViewModel { get; set; }
+
+        /// <summary>
+        /// Called when the button is clicked
+        /// </summary>
+        protected override void OnClick()
+        {
+            if (Command != null)
+            {
+                var onDemandLoadViewAction = Command as OnDemandLoadCustomViewViewAction;
+                if (onDemandLoadViewAction == null)
+                {
+                    // We have a standard action.command that handles everything
+                    base.OnClick();
+                    return;
+                }
+            }
+
+            ActivateButton();
+        }
+
+        /// <summary>
+        /// Activates the button
+        /// </summary>
+        public void ActivateButton()
+        {
+            var list = ElementHelper.FindVisualTreeParent<SpecialFirstPageActionList>(this);
+            if (list == null) return;
+
+            foreach (var button in list.Children.OfType<SpecialFirstPageRibbonButton>())
+                if (button != this) button.IsSelected = false;
+
+            if (ActionView == null && Command != null)
+            {
+                var onDemandLoadViewAction = Command as OnDemandLoadCustomViewViewAction;
+                if (onDemandLoadViewAction != null)
+                {
+                    onDemandLoadViewAction.Execute(null); // Makes sure the desired view is loaded on demand
+                    ActionView = onDemandLoadViewAction.ActionView;
+                    ActionViewModel = onDemandLoadViewAction.ActionViewModel;
+                }
+            }
+
+            if (list.ActiveView != null && list.ActiveView != ActionView)
+            {
+                //ElementHelper.DetachElementFromParent(list.ActiveView);
+                list.ActiveView = null;
+            }
+            if (ActionView != null && list.ActiveView != ActionView)
+            {
+                if (ActionView.DataContext == null) ActionView.DataContext = ActionViewModel;
+                //ElementHelper.DetachElementFromParent(ActionView);
+                list.ActiveView = ActionView;
+            }
+
+            IsSelected = true;
+        }
     }
 }

@@ -103,8 +103,31 @@ namespace CODE.Framework.Wpf.Mvvm
 
             // Getting all currently available actions
             var actions = actionHost.Actions.Where(a => a.Availability == ViewActionAvailabilities.Available).OrderBy(a => a.CategoryOrder).ToList();
+            if (itemsControl.ViewActionPolicy != null) actions = itemsControl.ViewActionPolicy.ProcessActions(actions).ToList();
             itemsControl.ItemsSource = itemsControl.OnRepopulateItems(actions);
         }
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public IViewActionPolicy ViewActionPolicy
+        {
+            get { return (IViewActionPolicy)GetValue(ViewActionPolicyProperty); }
+            set { SetValue(ViewActionPolicyProperty, value); }
+        }
+
+        /// <summary>
+        /// Policy that can be applied to view-actions displayed in the ribbon.
+        /// </summary>
+        /// <remarks>
+        /// This kind of policy can be used to change which view-actions are to be displayed, or which order they are displayed in.
+        /// </remarks>
+        /// <value>The view action policy.</value>
+        public static readonly DependencyProperty ViewActionPolicyProperty = DependencyProperty.Register("ViewActionPolicy", typeof(IViewActionPolicy), typeof(ActionItemsControl), new PropertyMetadata(null));
 
         /// <summary>
         /// This method is designed to be overridden in subclasses

@@ -76,7 +76,9 @@ namespace CODE.Framework.Wpf.Mvvm
                         action.Categories.Add(new ViewActionCategory(defaultEmptyCategory.Replace(" ", ""), defaultEmptyCategory));
                     var viewAction = action as ViewAction;
                     if (viewAction != null)
+                    {
                         viewAction.IsLocalAction = true;
+                    }
                     actionList.Add(action);
                     actionsCount++;
                 }
@@ -105,7 +107,7 @@ namespace CODE.Framework.Wpf.Mvvm
                 {
                     if (!localFileCategoryAdded && (action.Categories == null || action.Categories.Count == 0))
                     {
-                        result.Add(new ViewActionCategory(emptyLocalCategoryTitle.Replace(" ", ""), emptyLocalCategoryTitle));
+                        result.Add(new ViewActionCategory(emptyLocalCategoryTitle.Replace(" ", ""), emptyLocalCategoryTitle) {BrushResourceKey = viewAction.CategoryBrushResourceKey });
                         localFileCategoryAdded = true;
                     }
                     else if (action.Categories != null && action.Categories.Count > 0)
@@ -120,6 +122,7 @@ namespace CODE.Framework.Wpf.Mvvm
                             if (category.Caption == caption && category.Id == id)
                             {
                                 alreadyAdded = true;
+                                if (string.IsNullOrEmpty(category.BrushResourceKey)) category.BrushResourceKey = viewAction.CategoryBrushResourceKey;
                                 break;
                             }
                         }
@@ -135,7 +138,8 @@ namespace CODE.Framework.Wpf.Mvvm
                             result.Add(new ViewActionCategory(id, caption, action.Categories[0].AccessKey)
                             {
                                 IsLocalCategory = true,
-                                Order = order
+                                Order = order,
+                                BrushResourceKey = viewAction.CategoryBrushResourceKey
                             });
                         }
                         if (action.Categories[0].Id == emptyLocalCategoryTitle.Replace(" ", "")) globalFileCategoryAdded = true;
@@ -145,7 +149,9 @@ namespace CODE.Framework.Wpf.Mvvm
                 {
                     if (!globalFileCategoryAdded && (action.Categories == null || action.Categories.Count == 0))
                     {
-                        result.Add(new ViewActionCategory(emptyGlobalCategoryTitle.Replace(" ", ""), emptyGlobalCategoryTitle));
+                        var newCategory = new ViewActionCategory(emptyGlobalCategoryTitle.Replace(" ", ""), emptyGlobalCategoryTitle);
+                        if (viewAction != null) newCategory.BrushResourceKey = viewAction.CategoryBrushResourceKey;
+                        result.Add(newCategory);
                         globalFileCategoryAdded = true;
                     }
                     else if (action.Categories != null && action.Categories.Count > 0)
@@ -160,6 +166,7 @@ namespace CODE.Framework.Wpf.Mvvm
                             if (category.Caption == caption && category.Id == id)
                             {
                                 alreadyAdded = true;
+                                if (viewAction != null && string.IsNullOrEmpty(category.BrushResourceKey)) category.BrushResourceKey = viewAction.CategoryBrushResourceKey;
                                 break;
                             }
                         }
@@ -169,11 +176,13 @@ namespace CODE.Framework.Wpf.Mvvm
                             if (string.IsNullOrEmpty(id)) id = emptyGlobalCategoryTitle;
                             var caption = action.Categories[0].Caption;
                             if (string.IsNullOrEmpty(caption)) caption = emptyGlobalCategoryTitle;
-                            result.Add(new ViewActionCategory(id, caption, action.Categories[0].AccessKey)
-                                {
-                                    IsLocalCategory = false,
-                                    Order = action.CategoryOrder
-                                });
+                            var newCategory = new ViewActionCategory(id, caption, action.Categories[0].AccessKey)
+                            {
+                                IsLocalCategory = false,
+                                Order = action.CategoryOrder
+                            };
+                            if (viewAction != null) newCategory.BrushResourceKey = viewAction.CategoryBrushResourceKey;
+                            result.Add(newCategory);
                         }
                         if (action.Categories[0].Id == emptyGlobalCategoryTitle.Replace(" ", "")) globalFileCategoryAdded = true;
                     }
@@ -237,7 +246,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Anything that is at least low normal significance
         /// </summary>
         NormalSignificanceAndHigher,
-        /// <summary>
+        ///     <summary>
         /// Anything that is at least low significance
         /// </summary>
         BelowNormalSignificanceAndHigher

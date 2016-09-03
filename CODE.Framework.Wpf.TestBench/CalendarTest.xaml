@@ -1,0 +1,34 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.CalendarTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Calendar Test" SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-Calendar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-DatePicker.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-TextBox.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Control-ScrollBar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Workplace-Icon-Standard.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Colors.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/Fonts.xaml"/>
+
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Universe-Control-Calendar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Universe-Control-DatePicker.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Universe-Control-TextBox.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Universe-Control-ScrollBar.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Universe-Icon-Standard.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Colors.xaml"/>
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/Fonts.xaml"/>-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Calendar Margin="50"/>
+        <DatePicker Grid.Column="1" Margin="50" VerticalAlignment="Top" MinWidth="100"/>
+    </Grid>
+</Window>

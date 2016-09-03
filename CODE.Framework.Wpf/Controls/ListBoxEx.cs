@@ -32,6 +32,10 @@ namespace CODE.Framework.Wpf.Controls
             // We also hook both triggers (each of which will then check whether it needs to be executed as it happens)
             source.SelectionChanged += SelectionChangedCommandTrigger;
             source.MouseDoubleClick += MouseDoubleClickCommandTrigger;
+
+            var command = e.NewValue as ICommand;
+            if (command != null && GetTriggerCommandOnEnter(source))
+                source.InputBindings.Add(new InputBinding(command, new KeyGesture(Key.Enter)));
         }
 
         /// <summary>
@@ -154,6 +158,34 @@ namespace CODE.Framework.Wpf.Controls
         public static void SetCommandParameter(DependencyObject obj, object value)
         {
             obj.SetValue(CommandParameterProperty, value);
+        }
+
+        /// <summary>Indicates whether the associated command shall be triggered when the user hits ENTER on the listbox </summary>
+        public static bool GetTriggerCommandOnEnter(DependencyObject d)
+        {
+            return (bool) d.GetValue(TriggerCommandOnEnterProperty);
+        }
+        /// <summary>Indicates whether the associated command shall be triggered when the user hits ENTER on the listbox </summary>
+        public static void SetTriggerCommandOnEnter(DependencyObject d, bool value)
+        {
+            d.SetValue(TriggerCommandOnEnterProperty, value);
+        }
+        /// <summary>Indicates whether the associated command shall be triggered when the user hits ENTER on the listbox </summary>
+        public static readonly DependencyProperty TriggerCommandOnEnterProperty = DependencyProperty.RegisterAttached("TriggerCommandOnEnter", typeof(bool), typeof(ListBoxEx), new PropertyMetadata(false, OnTriggerCommandOnEnterChanged));
+
+        /// <summary>
+        /// Fires when TroggerCommandOnEnter changes
+        /// </summary>
+        /// <param name="d">The object the parameter is set on</param>
+        /// <param name="e">Event arguments</param>
+        private static void OnTriggerCommandOnEnterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool) e.NewValue) return;
+            var control = d as ListBox;
+            if (control == null) return;
+            var command = GetCommand(d);
+            if (command != null)
+                control.InputBindings.Add(new InputBinding(command, new KeyGesture(Key.Enter)));
         }
 
         /// <summary>Provides a way to bind selected items into an observable collection</summary>
