@@ -251,6 +251,7 @@
     <Compile Include="Utilities\LoggingMediator.cs" />
     <Compile Include="Utilities\ObjectHelper.cs" />
     <Compile Include="Utilities\SecurityHelper.cs" />
+    <Compile Include="Utilities\SettingsManager.cs" />
     <Compile Include="Utilities\StreamHelper.cs" />
     <Compile Include="Utilities\StringHelper.cs" />
     <Compile Include="Utilities\TransparentProxyGenerator.cs" />

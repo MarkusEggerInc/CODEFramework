@@ -78,6 +78,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Geek-Control-CapsLockWarning.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Geek-Control-FlowDocumentReader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

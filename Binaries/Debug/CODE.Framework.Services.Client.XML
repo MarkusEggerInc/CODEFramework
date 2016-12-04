@@ -875,11 +875,12 @@
             <param name="useCachedChannel">If true, the system will use a channel that was cached rather than creating a new one (if possible)</param>
             <returns>TCP/IP channel</returns>
         </member>
-        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetStandardNetTcpBinding">
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.GetStandardNetTcpBinding(System.String)">
             <summary>
             Creates a standard instance of a NetTcp binding and performs some basic configurations.
             </summary>
-            <returns></returns>
+            <param name="serviceId">The service identifier.</param>
+            <returns>NetTcpBinding.</returns>
         </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.GetInternalNetTcpChannel``1(System.Int32,System.String,CODE.Framework.Services.Client.MessageSize,System.String,System.String,System.Boolean)">
             <summary>
@@ -913,6 +914,28 @@
             <param name="endpoint">The endpoint.</param>
             <returns>Service type</returns>
             <exception cref="N:CODE.Framework.Core">Error creating service client.</exception>
+        </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.BeforeServiceOperationCall">
+            <summary>
+            This event fires whenever a service operation/method is called from within ServiceClient.Call()
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.RaiseBeforeServiceOperationCall(CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs)">
+            <summary>
+            Raises the before service operation call event.
+            </summary>
+            <param name="args">The <see cref="T:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="E:CODE.Framework.Services.Client.ServiceClient.AfterServiceOperationCall">
+            <summary>
+            This event fires whenever a service operation/method is called from within ServiceClient.Call()
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceClient.RaiseAfterServiceOperationCall(CODE.Framework.Services.Client.AfterServiceOperationCallEventArgs)">
+            <summary>
+            Raises the after service operation call event.
+            </summary>
+            <param name="args">The <see cref="T:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.RemoveCachedChannelFactory``1(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
             <summary>
@@ -1455,6 +1478,66 @@
             <summary>
             XML data format
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs">
+            <summary>
+            Event arguments related to events for before service operation calls
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs.MethodName">
+            <summary>
+            Information about the service method/operation being called
+            </summary>
+            <value>The method information.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs.ServiceContract">
+            <summary>
+            Information about the service that is called
+            </summary>
+            <value>The service contract.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs.InputDataContracts">
+            <summary>
+            Input contracts ("parameters") to be sent to the service
+            </summary>
+            <value>The input data contracts.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.BeforeServiceOperationCallEventArgs.ServiceInstance">
+            <summary>
+            Instance of the service that is being called
+            </summary>
+            <value>The service instance.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.AfterServiceOperationCallEventArgs">
+            <summary>
+            Event arguments related to events for after service operation calls
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Services.Client.AfterServiceOperationCallEventArgs.Response">
+            <summary>
+            The result/response created by a service call
+            </summary>
+            <value>The response.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Client.ServiceProxyEventWrapper">
+            <summary>
+            Wrapper object used to wrap service proxies for the purpose of raising ServiceClient events
+            </summary>
+            <seealso cref="T:CODE.Framework.Core.Utilities.IProxyHandler" />
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceProxyEventWrapper.#ctor(System.Object,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.ServiceProxyEventWrapper"/> class.
+            </summary>
+            <param name="originalProxy">The original proxy.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Client.ServiceProxyEventWrapper.OnMethod(System.Reflection.MethodInfo,System.Object[])">
+            <summary>
+            This method is called when any method on a proxied object is invoked.
+            </summary>
+            <param name="method">Information about the method being called.</param>
+            <param name="args">The arguments passed to the method.</param>
+            <returns>Result value from the proxy call</returns>
         </member>
         <member name="T:CODE.Framework.Services.Client.ServiceGardenLocal">
             <summary>

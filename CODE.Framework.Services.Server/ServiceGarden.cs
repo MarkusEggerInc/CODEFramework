@@ -35,6 +35,23 @@ namespace CODE.Framework.Services.Server
         /// </summary>
         public static int BasePort { get; set; }
 
+        private static SecurityMode GetSecurityMode(string interfaceName)
+        {
+            var mode = GetSetting("ServiceSecurityMode", interfaceName).ToLower();
+            switch (mode)
+            {
+                case "none":
+                    return SecurityMode.None;
+                case "message":
+                    return SecurityMode.Message;
+                case "transport":
+                    return SecurityMode.Transport;
+                case "transportwithmessagecredential":
+                    return SecurityMode.TransportWithMessageCredential;
+            }
+            return SecurityMode.None;
+        }
+
         private static MessageSize GetMessageSize(string interfaceName)
         {
             var size = GetSetting("ServiceMessageSize", interfaceName).ToLower();
@@ -364,7 +381,8 @@ namespace CODE.Framework.Services.Server
             var host = CreateServiceHost(serviceType, contractType, addresses);
 
             // Binding needed
-            var binding = new NetTcpBinding(SecurityMode.None) { SendTimeout = new TimeSpan(0, 10, 0) };
+            var securityMode = GetSecurityMode(contractType.Name);
+            var binding = new NetTcpBinding(securityMode) { SendTimeout = new TimeSpan(0, 10, 0) };
             if (!string.IsNullOrEmpty(serviceNamespace)) binding.Namespace = serviceNamespace;
             ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(messageSize, binding);
 

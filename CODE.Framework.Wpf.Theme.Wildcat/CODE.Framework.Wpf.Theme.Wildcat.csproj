@@ -84,6 +84,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Wildcat-Control-CapsLockWarning.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Wildcat-Control-Label.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

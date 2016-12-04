@@ -13,6 +13,7 @@
 
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Newsroom-Control-Button.xaml"/>
+        <ResourceDictionary Source="Newsroom-Control-CapsLockWarning.xaml"/>
         <ResourceDictionary Source="Newsroom-Control-CheckBox.xaml"/>
         <ResourceDictionary Source="Newsroom-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Newsroom-Control-FlowDocumentReader.xaml"/>

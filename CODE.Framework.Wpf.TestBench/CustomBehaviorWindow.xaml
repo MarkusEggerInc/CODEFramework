@@ -11,7 +11,7 @@
         Controls:WindowEx.AutoWindowResizingEnabled="True">
     <Border BorderBrush="Gray" BorderThickness="1">
         <Grid>
-
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5">Hello</Button>
         </Grid>
     </Border>
 </Window>

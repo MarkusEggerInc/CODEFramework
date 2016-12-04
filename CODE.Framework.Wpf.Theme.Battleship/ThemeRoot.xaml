@@ -11,6 +11,7 @@
 
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Battleship-Control-Button.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-CapsLockWarning.xaml"/>
         <ResourceDictionary Source="Battleship-Control-FlowDocumentReader.xaml"/>
         <ResourceDictionary Source="Battleship-Control-Label.xaml"/>
         <ResourceDictionary Source="Battleship-Control-ListBox.xaml"/>

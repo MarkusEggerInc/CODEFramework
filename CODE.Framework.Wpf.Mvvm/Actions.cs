@@ -352,8 +352,8 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="isCancel">Indicates if this is the action triggered if the user hits ESC</param>
         /// <param name="significance">General significance of the action.</param>
         /// <param name="userRoles">User roles with access to this action</param>
-        /// <param name="brushResourceKey">Resource key for a visual derrived from a brush.</param>
-        /// <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derrived from a brush.</param>
+        /// <param name="brushResourceKey">Resource key for a visual derived from a brush.</param>
+        /// <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derived from a brush.</param>
         /// <param name="groupTitle">The group title.</param>
         /// <param name="order">The order of the view action (within a group)</param>
         /// <param name="accessKey">The access key for this action (such as the underlined character in a menu if the action is linked to a menu).</param>
@@ -363,6 +363,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
         /// <param name="isPinned">Indicates whether this action is considered to be pinned</param>
         /// <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
         public ViewAction(string caption = "",
             bool beginGroup = false,
             Action<IViewAction, object> execute = null,
@@ -382,7 +383,8 @@ namespace CODE.Framework.Wpf.Mvvm
             char categoryAccessKey = ' ',
             bool isDefaultSelection = false,
             bool isPinned = false,
-            string id = "")
+            string id = "",
+            StandardIcons standardIcon = StandardIcons.None)
         {
 
             PropertyChanged += (s, e) =>
@@ -400,6 +402,7 @@ namespace CODE.Framework.Wpf.Mvvm
             _canExecuteDelegate = canExecute;
             VisualResourceKey = visualResourceKey;
             BrushResourceKey = brushResourceKey;
+            if (standardIcon != StandardIcons.None) StandardIcon = standardIcon;
             LogoBrushResourceKey = logoBrushResourceKey;
 
             CategoryOrder = categoryOrder;
@@ -492,6 +495,22 @@ namespace CODE.Framework.Wpf.Mvvm
                 NotifyChanged("PopulatedBrush");
                 NotifyChanged("PopulatedVisual");
                 NotifyChanged("Image1");
+            }
+        }
+
+        /// <summary>
+        /// StandardIconHelper icon to be used as the brush resource
+        /// </summary>
+        /// <value>The standard icon.</value>
+        public StandardIcons StandardIcon
+        {
+            get { return _standardIcon; }
+            set
+            {
+                _standardIcon = value;
+                NotifyChanged("StandardIcon");
+                if (value != StandardIcons.None || string.IsNullOrEmpty(BrushResourceKey))
+                    BrushResourceKey = StandardIconHelper.GetStandardIconKeyFromEnum(value);
             }
         }
 
@@ -1189,6 +1208,7 @@ namespace CODE.Framework.Wpf.Mvvm
         private Visibility _visibility = Visibility.Visible;
         private Brush _color2;
         private Brush _color1;
+        private StandardIcons _standardIcon = StandardIcons.None;
 
         private void CheckAllBrushesForResources()
         {

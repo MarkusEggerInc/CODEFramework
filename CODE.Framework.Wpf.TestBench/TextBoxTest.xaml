@@ -1,9 +1,20 @@
 ﻿<Window x:Class="CODE.Framework.Wpf.TestBench.TextBoxTest"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
         Title="TextBoxTest" Height="300" Width="300">
-    <StackPanel>
-        <TextBox Margin="10" controls:TextBoxEx.InputMaskRegEx="^\p{L}*$" />
+    <StackPanel Margin="10">
+        <!--<TextBlock>RegEx Input Mask:</TextBlock>
+        <TextBox controls:TextBoxEx.InputMaskRegEx="^\p{L}*$" />-->
+        <TextBlock>Standard Input Mask (phone number):</TextBlock>
+        <TextBox c:TextBoxEx.InputMask="(999) 999-9999" x:Name="text2" c:TextBoxEx.TextUnmasked="{Binding TestPhone}" />
+        <TextBox IsEnabled="False" Text="{Binding (c:TextBoxEx.TextUnmasked), ElementName=text2, Mode=OneWay}"/> 
+        <TextBlock>Standard Input Mask (10 alpha):</TextBlock>
+        <TextBox c:TextBoxEx.InputMask="AAAAAAAAAA" x:Name="text3" />
+        <TextBox IsEnabled="False" Text="{Binding (c:TextBoxEx.TextUnmasked), ElementName=text3, Mode=OneWay}"/>
+        <TextBlock>Standard Input Mask (Currency):</TextBlock>
+        <TextBox c:TextBoxEx.InputMask="$" x:Name="text4" c:TextBoxEx.InputMaskCurrencySymbol="Z$" c:TextBoxEx.TextUnmasked="{Binding TestValue}" />
+        <TextBox IsEnabled="False" Text="{Binding (c:TextBoxEx.TextUnmasked), ElementName=text4, Mode=OneWay}"/>
+        <TextBox IsEnabled="False" Text="{Binding TestValue}" />
     </StackPanel>
 </Window>

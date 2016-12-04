@@ -624,6 +624,7 @@
         <Setter Property="controls:WindowEx.AutoWindowDragEnabled" Value="True" />
         <Setter Property="controls:WindowEx.AutoWindowMaximizeEnabled" Value="True" />
         <Setter Property="controls:WindowEx.AutoWindowResizingEnabled" Value="True"/>
+        <Setter Property="controls:WindowEx.HeaderHeight" Value="30"/>
         <Setter Property="Template" Value="{DynamicResource Workplace-TopLevelWindow-Template}" />
     </Style>
 

@@ -202,12 +202,13 @@
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="c:HeaderContentControl">
                                                     <Grid SnapsToDevicePixels="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="root">
+                                                        <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="filterBackground" IsHitTestVisible="False"/>
                                                         <ContentPresenter Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="content"/>
                                                     </Grid>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="ColumnIsFiltered" Value="True">
                                                             <Setter Property="ToolTip" Value="Filtered" />
-                                                            <Setter Property="Background" TargetName="root">
+                                                            <Setter Property="Fill" TargetName="filterBackground">
                                                                 <Setter.Value>
                                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                                         <GradientStop Color="Transparent" Offset=".4"/>
@@ -419,4 +420,42 @@
     </ControlTemplate>
 
     <Style TargetType="ListBox" BasedOn="{StaticResource Workplace-Control-ListBox}" />
+
+    <Style TargetType="c:ColumnDropDestinationIndicator">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:ColumnDropDestinationIndicator">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-6,-10,-5,-10">
+                        <Rectangle Width="10" Height="10" VerticalAlignment="Top" HorizontalAlignment="Center">
+                            <Rectangle.Fill>
+                                <DrawingBrush Stretch="Uniform">
+                                    <DrawingBrush.Drawing>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Children>
+                                                <GeometryDrawing Brush="#FFFF0000" Geometry="F1 M 4.11976,0.607162L 5.9106,0.607162L 5.9106,6.86341L 8.59393,4.18445L 8.59393,6.42154L 5.01664,9.99445L 1.43935,6.42154L 1.43935,4.18445L 4.11976,6.86341L 4.11976,0.607162 Z "/>
+                                            </DrawingGroup.Children>
+                                        </DrawingGroup>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                            <Rectangle.Fill>
+                                <DrawingBrush Stretch="Uniform">
+                                    <DrawingBrush.Drawing>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Children>
+                                                <GeometryDrawing Brush="#FFFF0000" Geometry="F1 M 5.91706,9.38279L 4.12622,9.38279L 4.12622,3.12654L 1.44289,5.80549L 1.44289,3.56841L 5.02018,-0.00450516L 8.59747,3.56841L 8.59747,5.80549L 5.91706,3.12654L 5.91706,9.38279 Z "/>
+                                            </DrawingGroup.Children>
+                                        </DrawingGroup>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

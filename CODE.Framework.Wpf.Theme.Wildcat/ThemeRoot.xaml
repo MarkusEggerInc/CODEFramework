@@ -12,8 +12,9 @@
 
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Wildcat-Control-Button.xaml"/>
-        <!--<ResourceDictionary Source="Wildcat-Control-Calendar.xaml"/>
-        <ResourceDictionary Source="Wildcat-Control-DockHost.xaml"/>-->
+        <!--<ResourceDictionary Source="Wildcat-Control-Calendar.xaml"/>-->
+        <ResourceDictionary Source="Wildcat-Control-CapsLockWarning.xaml"/>
+        <!--<ResourceDictionary Source="Wildcat-Control-DockHost.xaml"/>-->
         <ResourceDictionary Source="Wildcat-Control-Label.xaml"/>
         <ResourceDictionary Source="Wildcat-Control-ListBox.xaml"/>
         <ResourceDictionary Source="Wildcat-Control-Menu.xaml"/>

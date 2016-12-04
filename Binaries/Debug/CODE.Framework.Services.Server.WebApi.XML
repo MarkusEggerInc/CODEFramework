@@ -24,6 +24,31 @@
             <returns>The interface to be exposed by the ApiController.</returns>
             <exception cref="T:System.NotSupportedException">The hosted service contract must implement a service interface</exception>
         </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.EnableCors">
+            <summary>
+            Defines whether the controller automatically handles CORS. True by default.
+            </summary>
+            <value><c>true</c> if CORS is enabled, otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.AllowableCorsOrigin">
+            <summary>
+            Defines origins CORS accepts calls from. Default is * (all). Can be a comma-separated list of origins.
+            </summary>
+            <value>The allowable CORS origin.</value>
+            <example>"*" = all. "codemag.com" = only calls from codemag.com. "codemag.com, microsoft.com" = only calls from those two domains.</example>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.AllowableCorsMethods">
+            <summary>
+            Methods supported by CORS (PUT, GET, DELETE, POST, HEAD, OPTIONS,...)
+            </summary>
+            <value>The allowable CORS methods.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.AllowableCorsHeaders">
+            <summary>
+            Headers supported by CORS
+            </summary>
+            <value>The allowable CORS headers.</value>
+        </member>
         <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.ExecuteAsync(System.Web.Http.Controllers.HttpControllerContext,System.Threading.CancellationToken)">
             <summary>
             execute as an asynchronous operation.
@@ -31,6 +56,50 @@
             <param name="controllerContext">The controller context for a single HTTP operation.</param>
             <param name="cancellationToken">The cancellation token assigned for the HTTP operation.</param>
             <returns>The newly started task.</returns>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.BeforeReturningResponse(System.Net.Http.HttpResponseMessage,System.String,System.Web.Http.Controllers.HttpControllerContext,System.String,System.String,System.Reflection.MethodInfo,System.Object)">
+            <summary>
+            Fires before the controller returns the result to the client. (Designed to be overridden in subclasses)
+            </summary>
+            <param name="response">The HTTP response.</param>
+            <param name="json">The json payload.</param>
+            <param name="controllerContext">The controller context.</param>
+            <param name="methodName">Name of the method that was invoked to create the response.</param>
+            <param name="httpVerb">HTTP verb used to call the method (Get, Put,...)</param>
+            <param name="methodInfo">Detailed information about the method that is about to be invoked</param>
+            <param name="originalResult">The original result as provided by the service.</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.BeforeInvokeMethod(System.Web.Http.Controllers.HttpControllerContext,System.String,System.String,System.Reflection.MethodInfo,System.Object)">
+            <summary>
+            Fires before the controller method is invoked. (Designed to be overridden in subclasses)
+            </summary>
+            <param name="controllerContext">The controller context.</param>
+            <param name="methodName">Name of the method to invoke</param>
+            <param name="httpVerb">HTTP verb used to call the method (Get, Put,...)</param>
+            <param name="methodInfo">Detailed information about the method that is about to be invoked</param>
+            <param name="inputContract">Input contract object. ("The parameter object for the method call")</param>
+        </member>
+        <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.BeforeCreatingResponse(System.Object,System.Web.Http.Controllers.HttpControllerContext,System.String,System.String,System.Reflection.MethodInfo)">
+            <summary>
+            Fires before the result object is serialized into a response and before the response context object is created. (Designed to be overridden in subclasses)
+            </summary>
+            <param name="result">The result object before it is serialized into a JSON response. Can be used to manipulate the result.</param>
+            <param name="controllerContext">The controller context.</param>
+            <param name="methodName">Name of the method that was invoked to create the response.</param>
+            <param name="httpVerb">HTTP verb used to call the method (Get, Put,...)</param>
+            <param name="methodInfo">Detailed information about the method that has been invoked to retrieve the result.</param>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.UserHostAddress">
+            <summary>
+            Provides the caller's IP address
+            </summary>
+            <value>The user host address.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.UserHostName">
+            <summary>
+            Provides the caller's DNS name
+            </summary>
+            <value>The name of the user host.</value>
         </member>
     </members>
 </doc>

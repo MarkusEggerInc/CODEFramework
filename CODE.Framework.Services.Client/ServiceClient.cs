@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
@@ -97,7 +98,7 @@ namespace CODE.Framework.Services.Client
         /// <returns>Open channel</returns>
         private static TServiceType GetCachedChannel<TServiceType>(int cacheIndex) where TServiceType : class
         {
-            if (cacheIndex > OpenChannels.Count-1) return null;
+            if (cacheIndex > OpenChannels.Count - 1) return null;
             var channel = OpenChannels[cacheIndex].Channel as TServiceType;
             if (channel == null) return null;
             channel = VerifyChannelIsValid(channel);
@@ -112,7 +113,7 @@ namespace CODE.Framework.Services.Client
         /// <returns>Open channel</returns>
         private static object GetCachedChannel(Type serviceType, int cacheIndex)
         {
-            if (cacheIndex > OpenChannels.Count-1) return null;
+            if (cacheIndex > OpenChannels.Count - 1) return null;
             var channelType = OpenChannels[cacheIndex].Channel.GetType();
             if (channelType != serviceType) return null;
             var channel = VerifyChannelIsValid(OpenChannels[cacheIndex].Channel);
@@ -187,7 +188,7 @@ namespace CODE.Framework.Services.Client
         /// <returns>MessageSize.</returns>
         private static MessageSize GetMessageSize<TServiceType>()
         {
-            var type = typeof (TServiceType);
+            var type = typeof(TServiceType);
             return GetMessageSize(type.Name);
         }
 
@@ -230,6 +231,24 @@ namespace CODE.Framework.Services.Client
                         CachedMessageSizes.Add(key, size);
 
             return size;
+        }
+
+        private static SecurityMode GetSecurityMode(string interfaceName)
+        {
+            var mode = GetSetting("SecurityMode:" + interfaceName).ToLower();
+            if (string.IsNullOrEmpty(mode)) mode = GetSetting("ServiceSecurityMode").ToLower();
+            switch (mode)
+            {
+                case "none":
+                    return SecurityMode.None;
+                case "message":
+                    return SecurityMode.Message;
+                case "transport":
+                    return SecurityMode.Transport;
+                case "transportwithmessagecredential":
+                    return SecurityMode.TransportWithMessageCredential;
+            }
+            return SecurityMode.None;
         }
 
         /// <summary>
@@ -402,7 +421,7 @@ namespace CODE.Framework.Services.Client
         public static TServiceType GetBasicHttpChannel<TServiceType>(string serviceId = null, MessageSize messageSize = MessageSize.Undefined, string baseAddress = null, string basePath = null, string extension = null, bool useCachedChannel = true, bool useHttps = false) where TServiceType : class
         {
             if (serviceId == null) serviceId = GetServiceId<TServiceType>();
-            var interfaceName = typeof (TServiceType).Name;
+            var interfaceName = typeof(TServiceType).Name;
             if (messageSize == MessageSize.Undefined) messageSize = GetMessageSize(serviceId);
             if (baseAddress == null)
             {
@@ -588,7 +607,7 @@ namespace CODE.Framework.Services.Client
                         CachedProtocols[key] = protocol;
                     else
                         CachedProtocols.Add(key, protocol);
-            
+
             return protocol;
         }
 
@@ -603,7 +622,7 @@ namespace CODE.Framework.Services.Client
         /// <exception cref="MissingConfigurationSettingException">ServicePort: + interfaceName +  - setting missing.</exception>
         private static int GetServicePort<TServiceType>()
         {
-            var serviceType = typeof (TServiceType);
+            var serviceType = typeof(TServiceType);
             var interfaceName = serviceType.Name;
             var key = "ServicePort:" + interfaceName;
 
@@ -924,8 +943,8 @@ namespace CODE.Framework.Services.Client
         private static string GetServiceId<TServiceType>()
         {
             lock (CachedServiceIds)
-                if (CacheSettings && CachedServiceIds.ContainsKey(typeof (TServiceType)))
-                    return CachedServiceIds[typeof (TServiceType)];
+                if (CacheSettings && CachedServiceIds.ContainsKey(typeof(TServiceType)))
+                    return CachedServiceIds[typeof(TServiceType)];
 
             string serviceId;
             var contractType = typeof(TServiceType);
@@ -942,10 +961,10 @@ namespace CODE.Framework.Services.Client
 
             if (CacheSettings)
                 lock (CachedServiceIds)
-                    if (CachedServiceIds.ContainsKey(typeof (TServiceType)))
-                        CachedServiceIds[typeof (TServiceType)] = serviceId;
+                    if (CachedServiceIds.ContainsKey(typeof(TServiceType)))
+                        CachedServiceIds[typeof(TServiceType)] = serviceId;
                     else
-                        CachedServiceIds.Add(typeof (TServiceType), serviceId);
+                        CachedServiceIds.Add(typeof(TServiceType), serviceId);
 
             return serviceId;
         }
@@ -993,13 +1012,33 @@ namespace CODE.Framework.Services.Client
             where TRequest : class, new()
             where TResult : class, new()
         {
-            var serviceUrl = GetRESTServiceUrl(typeof (TServiceType).Name, methodName, dataFormat);
+            var serviceUrl = GetRESTServiceUrl(typeof(TServiceType).Name, methodName, dataFormat);
             if (string.IsNullOrEmpty(serviceUrl)) return null;
 
             try
             {
+
+                if (BeforeServiceOperationCall != null)
+                    RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        ServiceContract = typeof (TServiceType),
+                        InputDataContracts = new object[] {request}
+                    });
+
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                return GetDeserializedData<TResult>(data, dataFormat);
+                var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
+
+                if (AfterServiceOperationCall != null)
+                    RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        ServiceContract = typeof(TServiceType),
+                        InputDataContracts = new object[] { request },
+                        Response = deserializedData
+                    });
+
+                return deserializedData;
             }
             catch (Exception ex)
             {
@@ -1007,8 +1046,26 @@ namespace CODE.Framework.Services.Client
                 {
                     try
                     {
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                ServiceContract = typeof(TServiceType),
+                                InputDataContracts = new object[] { request }
+                            });
+
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                        return GetDeserializedData<TResult>(data, dataFormat);
+                        var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
+
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                ServiceContract = typeof(TServiceType),
+                                InputDataContracts = new object[] { request }
+                            });
+
+                        return deserializedData;
                     }
                     catch (Exception ex2)
                     {
@@ -1047,8 +1104,25 @@ namespace CODE.Framework.Services.Client
 
             try
             {
+                if (BeforeServiceOperationCall != null)
+                    RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        InputDataContracts = new object[] { request }
+                    });
+
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                return GetDeserializedData<TResult>(data, dataFormat);
+                var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
+
+                if (AfterServiceOperationCall != null)
+                    RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        InputDataContracts = new object[] { request },
+                        Response = deserializedData
+                    });
+
+                return deserializedData;
             }
             catch (Exception ex)
             {
@@ -1056,8 +1130,25 @@ namespace CODE.Framework.Services.Client
                 {
                     try
                     {
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                InputDataContracts = new object[] { request }
+                            });
+
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                        return GetDeserializedData<TResult>(data, dataFormat);
+                        var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
+
+                        if (AfterServiceOperationCall != null)
+                            RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                InputDataContracts = new object[] { request },
+                                Response = deserializedData
+                            });
+
+                        return deserializedData;
                     }
                     catch (Exception ex2)
                     {
@@ -1066,7 +1157,7 @@ namespace CODE.Framework.Services.Client
                         return null;
                     }
                 }
-                
+
                 if (ChannelException != null)
                     ChannelException(null, new ChannelExceptionEventArgs(null, ex));
 
@@ -1092,8 +1183,25 @@ namespace CODE.Framework.Services.Client
 
             try
             {
+                if (BeforeServiceOperationCall != null)
+                    RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        InputDataContracts = new object[] { request }
+                    });
+
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                return Encoding.UTF8.GetString(data);
+                var deserializedData = Encoding.UTF8.GetString(data);
+
+                if (AfterServiceOperationCall != null)
+                    RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        InputDataContracts = new object[] { request },
+                        Response = deserializedData
+                    });
+
+                return deserializedData;
             }
             catch (Exception ex)
             {
@@ -1101,8 +1209,25 @@ namespace CODE.Framework.Services.Client
                 {
                     try
                     {
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                InputDataContracts = new object[] { request }
+                            });
+
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                        return Encoding.UTF8.GetString(data);
+                        var deserializedData = Encoding.UTF8.GetString(data);
+
+                        if (AfterServiceOperationCall != null)
+                            RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                InputDataContracts = new object[] { request },
+                                Response = deserializedData
+                            });
+
+                        return deserializedData;
                     }
                     catch (Exception ex2)
                     {
@@ -1135,8 +1260,25 @@ namespace CODE.Framework.Services.Client
 
             try
             {
+                if (BeforeServiceOperationCall != null)
+                    RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        InputDataContracts = new object[] { request }
+                    });
+
                 var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
-                return Encoding.UTF8.GetString(data);
+                var deserializedData = Encoding.UTF8.GetString(data);
+
+                if (AfterServiceOperationCall != null)
+                    RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                    {
+                        MethodName = methodName,
+                        InputDataContracts = new object[] { request },
+                        Response = deserializedData
+                    });
+
+                return deserializedData;
             }
             catch (Exception ex)
             {
@@ -1144,8 +1286,25 @@ namespace CODE.Framework.Services.Client
                 {
                     try
                     {
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                InputDataContracts = new object[] { request }
+                            });
+
                         var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
-                        return Encoding.UTF8.GetString(data);
+                        var deserializedData = Encoding.UTF8.GetString(data);
+
+                        if (AfterServiceOperationCall != null)
+                            RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                            {
+                                MethodName = methodName,
+                                InputDataContracts = new object[] { request },
+                                Response = deserializedData
+                            });
+
+                        return deserializedData;
                     }
                     catch (Exception ex2)
                     {
@@ -1176,8 +1335,25 @@ namespace CODE.Framework.Services.Client
         {
             try
             {
+                if (BeforeServiceOperationCall != null)
+                    RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                    {
+                        MethodName = serviceUrl,
+                        InputDataContracts = new object[] { request },
+                    });
+
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                return GetDeserializedData<TResult>(data, dataFormat);
+                var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
+
+                if (AfterServiceOperationCall != null)
+                    RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                    {
+                        MethodName = serviceUrl,
+                        InputDataContracts = new object[] { request },
+                        Response = deserializedData
+                    });
+
+                return deserializedData;
             }
             catch (Exception ex)
             {
@@ -1185,8 +1361,25 @@ namespace CODE.Framework.Services.Client
                 {
                     try
                     {
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = serviceUrl,
+                                InputDataContracts = new object[] { request },
+                            });
+
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
-                        return GetDeserializedData<TResult>(data, dataFormat);
+                        var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
+
+                        if (AfterServiceOperationCall != null)
+                            RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                            {
+                                MethodName = serviceUrl,
+                                InputDataContracts = new object[] { request },
+                                Response = deserializedData
+                            });
+
+                        return deserializedData;
                     }
                     catch (Exception ex2)
                     {
@@ -1215,8 +1408,25 @@ namespace CODE.Framework.Services.Client
         {
             try
             {
+                if (BeforeServiceOperationCall != null)
+                    RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                    {
+                        MethodName = serviceUrl,
+                        InputDataContracts = new object[] { request }
+                    });
+
                 var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
-                return Encoding.UTF8.GetString(data);
+                var deserializedData = Encoding.UTF8.GetString(data);
+
+                if (AfterServiceOperationCall != null)
+                    RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                    {
+                        MethodName = serviceUrl,
+                        InputDataContracts = new object[] { request },
+                        Response = deserializedData
+                    });
+
+                return deserializedData;
             }
             catch (Exception ex)
             {
@@ -1224,8 +1434,25 @@ namespace CODE.Framework.Services.Client
                 {
                     try
                     {
+                        if (BeforeServiceOperationCall != null)
+                            RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+                            {
+                                MethodName = serviceUrl,
+                                InputDataContracts = new object[] { request }
+                            });
+
                         var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
-                        return Encoding.UTF8.GetString(data);
+                        var deserializedData = Encoding.UTF8.GetString(data);
+
+                        if (AfterServiceOperationCall != null)
+                            RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+                            {
+                                MethodName = serviceUrl,
+                                InputDataContracts = new object[] { request },
+                                Response = deserializedData
+                            });
+
+                        return deserializedData;
                     }
                     catch (Exception ex2)
                     {
@@ -1300,12 +1527,12 @@ namespace CODE.Framework.Services.Client
             {
                 if (dataFormat == ServiceDataFormat.Json)
                 {
-                    var serializer = new DataContractJsonSerializer(typeof (TData));
+                    var serializer = new DataContractJsonSerializer(typeof(TData));
                     serializer.WriteObject(stream, data);
                 }
                 else
                 {
-                    var serializer = new DataContractSerializer(typeof (TData));
+                    var serializer = new DataContractSerializer(typeof(TData));
                     serializer.WriteObject(stream, data);
                 }
                 return stream.ToArray();
@@ -1741,16 +1968,18 @@ namespace CODE.Framework.Services.Client
         /// <summary>
         /// Creates a standard instance of a NetTcp binding and performs some basic configurations.
         /// </summary>
-        /// <returns></returns>
-        private static NetTcpBinding GetStandardNetTcpBinding()
+        /// <param name="serviceId">The service identifier.</param>
+        /// <returns>NetTcpBinding.</returns>
+        private static NetTcpBinding GetStandardNetTcpBinding(string serviceId = "")
         {
-            var binding = new NetTcpBinding(SecurityMode.None)
-                {
-                    CloseTimeout = TimeSpan.MaxValue,
-                    OpenTimeout = TimeSpan.MaxValue,
-                    ReceiveTimeout = TimeSpan.MaxValue,
-                    SendTimeout = TimeSpan.MaxValue
-                };
+            var securityMode = GetSecurityMode(serviceId);
+            var binding = new NetTcpBinding(securityMode)
+            {
+                CloseTimeout = TimeSpan.MaxValue,
+                OpenTimeout = TimeSpan.MaxValue,
+                ReceiveTimeout = TimeSpan.MaxValue,
+                SendTimeout = TimeSpan.MaxValue
+            };
 
             if (binding.ReliableSession.Enabled)
                 binding.ReliableSession.InactivityTimeout = TimeSpan.MaxValue;
@@ -1788,11 +2017,11 @@ namespace CODE.Framework.Services.Client
             // Ready to start processing
             if (useCachedChannel)
             {
-                var cachedChannelIndex = GetChannelCacheIndex(typeof (TServiceType), messageSize, port, serviceId, baseAddress, basePath);
+                var cachedChannelIndex = GetChannelCacheIndex(typeof(TServiceType), messageSize, port, serviceId, baseAddress, basePath);
                 if (cachedChannelIndex > -1) return GetCachedChannel<TServiceType>(cachedChannelIndex);
             }
 
-            var binding = GetStandardNetTcpBinding();
+            var binding = GetStandardNetTcpBinding(serviceId);
             ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(messageSize, binding);
 
             if (!string.IsNullOrEmpty(basePath) && !basePath.EndsWith("/")) basePath += "/";
@@ -1807,7 +2036,7 @@ namespace CODE.Framework.Services.Client
                 {
                     ServiceFullAddress = serviceFullAddress,
                     Binding = binding,
-                    ContractType = typeof (TServiceType),
+                    ContractType = typeof(TServiceType),
                     ServiceId = serviceId
                 };
                 beforeEndpointAdded(null, endpointEventArgs);
@@ -1828,22 +2057,22 @@ namespace CODE.Framework.Services.Client
                     var beforeChannelOpens = BeforeChannelOpens;
                     if (beforeChannelOpens != null)
                         beforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = typeof (TServiceType),
-                                MessageSize = messageSize,
-                                Port = port,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = typeof(TServiceType),
+                            MessageSize = messageSize,
+                            Port = port,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = port, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof (TServiceType)});
+                        OpenChannels.Add(new OpenChannelInformation { Port = port, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof(TServiceType) });
 
                 return proxy;
             }
@@ -1881,10 +2110,10 @@ namespace CODE.Framework.Services.Client
             lock (CachedChannelFactories)
             {
                 var bindingName = binding.GetType().ToString();
-                if (CachedChannelFactories.ContainsKey(bindingName) && CachedChannelFactories[bindingName].ContainsKey(endpoint) && CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof (TServiceType)))
+                if (CachedChannelFactories.ContainsKey(bindingName) && CachedChannelFactories[bindingName].ContainsKey(endpoint) && CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
                 {
                     // It looks like we have the channel factory cached, so we try to use it
-                    var cachedFactory = CachedChannelFactories[bindingName][endpoint][typeof (TServiceType)];
+                    var cachedFactory = CachedChannelFactories[bindingName][endpoint][typeof(TServiceType)];
                     if (cachedFactory == null) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
                     else if (cachedFactory.State == CommunicationState.Faulted) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
                     {
@@ -1895,7 +2124,12 @@ namespace CODE.Framework.Services.Client
                             else
                             {
                                 var proxy2 = typedFactory.CreateChannel();
-                                if (proxy2 != null) return proxy2;
+                                if (proxy2 != null)
+                                {
+                                    if (BeforeServiceOperationCall != null || AfterServiceOperationCall != null)
+                                        proxy2 = TransparentProxyGenerator.GetProxy<TServiceType>(new ServiceProxyEventWrapper(proxy2, typeof(TServiceType)));
+                                    return proxy2;
+                                }
                             }
                         }
                         catch
@@ -1922,16 +2156,52 @@ namespace CODE.Framework.Services.Client
                 var proxy = factory.CreateChannel();
                 if (proxy == null) throw new Core.Exceptions.NullReferenceException("Requested service unavailable.");
 
+                // If we need to raise events when calls happen, we need to create another wrapper proxy
+                if (BeforeServiceOperationCall != null || AfterServiceOperationCall != null)
+                    proxy = TransparentProxyGenerator.GetProxy<TServiceType>(new ServiceProxyEventWrapper(proxy, typeof (TServiceType)));
+
                 // Since everything seems to work, we are adding the factory to the cached items
                 if (!CachedChannelFactories.ContainsKey(bindingName))
                     CachedChannelFactories.Add(bindingName, new Dictionary<EndpointAddress, Dictionary<Type, ChannelFactory>>());
                 if (!CachedChannelFactories[bindingName].ContainsKey(endpoint))
                     CachedChannelFactories[bindingName].Add(endpoint, new Dictionary<Type, ChannelFactory>());
-                if (!CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof (TServiceType)))
-                    CachedChannelFactories[bindingName][endpoint].Add(typeof (TServiceType), factory);
+                if (!CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
+                    CachedChannelFactories[bindingName][endpoint].Add(typeof(TServiceType), factory);
 
                 return proxy;
             }
+        }
+
+        /// <summary>
+        /// This event fires whenever a service operation/method is called from within ServiceClient.Call()
+        /// </summary>
+        public static event EventHandler<BeforeServiceOperationCallEventArgs> BeforeServiceOperationCall;
+
+        /// <summary>
+        /// Raises the before service operation call event.
+        /// </summary>
+        /// <param name="args">The <see cref="BeforeServiceOperationCallEventArgs"/> instance containing the event data.</param>
+        public static void RaiseBeforeServiceOperationCall(BeforeServiceOperationCallEventArgs args)
+        {
+            var handler = BeforeServiceOperationCall;
+            if (handler == null) return;
+            handler(null, args);
+        }
+
+        /// <summary>
+        /// This event fires whenever a service operation/method is called from within ServiceClient.Call()
+        /// </summary>
+        public static event EventHandler<AfterServiceOperationCallEventArgs> AfterServiceOperationCall;
+
+        /// <summary>
+        /// Raises the after service operation call event.
+        /// </summary>
+        /// <param name="args">The <see cref="BeforeServiceOperationCallEventArgs"/> instance containing the event data.</param>
+        public static void RaiseAfterServiceOperationCall(AfterServiceOperationCallEventArgs args)
+        {
+            var handler = AfterServiceOperationCall;
+            if (handler == null) return;
+            handler(null, args);
         }
 
         /// <summary>
@@ -1946,9 +2216,9 @@ namespace CODE.Framework.Services.Client
                 try
                 {
                     var bindingName = binding.GetType().ToString();
-                    if (CachedChannelFactories.ContainsKey(bindingName) && CachedChannelFactories[bindingName].ContainsKey(endpoint) && CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof (TServiceType)))
+                    if (CachedChannelFactories.ContainsKey(bindingName) && CachedChannelFactories[bindingName].ContainsKey(endpoint) && CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
                     {
-                        CachedChannelFactories[bindingName][endpoint].Remove(typeof (TServiceType));
+                        CachedChannelFactories[bindingName][endpoint].Remove(typeof(TServiceType));
                         if (CachedChannelFactories[bindingName][endpoint].Count == 0)
                         {
                             CachedChannelFactories[bindingName].Remove(endpoint);
@@ -1995,11 +2265,11 @@ namespace CODE.Framework.Services.Client
             var basePath = GetBasePathFromUri(serviceUri);
             if (useCachedChannel)
             {
-                var cachedChannelIndex = GetChannelCacheIndex(typeof (TServiceType), messageSize, serviceUri.Port, serviceId, baseAddress, basePath);
+                var cachedChannelIndex = GetChannelCacheIndex(typeof(TServiceType), messageSize, serviceUri.Port, serviceId, baseAddress, basePath);
                 if (cachedChannelIndex > -1) return GetCachedChannel<TServiceType>(cachedChannelIndex);
             }
 
-            var binding = GetStandardNetTcpBinding();
+            var binding = GetStandardNetTcpBinding(serviceId);
             ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(messageSize, binding);
 
             var endpoint = new EndpointAddress(serviceUri.AbsoluteUri);
@@ -2014,22 +2284,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = typeof (TServiceType),
-                                MessageSize = messageSize,
-                                Port = serviceUri.Port,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = typeof(TServiceType),
+                            MessageSize = messageSize,
+                            Port = serviceUri.Port,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = serviceUri.Port, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof (TServiceType)});
+                        OpenChannels.Add(new OpenChannelInformation { Port = serviceUri.Port, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof(TServiceType) });
 
                 return proxy;
             }
@@ -2055,7 +2325,7 @@ namespace CODE.Framework.Services.Client
         {
             // TODO: This does not yet support inherited interfaces on the contract
             var factoryType = typeof(ChannelFactory<>);
-            var genericFactoryType = factoryType.MakeGenericType(new []{contract});
+            var genericFactoryType = factoryType.MakeGenericType(new[] { contract });
             var factory = Activator.CreateInstance(genericFactoryType, binding, address);
             return (ChannelFactory)factory;
         }
@@ -2072,7 +2342,7 @@ namespace CODE.Framework.Services.Client
                 dynamic factory2 = factory;
                 return factory2.CreateChannel();
             }
-            catch 
+            catch
             {
                 return null;
             }
@@ -2098,7 +2368,7 @@ namespace CODE.Framework.Services.Client
                 if (cachedChannelIndex > -1) return GetCachedChannel(serviceType, cachedChannelIndex);
             }
 
-            var binding = GetStandardNetTcpBinding();
+            var binding = GetStandardNetTcpBinding(serviceId);
             ServiceHelper.ConfigureMessageSizeOnNetTcpBinding(messageSize, binding);
 
             var endpoint = new EndpointAddress(serviceUri.AbsoluteUri);
@@ -2117,22 +2387,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = serviceType,
-                                MessageSize = messageSize,
-                                Port = serviceUri.Port,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = serviceType,
+                            MessageSize = messageSize,
+                            Port = serviceUri.Port,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = serviceUri.Port, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = serviceType});
+                        OpenChannels.Add(new OpenChannelInformation { Port = serviceUri.Port, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = serviceType });
 
                 return proxy;
             }
@@ -2190,7 +2460,7 @@ namespace CODE.Framework.Services.Client
         /// <exception cref="Core.Exceptions.NullReferenceException">Static BaseUrl property must be set on the ServiceClient class.</exception>
         private static TServiceType GetInternalBasicHttpChannel<TServiceType>(string serviceId, MessageSize messageSize, string baseAddress, string basePath, string extension, bool useCachedChannel, bool useHttps) where TServiceType : class
         {
-            var interfaceName = typeof (TServiceType).Name;
+            var interfaceName = typeof(TServiceType).Name;
             var serviceFullAddress = GetSetting("ServiceUrl:" + interfaceName);
 
             // Checking parameter values
@@ -2233,7 +2503,7 @@ namespace CODE.Framework.Services.Client
 
             // Ready to start processing
             var securityMode = useHttps ? BasicHttpSecurityMode.Transport : BasicHttpSecurityMode.None;
-            var binding = new BasicHttpBinding(securityMode) {SendTimeout = new TimeSpan(0, 10, 0)};
+            var binding = new BasicHttpBinding(securityMode) { SendTimeout = new TimeSpan(0, 10, 0) };
             ServiceHelper.ConfigureMessageSizeOnBasicHttpBinding(messageSize, binding);
 
             // We allow for an override of the URL
@@ -2267,22 +2537,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = typeof (TServiceType),
-                                MessageSize = messageSize,
-                                Port = 80,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = typeof(TServiceType),
+                            MessageSize = messageSize,
+                            Port = 80,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof (TServiceType)});
+                        OpenChannels.Add(new OpenChannelInformation { Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof(TServiceType) });
 
                 return proxy;
             }
@@ -2313,7 +2583,7 @@ namespace CODE.Framework.Services.Client
             var basePath = GetBasePathFromUri(serviceUri);
             if (useCachedChannel)
             {
-                int cachedChannelIndex = GetChannelCacheIndex(typeof (TServiceType), messageSize, 80, serviceId, baseAddress, basePath);
+                int cachedChannelIndex = GetChannelCacheIndex(typeof(TServiceType), messageSize, 80, serviceId, baseAddress, basePath);
                 if (cachedChannelIndex > -1) return GetCachedChannel<TServiceType>(cachedChannelIndex);
             }
 
@@ -2333,22 +2603,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = typeof (TServiceType),
-                                MessageSize = messageSize,
-                                Port = 80,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = typeof(TServiceType),
+                            MessageSize = messageSize,
+                            Port = 80,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof (TServiceType)});
+                        OpenChannels.Add(new OpenChannelInformation { Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof(TServiceType) });
 
                 return proxy;
             }
@@ -2402,22 +2672,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = serviceType,
-                                MessageSize = messageSize,
-                                Port = 80,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = serviceType,
+                            MessageSize = messageSize,
+                            Port = 80,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = serviceType});
+                        OpenChannels.Add(new OpenChannelInformation { Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = serviceType });
 
                 return proxy;
             }
@@ -2866,22 +3136,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = typeof (TServiceType),
-                                MessageSize = messageSize,
-                                Port = 80,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = typeof(TServiceType),
+                            MessageSize = messageSize,
+                            Port = 80,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof (TServiceType)});
+                        OpenChannels.Add(new OpenChannelInformation { Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof(TServiceType) });
 
                 return proxy;
             }
@@ -2912,7 +3182,7 @@ namespace CODE.Framework.Services.Client
             var basePath = GetBasePathFromUri(serviceUri);
             if (useCachedChannel)
             {
-                var cachedChannelIndex = GetChannelCacheIndex(typeof (TServiceType), messageSize, 80, serviceId, baseAddress, basePath);
+                var cachedChannelIndex = GetChannelCacheIndex(typeof(TServiceType), messageSize, 80, serviceId, baseAddress, basePath);
                 if (cachedChannelIndex > -1) return GetCachedChannel<TServiceType>(cachedChannelIndex);
             }
 
@@ -2932,22 +3202,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = typeof (TServiceType),
-                                MessageSize = messageSize,
-                                Port = 80,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = typeof(TServiceType),
+                            MessageSize = messageSize,
+                            Port = 80,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof (TServiceType)});
+                        OpenChannels.Add(new OpenChannelInformation { Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = typeof(TServiceType) });
 
                 return proxy;
             }
@@ -3001,22 +3271,22 @@ namespace CODE.Framework.Services.Client
                 {
                     if (BeforeChannelOpens != null)
                         BeforeChannelOpens(null, new BeforeChannelOpensEventArgs
-                            {
-                                Channel = channel,
-                                BaseAddress = baseAddress,
-                                BasePath = basePath,
-                                ChannelType = serviceType,
-                                MessageSize = messageSize,
-                                Port = 80,
-                                ServiceId = serviceId
-                            });
+                        {
+                            Channel = channel,
+                            BaseAddress = baseAddress,
+                            BasePath = basePath,
+                            ChannelType = serviceType,
+                            MessageSize = messageSize,
+                            Port = 80,
+                            ServiceId = serviceId
+                        });
 
                     channel.Open();
                 }
 
                 if (useCachedChannel)
                     lock (OpenChannels)
-                        OpenChannels.Add(new OpenChannelInformation {Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = serviceType});
+                        OpenChannels.Add(new OpenChannelInformation { Port = 80, ServiceId = serviceId, MessageSize = messageSize, BaseUrl = baseAddress, BasePath = basePath, Channel = proxy, ChannelType = serviceType });
 
                 return proxy;
             }
@@ -3290,5 +3560,97 @@ namespace CODE.Framework.Services.Client
         /// XML data format
         /// </summary>
         Xml
+    }
+
+    /// <summary>
+    /// Event arguments related to events for before service operation calls
+    /// </summary>
+    public class BeforeServiceOperationCallEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Information about the service method/operation being called
+        /// </summary>
+        /// <value>The method information.</value>
+        public string MethodName { get; set; }
+
+        /// <summary>
+        /// Information about the service that is called
+        /// </summary>
+        /// <value>The service contract.</value>
+        public Type ServiceContract { get; set; }
+
+        /// <summary>
+        /// Input contracts ("parameters") to be sent to the service
+        /// </summary>
+        /// <value>The input data contracts.</value>
+        public object[] InputDataContracts { get; set; }
+
+        /// <summary>
+        /// Instance of the service that is being called
+        /// </summary>
+        /// <value>The service instance.</value>
+        public object ServiceInstance { get; set; }
+    }
+
+    /// <summary>
+    /// Event arguments related to events for after service operation calls
+    /// </summary>
+    public class AfterServiceOperationCallEventArgs : BeforeServiceOperationCallEventArgs
+    {
+        /// <summary>
+        /// The result/response created by a service call
+        /// </summary>
+        /// <value>The response.</value>
+        public object Response { get; set; }
+    }
+
+    /// <summary>
+    /// Wrapper object used to wrap service proxies for the purpose of raising ServiceClient events
+    /// </summary>
+    /// <seealso cref="CODE.Framework.Core.Utilities.IProxyHandler" />
+    public class ServiceProxyEventWrapper : IProxyHandler
+    {
+        private readonly object _originalProxy;
+        private readonly Type _contractType;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceProxyEventWrapper"/> class.
+        /// </summary>
+        /// <param name="originalProxy">The original proxy.</param>
+        public ServiceProxyEventWrapper(object originalProxy, Type contractType)
+        {
+            _originalProxy = originalProxy;
+            _contractType = contractType;
+        }
+
+        /// <summary>
+        /// This method is called when any method on a proxied object is invoked.
+        /// </summary>
+        /// <param name="method">Information about the method being called.</param>
+        /// <param name="args">The arguments passed to the method.</param>
+        /// <returns>Result value from the proxy call</returns>
+        public object OnMethod(MethodInfo method, object[] args)
+        {
+            ServiceClient.RaiseBeforeServiceOperationCall(new BeforeServiceOperationCallEventArgs
+            {
+                MethodName = method.Name,
+                ServiceContract = _contractType,
+                ServiceInstance = _originalProxy,
+                InputDataContracts = args
+            });
+
+            var result = method.Invoke(_originalProxy, args);
+
+            ServiceClient.RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
+            {
+                MethodName = method.Name,
+                ServiceContract = _contractType,
+                ServiceInstance = _originalProxy,
+                InputDataContracts = args,
+                Response = result
+            });
+
+            return result;
+        }
     }
 }

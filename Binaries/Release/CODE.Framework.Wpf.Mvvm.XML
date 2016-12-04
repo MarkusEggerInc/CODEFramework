@@ -398,7 +398,7 @@
             Fundamental implementation of an action
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.ViewAction.#ctor(System.String,System.Boolean,System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object},System.Func{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object,System.Boolean},System.String,System.String,System.String,System.Int32,System.Boolean,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionSignificance,System.String[],System.String,System.String,System.String,System.Int32,System.Char,System.Windows.Input.Key,System.Windows.Input.ModifierKeys,System.Char,System.Boolean,System.Boolean,System.String)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewAction.#ctor(System.String,System.Boolean,System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object},System.Func{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object,System.Boolean},System.String,System.String,System.String,System.Int32,System.Boolean,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionSignificance,System.String[],System.String,System.String,System.String,System.Int32,System.Char,System.Windows.Input.Key,System.Windows.Input.ModifierKeys,System.Char,System.Boolean,System.Boolean,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons)">
             <summary>
             Constructor
             </summary>
@@ -414,8 +414,8 @@
             <param name="isCancel">Indicates if this is the action triggered if the user hits ESC</param>
             <param name="significance">General significance of the action.</param>
             <param name="userRoles">User roles with access to this action</param>
-            <param name="brushResourceKey">Resource key for a visual derrived from a brush.</param>
-            <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derrived from a brush.</param>
+            <param name="brushResourceKey">Resource key for a visual derived from a brush.</param>
+            <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derived from a brush.</param>
             <param name="groupTitle">The group title.</param>
             <param name="order">The order of the view action (within a group)</param>
             <param name="accessKey">The access key for this action (such as the underlined character in a menu if the action is linked to a menu).</param>
@@ -425,6 +425,7 @@
             <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
             <param name="isPinned">Indicates whether this action is considered to be pinned</param>
             <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewAction.ToString">
             <summary>
@@ -446,6 +447,12 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.BrushResourceKey">
             <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.StandardIcon">
+            <summary>
+            StandardIconHelper icon to be used as the brush resource
+            </summary>
+            <value>The standard icon.</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.CategoryBrushResourceKey">
             <summary>Key of a visual XAML resource associated with this action (such as an icon)</summary>
@@ -3341,6 +3348,11 @@
             <param name="viewResult">The view result.</param>
             <returns>True if successfully opened</returns>
         </member>
+        <member name="E:CODE.Framework.Wpf.Mvvm.Shell.GetTopLevelWindowStyleName">
+            <summary>
+            This event can be used to influence the name of the style used for top level windows
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Shell.CloseViewForModel(System.Object)">
             <summary>
             This method is invoked when a view that is associated with a certain model should be closed
@@ -3353,7 +3365,6 @@
             This method closes all currently open views
             </summary>
             <returns>True if the handler successfully closed all views. False if it didn't close all views or generally does not handle view closing</returns>
-            <exception cref="T:System.NotImplementedException"></exception>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Shell.GetViewForModel(System.Object)">
             <summary>
@@ -3369,6 +3380,12 @@
             Sets the original version of the title (which can be used later to reset the title)
             </summary>
             <param name="originalTitle">The original title.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Shell.OnClosing(System.ComponentModel.CancelEventArgs)">
+            <summary>
+            Raises the <see cref="E:System.Windows.Window.Closing" /> event.
+            </summary>
+            <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.NotificationSort">
             <summary>
@@ -3469,6 +3486,36 @@
             <summary>
             Shows only the title of the current view (except when there is no open view, then the original title is shown)
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.GetTopLevelWindowStyleNameEventArgs">
+            <summary>
+            Event args for GetTopLevelWindowStyleName event
+            </summary>
+            <seealso cref="T:System.EventArgs" />
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.GetTopLevelWindowStyleNameEventArgs.Window">
+            <summary>
+            The window the style will be attached to
+            </summary>
+            <value>The window.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.GetTopLevelWindowStyleNameEventArgs.ViewResult">
+            <summary>
+            The view result
+            </summary>
+            <value>The view result.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.GetTopLevelWindowStyleNameEventArgs.StyleKey">
+            <summary>
+            Key of the style that will be applied to the window. Set the property to load a different style
+            </summary>
+            <value>The style key.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.GetTopLevelWindowStyleNameEventArgs.RequestContext">
+            <summary>
+            Request context
+            </summary>
+            <value>The request context.</value>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.WindowShellLauncher`1">
             <summary>
@@ -3620,6 +3667,181 @@
             <summary>
             If set to true, this action is the one that gets executed by default
             </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.StandardLayouts">
+            <summary>
+            Defines all standard layouts supported by all themes
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.None">
+            <summary>
+            No layout assigned.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.Blades">
+            <summary>
+            Blade panels typically create a layout of blades that are arranged vertical left-to-right.
+            If needed, the layout adds a scrollbar.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.BladesToFill">
+            <summary>
+            Blade panels typically create a layout of blades that are arranged vertical left-to-right. 
+            If needed, the layout adds a scrollbar.
+            This variation fills the remaining horizontal space (of any) with the last element.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.BladesWithHeaders">
+            <summary>
+            Blade panels typically create a layout of blades that are arranged vertical left-to-right.
+            If needed, the layout adds a scrollbar.
+            This version also has headers.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.BladesWithHeadersToFill">
+            <summary>
+            Blade panels typically create a layout of blades that are arranged vertical left-to-right. 
+            If needed, the layout adds a scrollbar.
+            This variation fills the remaining horizontal space (of any) with the last element.
+            This version also has headers.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.EditForm">
+            <summary>
+            Edit form layouts arrange controls in a fashion useful for complex data edit interfaces.
+            The layout attempts to create groups of controls that have labels associated with them.
+            Controls are arranged in groups and columns.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.FlowForm">
+            <summary>
+            Flow form layouts arrange controls in a flowing fashion, left-to-right.
+            This layout provides additional smarts in how controls are broken across lines
+            to create a visually pleasing result.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.MultiPanel">
+            <summary>
+            Multi-panel layouts arrange controls either horizontally or vertically, using up all available space.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.MultiPanelWithHeaders">
+            <summary>
+            Multi-panel layouts arrange controls either horizontally or vertically, using up all available space.
+            This version includes headers.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.PrimarySecondaryForm">
+            <summary>
+            Primary/Secondary layouts arrange a primary element that takes up most of the screen, and adorns
+            the arrangement with a secondary/auxiliary element. This is similar to how Windows Explorer is organized,
+            with a tree on the left (the "secondary" element) and a list of files using up the majority of the
+            available UI space (the "primary element).
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.PrimarySecondaryFormNoColor">
+            <summary>
+            Primary/Secondary layouts arrange a primary element that takes up most of the screen, and adorns
+            the arrangement with a secondary/auxiliary element. This is similar to how Windows Explorer is organized,
+            with a tree on the left (the "secondary" element) and a list of files using up the majority of the
+            available UI space (the "primary element).
+            This version is well suited for UIs where the main element is a list of items.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.PrimarySecondaryListForm">
+            <summary>
+            Primary/Secondary layouts arrange a primary element that takes up most of the screen, and adorns
+            the arrangement with a secondary/auxiliary element. This is similar to how Windows Explorer is organized,
+            with a tree on the left (the "secondary" element) and a list of files using up the majority of the
+            available UI space (the "primary element).
+            This version does not create background colors.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.PrimarySecondaryListFormNoColor">
+            <summary>
+            Primary/Secondary layouts arrange a primary element that takes up most of the screen, and adorns
+            the arrangement with a secondary/auxiliary element. This is similar to how Windows Explorer is organized,
+            with a tree on the left (the "secondary" element) and a list of files using up the majority of the
+            available UI space (the "primary element).
+            This version is well suited for UIs where the main element is a list of items.
+            This version does not create background colors.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.SimpleForm">
+            <summary>
+            Simple form layouts are basic arrangements of controls, typically in a vertical or horizontal stack.
+            The layout is smart enough to create visually pleasing results by assigning meaningful spacing.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.SimpleFormToFill">
+            <summary>
+            Simple form layouts are basic arrangements of controls, typically in a vertical or horizontal stack.
+            The layout is smart enough to create visually pleasing results by assigning meaningful spacing.
+            This version fills the remaining screen real-estate (if any) with the last element.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.StandardForm">
+            <summary>
+            Standard form layouts use WPF standards (typically a Grid) and leave layout details up to the developer.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper">
+            <summary>
+            This helper class provides functionality related to standard layouts.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.StandardLayoutMapsBackward">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.StandardLayoutMaps">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.StandardLayoutTitles">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.StandardLayoutDescriptions">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper" /> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.GetStandardLayoutEnumFromKey(System.String)">
+            <summary>
+            Returns a standard layout enum value from the provided key (or StandardLayouts.None, if the key is not valid)
+            </summary>
+            <param name="layoutKey">The layout key.</param>
+            <returns>Standard Layout</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.GetStandardLayoutKeyFromEnum(CODE.Framework.Wpf.Mvvm.StandardLayouts)">
+            <summary>
+            Returns a standard layout string/key from the provided enum value
+            </summary>
+            <param name="layout">The layout key.</param>
+            <returns>Standard layout resource key name</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.GetStandardLayoutDescription(CODE.Framework.Wpf.Mvvm.StandardLayouts)">
+            <summary>
+            Returns a standard layout description from the provided enum value
+            </summary>
+            <param name="layout">The layout key.</param>
+            <returns>Standard layout description</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper.GetStandardLayoutTitle(CODE.Framework.Wpf.Mvvm.StandardLayouts)">
+            <summary>
+            Returns a standard layout title from the provided enum value
+            </summary>
+            <param name="layout">The layout key.</param>
+            <returns>Standard layout title</returns>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.IStandardViewModel">
             <summary>Standard view model interface, which can be used with all the standard data templates</summary>
@@ -3946,7 +4168,7 @@
             <summary>
             Handles the StandardIconChanged event event.
             </summary>
-            <param name="d">The d.</param>
+            <param name="d">The object the icon is set on.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ThemeIcon.FallbackIconResourceKey">
@@ -4032,7 +4254,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardIconHelper.GetStandardIconKeyFromEnum(CODE.Framework.Wpf.Mvvm.StandardIcons)">
             <summary>
-            Returns a standard icon string/key from the provided enum value (or string.Empty, if the key is not valid)
+            Returns a standard icon string/key from the provided enum value
             </summary>
             <param name="icon">The icon key.</param>
             <returns>Standard icon resource key name</returns>
@@ -5187,6 +5409,41 @@
             <summary>
             Indicates whether the focus should be moved to the default control when the view gets activated
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.View.StandardIcon">
+            <summary>
+            Defines a standard icon to be used
+            </summary>
+            <value>The standard icon.</value>
+            <remarks>This automatically sets the associated icon resource key</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.View.StandardIconProperty">
+            <summary>
+            Defines a standard icon to be used
+            </summary>
+            <value>The standard icon.</value>
+            <remarks>This automatically sets the associated icon resource key</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.View.OnStandardIconChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Handles the StandardIconChanged event event.
+            </summary>
+            <param name="d">The object the icon is set on.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.View.StandardLayout">
+            <summary>
+            Defines the standard layout style to be used for this view.
+            </summary>
+            <value>The standard layout.</value>
+            <remarks>This automatically assigns a dynamic resource link to the specified layout style</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.View.StandardLayoutProperty">
+            <summary>
+            Defines the standard layout style to be used for this view.
+            </summary>
+            <value>The standard layout.</value>
+            <remarks>This automatically assigns a dynamic resource link to the specified layout style</remarks>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionAndOpenViewSelector">
             <summary>

@@ -310,6 +310,7 @@ namespace CODE.Framework.Wpf.Controls
                 columnCounter++;
 
                 var gridColumn = new ColumnDefinition();
+                BindingOperations.ClearBinding(gridColumn, ColumnDefinition.WidthProperty);
                 gridColumn.SetBinding(ColumnDefinition.WidthProperty, new Binding("ActualWidth") {Source = column, Mode = BindingMode.OneWay, Converter = new LengthToGridLengthConverter()});
                 ColumnDefinitions.Add(new ColumnPanelColumnDefinition(gridColumn));
                 if (column.Width.GridUnitType == GridUnitType.Star)

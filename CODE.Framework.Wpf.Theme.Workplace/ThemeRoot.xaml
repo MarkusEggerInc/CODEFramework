@@ -13,6 +13,7 @@
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Workplace-Control-Button.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Calendar.xaml"/>
+        <ResourceDictionary Source="Workplace-Control-CapsLockWarning.xaml"/>
         <ResourceDictionary Source="Workplace-Control-DatePicker.xaml"/>
         <ResourceDictionary Source="Workplace-Control-DockHost.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Expander.xaml"/>

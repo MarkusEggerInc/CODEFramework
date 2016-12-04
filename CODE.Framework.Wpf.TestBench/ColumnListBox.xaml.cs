@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows;
+using CODE.Framework.Core.Utilities;
 using CODE.Framework.Wpf.Controls;
 using CODE.Framework.Wpf.Mvvm;
 
@@ -17,6 +20,11 @@ namespace CODE.Framework.Wpf.TestBench
             var model = new MyModel();
             DataContext = model;
             list.ItemsSource = model.OtherModels;
+
+            Closing += (s, e) =>
+            {
+                SettingsManager.SaveSettings(ListEx.GetColumns(list));
+            };
         }
     }
 

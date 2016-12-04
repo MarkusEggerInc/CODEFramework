@@ -265,8 +265,8 @@ namespace CODE.Framework.Wpf.Mvvm
                 if (matchingAction.Categories != null && matchingAction.Categories.Count > indentLevel + 1 && !populatedCategories.Contains(matchingAction.Categories[indentLevel].Id)) // This is further down in a sub-category even
                 {
                     populatedCategories.Add(matchingAction.Categories[indentLevel].Id);
-                    var newMenuItem = new ViewActionMenuItem {Header = matchingAction.Categories[indentLevel + 1].Caption};
-                    var icon = new ThemeIcon {UseFallbackIcon = false};
+                    var newMenuItem = new ViewActionMenuItem { Header = matchingAction.Categories[indentLevel + 1].Caption };
+                    var icon = new ThemeIcon { UseFallbackIcon = false };
                     icon.SetBinding(ThemeIcon.IconResourceKeyProperty, new Binding("BrushResourceKey"));
                     newMenuItem.Icon = icon;
                     CreateMenuItemBinding(matchingAction, newMenuItem);
@@ -276,12 +276,12 @@ namespace CODE.Framework.Wpf.Mvvm
                 }
                 else
                 {
-                    var newMenuItem1 = new ViewActionMenuItem {Header = GetMenuTitle(matchingAction), Command = matchingAction, DataContext = matchingAction};
+                    var newMenuItem1 = new ViewActionMenuItem { Header = GetMenuTitle(matchingAction), Command = matchingAction, DataContext = matchingAction };
                     HandleMenuShortcutKey(newMenuItem1, matchingAction);
                     if (matchingAction.ViewActionType == ViewActionTypes.Toggle)
                     {
                         newMenuItem1.IsCheckable = true;
-                        newMenuItem1.SetBinding(MenuItem.IsCheckedProperty, new Binding("IsChecked") {Source = matchingAction});
+                        newMenuItem1.SetBinding(MenuItem.IsCheckedProperty, new Binding("IsChecked") { Source = matchingAction, Mode = BindingMode.OneWay });
                     }
                     var realMatchingAction = matchingAction as ViewAction;
                     if (realMatchingAction != null && !string.IsNullOrEmpty(realMatchingAction.ToolTipText))

@@ -11518,6 +11518,14 @@
             This class provides useful helper functionality to deal with JSON strings
             </summary>
         </member>
+        <member name="M:CODE.Framework.Core.Utilities.JsonHelper.GetJsonNameValuePair(System.String,System.Object)">
+            <summary>
+            Returns a name/value pair in JSON format
+            </summary>
+            <param name="elementName">Name of the element.</param>
+            <param name="value">The value.</param>
+            <returns>JSON snippet</returns>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.JsonHelper.SerializeToRestJson(System.Object)">
             <summary>
             Serializes to REST JSON.
@@ -11541,12 +11549,51 @@
             <param name="returnType">Type of the return.</param>
             <returns>Deserialized object</returns>
         </member>
-        <member name="M:CODE.Framework.Core.Utilities.JsonHelper.Format(System.String)">
+        <member name="M:CODE.Framework.Core.Utilities.JsonHelper.Format(System.String,System.Int32)">
             <summary>
             Formats the provided JSON string (adds line feeds, indents, ...)
             </summary>
             <param name="json">The original JSON string.</param>
+            <param name="indentSpaces">Defines how many spaces are to be used for indentation.</param>
             <returns>Formatted JSON string</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.JsonHelper.QuickParse(System.String,System.Action{System.String,System.String})">
+            <summary>
+            Performs a quick element by element parse of a flat JSON string 
+            and invokes the callback for each value found.
+            </summary>
+            <param name="json">The JSON string that is to be parsed.</param>
+            <param name="callback">The callback that gets called for each name/value pair found.</param>
+            <example>
+            var json = "{ 'value': 'x', 'value2': 'y' }";
+            JsonHelper.QuicklParse(json, (n, v) => {
+                Console.WriteLine("Name: " + n);
+                Console.WriteLine("Value: " + v);
+            });
+            </example>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.JsonBuilder">
+            <summary>
+            This class helps in manually building simple JSON
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.JsonBuilder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Utilities.JsonBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.JsonBuilder.Append(System.String,System.Object)">
+            <summary>
+            Appends the specified name/value pair.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.JsonBuilder.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>A <see cref="T:System.String" /> that represents this instance.</returns>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.Logger">
             <summary>
@@ -12638,6 +12685,644 @@
             This method can be used with an arbitrary key, but make sure
             you use the same key for encryption and decryption.
             </remarks>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.SettingsManager">
+            <summary>
+            This class is used to save user and machine settings and preferences
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.#cctor">
+            <summary>
+            Static constructor
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.SaveSettings(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope,System.Type,System.Boolean)">
+            <summary>
+            Saves the object with the provided settings according to current SettingsManager configuration.
+            </summary>
+            <param name="stateObject">The object that contains the preserved state</param>
+            <param name="id">ID (name) of the setting that is to be saved. If omitted, the name of the state object's class is used.</param>
+            <param name="scope">Scope of the setting (default is Workstation)</param>
+            <param name="serializerTypeFilter">If not null, only serializers of this type will be considered for serialization.</param>
+            <param name="includeDerivedTypeFilterTypes">If set to true, serializer type filters will match derived types, otherwise, only the exact type will be used.</param>
+            <returns>True if the operation was successful</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.ClearSettings(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Clears the specified settings.
+            </summary>
+            <param name="stateObject">The state object.</param>
+            <param name="id">The identifier.</param>
+            <param name="scope">The scope.</param>
+            <returns>True if the operation was successful</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.LoadSettings(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Loads the specified settings and applies them to the state object.
+            </summary>
+            <param name="stateObject">The object that needs to be updated with the persisted settings</param>
+            <param name="id">ID (name) of the setting that is to be loaded. If not present, the name of the state object's class is used.</param>
+            <param name="scope">Scope of the setting (default is Workstation)</param>
+            <returns>
+            Returns true if the setting was loaded. If no existing settings were found, the method returns false.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.SaveMostRecentlyUsed(System.String,CODE.Framework.Core.Utilities.MostRecentlyUsed,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Saves an MRU item for the specified area to the list
+            </summary>
+            <param name="area">The area (such as "Invoice").</param>
+            <param name="mruItem">The MRU item.</param>
+            <param name="scope">Scope of the setting (default is User)</param>
+            <returns>True if success</returns>
+        </member>
+        <member name="E:CODE.Framework.Core.Utilities.SettingsManager.MostRecentlyUsedChanged">
+            <summary>
+            Occurs when the most-recently
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.SaveMostRecentlyUsed(System.String,System.String,System.String,System.Nullable{System.DateTime},System.Collections.Generic.Dictionary{System.String,System.String},CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Saves an MRU item for the specified area to the list
+            </summary>
+            <param name="area">The area (such as "Invoice").</param>
+            <param name="id">String that uniquely identifies the item in question (often a string representation of a GUID)</param>
+            <param name="title">Title to be displayed in MRU lists.</param>
+            <param name="timestamp">Time the item was used (if mull, DateTime.Now is assumed)</param>
+            <param name="data">Name/value pairs of other data.</param>
+            <param name="scope">Scope of the setting (default is User)</param>
+            <returns>True if success</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.LoadMostRecentlyUsed(System.String,CODE.Framework.Core.Utilities.SettingScope,System.Collections.Generic.List{CODE.Framework.Core.Utilities.MostRecentlyUsed})">
+            <summary>
+            Returns a list of most-recently-used entries for the specified area
+            </summary>
+            <param name="area">The area (such as "Invoice").</param>
+            <param name="scope">Scope of the setting (default is User)</param>
+            <param name="existingList">Optionally, an existing list that is to be populated can be passed in (useful for custom implementations of IMostRecentlyUsed)</param>
+            <returns>Most-recently-used items list</returns>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.SettingsManager.LastSaveSettingsError">
+            <summary>
+            Provides details information about the last error that occurred during a save operation
+            </summary>
+            <remarks>
+            Information gets cleared for every call to SaveSettings()
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.SettingsManager.LastClearSettingsError">
+            <summary>
+            Provides details information about the last error that occurred during a clear operation
+            </summary>
+            <remarks>
+            Information gets cleared for every call to ClearSettings()
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.SettingsManager.LastLoadSettingsError">
+            <summary>
+            Provides details information about the last error that occurred during a load operation
+            </summary>
+            <remarks>
+            Information gets cleared for every call to LoadSettings()
+            </remarks>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.GetSettingId(System.String,System.Object)">
+            <summary>
+            Returns a standardized ID for the provided object and optional ID
+            </summary>
+            <param name="id">ID to be used</param>
+            <param name="stateObject">State object to be handled</param>
+            <returns>Standardized ID</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.GetSerializers(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Finds a serializer that can handle the specified object
+            </summary>
+            <param name="stateObject">The object that needs to be serialized/deserialized</param>
+            <param name="id">Key of the setting</param>
+            <param name="scope">Scope of the setting</param>
+            <returns></returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.RegisterSerializer(CODE.Framework.Core.Utilities.ISettingsSerializer)">
+            <summary>
+            Registered the specified serializer
+            </summary>
+            <remarks>
+            Adds the new serializer to the bottom of the list of serializers
+            </remarks>
+            <param name="serializer">Serializer</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.RegisterSerializer``1">
+            <summary>
+            Checks if a serializer of the specified type has already been registered, and if not, Registered the specified serializer
+            instantiates and registers a serializer of the specified type.
+            </summary>
+            <remarks>
+            Adds the new serializer to the bottom of the list of serializers.
+            Creates a default (parameterless) instance of the serializer.
+            </remarks>
+            <typeparam name="T">Serializer Type</typeparam>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.ResetSerializers">
+            <summary>
+            Removes all registered serializers from the list
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.UnregisterSerializer(CODE.Framework.Core.Utilities.ISettingsSerializer)">
+            <summary>
+            Checks for the existence of the registered serializer, and, if found, removes it fromt he list.
+            </summary>
+            <param name="serializer">Serializer to remove</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.RegisterSettingsHandler(CODE.Framework.Core.Utilities.ISettingsHandler,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Registers handler (the object that loads and saves state) for a specific setting scope.
+            </summary>
+            <param name="handler">Handler object</param>
+            <param name="scope">Scope</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.SettingsManager.HasRegisteredSerializer``1">
+            <summary>
+            Indicates whether a serializer of the specified type has already been registered
+            </summary>
+            <typeparam name="T">Serializer Type</typeparam>
+            <returns><c>true</c> if [has registered serializer]; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.MostRecentlyUsedEventArgs">
+            <summary>
+            Event arguments used whenever the MRU list changes
+            </summary>
+            <seealso cref="T:System.EventArgs" />
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsedEventArgs.Area">
+            <summary>
+            Area (such as "Invoice")
+            </summary>
+            <value>The area.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsedEventArgs.Scope">
+            <summary>
+            Scope (User, Workstation,...)
+            </summary>
+            <value>The scope.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsedEventArgs.LastItemAdded">
+            <summary>
+            The last MRU item added to the list
+            </summary>
+            <value>The last item added.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsedEventArgs.CompleteList">
+            <summary>
+            Complete list of MRU items in this area, including the changed ones
+            </summary>
+            <value>The complete list.</value>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.ISettingsSerializer">
+            <summary>
+            Provides all the functionality required to serialize and deserialize settings
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsSerializer.SerializeToJson(System.Object)">
+            <summary>
+            Serializes the state object and returns the state as JSON
+            </summary>
+            <param name="stateObject">Object to serialize</param>
+            <returns>State JSON</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsSerializer.DeserializeFromJson(System.Object,System.String)">
+            <summary>
+            Deserializes the provides JSON state and updates the state object with the settings
+            </summary>
+            <param name="stateObject">Object to set the persisted state on.</param>
+            <param name="state">State information (JSON)</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsSerializer.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsSerializer.GetSuggestedFileName(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Can be used to suggest a file name for the setting, in case the handler is file-based
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>File name, or string.Empty if no default is suggested</returns>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.ISettingsSerializer.UseInAdditionToOtherAppliedSerializers">
+            <summary>
+            If set to true, this serializer will be invoked, even if other serializers have already 
+            handled the process
+            </summary>
+            <value>True or False</value>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.ISettingsHandler">
+            <summary>
+            Objects implementing this interface can persist (save and load) settings
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsHandler.Save(System.String,System.String,System.String)">
+            <summary>
+            Saves the specified state
+            </summary>
+            <param name="state">State to persist (typically JSON)</param>
+            <param name="id">ID of the state</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>True if successful</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsHandler.Load(System.String,System.String)">
+            <summary>
+            Loads the specified state and returns it as a string (typically JSON)
+            </summary>
+            <param name="id">ID of the setting</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>State (typically JSON). If setting is not found, returns an empty string.</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.ISettingsHandler.Clear(System.String,System.String)">
+            <summary>
+            Clears the specified settings.
+            </summary>
+            <param name="id">ID of the setting</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>True if successful</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.SettingScope">
+            <summary>
+            Scope of the setting (such as settings that are specific to a workstation or travel with a user no matter where they log on)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.SettingScope.User">
+            <summary>
+            The setting is user-specific, no matter which workstation they log on at
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.SettingScope.Workstation">
+            <summary>
+            The setting is specific to the current workstation, no matter the user
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Core.Utilities.SettingScope.WorkstationAndUser">
+            <summary>
+            The setting is workstation-specific, but varies by user
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.DefaultSettingSerializer">
+            <summary>
+            Standard serializer that attempts to handle all objects
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.DefaultSettingSerializer.SerializeToJson(System.Object)">
+            <summary>
+            Serializes the state object and returns the state as JSON
+            </summary>
+            <param name="stateObject">Object to serialize</param>
+            <returns>State JSON</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.DefaultSettingSerializer.DeserializeFromJson(System.Object,System.String)">
+            <summary>
+            Deserializes the provides JSON state and updates the state object with the settings
+            </summary>
+            <param name="stateObject">Object to set the persisted state on.</param>
+            <param name="state">State information (JSON)</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.DefaultSettingSerializer.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.DefaultSettingSerializer.GetSuggestedFileName(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Can be used to suggest a file name for the setting, in case the handler is file-based
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>File name, or string.Empty if no default is suggested</returns>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.DefaultSettingSerializer.UseInAdditionToOtherAppliedSerializers">
+            <summary>
+            If set to true, this serializer will be invoked, even if other serializers have already
+            handled the process
+            </summary>
+            <value>True or False</value>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1">
+            <summary>
+            Base class used to create classes that serialize based on attributes associated with objects
+            </summary>
+            <seealso cref="T:CODE.Framework.Core.Utilities.ISettingsSerializer" />
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1.SerializeToJson(System.Object)">
+            <summary>
+            Serializes the state object and returns the state as JSON
+            </summary>
+            <param name="stateObject">Object to serialize</param>
+            <returns>State JSON</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1.DeserializeFromJson(System.Object,System.String)">
+            <summary>
+            Deserializes the provides JSON state and updates the state object with the settings
+            </summary>
+            <param name="stateObject">Object to set the persisted state on.</param>
+            <param name="state">State information (JSON)</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1.GetSuggestedFileName(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Can be used to suggest a file name for the setting, in case the handler is file-based
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>File name, or string.Empty if no default is suggested</returns>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1.UseInAdditionToOtherAppliedSerializers">
+            <summary>
+            If set to true, this serializer will be invoked, even if other serializers have already
+            handled the process
+            </summary>
+            <value>True or False</value>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.AttributeSettingSerializer`1.GetPropertiesToSerialize(System.Object)">
+            <summary>
+            Returns a list of all the properties that need to be serialized
+            </summary>
+            <param name="stateObject">The state object.</param>
+            <returns>List of PropertyInfo.</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.WorkstationAttributeSettingSerializer">
+            <summary>
+            This serializer inspects an object for all properties decorated with a WorkstationSetting attribute and
+            preserves their value as local workstation settings.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationAttributeSettingSerializer.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.UserAttributeSettingSerializer">
+            <summary>
+            This serializer inspects an object for all properties decorated with a UserSetting attribute and
+            preserves their value as user settings.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.UserAttributeSettingSerializer.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.WorkstationUserAttributeSettingSerializer">
+            <summary>
+            This serializer inspects an object for all properties decorated with a UserSetting attribute and
+            preserves their value as user settings.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationUserAttributeSettingSerializer.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.WorkstationSettingAttribute">
+            <summary>
+            This attribute can be used to identify properties that shall be serialized as workstation settings
+            </summary>
+            <seealso cref="T:System.Attribute" />
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.UserSettingAttribute">
+            <summary>
+            This attribute can be used to identify properties that shall be serialized as user settings
+            </summary>
+            <seealso cref="T:System.Attribute" />
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.WorkstationUserSettingAttribute">
+            <summary>
+            This attribute can be used to identify properties that shall be serialized as workstation settings per user
+            </summary>
+            <seealso cref="T:System.Attribute" />
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.WorkstationSettingsHandler">
+            <summary>
+            Settings handler used to save settings in local machine files
+            </summary>
+            <seealso cref="T:CODE.Framework.Core.Utilities.ISettingsHandler" />
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationSettingsHandler.Save(System.String,System.String,System.String)">
+            <summary>
+            Saves the specified state
+            </summary>
+            <param name="state">State to persist (typically JSON)</param>
+            <param name="id">ID of the state</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>True if successful</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationSettingsHandler.Load(System.String,System.String)">
+            <summary>
+            Loads the specified state and returns it as a string (typically JSON)
+            </summary>
+            <param name="id">ID of the setting</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>State (typically JSON). If setting is not found, returns an empty string.</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationSettingsHandler.Clear(System.String,System.String)">
+            <summary>
+            Clears the specified settings.
+            </summary>
+            <param name="id">ID of the setting</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>True if successful</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationSettingsHandler.GetPath">
+            <summary>
+            Returns the path to where settings for this app and workstation are to be stored
+            </summary>
+            <returns>Path</returns>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.WorkstationSettingsHandler.AppDataSubFolder">
+            <summary>
+            Name of the folder within Environment.SpecialFolder.CommonApplicationData where the files for these settings are to be saved
+            </summary>
+            <value>The application data sub folder.</value>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationSettingsHandler.GetFileName(System.String,System.String)">
+            <summary>
+            Returns a file name for the specified settings ID
+            </summary>
+            <param name="id">Settings ID</param>
+            <param name="suggestedFileName">Potentially suggested file name by the caller</param>
+            <returns>File name</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.UserSettingsHandlerBase">
+            <summary>
+            Base implementation of a settings handler with standardized access to the current user name
+            </summary>
+            <seealso cref="T:CODE.Framework.Core.Utilities.ISettingsHandler" />
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.UserSettingsHandlerBase.UserName">
+            <summary>
+            Returns a standardized version of the current user name
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.UserSettingsHandlerBase.Save(System.String,System.String,System.String)">
+            <summary>
+            Saves the specified state
+            </summary>
+            <param name="state">State to persist (typically JSON)</param>
+            <param name="id">ID of the state</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>True if successful</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.UserSettingsHandlerBase.Load(System.String,System.String)">
+            <summary>
+            Loads the specified state and returns it as a string (typically JSON)
+            </summary>
+            <param name="id">ID of the setting</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>State (typically JSON). If setting is not found, returns an empty string.</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.UserSettingsHandlerBase.Clear(System.String,System.String)">
+            <summary>
+            Clears the specified settings.
+            </summary>
+            <param name="id">ID of the setting</param>
+            <param name="suggestedFileName">Potentially suggested file name created by a serializer (may be blank)</param>
+            <returns>True if successful</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.WorkstationAndUserSettingsHandler">
+            <summary>
+            Standard settings handler that saves the specified settings on the local workstation
+            separated by user.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.WorkstationAndUserSettingsHandler.UserName">
+            <summary>
+            Returns a standardized version of the current user name
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.WorkstationAndUserSettingsHandler.GetPath">
+            <summary>
+            Returns the path to where settings for this app and workstation are to be stored
+            </summary>
+            <returns>Path</returns>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer">
+            <summary>
+            Handles MRU (most-recently-used) lists
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.MaxItemCount">
+            <summary>
+            Maximum number of items stored in MRU lists
+            </summary>
+            <value>The maximum item count.</value>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.SerializeToJson(System.Object)">
+            <summary>
+            Serializes the state object and returns the state as JSON
+            </summary>
+            <param name="stateObject">Object to serialize</param>
+            <returns>State JSON</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.DeserializeFromJson(System.Object,System.String)">
+            <summary>
+            Deserializes the provides JSON state and updates the state object with the settings
+            </summary>
+            <param name="stateObject">Object to set the persisted state on.</param>
+            <param name="state">State information (JSON)</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.CanHandle(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Returns true if the provided serializer can handle the object in question
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>True if the serializer can handle the provided object</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.GetSuggestedFileName(System.Object,System.String,CODE.Framework.Core.Utilities.SettingScope)">
+            <summary>
+            Can be used to suggest a file name for the setting, in case the handler is file-based
+            </summary>
+            <param name="stateObject">Object containing the state</param>
+            <param name="id">ID of the setting that is to be persisted</param>
+            <param name="scope">Scope of the setting</param>
+            <returns>File name, or string.Empty if no default is suggested</returns>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsedListSerializer.UseInAdditionToOtherAppliedSerializers">
+            <summary>
+            If set to true, this serializer will be invoked, even if other serializers have already
+            handled the process
+            </summary>
+            <value>True or False</value>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.MostRecentlyUsed">
+            <summary>
+            Standard implementation for an MRU item
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.MostRecentlyUsed.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Core.Utilities.MostRecentlyUsed"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsed.Timestamp">
+            <summary>
+            Time the item was last used
+            </summary>
+            <value>The time stamp.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsed.Id">
+            <summary>
+            Gets or sets the identifier.
+            </summary>
+            <value>The identifier.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsed.Title">
+            <summary>
+            Main title of the item
+            </summary>
+            <value>The title.</value>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MostRecentlyUsed.Data">
+            <summary>
+            Other data associated with the MRU item
+            </summary>
+            <value>The data.</value>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.StreamHelper">
             <summary>

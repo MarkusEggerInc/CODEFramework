@@ -6,10 +6,12 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>-->
-                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Vapor;component/ThemeRoot.xaml"/>-->
-                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Geek;component/ThemeRoot.xaml"/>-->
                 <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Battleship;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Geek;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Vapor;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Wildcat;component/ThemeRoot.xaml"/>-->
                 <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/ThemeRoot.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -18,11 +20,11 @@
     <Grid>
         <ListBox Margin="10" x:Name="list"> <!--Style="{DynamicResource Metro-Control-ListBox-Columns}"-->
             <c:ListEx.Columns>
-                <c:ListColumnsCollection EditModeBindingPath="">
-                    <c:ListColumn BindingPath="Text1" Header="Text 1" IsResizable="True" Width="100" HeaderClickCommandBindingPath="HeaderClick" />
+                <c:ListColumnsCollection EditModeBindingPath="" AllowColumnMove="True">
+                    <c:ListColumn BindingPath="Text1" Header="Text 1" IsResizable="True" Width="100" />
                     <c:ListColumn BindingPath="Text2" Header="Text 2" IsResizable="True" Width="200" HeaderClickCommandBindingPath="HeaderClick" />
                     <c:ListColumn BindingPath="Text3" Header="Text 3" IsResizable="True" Width="250" HeaderClickCommandBindingPath="HeaderClick" />
-                    <c:ListColumn BindingPath="Text4" Header="Text 4" IsResizable="True" Width="*" HeaderClickCommandBindingPath="HeaderClick">
+                    <c:ListColumn BindingPath="Text4" Header="Text 4" IsResizable="True" Width="200" HeaderClickCommandBindingPath="HeaderClick">
                         <c:ListColumn.HeaderTemplate>
                             <ControlTemplate>
                                 <Grid c:GridEx.RowHeights="Auto,10" HorizontalAlignment="Stretch">
@@ -31,7 +33,7 @@
                             </ControlTemplate>
                         </c:ListColumn.HeaderTemplate>
                     </c:ListColumn>
-                    <c:ListColumn Header="Text 5" IsResizable="True" Width="*" HeaderClickCommandBindingPath="HeaderClick">
+                    <c:ListColumn Header="Text 5" IsResizable="True" Width="250" HeaderClickCommandBindingPath="HeaderClick">
                         <c:ListColumn.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">

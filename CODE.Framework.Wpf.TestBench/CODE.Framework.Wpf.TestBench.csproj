@@ -80,6 +80,9 @@
     <Compile Include="CanExecuteChangedTest.xaml.cs">
       <DependentUpon>CanExecuteChangedTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CapsLockTest.xaml.cs">
+      <DependentUpon>CapsLockTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ColumnListBox.xaml.cs">
       <DependentUpon>ColumnListBox.xaml</DependentUpon>
     </Compile>
@@ -146,6 +149,9 @@
     <Compile Include="RibbonTest.xaml.cs">
       <DependentUpon>RibbonTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SaveWindowSettingsTest.xaml.cs">
+      <DependentUpon>SaveWindowSettingsTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScaleSliderTest.xaml.cs">
       <DependentUpon>ScaleSliderTest.xaml</DependentUpon>
     </Compile>
@@ -172,6 +178,9 @@
     </Compile>
     <Compile Include="SyncCollectionTest.xaml.cs">
       <DependentUpon>SyncCollectionTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SystemMetricsTests.xaml.cs">
+      <DependentUpon>SystemMetricsTests.xaml</DependentUpon>
     </Compile>
     <Compile Include="TextBlockExTest.xaml.cs">
       <DependentUpon>TextBlockExTest.xaml</DependentUpon>
@@ -217,6 +226,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CanExecuteChangedTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CapsLockTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -342,6 +355,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SaveWindowSettingsTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ScaleSliderTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -375,6 +392,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SyncCollectionTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SystemMetricsTests.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,17 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.SaveWindowSettingsTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+        Title="Save Window Settings Test" Height="300" Width="300"
+        controls:WindowEx.AutoSaveWindowPosition="True">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Margin="50,10" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center">This window should appear at the same size, location, and state when re-opened, as it was when it is closed.</TextBlock>
+        <TextBlock Grid.Row="1">This window most most recently used at:</TextBlock>
+        <ListBox x:Name="mruList" Grid.Row="2" Margin="0,10" DisplayMemberPath="Title" />
+    </Grid>
+</Window>

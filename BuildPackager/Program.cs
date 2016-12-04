@@ -108,7 +108,7 @@ namespace BuildPackager
             foreach (var folder in folders)
             {
                 var folderName = folder.JustFileName().ToLower();
-                if (!folderName.StartsWith("packages") && !folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
+                if (!folderName.StartsWith("packages") && !folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj" && folderName != "$tf")
                 {
                     var fullGitFolderName = gitHubSourceFolder + folder.JustFileName() + @"\";
                     if (!Directory.Exists(fullGitFolderName)) Directory.CreateDirectory(fullGitFolderName);
@@ -196,7 +196,7 @@ namespace BuildPackager
             foreach (var folder2 in folders)
             {
                 var folderName = folder2.JustFileName().ToLower();
-                if (!folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj")
+                if (!folderName.StartsWith("_resharper") && folderName != "build" && !folderName.EndsWith(".pdb") && folderName != "bin" && folderName != "obj" && folderName != "$tf")
                 {
                     var fullGitFolderName2 = fullGitFolderName + folder2.JustFileName() + @"\";
                     if (!Directory.Exists(fullGitFolderName2)) Directory.CreateDirectory(fullGitFolderName2);

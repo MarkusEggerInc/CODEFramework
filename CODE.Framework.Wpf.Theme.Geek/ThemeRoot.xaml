@@ -11,6 +11,7 @@
 
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Geek-Control-Button.xaml"/>
+        <ResourceDictionary Source="Geek-Control-CapsLockWarning.xaml"/>
         <ResourceDictionary Source="Geek-Control-FlowDocumentReader.xaml"/>
         <ResourceDictionary Source="Geek-Control-Label.xaml"/>
         <ResourceDictionary Source="Geek-Control-ListBox.xaml"/>

@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CODE.Framework.Wpf.TestBench
 {
@@ -21,6 +11,39 @@ namespace CODE.Framework.Wpf.TestBench
         public TextBoxTest()
         {
             InitializeComponent();
+
+            DataContext = new TextBoxTestModel();
+        }
+    }
+
+    public class TextBoxTestModel : INotifyPropertyChanged
+    {
+        private decimal _testValue;
+
+        public TextBoxTestModel()
+        {
+            TestValue = 19.95m;
+        }
+
+        public string TestPhone { get; set; }
+
+        public decimal TestValue
+        {
+            get { return _testValue; }
+            set
+            {
+                _testValue = value;
+                OnPropertyChanged("TestValue");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var onPropertyChanged = PropertyChanged;
+            if (onPropertyChanged != null)
+                onPropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

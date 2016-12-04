@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -7,6 +9,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CODE.Framework.Core.Utilities;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Controls
 {
@@ -15,9 +18,58 @@ namespace CODE.Framework.Wpf.Controls
     /// </summary>
     public class WindowEx : Window
     {
+        /// <summary>
+        /// If set to true, the Window will remember the last size and position it had and re-open at that same position
+        /// </summary>
+        public static readonly DependencyProperty AutoSaveWindowPositionProperty = DependencyProperty.RegisterAttached("AutoSaveWindowPosition", typeof(bool), typeof(WindowEx), new PropertyMetadata(false, OnAutoSaveWindowPositionChanged));
+
+        /// <summary>
+        /// If set to true, the Window will remember the last size and position it had and re-open at that same position
+        /// </summary>
+        public static bool GetAutoSaveWindowPosition(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(AutoSaveWindowPositionProperty);
+        }
+
+        /// <summary>
+        /// If set to true, the Window will remember the last size and position it had and re-open at that same position
+        /// </summary>
+        public static void SetAutoSaveWindowPosition(DependencyObject obj, bool value)
+        {
+            obj.SetValue(AutoSaveWindowPositionProperty, value);
+        }
+
+        /// <summary>
+        /// Fires when the AutoSaveWindowPosition property is set
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnAutoSaveWindowPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as Window;
+            if (window == null) return;
+            if (!(bool) e.NewValue) return;
+
+            SettingsManager.RegisterSerializer<WindowPositionSettingsSerializer>();
+            SettingsManager.LoadSettings(window);
+            window.Closing += (s2, e2) => { SettingsManager.SaveSettings(window, serializerTypeFilter: typeof (WindowPositionSettingsSerializer), includeDerivedTypeFilterTypes: true); };
+        }
+
         /// <summary>If set to true, the window can be dragged automatically by clicking in the background or header area</summary>
         /// <remarks>If the HeaderHeight property is set to anything larger than 0, only clicks within the header area will be considered for dragging.</remarks>
         public static readonly DependencyProperty AutoWindowDragEnabledProperty = DependencyProperty.RegisterAttached("AutoWindowDragEnabled", typeof (bool), typeof (WindowEx), new PropertyMetadata(false, AutoWindowDragEnabledChanged));
+
+        /// <summary>If set to true, the window can be dragged automatically by clicking in the background or header area</summary>
+        public static bool GetAutoWindowDragEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(AutoWindowDragEnabledProperty);
+        }
+
+        /// <summary>If set to true, the window can be dragged automatically by clicking in the background or header area</summary>
+        public static void SetAutoWindowDragEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(AutoWindowDragEnabledProperty, value);
+        }
 
         /// <summary>Handler for auto-windows-drag-enabled changes</summary>
         /// <param name="dependencyObject">The dependency object.</param>
@@ -27,38 +79,216 @@ namespace CODE.Framework.Wpf.Controls
             If.Real<Window>(dependencyObject, win =>
             {
                 if (GetAutoWindowDragEnabled(win))
-                    win.MouseLeftButtonDown += WindowDragHandler;
+                {
+                    win.MouseLeftButtonDown += WindowDragMouseDownHandler;
+                    win.MouseMove += WindowDragMoveHandler;
+                    win.MouseLeftButtonUp += WindowDragMouseUpHandler;
+                }
                 else
-                    win.MouseLeftButtonDown -= WindowDragHandler;
+                {
+                    win.MouseLeftButtonDown -= WindowDragMouseDownHandler;
+                    win.MouseMove -= WindowDragMoveHandler;
+                    win.MouseLeftButtonUp -= WindowDragMouseUpHandler;
+                }
             });
+        }
+
+        private static void WindowDragMouseUpHandler(object sender, MouseButtonEventArgs e)
+        {
+            _currentDisplays = null;
+            var window = sender as Window;
+            if (window == null) return;
+            Mouse.Capture(null);
+            SetCurrentDragOperationStartScreenPosition(window, new Point(double.MinValue, double.MinValue));
+            SetCurrentDragOperationStartWindowPosition(window, new Point(double.MinValue, double.MinValue));
+        }
+
+        private static List<DisplayInformation> _currentDisplays;
+
+        private static void WindowDragMoveHandler(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+            var window = sender as Window;
+            if (window == null) return;
+
+            var startAbsoluteMousePosition = GetCurrentDragOperationStartScreenPosition(window);
+            if (!(startAbsoluteMousePosition.X > double.MinValue)) return; // Not in a window drag operation
+
+            // We now we are in a drag operation, so we have to first know how far the mouse has moved
+            var currentAbsoluteMousePosition = GetMousePositionInScreen(window);
+            var deltaX = startAbsoluteMousePosition.X - currentAbsoluteMousePosition.X;
+            var deltaY = startAbsoluteMousePosition.Y - currentAbsoluteMousePosition.Y;
+            var deltaXAbsolute = Math.Abs(deltaX);
+            var deltaYAbsolute = Math.Abs(deltaY);
+
+            // We may have to change the window state to normal if it is currently maximized
+            if (window.WindowState == WindowState.Maximized)
+                foreach (var display in _currentDisplays)
+                    if (display.MonitorArea.Contains(currentAbsoluteMousePosition))
+                        if ((deltaXAbsolute > SystemParameters.MinimumHorizontalDragDistance || deltaYAbsolute > SystemParameters.MinimumVerticalDragDistance) && currentAbsoluteMousePosition.Y > display.MonitorArea.Top + SystemParameters.MinimumHorizontalDragDistance)
+                        {
+                            // The user has tried to move the window, so we need to switch it out of maximized state
+                            window.WindowState = WindowState.Normal;
+
+                            window.Top = startAbsoluteMousePosition.Y*-1;
+                            if (window.Top > currentAbsoluteMousePosition.Y - 10) window.Top = currentAbsoluteMousePosition.Y - 10;
+                            if (window.Left > currentAbsoluteMousePosition.X) window.Left = currentAbsoluteMousePosition.X - (window.Width/2);
+                            if (window.Left + window.Width < currentAbsoluteMousePosition.X) window.Left = currentAbsoluteMousePosition.X - (window.Width/2);
+                            SetCurrentDragOperationStartWindowPosition(window, new Point(window.Left, window.Top));
+                            SetCurrentDragOperationStartScreenPosition(window, currentAbsoluteMousePosition);
+                            return;
+                        }
+
+            foreach (var display in _currentDisplays)
+                if (display.MonitorArea.Contains(currentAbsoluteMousePosition))
+                    if (window.WindowState == WindowState.Normal && currentAbsoluteMousePosition.Y < display.MonitorArea.Top + SystemParameters.MinimumVerticalDragDistance && currentAbsoluteMousePosition.Y >= display.MonitorArea.Top)
+                    {
+                        // The user has snapped the window to the top of the screen it is in, so we maximize it (but only for windows that support resizing)
+                        if (WindowEx.GetAutoWindowResizingEnabled(window))
+                        {
+                            window.WindowState = WindowState.Maximized;
+                            return;
+                        }
+                    }
+
+            // No special mode interfered, so we simply move the window
+            var originalWindowPosition = GetCurrentDragOperationStartWindowPosition(window);
+            if (!(originalWindowPosition.X > double.MinValue)) return;
+            window.Top = originalWindowPosition.Y - deltaY;
+            window.Left = originalWindowPosition.X - deltaX;
         }
 
         /// <summary>Handler for window drag operations</summary>
         /// <param name="sender">The sender.</param>
         /// <param name="mouseButtonEventArgs">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
-        private static void WindowDragHandler(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        private static void WindowDragMouseDownHandler(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             if (mouseButtonEventArgs.LeftButton != MouseButtonState.Pressed) return;
             var window = sender as Window;
             if (window == null) return;
+
+            // Get the mouse position within the current window
             var position = mouseButtonEventArgs.GetPosition(window);
+            _currentDisplays = GetAllDisplays();
+
             if (IsMouseActionInHeader(window, position))
                 if (!MustHandleResize(position, window)) // This second check is to make sure we do not interfere with auto resizing
-                    window.DragMove();
+                {
+                    // We also check the position on the screen
+                    SetCurrentDragOperationStartScreenPosition(window, GetMousePositionInScreen(window));
+                    SetCurrentDragOperationStartWindowPosition(window, new Point(window.Left, window.Top));
+                    Mouse.Capture(window);
+                    if (!window.IsActive) window.Activate();
+                    //window.DragMove();
+                }
         }
 
-        /// <summary>If set to true, the window can be dragged automatically by clicking in the background or header area</summary>
-        public static bool GetAutoWindowDragEnabled(DependencyObject obj)
+        private static Point GetMousePositionInScreen(Visual visual)
         {
-            return (bool) obj.GetValue(AutoWindowDragEnabledProperty);
+            var scale = GetScreenScale(visual);
+            var w32Mouse = new Win32Point();
+            GetCursorPos(ref w32Mouse);
+            return new Point(w32Mouse.X/scale.X, w32Mouse.Y/scale.Y);
         }
 
-        /// <summary>If set to true, the window can be dragged automatically by clicking in the background or header area</summary>
-        public static void SetAutoWindowDragEnabled(DependencyObject obj, bool value)
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public static readonly DependencyProperty CurrentDragOperationStartScreenPositionProperty = DependencyProperty.RegisterAttached("CurrentDragOperationStartScreenPosition", typeof(Point), typeof(WindowEx), new PropertyMetadata(new Point(double.MinValue, double.MinValue)));
+
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public static Point GetCurrentDragOperationStartScreenPosition(DependencyObject obj)
         {
-            obj.SetValue(AutoWindowDragEnabledProperty, value);
+            return (Point)obj.GetValue(CurrentDragOperationStartScreenPositionProperty);
+        }
+        
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public static void SetCurrentDragOperationStartScreenPosition(DependencyObject obj, Point value)
+        {
+            obj.SetValue(CurrentDragOperationStartScreenPositionProperty, value);
         }
 
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public static readonly DependencyProperty CurrentDragOperationStartWindowPositionProperty = DependencyProperty.RegisterAttached("CurrentDragOperationStartWindowPosition", typeof(Point), typeof(WindowEx), new PropertyMetadata(new Point(double.MinValue, double.MinValue)));
+
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public static Point GetCurrentDragOperationStartWindowPosition(DependencyObject obj)
+        {
+            return (Point)obj.GetValue(CurrentDragOperationStartWindowPositionProperty);
+        }
+
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public static void SetCurrentDragOperationStartWindowPosition(DependencyObject obj, Point value)
+        {
+            obj.SetValue(CurrentDragOperationStartWindowPositionProperty, value);
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool GetCursorPos(ref Win32Point point);
+
+        [DllImport("user32.dll")]
+        static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInformation lpmi);
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
+        private delegate bool EnumMonitorsDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MonitorInformation
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public uint dwFlags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int left;
+            public int top;
+            public int right;
+            public int bottom;
+        }
+
+        /// <summary>
+        /// Gets a list of all monitors and returns detailed monitor information
+        /// </summary>
+        private static List<DisplayInformation> GetAllDisplays()
+        {
+            var displays = new List<DisplayInformation>();
+
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero,
+                (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData) =>
+                {
+                    var mi = new MonitorInformation();
+                    mi.cbSize = Marshal.SizeOf(mi);
+                    if (GetMonitorInfo(hMonitor, ref mi))
+                        displays.Add(new DisplayInformation
+                        {
+                            ScreenWidth = mi.rcMonitor.right - mi.rcMonitor.left,
+                            ScreenHeight = mi.rcMonitor.bottom - mi.rcMonitor.top,
+                            MonitorArea = new Rect(mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top),
+                            WorkArea = new Rect(mi.rcWork.left, mi.rcWork.top, mi.rcWork.right - mi.rcWork.left, mi.rcWork.bottom - mi.rcWork.top),
+                            Availability = mi.dwFlags.ToString()
+                        });
+                    return true;
+                }, IntPtr.Zero);
+
+            return displays;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct Win32Point
+        {
+            public int X;
+            public int Y;
+        };
 
         /// <summary>If set to true, the window automatically maximizes when double-clicked</summary>
         /// <remarks>If the HeaderHeight property is set to anything larger than 0, only clicks within the header area will be considered for dragging.</remarks>
@@ -85,8 +315,30 @@ namespace CODE.Framework.Wpf.Controls
         {
             var window = sender as Window;
             if (window == null) return;
+            if (!GetAutoWindowMaximizeEnabled(window)) return; // Just doublec-checking to make sure this is still on
+
+            // We need to make sure that the click actually happened on the window (or part of the window template) and not in a different control
+            var originalSource = mouseButtonEventArgs.OriginalSource as FrameworkElement;
+            if (originalSource != null && originalSource != window)
+            {
+                var clickRoot = FindRoot(originalSource);
+                if (clickRoot == null) return; // This couldn't possibly be a window
+                if (clickRoot.TemplatedParent != null) clickRoot = clickRoot.TemplatedParent as FrameworkElement;
+                if (clickRoot != window) return; // Click happened on something else
+            }
+
             if (IsMouseActionInHeader(window, mouseButtonEventArgs.GetPosition(window)))
                 window.WindowState = window.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
+
+        private static FrameworkElement FindRoot(FrameworkElement element)
+        {
+            while (element.Parent != null)
+            {
+                element = element.Parent as FrameworkElement;
+                if (element == null) return null;
+            }
+            return element;
         }
 
         /// <summary>If set to true, the window can be dragged automatically by clicking in the background or header area</summary>
@@ -802,7 +1054,7 @@ namespace CODE.Framework.Wpf.Controls
     }
 
     /// <summary>
-    /// Indicates when a certain effect shoudl be active
+    /// Indicates when a certain effect should be active
     /// </summary>
     public enum EffectActiveStates
     {
@@ -820,5 +1072,32 @@ namespace CODE.Framework.Wpf.Controls
         /// Always
         /// </summary>
         Always
+    }
+
+    /// <summary>
+    /// Information about a specific display
+    /// </summary>
+    public class DisplayInformation
+    {
+        /// <summary>
+        /// Availability
+        /// </summary>
+        public string Availability { get; set; }
+        /// <summary>
+        /// Screen height
+        /// </summary>
+        public double ScreenHeight { get; set; }
+        /// <summary>
+        /// Screen width
+        /// </summary>
+        public double ScreenWidth { get; set; }
+        /// <summary>
+        /// Monitor area
+        /// </summary>
+        public Rect MonitorArea { get; set; }
+        /// <summary>
+        /// Work area
+        /// </summary>
+        public Rect WorkArea { get; set; }
     }
 }

@@ -2,8 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
+    <!-- 
+    The following are default settings listed here so they can easily be changed. 
+    Uncomment and override the settings you wish to change.
+    -->
+
     <FontFamily x:Key="DefaultFont">Segoe UI</FontFamily>
 
+    <!-- Original UWP font sizes, as used by the default template -->
     <system:Double x:Key="FontSize-Smallest">11</system:Double>
     <system:Double x:Key="FontSize-Smaller">13.333</system:Double>
     <system:Double x:Key="FontSize-Normal">15</system:Double>
@@ -11,5 +17,14 @@
     <system:Double x:Key="FontSize-Larger">20</system:Double>
     <system:Double x:Key="FontSize-Largest">24</system:Double>
     <system:Double x:Key="FontSize-VeryLarge">48</system:Double>
+
+    <!-- Suggested slightly smaller font sizes for a more delicate look -->
+    <!--<system:Double x:Key="FontSize-Smallest">9</system:Double>
+    <system:Double x:Key="FontSize-Smaller">11</system:Double>
+    <system:Double x:Key="FontSize-Normal">13.333</system:Double>
+    <system:Double x:Key="FontSize-Large">15</system:Double>
+    <system:Double x:Key="FontSize-Larger">17</system:Double>
+    <system:Double x:Key="FontSize-Largest">20</system:Double>
+    <system:Double x:Key="FontSize-VeryLarge">36</system:Double>-->
 
 </ResourceDictionary>

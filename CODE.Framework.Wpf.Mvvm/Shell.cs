@@ -701,7 +701,20 @@ namespace CODE.Framework.Wpf.Mvvm
                 viewResult.TopLevelWindow = window;
 
                 if (context.Result is MessageBoxResult) window.SetResourceReference(StyleProperty, "CODE.Framework.Wpf.Mvvm.Shell-TopLevelMessageBoxWindowStyle");
-                else window.SetResourceReference(StyleProperty, "CODE.Framework.Wpf.Mvvm.Shell-TopLevelWindowStyle");
+                else
+                {
+                    var styleKey = "CODE.Framework.Wpf.Mvvm.Shell-TopLevelWindowStyle";
+                    var handler = GetTopLevelWindowStyleName;
+                    if (handler != null)
+                    {
+                        var getTopLevelWindowStyleNameEventArgs = new GetTopLevelWindowStyleNameEventArgs {ViewResult = viewResult, RequestContext = context, StyleKey = styleKey, Window = window};
+                        handler(this, getTopLevelWindowStyleNameEventArgs);
+                        styleKey = getTopLevelWindowStyleNameEventArgs.StyleKey;
+                    }
+                    if (string.IsNullOrEmpty(styleKey))
+                        styleKey = "CODE.Framework.Wpf.Mvvm.Shell-TopLevelWindowStyle";
+                    window.SetResourceReference(StyleProperty, styleKey);
+                }
 
                 if (viewResult.View != null)
                     foreach (InputBinding binding in viewResult.View.InputBindings)
@@ -730,6 +743,11 @@ namespace CODE.Framework.Wpf.Mvvm
 
             return true;
         }
+
+        /// <summary>
+        /// This event can be used to influence the name of the style used for top level windows
+        /// </summary>
+        public static event EventHandler<GetTopLevelWindowStyleNameEventArgs> GetTopLevelWindowStyleName;
 
         /// <summary>
         /// This method is invoked when a view that is associated with a certain model should be closed
@@ -780,7 +798,6 @@ namespace CODE.Framework.Wpf.Mvvm
         /// This method closes all currently open views
         /// </summary>
         /// <returns>True if the handler successfully closed all views. False if it didn't close all views or generally does not handle view closing</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public bool CloseAllViews()
         {
             var topLevelViews = TopLevelViews.ToArray();
@@ -842,6 +859,16 @@ namespace CODE.Framework.Wpf.Mvvm
         public void SetOriginalTitle(string originalTitle)
         {
             _originalTitle = originalTitle;
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Window.Closing" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data.</param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            CloseAllViews();
+            base.OnClosing(e);
         }
     }
 
@@ -987,5 +1014,33 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Shows only the title of the current view (except when there is no open view, then the original title is shown)
         /// </summary>
         ViewTitleOnly
+    }
+
+    /// <summary>
+    /// Event args for GetTopLevelWindowStyleName event
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
+    public class GetTopLevelWindowStyleNameEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The window the style will be attached to
+        /// </summary>
+        /// <value>The window.</value>
+        public Window Window { get; set; }
+        /// <summary>
+        /// The view result
+        /// </summary>
+        /// <value>The view result.</value>
+        public ViewResult ViewResult { get; set; }
+        /// <summary>
+        /// Key of the style that will be applied to the window. Set the property to load a different style
+        /// </summary>
+        /// <value>The style key.</value>
+        public string StyleKey { get; set; }
+        /// <summary>
+        /// Request context
+        /// </summary>
+        /// <value>The request context.</value>
+        public RequestContext RequestContext { get; set; }
     }
 }

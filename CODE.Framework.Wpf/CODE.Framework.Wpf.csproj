@@ -69,9 +69,11 @@
     <Compile Include="BindingConverters\TransparentColorConverter.cs" />
     <Compile Include="Controls\AutoComplete.cs" />
     <Compile Include="Controls\BorderEx.cs" />
+    <Compile Include="Controls\CapsLockWarning.cs" />
     <Compile Include="Controls\ContentTextDisplay.cs" />
     <Compile Include="Controls\DockHost.cs" />
     <Compile Include="Controls\Ex.cs" />
+    <Compile Include="Controls\LabelEx.cs" />
     <Compile Include="Controls\ListBoxEx.cs" />
     <Compile Include="Controls\ListBoxFastGridHeader.cs" />
     <Compile Include="Controls\ListBoxFastSmartDataTemplate.cs" />
@@ -133,11 +135,14 @@
     <Compile Include="Utilities\AutoLayoutHeaderRenderer.cs" />
     <Compile Include="Utilities\ElementHelper.cs" />
     <Compile Include="Utilities\FocusHelper.cs" />
+    <Compile Include="Utilities\GlobalKeyboardHookHelper.cs" />
     <Compile Include="Utilities\ImageHelper.cs" />
     <Compile Include="Utilities\ObservableResourceDictionary.cs" />
     <Compile Include="Utilities\ResourceHelper.cs" />
     <Compile Include="Utilities\SpellCheckHelper.cs" />
+    <Compile Include="Utilities\SystemMetricsHelper.cs" />
     <Compile Include="Utilities\VisualHelper.cs" />
+    <Compile Include="Utilities\WindowPositionSettingsSerializer.cs" />
     <Compile Include="Validation\InputValidation.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

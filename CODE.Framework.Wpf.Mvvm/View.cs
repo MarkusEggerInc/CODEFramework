@@ -108,14 +108,17 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Defines whether the control is the one to receive the default focus. Set it to true as an attached property to move focus to that control.</summary>
         /// <remarks>If multiple controls are set to receive the default first focus, the 'last one wins' rule is applied.</remarks>
         /// <example>&lt;TextBox c:Document.HasDefaultFocus="true" &gt;</example>
-        public static readonly DependencyProperty HasDefaultFocusProperty =
-            DependencyProperty.RegisterAttached("HasDefaultFocus", typeof (bool), typeof (SimpleView),
-                                                new PropertyMetadata(false, (s, e) =>
-                                                    {
-                                                        var element = s as FrameworkElement;
-                                                        if (element != null)
-                                                            Controller.ExecuteAfterNextViewOpen(r => FocusHelper.FocusDelayed(element));
-                                                    }));
+        public static readonly DependencyProperty HasDefaultFocusProperty =DependencyProperty.RegisterAttached("HasDefaultFocus", typeof (bool), typeof (SimpleView),new PropertyMetadata(false, OnHasDefaultFocusChanged));
+
+        private static void OnHasDefaultFocusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(e.NewValue is bool)) return;
+            var hasFocus = (bool) e.NewValue;
+            if (!hasFocus) return;
+            var element = d as FrameworkElement;
+            if (element != null)
+                Controller.ExecuteAfterNextViewOpen(r => FocusHelper.FocusDelayed(element));
+        }
 
         /// <summary>Defines whether the control is the one to receive the default focus. Set it to true as an attached property to move focus to that control.</summary>
         /// <remarks>If multiple controls are set to receive the default first focus, the 'last one wins' rule is applied.</remarks>
@@ -147,5 +150,61 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Indicates whether the focus should be moved to the default control when the view gets activated
         /// </summary>
         public static readonly DependencyProperty MoveFocusToDefaultOnActivateProperty = DependencyProperty.Register("MoveFocusToDefaultOnActivate", typeof(bool), typeof(View), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Defines a standard icon to be used
+        /// </summary>
+        /// <value>The standard icon.</value>
+        /// <remarks>This automatically sets the associated icon resource key</remarks>
+        public StandardIcons StandardIcon
+        {
+            get { return (StandardIcons)GetValue(StandardIconProperty); }
+            set { SetValue(StandardIconProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines a standard icon to be used
+        /// </summary>
+        /// <value>The standard icon.</value>
+        /// <remarks>This automatically sets the associated icon resource key</remarks>
+        public static readonly DependencyProperty StandardIconProperty = DependencyProperty.Register("StandardIcon", typeof(StandardIcons), typeof(View), new PropertyMetadata(StandardIcons.None, OnStandardIconChanged));
+
+        /// <summary>
+        /// Handles the StandardIconChanged event event.
+        /// </summary>
+        /// <param name="d">The object the icon is set on.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnStandardIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var view = d as View;
+            if (view == null) return;
+            SetIconResourceKey(view, StandardIconHelper.GetStandardIconKeyFromEnum(view.StandardIcon));
+        }
+
+        /// <summary>
+        /// Defines the standard layout style to be used for this view.
+        /// </summary>
+        /// <value>The standard layout.</value>
+        /// <remarks>This automatically assigns a dynamic resource link to the specified layout style</remarks>
+        public StandardLayouts StandardLayout
+        {
+            get { return (StandardLayouts)GetValue(StandardLayoutProperty); }
+            set { SetValue(StandardLayoutProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the standard layout style to be used for this view.
+        /// </summary>
+        /// <value>The standard layout.</value>
+        /// <remarks>This automatically assigns a dynamic resource link to the specified layout style</remarks>
+        public static readonly DependencyProperty StandardLayoutProperty = DependencyProperty.Register("StandardLayout", typeof(StandardLayouts), typeof(View), new PropertyMetadata(StandardLayouts.None, OnStandardLayoutChanged));
+
+        private static void OnStandardLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var view = d as View;
+            if (view == null) return;
+            if (view.StandardLayout == StandardLayouts.None) return; // We do not un-assign anything, since we do not want to interfere with other settings
+            view.SetResourceReference(StyleProperty, StandardLayoutHelper.GetStandardLayoutKeyFromEnum(view.StandardLayout));
+        }
     }
 }

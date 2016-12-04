@@ -82,6 +82,7 @@
     <Compile Include="Shell.cs" />
     <Compile Include="ShellLauncher.cs" />
     <Compile Include="StandardActions.cs" />
+    <Compile Include="StandardLayouts.cs" />
     <Compile Include="StandardViewModel.cs" />
     <Compile Include="StandardViewPlaceholder.cs" />
     <Compile Include="ThemeIcon.cs" />

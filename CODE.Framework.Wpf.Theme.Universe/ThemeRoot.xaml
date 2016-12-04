@@ -14,6 +14,7 @@
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Universe-Control-Button.xaml"/>
         <ResourceDictionary Source="Universe-Control-Calendar.xaml"/>
+        <ResourceDictionary Source="Universe-Control-CapsLockWarning.xaml"/>
         <ResourceDictionary Source="Universe-Control-CheckBox.xaml"/>
         <ResourceDictionary Source="Universe-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Universe-Control-DatePicker.xaml"/>

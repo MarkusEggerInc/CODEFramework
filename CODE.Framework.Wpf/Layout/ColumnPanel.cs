@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -57,13 +58,26 @@ namespace CODE.Framework.Wpf.Layout
                         if (newColumn == null) continue;
                         var descriptor = DependencyPropertyDescriptor.FromProperty(ColumnDefinition.WidthProperty, typeof (ColumnDefinition));
                         if (descriptor == null) continue;
-                        descriptor.AddValueChanged(newColumn, (s2, e2) =>
-                        {
-                            panel.InvalidateArrange();
-                            panel.InvalidateMeasure();
-                        });
+                        descriptor.AddValueChanged(newColumn, panel.ColumnDefinitionChangedEventHandler);
                     }
+
+                if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
+                    if (e.OldItems != null)
+                        foreach (var oldItem in e.OldItems)
+                        {
+                            var oldColumn = oldItem as ColumnDefinition;
+                            if (oldColumn == null) continue;
+                            var descriptor = DependencyPropertyDescriptor.FromProperty(ColumnDefinition.WidthProperty, typeof (ColumnDefinition));
+                            if (descriptor == null) continue;
+                            descriptor.RemoveValueChanged(oldColumn, panel.ColumnDefinitionChangedEventHandler);
+                        }
             };
+        }
+
+        private void ColumnDefinitionChangedEventHandler(object source, EventArgs e)
+        {
+            InvalidateArrange();
+            InvalidateMeasure();
         }
 
         /// <summary>Column assignment</summary>

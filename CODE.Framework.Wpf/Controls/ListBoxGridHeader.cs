@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -9,8 +8,10 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using CODE.Framework.Wpf.Utilities;
 
@@ -28,6 +29,7 @@ namespace CODE.Framework.Wpf.Controls
             ClipToBounds = true;
             IsHitTestVisible = true;
             Background = Brushes.Transparent;
+            MouseLeftButtonDown += HandleMouseLeftButtonDown;
         }
 
         /// <summary>Generic column definition</summary>
@@ -140,7 +142,17 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         private readonly List<Grid> _headerContentGrids = new List<Grid>();
+        private Point _mouseDownPosition;
+        private bool _inHeaderDragMode;
+        private DragHeaderAdorner _dragHeaderAdorner;
+        private double _startDragHeaderLeft;
+        private int _startDragColumnIndex;
+        private double _startDragMouseOffsetWithinColumn;
+        private bool _inValidDragMouseDown;
 
+        /// <summary>
+        /// Repopulates the headers.
+        /// </summary>
         private void RepopulateHeaders()
         {
             if (Columns == null)
@@ -155,6 +167,18 @@ namespace CODE.Framework.Wpf.Controls
                 Visibility = Visibility.Visible;
                 ForceParentRefresh();
             }
+
+            if (Content != null)
+            {
+                var oldGrid = Content as Grid;
+                if (oldGrid != null)
+                {
+                    foreach (var gridColumn in oldGrid.ColumnDefinitions)
+                        BindingOperations.ClearBinding(gridColumn, ColumnDefinition.WidthProperty);
+                    oldGrid.ColumnDefinitions.Clear();
+                }
+            }
+
             var grid = new Grid
             {
                 VerticalAlignment = VerticalAlignment.Stretch,
@@ -171,6 +195,7 @@ namespace CODE.Framework.Wpf.Controls
                 columnCounter++;
 
                 var gridColumn = new ColumnDefinition();
+                BindingOperations.ClearBinding(gridColumn, ColumnDefinition.WidthProperty);
                 gridColumn.SetBinding(ColumnDefinition.WidthProperty, new Binding("Width") {Source = column, Mode = BindingMode.TwoWay});
                 var descriptor = DependencyPropertyDescriptor.FromProperty(ColumnDefinition.WidthProperty, typeof (ColumnDefinition));
                 if (descriptor != null)
@@ -185,6 +210,7 @@ namespace CODE.Framework.Wpf.Controls
                 if (column.Width.GridUnitType == GridUnitType.Star) starColumnFound = true;
 
                 var content = new HeaderContentControl {Column = column};
+                content.MouseLeftButtonDown += HandleMouseLeftButtonDown;
 
                 if (!string.IsNullOrEmpty(column.HeaderClickCommandBindingPath))
                 {
@@ -201,7 +227,10 @@ namespace CODE.Framework.Wpf.Controls
                     var realContent = column.HeaderTemplate.LoadContent();
                     var realContentElement = realContent as UIElement;
                     if (realContentElement != null)
+                    {
                         contentParent.Content = realContentElement;
+                        realContentElement.MouseLeftButtonDown += HandleMouseLeftButtonDown;
+                    }
                 }
                 else
                 {
@@ -212,7 +241,9 @@ namespace CODE.Framework.Wpf.Controls
                     if (column.ShowColumnHeaderText)
                     {
                         var textPlusGraphic = new TextPlusGraphic();
+                        textPlusGraphic.MouseLeftButtonDown += HandleMouseLeftButtonDown;
                         var headerText = new TextBlock();
+                        headerText.MouseLeftButtonDown += HandleMouseLeftButtonDown;
                         textPlusGraphic.Children.Add(headerText);
                         if (column.Header != null)
                             headerText.Text = column.Header.ToString();
@@ -247,6 +278,8 @@ namespace CODE.Framework.Wpf.Controls
                             if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlBindingPath))
                                 headerEditControl.SetBinding(TextBox.TextProperty, new Binding(column.ColumnHeaderEditControlBindingPath) {UpdateSourceTrigger = column.ColumnHeaderEditControlUpdateTrigger});
                         }
+                        else
+                            headerEditControl.MouseLeftButtonDown += HandleMouseLeftButtonDown;
                         if (column.ColumnHeaderEditControlDataContext != null)
                             headerEditControl.DataContext = column.ColumnHeaderEditControlDataContext;
                         if (!string.IsNullOrEmpty(column.ColumnHeaderEditControlWatermarkText))
@@ -275,7 +308,8 @@ namespace CODE.Framework.Wpf.Controls
                         Width = 3d,
                         Margin = new Thickness(0d, 0d, -1d, 0d),
                         IsHitTestVisible = true,
-                        Background = Brushes.Transparent
+                        Background = Brushes.Transparent,
+                        SnapsToDevicePixels = true
                     };
                     Panel.SetZIndex(splitter, 30000);
                     grid.Children.Add(splitter);
@@ -291,8 +325,173 @@ namespace CODE.Framework.Wpf.Controls
             }
             Content = grid;
 
+            InvalidateHorizontalHeaderOffset();
+
             if (ParentListBox != null)
                 SetEditControlVisibility(ListEx.GetShowHeaderEditControls(ParentListBox));
+        }
+
+        /// <summary>
+        /// Handles the <see cref="E:MouseLeftButtonDown" /> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void HandleMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.Source == this || e.Source is Label || e.Source is TextBlock || e.Source is ContentControl || e.Source is Grid)
+            {
+                var clickPosition = e.GetPosition(this);
+                _mouseDownPosition = new Point(clickPosition.X + HorizontalHeaderOffset, clickPosition.Y);
+                _inValidDragMouseDown = true;
+            }
+            else
+                _inValidDragMouseDown = false;
+        }
+
+        /// <summary>
+        /// Handles the <see cref="E:MouseMove" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (!_inHeaderDragMode && e.LeftButton == MouseButtonState.Pressed && Columns.AllowColumnMove && _inValidDragMouseDown)
+            {
+                var dragPosition = e.GetPosition(this);
+                dragPosition = new Point(dragPosition.X + HorizontalHeaderOffset, dragPosition.Y);
+                var deltaX = Math.Abs(_mouseDownPosition.X - dragPosition.X);
+                if (deltaX > SystemParameters.MinimumHorizontalDragDistance)
+                {
+                    // We are ready to start a drag operation since the user has moved far enough with the mouse button pressed
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                    if (adornerLayer != null)
+                    {
+                        var dragColumnIndex = GetColumnIndexAtHorizontalPosition(_mouseDownPosition.X);
+                        if (dragColumnIndex > -1)
+                        {
+                            _startDragMouseOffsetWithinColumn = GetHorizontalOffsetFromLeftColumnEdge(dragColumnIndex, _mouseDownPosition.X);
+                            var draggedColumn = Columns[dragColumnIndex];
+                            var grid = Content as Grid;
+                            if (grid != null)
+                            {
+                                var dragColumnElement = grid.Children.OfType<HeaderContentControl>().FirstOrDefault(c => c.Column == draggedColumn);
+                                if (dragColumnElement != null)
+                                {
+                                    _dragHeaderAdorner = new DragHeaderAdorner(this, new Rectangle
+                                    {
+                                        Height = dragColumnElement.ActualHeight + dragColumnElement.Margin.Top + dragColumnElement.Margin.Bottom,
+                                        Width = dragColumnElement.ActualWidth + dragColumnElement.Margin.Left + dragColumnElement.Margin.Right,
+                                        Fill = new VisualBrush(dragColumnElement), Opacity = .5
+                                    }, Columns, dragColumnIndex);
+                                    adornerLayer.Add(_dragHeaderAdorner);
+                                    _inHeaderDragMode = true;
+                                    _startDragHeaderLeft = GetLeftEdgePosition(dragColumnIndex);
+                                    _startDragColumnIndex = dragColumnIndex;
+                                    Mouse.Capture(this);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (_inHeaderDragMode && _dragHeaderAdorner != null)
+            {
+                var deltaX = _mouseDownPosition.X - (e.GetPosition(this).X + HorizontalHeaderOffset);
+                var visualLeft = _startDragHeaderLeft - deltaX;
+                _dragHeaderAdorner.SetDragVisualLeft(visualLeft, _startDragMouseOffsetWithinColumn);
+            }
+
+            if (!_inHeaderDragMode)
+                base.OnMouseMove(e);
+            else
+                e.Handled = true;
+        }
+
+        /// <summary>
+        /// Handles the <see cref="E:MouseLeftButtonUp" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            _inValidDragMouseDown = false;
+            if (_inHeaderDragMode)
+            {
+                _inHeaderDragMode = false;
+                Mouse.Capture(null);
+
+                if (_dragHeaderAdorner != null)
+                {
+                    var dragDestinationIndex = _dragHeaderAdorner.LastCalculatedDropIndex;
+                    if (dragDestinationIndex > _startDragColumnIndex) dragDestinationIndex--; // Since the current one is removed and inserted after, the index shifts by one if it was dragged to the right
+                    if (dragDestinationIndex > -1)
+                    {
+                        var draggedColumn = Columns[_startDragColumnIndex];
+                        Columns.Remove(draggedColumn);
+                        Columns.Insert(dragDestinationIndex, draggedColumn);
+                    }
+
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                    if (adornerLayer != null)
+                    {
+                        adornerLayer.Remove(_dragHeaderAdorner);
+                        _dragHeaderAdorner = null;
+                    }
+                }
+            }
+            else
+                base.OnMouseLeftButtonUp(e);
+        }
+
+        /// <summary>
+        /// Gets the index of the column the specified horizontal (x) position falls in
+        /// </summary>
+        /// <param name="x">The x position within the control.</param>
+        /// <remarks>When the control is scrolled to the right, the X position is still absolute within the control, so we do not have to consider the offset.</remarks>
+        /// <returns>System.Int32.</returns>
+        private int GetColumnIndexAtHorizontalPosition(double x)
+        {
+            var index = -1;
+            var currentLeft = 0d;
+            foreach (var column in Columns)
+            {
+                index++;
+                if (column.ActualWidth + currentLeft > x)
+                    return index;
+                currentLeft += column.ActualWidth;
+            }
+            return index;
+        }
+
+        private double GetHorizontalOffsetFromLeftColumnEdge(int columnIndex, double x)
+        {
+            var columnLeftEdge = GetLeftEdgePosition(columnIndex);
+            return x - columnLeftEdge;
+        }
+
+        /// <summary>
+        /// Returns all the positions of column separators (the 'edges' of the columns)
+        /// </summary>
+        /// <returns>System.Double[].</returns>
+        public double[] GetColumnSeparatorPositions()
+        {
+            var edgePositions = new double[Columns.Count + 1];
+            for (var edgeCounter = 0; edgeCounter < edgePositions.Length; edgeCounter++)
+                edgePositions[edgeCounter] = GetLeftEdgePosition(edgeCounter);
+            return edgePositions;
+        }
+
+        /// <summary>
+        /// Gets the left edge position of the specified column.
+        /// </summary>
+        /// <param name="columnIndex">The column index.</param>
+        /// <returns>System.Double.</returns>
+        public double GetLeftEdgePosition(int columnIndex)
+        {
+            var left = HorizontalHeaderOffset * -1;
+            for (var counter = 0; counter < columnIndex; counter++)
+                left += Columns[counter].ActualWidth;
+            return left;
         }
     }
 
@@ -316,6 +515,7 @@ namespace CODE.Framework.Wpf.Controls
         public FilterHeaderTextBox(ListColumn column)
         {
             _column = column;
+
             _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Normal, (s, e) =>
             {
                 _timer.IsEnabled = false;
@@ -342,6 +542,7 @@ namespace CODE.Framework.Wpf.Controls
                 };
 
                 HookDataSourceChanged(list);
+                SetBinding(TextProperty, new Binding("FilterText") { Source = column, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
             };
 
             MouseLeftButtonUp += (s, e) => { e.Handled = true; };
@@ -385,7 +586,7 @@ namespace CODE.Framework.Wpf.Controls
                         itemsCollection.Add((dynamic) item);
 
                 var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-                GetCollectionChangedMethod(itemsControl.ItemsSource).Invoke(dynamicSource, new object[] { args });
+                GetCollectionChangedMethod(itemsControl.ItemsSource).Invoke(dynamicSource, new object[] {args});
                 return;
             }
             if (listTypeName.StartsWith("List`1"))
@@ -663,7 +864,7 @@ namespace CODE.Framework.Wpf.Controls
                     {
                         var text = (FilterHeaderTextBox) column.UtilizedHeaderEditControl;
                         if (!string.IsNullOrEmpty(text.Text))
-                            result.Add(column.BindingPath, new FilterInformation {Text = text.Text.Trim().ToLower(), FilterMode =  column.FilterMode});
+                            result.Add(column.BindingPath, new FilterInformation {Text = text.Text.Trim().ToLower(), FilterMode = column.FilterMode});
                     }
 
             return result;
@@ -966,6 +1167,174 @@ namespace CODE.Framework.Wpf.Controls
             }
 
             return finalSize;
+        }
+    }
+
+    /// <summary>Adorner UI used for header drag operations</summary>
+    public class DragHeaderAdorner : Adorner
+    {
+        private readonly Rectangle _dragVisual;
+        private double _visualLeft;
+        private readonly FrameworkElement _parentElement;
+        private readonly ListColumnsCollection _columns;
+        private readonly int _dragColumnIndex;
+        private double _mouseOffsetX;
+        private readonly ColumnDropDestinationIndicator _columnDropDestinationIndicator;
+        private readonly ListBoxGridHeader _parentHeader;
+
+        /// <summary>
+        /// Background brush for drag preview
+        /// </summary>
+        public Brush DragPreviewBackground
+        {
+            get { return (Brush) GetValue(DragPreviewBackgroundProperty); }
+            set { SetValue(DragPreviewBackgroundProperty, value); }
+        }
+
+        /// <summary>
+        /// Background brush for drag preview
+        /// </summary>
+        public static readonly DependencyProperty DragPreviewBackgroundProperty = DependencyProperty.Register("DragPreviewBackground", typeof (Brush), typeof (DragHeaderAdorner), new PropertyMetadata(new SolidColorBrush(Color.FromArgb(80, 0, 0, 0))));
+
+
+        /// <summary>Constructor</summary>
+        /// <param name="adornedElement">Adorned element (typically a textbox)</param>
+        /// <param name="dragVisual">The UI that is to be used in the drop-down</param>
+        /// <param name="columns">Overall columns collection this adorner goes with.</param>
+        /// <param name="dragColumnIndex">Index of the column that is being dragged</param>
+        public DragHeaderAdorner(FrameworkElement adornedElement, Rectangle dragVisual, ListColumnsCollection columns, int dragColumnIndex)
+            : base(adornedElement)
+        {
+            LastCalculatedDropIndex = -1;
+            _parentElement = adornedElement;
+            _parentHeader = adornedElement as ListBoxGridHeader;
+            _dragVisual = dragVisual;
+            _columns = columns;
+            _dragColumnIndex = dragColumnIndex;
+            AddVisualChild(dragVisual);
+            _columnDropDestinationIndicator = new ColumnDropDestinationIndicator();
+            AddVisualChild(_columnDropDestinationIndicator);
+        }
+
+        /// <summary>
+        /// Implements any custom measuring behavior for the adorner.
+        /// </summary>
+        /// <param name="constraint">A size to constrain the adorner to.</param>
+        /// <returns>
+        /// A <see cref="T:System.Windows.Size"/> object representing the amount of layout space needed by the adorner.
+        /// </returns>
+        protected override Size MeasureOverride(Size constraint)
+        {
+            _dragVisual.Measure(constraint);
+            _columnDropDestinationIndicator.Measure(constraint);
+            return new Size(_parentElement.ActualWidth, _parentElement.ActualHeight);
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement"/> derived class.
+        /// </summary>
+        /// <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+        /// <returns>
+        /// The actual size used.
+        /// </returns>
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            // Arranging the preview 
+            _dragVisual.Arrange(new Rect(_visualLeft, 0, _dragVisual.Width, _dragVisual.Height));
+
+            // Arranging the drop indicator
+            var closestSeparatorIndex = GetClosestColumnSeparatorIndexAtHorizontalPosition(_visualLeft + _mouseOffsetX - _parentHeader.HorizontalHeaderOffset);
+            _columnDropDestinationIndicator.Visibility = closestSeparatorIndex < 0 || closestSeparatorIndex == _dragColumnIndex || closestSeparatorIndex == _dragColumnIndex + 1 ? Visibility.Collapsed : Visibility.Visible;
+            var destinationIndicatorX = 0d;
+            for (var columnCounter = 0; columnCounter < closestSeparatorIndex; columnCounter++)
+                destinationIndicatorX += _columns[columnCounter].ActualWidth;
+            _columnDropDestinationIndicator.Arrange(new Rect(destinationIndicatorX - _parentHeader.HorizontalHeaderOffset, 0, 1, _dragVisual.Height));
+            LastCalculatedDropIndex = closestSeparatorIndex;
+
+            return new Size(_parentElement.ActualWidth, _parentElement.ActualHeight);
+        }
+
+        /// <summary>
+        /// Drop index calculated by moving the column
+        /// </summary>
+        public int LastCalculatedDropIndex { get; set; }
+
+        private int GetClosestColumnSeparatorIndexAtHorizontalPosition(double x)
+        {
+            var separators = _parentHeader.GetColumnSeparatorPositions();
+            var distancesFromSeparators = new double[separators.Length];
+            for (var edgeCounter = 0; edgeCounter < separators.Length; edgeCounter++)
+                distancesFromSeparators[edgeCounter] = Math.Abs(separators[edgeCounter] - x);
+
+            var nearestEdgeIndex = -1;
+            var nearestOffset = double.MaxValue;
+            for (var edgeCounter = 0; edgeCounter < distancesFromSeparators.Length; edgeCounter++)
+                if (distancesFromSeparators[edgeCounter] < nearestOffset)
+                {
+                    nearestEdgeIndex = edgeCounter;
+                    nearestOffset = distancesFromSeparators[edgeCounter];
+                }
+
+            return nearestEdgeIndex;
+        }
+
+        /// <summary>
+        /// Gets the number of visual child elements within this element.
+        /// </summary>
+        /// <returns>The number of visual child elements for this element.</returns>
+        protected override int VisualChildrenCount
+        {
+            get { return 2; }
+        }
+
+        /// <summary>
+        /// Overrides <see cref="M:System.Windows.Media.Visual.GetVisualChild(System.Int32)"/>, and returns a child at the specified index from a collection of child elements.
+        /// </summary>
+        /// <param name="index">The zero-based index of the requested child element in the collection.</param>
+        /// <returns>
+        /// The requested child element. This should not return null; if the provided index is out of range, an exception is thrown.
+        /// </returns>
+        protected override Visual GetVisualChild(int index)
+        {
+            if (index == 1) return _columnDropDestinationIndicator;
+            return _dragVisual;
+        }
+
+        /// <summary>
+        /// Called when the control needs to render itself.
+        /// </summary>
+        /// <param name="drawingContext">The drawing context.</param>
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+            drawingContext.DrawRectangle(DragPreviewBackground, null, new Rect(_visualLeft - 4, 0, _dragVisual.Width + 8, _dragVisual.Height));
+        }
+
+        /// <summary>
+        /// Moves the 'preview' visual of the column header to the specified position
+        /// </summary>
+        /// <param name="visualLeft">X position to move the element to</param>
+        /// <param name="mouseOffsetX">The mouse X offset within the column header.</param>
+        public void SetDragVisualLeft(double visualLeft, double mouseOffsetX)
+        {
+            _visualLeft = visualLeft;
+            _mouseOffsetX = mouseOffsetX;
+            InvalidateVisual();
+        }
+    }
+
+    /// <summary>
+    /// This stylable control indicates the drop-destination for a dragged column
+    /// </summary>
+    public class ColumnDropDestinationIndicator : Control
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ColumnDropDestinationIndicator()
+        {
+            MinWidth = 1;
+            MinHeight = 1;
         }
     }
 }

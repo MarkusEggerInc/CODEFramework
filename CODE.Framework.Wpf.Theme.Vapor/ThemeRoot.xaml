@@ -12,6 +12,7 @@
         <!-- Standard controls -->
         <ResourceDictionary Source="Vapor-Control-Button.xaml"/>
         <ResourceDictionary Source="Vapor-Control-CheckBox.xaml"/>
+        <ResourceDictionary Source="Vapor-Control-CapsLockWarning.xaml"/>
         <ResourceDictionary Source="Vapor-Control-FlowDocumentReader.xaml"/>
         <ResourceDictionary Source="Vapor-Control-Label.xaml"/>
         <ResourceDictionary Source="Vapor-Control-ListBox.xaml"/>

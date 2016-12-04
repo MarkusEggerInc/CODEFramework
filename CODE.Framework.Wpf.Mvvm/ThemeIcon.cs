@@ -128,7 +128,7 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Handles the StandardIconChanged event event.
         /// </summary>
-        /// <param name="d">The d.</param>
+        /// <param name="d">The object the icon is set on.</param>
         /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void OnStandardIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -595,7 +595,7 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
-        /// Returns a standard icon string/key from the provided enum value (or string.Empty, if the key is not valid)
+        /// Returns a standard icon string/key from the provided enum value
         /// </summary>
         /// <param name="icon">The icon key.</param>
         /// <returns>Standard icon resource key name</returns>

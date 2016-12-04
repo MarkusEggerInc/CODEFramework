@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
+using System.Linq;
+using System.Media;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +24,8 @@ namespace CODE.Framework.Wpf.Controls
     public class TextBoxEx : TextBox
     {
         /// <summary>Watermark text property (can be used to set text for empty textboxes)</summary>
-        public static readonly DependencyProperty WatermarkTextProperty = DependencyProperty.RegisterAttached("WatermarkText", typeof(string), typeof(TextBoxEx), new PropertyMetadata(""));
+        public static readonly DependencyProperty WatermarkTextProperty = DependencyProperty.RegisterAttached("WatermarkText", typeof (string), typeof (TextBoxEx), new PropertyMetadata(""));
+
         /// <summary>Watermark text property (can be used to set text for empty textboxes)</summary>
         /// <param name="o">The object to set the value on.</param>
         /// <param name="value">The value.</param>
@@ -28,23 +33,24 @@ namespace CODE.Framework.Wpf.Controls
         {
             o.SetValue(WatermarkTextProperty, value);
         }
+
         /// <summary>Watermark text property (can be used to set text for empty textboxes)</summary>
         /// <param name="o">The object to get the value for.</param>
         /// <returns>System.String.</returns>
         public static string GetWatermarkText(DependencyObject o)
         {
-            return (string)o.GetValue(WatermarkTextProperty);
+            return (string) o.GetValue(WatermarkTextProperty);
         }
 
         /// <summary>
         /// Attached property can be used to define a RegEx based input mask
         /// </summary>
-        public static readonly DependencyProperty RegexInputMaskProperty = DependencyProperty.RegisterAttached("RegexInputMask", typeof(Regex), typeof(TextBoxEx), new PropertyMetadata(null));
+        public static readonly DependencyProperty RegexInputMaskProperty = DependencyProperty.RegisterAttached("RegexInputMask", typeof (Regex), typeof (TextBoxEx), new PropertyMetadata(null));
 
         /// <summary>
         /// Attached property can be used to define a RegEx based input mask
         /// </summary>
-        public static readonly DependencyProperty InputMaskRegExProperty = DependencyProperty.RegisterAttached("InputMaskRegEx", typeof(string), typeof(TextBoxEx), new PropertyMetadata(null, OnInputMaskRegExChanged));
+        public static readonly DependencyProperty InputMaskRegExProperty = DependencyProperty.RegisterAttached("InputMaskRegEx", typeof (string), typeof (TextBoxEx), new PropertyMetadata(null, OnInputMaskRegExChanged));
 
         /// <summary>
         /// Fires when the input mask regular expression changes
@@ -165,7 +171,7 @@ namespace CODE.Framework.Wpf.Controls
         private static string GetTextWithSelectionRemoved(TextBox textBox)
         {
             var text = textBox.Text;
-            if (textBox.SelectionStart != -1)text = text.Remove(textBox.SelectionStart, textBox.SelectionLength);
+            if (textBox.SelectionStart != -1) text = text.Remove(textBox.SelectionStart, textBox.SelectionLength);
             return text;
         }
 
@@ -182,7 +188,7 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         public static string GetInputMaskRegEx(DependencyObject o)
         {
-            return (string)o.GetValue(InputMaskRegExProperty);
+            return (string) o.GetValue(InputMaskRegExProperty);
         }
 
 
@@ -190,6 +196,7 @@ namespace CODE.Framework.Wpf.Controls
         private static string _customDictionaryFile;
         private static string _ignoreAllDictionaryFile;
         private static List<string> _customDictionaries;
+
         /// <summary>
         /// Fires when the spell check flag is toggled
         /// </summary>
@@ -202,19 +209,27 @@ namespace CODE.Framework.Wpf.Controls
         ///Other custom dictionaries found in the same folder will be used, but only UserDictionary.lex will get "Added" words.
         ///Custom dictionary path can be overridden in the app.config by adding a CustomDictionaryPath key and value to appSettings.
         ///Custom dictionary path setting is applicaiton wide.</summary>
-        public static readonly DependencyProperty UseCustomDictionariesProperty = DependencyProperty.RegisterAttached("UseCustomDictionaries", typeof(bool), typeof(TextBoxEx), new PropertyMetadata(false, UseCustomDictionariesChanged));
+        public static readonly DependencyProperty UseCustomDictionariesProperty = DependencyProperty.RegisterAttached("UseCustomDictionaries", typeof (bool), typeof (TextBoxEx), new PropertyMetadata(false, UseCustomDictionariesChanged));
+
         /// <summary>
         /// Gets UseCustomDictionaries
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool GetUseCustomDictionaries(DependencyObject obj) { return (bool)obj.GetValue(UseCustomDictionariesProperty); }
+        public static bool GetUseCustomDictionaries(DependencyObject obj)
+        {
+            return (bool) obj.GetValue(UseCustomDictionariesProperty);
+        }
+
         /// <summary>
         /// Sets UseCustomDictionaries
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <param name="value">if set to <c>true</c> [value].</param>
-        public static void SetUseCustomDictionaries(DependencyObject obj, bool value) { obj.SetValue(UseCustomDictionariesProperty, value); }
+        public static void SetUseCustomDictionaries(DependencyObject obj, bool value)
+        {
+            obj.SetValue(UseCustomDictionariesProperty, value);
+        }
 
         /// <summary>
         /// Fires when UseCustomDictionaries changes
@@ -225,7 +240,7 @@ namespace CODE.Framework.Wpf.Controls
         {
             var textBoxBase = dependencyObject as TextBoxBase;
             if (textBoxBase == null) return;
-            var isEnabled = (bool)a.NewValue;
+            var isEnabled = (bool) a.NewValue;
 
             if (isEnabled)
             {
@@ -266,7 +281,10 @@ namespace CODE.Framework.Wpf.Controls
                         dictionaries.Clear();
                         foreach (var fileName in _customDictionaries) dictionaries.Add(new Uri(fileName));
                     }
-                    catch (Exception ex) { LoggingMediator.Log(ex); }
+                    catch (Exception ex)
+                    {
+                        LoggingMediator.Log(ex);
+                    }
                 }
 
                 if (textBoxBase.ContextMenu != null) return;
@@ -355,12 +373,13 @@ namespace CODE.Framework.Wpf.Controls
         {
             WriteToDictionary(sender, _ignoreAllDictionaryFile);
         }
-        
+
         private static void WriteToDictionary(object sender, string dictionaryFile)
         {
             var item = sender as MenuItem;
             if (item == null) return;
-            var textBoxBase = item.CommandTarget as TextBoxBase; ;
+            var textBoxBase = item.CommandTarget as TextBoxBase;
+            ;
             if (textBoxBase == null) return;
 
             string misspelledWord = string.Empty;
@@ -384,14 +403,17 @@ namespace CODE.Framework.Wpf.Controls
                 writer.Close();
                 if (ToggleSpellCheck != null) ToggleSpellCheck(textBoxBase, null);
             }
-            catch (Exception ex) { LoggingMediator.Log(ex); }
+            catch (Exception ex)
+            {
+                LoggingMediator.Log(ex);
+            }
         }
 
         /// <summary>
         /// If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
         /// text element is otherwise only updated on LostFocus or Explicit
         /// </summary>
-        public static readonly DependencyProperty UpdateSourceOnEnterKeyProperty = DependencyProperty.RegisterAttached("UpdateSourceOnEnterKey", typeof(bool), typeof(TextBoxEx), new PropertyMetadata(false, OnUpdateSourceOnEnterKeyChanged));
+        public static readonly DependencyProperty UpdateSourceOnEnterKeyProperty = DependencyProperty.RegisterAttached("UpdateSourceOnEnterKey", typeof (bool), typeof (TextBoxEx), new PropertyMetadata(false, OnUpdateSourceOnEnterKeyChanged));
 
         /// <summary>
         /// Fires when the UpdateSourceOnEnterKey property changes
@@ -425,6 +447,7 @@ namespace CODE.Framework.Wpf.Controls
         {
             return (bool) d.GetValue(UpdateSourceOnEnterKeyProperty);
         }
+
         /// <summary>
         /// If set to true, triggers a source update on textboxes whenever the ENTER key is pressed, even if the 
         /// text element is otherwise only updated on LostFocus or Explicit
@@ -436,5 +459,376 @@ namespace CODE.Framework.Wpf.Controls
             d.SetValue(UpdateSourceOnEnterKeyProperty, value);
         }
 
+        /// <summary>
+        /// When an InputMask is applied, this attached property contains the unmasked value of the textbox.
+        /// For instance, if the mask is (999) 999-999 for a phone number entry, then the the user can type
+        /// something like (555) 123-4567. The ValueUnmasked property will contain just 5551234567.
+        /// </summary>
+        public static readonly DependencyProperty TextUnmaskedProperty = DependencyProperty.RegisterAttached("TextUnmasked", typeof (string), typeof (TextBoxEx), new FrameworkPropertyMetadata("", OnTextUnmaskedChanged) {BindsTwoWayByDefault = true});
+
+        private static void OnTextUnmaskedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var textbox = d as TextBox;
+            if (textbox == null) return;
+            if ((bool)textbox.GetValue(InputMaskIsValidatingProperty)) return;
+            var mask = GetInputMask(textbox);
+            if (string.IsNullOrEmpty(mask)) return;
+            var newText = string.Empty;
+            if (e.NewValue != null) newText = e.NewValue.ToString();
+            ValidateInputMaskText(textbox, mask, newText);
+        }
+
+        /// <summary>
+        /// When an InputMask is applied, this attached property contains the unmasked value of the textbox.
+        /// For instance, if the mask is (999) 999-999 for a phone number entry, then the the user can type
+        /// something like (555) 123-4567. The ValueUnmasked property will contain just 5551234567.
+        /// </summary>
+        /// <param name="d">The textbox the mask is set on</param>
+        /// <returns>Unmasked value</returns>
+        public static string GetTextUnmasked(DependencyObject d)
+        {
+            return (string) d.GetValue(TextUnmaskedProperty);
+        }
+
+        /// <summary>
+        /// When an InputMask is applied, this attached property contains the unmasked value of the textbox.
+        /// For instance, if the mask is (999) 999-999 for a phone number entry, then the the user can type
+        /// something like (555) 123-4567. The ValueUnmasked property will contain just 5551234567.
+        /// </summary>
+        /// <param name="d">The textbox the mask is set on</param>
+        /// <param name="value">The value.</param>
+        /// <remarks>This value should never be set manually.</remarks>
+        public static void SetTextUnmasked(DependencyObject d, string value)
+        {
+            d.SetValue(TextUnmaskedProperty, value);
+        }
+
+        /// <summary>
+        /// Currency symbol (such as $, €, or £ - can be multiple characters)
+        /// </summary>
+        public static readonly DependencyProperty InputMaskCurrencySymbolProperty = DependencyProperty.Register("InputMaskCurrencySymbol", typeof(string), typeof(TextBoxEx), new PropertyMetadata(""));
+
+        /// <summary>
+        /// Currency symbol (such as $, €, or £ - can be multiple characters)
+        /// </summary>
+        /// <param name="d">The object the symbol is set on</param>
+        /// <returns>Currency symbol</returns>
+        public static string GetInputMaskCurrencySymbol(DependencyObject d)
+        {
+            return (string) d.GetValue(InputMaskCurrencySymbolProperty);
+        }
+
+        /// <summary>
+        /// Currency symbol (such as $, €, or £ - can be multiple characters)
+        /// </summary>
+        /// <param name="d">The object the symbol is set on</param>
+        /// <param name="value">Currency symbol to set.</param>
+        public static void SetInputMaskCurrencySymbol(DependencyObject d, string value)
+        {
+            d.SetValue(InputMaskCurrencySymbolProperty, value);
+        }
+
+        /// <summary>
+        /// Provides the ability to define input masks on textboxes
+        /// </summary>
+        public static readonly DependencyProperty InputMaskProperty = DependencyProperty.RegisterAttached("InputMask", typeof (string), typeof (TextBoxEx), new PropertyMetadata("", OnInputMaskChanged));
+
+        /// <summary>
+        /// Provides the ability to define input masks on textboxes
+        /// </summary>
+        /// <param name="d">The object the input mask is defined on</param>
+        /// <returns>Input mask</returns>
+        public static string GetInputMask(DependencyObject d)
+        {
+            return (string) d.GetValue(InputMaskProperty);
+        }
+
+        /// <summary>
+        /// Provides the ability to define input masks on textboxes
+        /// </summary>
+        /// <param name="d">The object the mask is to be set on</param>
+        /// <param name="value">The inpout mask.</param>
+        public static void SetInputMask(DependencyObject d, string value)
+        {
+            d.SetValue(InputMaskProperty, value);
+        }
+
+        /// <summary>
+        /// Fires whenever an input mask changes on a textbox
+        /// </summary>
+        /// <param name="d">The object the input mask was set on</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnInputMaskChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var textbox = d as TextBox;
+            if (textbox == null) return;
+            var mask = e.NewValue.ToString();
+
+            // Detaching the event handler. This makes sure we are not attached when the mask is empty,
+            // and if the mask isn't empty, we reset the handler below, resulting in it being wired up once.
+            textbox.PreviewKeyDown -= HandleInputMaskKeyDown;
+            if (string.IsNullOrEmpty(mask)) return;
+
+            // We have a mask, so we wire everything up we need to handle text input
+            textbox.PreviewKeyDown += HandleInputMaskKeyDown;
+
+            // Triggering the first validation to start out with proper state
+            ValidateInputMaskText(textbox, mask, textbox.Text);
+        }
+
+        private static void HandleInputMaskKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) return;
+            if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt)) return;
+
+            var ignoreKeys = new List<Key> { Key.LeftShift, Key.RightShift, Key.Tab, Key.Capital, Key.CapsLock, Key.Left, Key.Right, Key.Home, Key.End, Key.LeftAlt, Key.RightAlt, Key.LeftCtrl, Key.RightCtrl };
+            if (ignoreKeys.Contains(e.Key)) return;
+
+            var textbox = sender as TextBox;
+            if (textbox == null) return;
+
+            var mask = GetInputMask(textbox);
+
+            if (mask == "d" || mask == "$")
+            {
+                HandleInputMaskDecimalKeyDown(e.Key, textbox, mask);
+                e.Handled = true;
+            }
+            else
+            {
+                var startPosition = textbox.SelectionStart;
+
+                // We are using the default .NET MaskedTextProvider to provide this functionality
+                var provider = GetMaskedTextProvider(textbox, mask);
+
+                // Need to handle selected text properly by replacing it with the new input
+
+                if (e.Key == Key.Delete)
+                {
+                    if (textbox.SelectionLength > 0)
+                        provider.RemoveAt(startPosition, startPosition + textbox.SelectionLength - 1);
+                    else
+                        provider.RemoveAt(startPosition);
+                }
+                else if (e.Key == Key.Back)
+                {
+                    if (startPosition > 0 || textbox.SelectionLength > 0)
+                        if (textbox.SelectionLength > 0)
+                            provider.RemoveAt(startPosition, startPosition + textbox.SelectionLength - 1);
+                        else
+                            provider.RemoveAt(startPosition - 1);
+                }
+                else
+                {
+                    if (textbox.SelectionLength > 0)
+                        provider.RemoveAt(startPosition, startPosition + textbox.SelectionLength - 1);
+                    var newChar = KeyboardHelper.GetCharFromKey(e.Key);
+                    if (provider.MaskFull) provider.RemoveAt(provider.Length - 1);
+                    provider.InsertAt(newChar, startPosition);
+                    textbox.SetValue(InputMaskIsValidatingProperty, true);
+                    textbox.Text = provider.ToDisplayString();
+                    textbox.SetValue(InputMaskIsValidatingProperty, false);
+                    var newCarotPosition = provider.FindAssignedEditPositionFrom(startPosition, true);
+                    newCarotPosition++;
+                    if (newCarotPosition > textbox.Text.Length - 1) newCarotPosition = textbox.Text.Length - 1;
+                    if (newCarotPosition < 0) newCarotPosition = textbox.CaretIndex > 0 ? textbox.Text.Length : 0;
+                    textbox.CaretIndex = newCarotPosition;
+                    e.Handled = true;
+                }
+                textbox.SetValue(InputMaskIsValidatingProperty, true);
+                SetTextUnmasked(textbox, provider.ToString(false, false));
+                textbox.SetValue(InputMaskIsValidatingProperty, false);
+            }
+        }
+
+        private static void HandleInputMaskDecimalKeyDown(Key key, TextBox textbox, string mask)
+        {
+            var startPosition = textbox.SelectionStart;
+            var isCurrency = mask == "$";
+            var numberFormat = CultureInfo.CurrentUICulture.NumberFormat;
+            var decimalSeparator = isCurrency ? numberFormat.CurrencyDecimalSeparator : numberFormat.NumberDecimalSeparator;
+            var lastInsertWasDecimalSeparator = false;
+
+            // Need to memorize how many digits there were to the left before this keystroke
+            var allChars = textbox.Text.ToCharArray().ToList();
+            var numberOfDigitsToTheLeft = 0;
+            for (var charCounter = 0; charCounter < startPosition; charCounter++)
+                if (char.IsDigit(allChars[charCounter]))
+                    numberOfDigitsToTheLeft++;
+
+            // Special custom decimal handling
+            var currencySymbol = GetInputMaskCurrencySymbol(textbox);
+            if (string.IsNullOrEmpty(currencySymbol))
+            {
+                currencySymbol = numberFormat.CurrencySymbol;
+                SetInputMaskCurrencySymbol(textbox, currencySymbol); // So we have it for later
+            }
+            var newChar = KeyboardHelper.GetCharFromKey(key);
+            var sb = new StringBuilder(textbox.Text);
+
+            if (key == Key.Delete)
+            {
+                if (textbox.SelectionLength > 0)
+                {
+                    sb.Remove(startPosition, textbox.SelectionLength);
+                    for (var counter = 0; counter < textbox.SelectionLength; counter++)
+                        allChars.RemoveAt(startPosition);
+                }
+                else
+                {
+                    sb.Remove(startPosition, 1);
+                    allChars.RemoveAt(startPosition);
+                }
+            }
+            else if (key == Key.Back)
+            {
+                if (textbox.SelectionLength > 0)
+                {
+                    sb.Remove(startPosition, textbox.SelectionLength);
+                    for (var counter = 0; counter < textbox.SelectionLength; counter++)
+                        allChars.RemoveAt(startPosition);
+                }
+                else if (startPosition > 0)
+                {
+                    sb.Remove(startPosition - 1, 1);
+                    allChars.RemoveAt(startPosition - 1);
+                    numberOfDigitsToTheLeft--;
+                }
+            }
+            else
+            {
+                // Need to handle selected text properly by replacing it with the new input
+                if (textbox.SelectionLength > 0)
+                {
+                    sb.Remove(startPosition, textbox.SelectionLength);
+                    for (var counter = 0; counter < textbox.SelectionLength; counter++)
+                        allChars.RemoveAt(startPosition);
+                }
+
+                if (char.IsDigit(newChar))
+                {
+                    sb.Insert(startPosition, newChar);
+                    numberOfDigitsToTheLeft++;
+                }
+                else if (newChar.ToString() == decimalSeparator)
+                {
+                    // If there is a decimal indicator to the left, we ignore the input
+                    for (var counter = 0; counter < startPosition; counter++)
+                        if (allChars[counter].ToString() == decimalSeparator)
+                        {
+                            SystemSounds.Beep.Play();
+                            return;
+                        }
+
+                    // If there already is another decimal in the string (to the right), we need to get rid of it
+                    var existingDecimalPosition = -1;
+                    for (var counter = startPosition; counter < allChars.Count; counter++)
+                        if (allChars[counter].ToString() == decimalSeparator)
+                            existingDecimalPosition = counter;
+                    if (existingDecimalPosition > -1)
+                        sb.Remove(startPosition, existingDecimalPosition - startPosition + 1);
+                    sb.Insert(startPosition, newChar);
+                    lastInsertWasDecimalSeparator = true;
+                }
+                else
+                    SystemSounds.Beep.Play();
+            }
+
+            var newText = sb.ToString();
+            if (isCurrency && newText.StartsWith(currencySymbol))
+                newText = newText.Substring(currencySymbol.Length).Trim();
+
+            decimal parsedValue;
+            if (decimal.TryParse(newText, out parsedValue))
+            {
+                var rightFormat = isCurrency ? StringHelper.Replicate("0", numberFormat.CurrencyDecimalDigits) : "00";
+                newText = parsedValue.ToString("###,###,###,##0." + rightFormat);
+                if (isCurrency)
+                    newText = currencySymbol + " " + newText;
+
+                textbox.SetValue(InputMaskIsValidatingProperty, true);
+                textbox.Text = newText;
+                SetTextUnmasked(textbox, parsedValue.ToString("###########0." + rightFormat));
+                textbox.SetValue(InputMaskIsValidatingProperty, false);
+
+                var newCaretIndex = 0;
+                var digitsFound = 0;
+                var newAllChars = newText.ToCharArray();
+                foreach (var newAllChar in newAllChars)
+                {
+                    if (digitsFound >= numberOfDigitsToTheLeft) break;
+                    if (isCurrency)
+                    {
+                        if (newCaretIndex > currencySymbol.Length && char.IsDigit(newAllChar)) digitsFound++;
+                    }
+                    else if (char.IsDigit(newAllChar)) digitsFound++;
+                    newCaretIndex++;
+                }
+                if (lastInsertWasDecimalSeparator) newCaretIndex++;
+                textbox.CaretIndex = newCaretIndex;
+            }
+            else
+                SystemSounds.Beep.Play();
+        }
+
+        private static void ValidateInputMaskText(TextBox textbox, string mask, string text)
+        {
+            if (string.IsNullOrEmpty(mask)) return;
+
+            if (mask.ToLowerInvariant() == "d" || mask == "$")
+            {
+                decimal parsedValue;
+                if (decimal.TryParse(text, out parsedValue))
+                {
+                    var currencySymbol = GetInputMaskCurrencySymbol(textbox);
+                    if (string.IsNullOrEmpty(currencySymbol))
+                    {
+                        currencySymbol = CultureInfo.CurrentUICulture.NumberFormat.CurrencySymbol;
+                        SetInputMaskCurrencySymbol(textbox, currencySymbol); // So we have it for later
+                    }
+                    var rightFormat = mask == "$" ? StringHelper.Replicate("0", CultureInfo.CurrentUICulture.NumberFormat.CurrencyDecimalDigits) : "00";
+                    text = parsedValue.ToString("###,###,###,##0." + rightFormat);
+                    if (mask == "$") text = currencySymbol + " " + text;
+                    textbox.SetValue(InputMaskIsValidatingProperty, true);
+                    textbox.Text = text;
+                    SetTextUnmasked(textbox, parsedValue.ToString("###########0." + rightFormat));
+                    textbox.SetValue(InputMaskIsValidatingProperty, false);
+                }
+            }
+            else
+            {
+                var provider = GetMaskedTextProvider(textbox, mask);
+                if (text == null) text = string.Empty;
+                provider.Set(text);
+                text = provider.ToString(false, false, true, 0, provider.Length);
+                textbox.SetValue(InputMaskIsValidatingProperty, true);
+                textbox.Text = text;
+                SetTextUnmasked(textbox, provider.ToString(false, false));
+                textbox.SetValue(InputMaskIsValidatingProperty, false);
+            }
+        }
+
+        private static MaskedTextProvider GetMaskedTextProvider(DependencyObject d, string mask, bool allowPromptAsInput = true, char promptChar = ' ', char passwordChar = '*', bool restrictToAscii = false)
+        {
+            var currentProvider = d.GetValue(InputMaskMaskedTextProviderProperty) as MaskedTextProvider;
+            if (currentProvider != null && currentProvider.Mask == mask) return currentProvider;
+
+            var newProvider = new MaskedTextProvider(mask, CultureInfo.CurrentUICulture, allowPromptAsInput, promptChar, passwordChar, restrictToAscii)
+            {
+                ResetOnPrompt = true,
+                ResetOnSpace = true,
+                SkipLiterals = true,
+                IncludeLiterals = true,
+                IncludePrompt = true,
+                IsPassword = false
+            };
+
+            d.SetValue(InputMaskMaskedTextProviderProperty, newProvider);
+
+            return newProvider;
+        }
+
+        private static readonly DependencyProperty InputMaskMaskedTextProviderProperty = DependencyProperty.RegisterAttached("InputMaskMaskedTextProvider", typeof (MaskedTextProvider), typeof (TextBoxEx), new PropertyMetadata(null));
+        private static readonly DependencyProperty InputMaskIsValidatingProperty = DependencyProperty.RegisterAttached("InputMaskIsValidating", typeof(bool), typeof(TextBoxEx), new PropertyMetadata(false));
     }
 }
