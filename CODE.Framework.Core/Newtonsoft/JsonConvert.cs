@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,90 +22,93 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
-using System.IO;
 using System.Globalization;
+using System.IO;
 using System.Numerics;
+using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using CODE.Framework.Core.Newtonsoft.Converters;
 using CODE.Framework.Core.Newtonsoft.Linq;
 using CODE.Framework.Core.Newtonsoft.Utilities;
-using CODE.Framework.Core.Newtonsoft.Converters;
-using System.Text;
-using System.Xml.Linq;
 
 namespace CODE.Framework.Core.Newtonsoft
 {
     /// <summary>
-    /// Provides methods for converting between common language runtime types and JSON types.
+    ///     Provides methods for converting between common language runtime types and JSON types.
     /// </summary>
     /// <example>
-    ///   <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="SerializeObject" title="Serializing and Deserializing JSON with JsonConvert" />
+    ///     <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="SerializeObject"
+    ///         title="Serializing and Deserializing JSON with JsonConvert" />
     /// </example>
     public static class JsonConvert
     {
         /// <summary>
-        /// Gets or sets a function that creates default <see cref="JsonSerializerSettings"/>.
-        /// Default settings are automatically used by serialization methods on <see cref="JsonConvert"/>,
-        /// and <see cref="JToken.ToObject{T}()"/> and <see cref="JToken.FromObject(object)"/> on <see cref="JToken"/>.
-        /// To serialize without using any default settings create a <see cref="JsonSerializer"/> with
-        /// <see cref="JsonSerializer.Create()"/>.
-        /// </summary>
-        public static Func<JsonSerializerSettings> DefaultSettings { get; set; }
-
-        /// <summary>
-        /// Represents JavaScript's boolean value true as a string. This field is read-only.
+        ///     Represents JavaScript's boolean value true as a string. This field is read-only.
         /// </summary>
         public static readonly string True = "true";
 
         /// <summary>
-        /// Represents JavaScript's boolean value false as a string. This field is read-only.
+        ///     Represents JavaScript's boolean value false as a string. This field is read-only.
         /// </summary>
         public static readonly string False = "false";
 
         /// <summary>
-        /// Represents JavaScript's null as a string. This field is read-only.
+        ///     Represents JavaScript's null as a string. This field is read-only.
         /// </summary>
         public static readonly string Null = "null";
 
         /// <summary>
-        /// Represents JavaScript's undefined as a string. This field is read-only.
+        ///     Represents JavaScript's undefined as a string. This field is read-only.
         /// </summary>
         public static readonly string Undefined = "undefined";
 
         /// <summary>
-        /// Represents JavaScript's positive infinity as a string. This field is read-only.
+        ///     Represents JavaScript's positive infinity as a string. This field is read-only.
         /// </summary>
         public static readonly string PositiveInfinity = "Infinity";
 
         /// <summary>
-        /// Represents JavaScript's negative infinity as a string. This field is read-only.
+        ///     Represents JavaScript's negative infinity as a string. This field is read-only.
         /// </summary>
         public static readonly string NegativeInfinity = "-Infinity";
 
         /// <summary>
-        /// Represents JavaScript's NaN as a string. This field is read-only.
+        ///     Represents JavaScript's NaN as a string. This field is read-only.
         /// </summary>
         public static readonly string NaN = "NaN";
 
         /// <summary>
-        /// Converts the <see cref="DateTime"/> to its JSON string representation.
+        ///     Gets or sets a function that creates default <see cref="JsonSerializerSettings" />.
+        ///     Default settings are automatically used by serialization methods on <see cref="JsonConvert" />,
+        ///     and <see cref="JToken.ToObject{T}()" /> and <see cref="JToken.FromObject(object)" /> on <see cref="JToken" />.
+        ///     To serialize without using any default settings create a <see cref="JsonSerializer" /> with
+        ///     <see cref="JsonSerializer.Create()" />.
+        /// </summary>
+        public static Func<JsonSerializerSettings> DefaultSettings { get; set; }
+
+        /// <summary>
+        ///     Converts the <see cref="DateTime" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="DateTime"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="DateTime" />.</returns>
         public static string ToString(DateTime value)
         {
             return ToString(value, DateFormatHandling.IsoDateFormat, DateTimeZoneHandling.RoundtripKind);
         }
 
         /// <summary>
-        /// Converts the <see cref="DateTime"/> to its JSON string representation using the <see cref="DateFormatHandling"/> specified.
+        ///     Converts the <see cref="DateTime" /> to its JSON string representation using the <see cref="DateFormatHandling" />
+        ///     specified.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="format">The format the date will be converted to.</param>
         /// <param name="timeZoneHandling">The time zone handling when the date is converted to a string.</param>
-        /// <returns>A JSON string representation of the <see cref="DateTime"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="DateTime" />.</returns>
         public static string ToString(DateTime value, DateFormatHandling format, DateTimeZoneHandling timeZoneHandling)
         {
             var updatedDateTime = DateTimeUtils.EnsureDateTime(value, timeZoneHandling);
@@ -119,21 +123,22 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="DateTimeOffset"/> to its JSON string representation.
+        ///     Converts the <see cref="DateTimeOffset" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="DateTimeOffset"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="DateTimeOffset" />.</returns>
         public static string ToString(DateTimeOffset value)
         {
             return ToString(value, DateFormatHandling.IsoDateFormat);
         }
 
         /// <summary>
-        /// Converts the <see cref="DateTimeOffset"/> to its JSON string representation using the <see cref="DateFormatHandling"/> specified.
+        ///     Converts the <see cref="DateTimeOffset" /> to its JSON string representation using the
+        ///     <see cref="DateFormatHandling" /> specified.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="format">The format the date will be converted to.</param>
-        /// <returns>A JSON string representation of the <see cref="DateTimeOffset"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="DateTimeOffset" />.</returns>
         public static string ToString(DateTimeOffset value, DateFormatHandling format)
         {
             using (var writer = StringUtils.CreateStringWriter(64))
@@ -146,60 +151,60 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Boolean"/> to its JSON string representation.
+        ///     Converts the <see cref="Boolean" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Boolean"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Boolean" />.</returns>
         public static string ToString(bool value)
         {
-            return (value) ? True : False;
+            return value ? True : False;
         }
 
         /// <summary>
-        /// Converts the <see cref="Char"/> to its JSON string representation.
+        ///     Converts the <see cref="Char" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Char"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Char" />.</returns>
         public static string ToString(char value)
         {
             return ToString(char.ToString(value));
         }
 
         /// <summary>
-        /// Converts the <see cref="Enum"/> to its JSON string representation.
+        ///     Converts the <see cref="Enum" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Enum"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Enum" />.</returns>
         public static string ToString(Enum value)
         {
             return value.ToString("D");
         }
 
         /// <summary>
-        /// Converts the <see cref="Int32"/> to its JSON string representation.
+        ///     Converts the <see cref="Int32" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Int32"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Int32" />.</returns>
         public static string ToString(int value)
         {
             return value.ToString(null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// Converts the <see cref="Int16"/> to its JSON string representation.
+        ///     Converts the <see cref="Int16" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Int16"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Int16" />.</returns>
         public static string ToString(short value)
         {
             return value.ToString(null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// Converts the <see cref="UInt16"/> to its JSON string representation.
+        ///     Converts the <see cref="UInt16" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="UInt16"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="UInt16" />.</returns>
         [CLSCompliant(false)]
         public static string ToString(ushort value)
         {
@@ -207,10 +212,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="UInt32"/> to its JSON string representation.
+        ///     Converts the <see cref="UInt32" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="UInt32"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="UInt32" />.</returns>
         [CLSCompliant(false)]
         public static string ToString(uint value)
         {
@@ -218,10 +223,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Int64"/>  to its JSON string representation.
+        ///     Converts the <see cref="Int64" />  to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Int64"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Int64" />.</returns>
         public static string ToString(long value)
         {
             return value.ToString(null, CultureInfo.InvariantCulture);
@@ -233,10 +238,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="UInt64"/> to its JSON string representation.
+        ///     Converts the <see cref="UInt64" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="UInt64"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="UInt64" />.</returns>
         [CLSCompliant(false)]
         public static string ToString(ulong value)
         {
@@ -244,10 +249,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Single"/> to its JSON string representation.
+        ///     Converts the <see cref="Single" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Single"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Single" />.</returns>
         public static string ToString(float value)
         {
             return EnsureDecimalPlace(value, value.ToString("R", CultureInfo.InvariantCulture));
@@ -261,15 +266,15 @@ namespace CODE.Framework.Core.Newtonsoft
         private static string EnsureFloatFormat(double value, string text, FloatFormatHandling floatFormatHandling, char quoteChar, bool nullable)
         {
             if (floatFormatHandling == FloatFormatHandling.Symbol || !(double.IsInfinity(value) || double.IsNaN(value))) return text;
-            if (floatFormatHandling == FloatFormatHandling.DefaultValue) return (!nullable) ? "0.0" : Null;
+            if (floatFormatHandling == FloatFormatHandling.DefaultValue) return !nullable ? "0.0" : Null;
             return quoteChar + text + quoteChar;
         }
 
         /// <summary>
-        /// Converts the <see cref="Double"/> to its JSON string representation.
+        ///     Converts the <see cref="Double" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Double"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Double" />.</returns>
         public static string ToString(double value)
         {
             return EnsureDecimalPlace(value, value.ToString("R", CultureInfo.InvariantCulture));
@@ -293,20 +298,20 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Byte"/> to its JSON string representation.
+        ///     Converts the <see cref="Byte" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Byte"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Byte" />.</returns>
         public static string ToString(byte value)
         {
             return value.ToString(null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// Converts the <see cref="SByte"/> to its JSON string representation.
+        ///     Converts the <see cref="SByte" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="SByte"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="SByte" />.</returns>
         [CLSCompliant(false)]
         public static string ToString(sbyte value)
         {
@@ -314,20 +319,20 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Decimal"/> to its JSON string representation.
+        ///     Converts the <see cref="Decimal" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="SByte"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="SByte" />.</returns>
         public static string ToString(decimal value)
         {
             return EnsureDecimalPlace(value.ToString(null, CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Converts the <see cref="Guid"/> to its JSON string representation.
+        ///     Converts the <see cref="Guid" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Guid"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Guid" />.</returns>
         public static string ToString(Guid value)
         {
             return ToString(value, '"');
@@ -341,10 +346,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="TimeSpan"/> to its JSON string representation.
+        ///     Converts the <see cref="TimeSpan" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="TimeSpan"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="TimeSpan" />.</returns>
         public static string ToString(TimeSpan value)
         {
             return ToString(value, '"');
@@ -356,10 +361,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Uri"/> to its JSON string representation.
+        ///     Converts the <see cref="Uri" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Uri"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Uri" />.</returns>
         public static string ToString(Uri value)
         {
             return value == null ? Null : ToString(value, '"');
@@ -371,33 +376,33 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="String"/> to its JSON string representation.
+        ///     Converts the <see cref="String" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="String"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="String" />.</returns>
         public static string ToString(string value)
         {
             return ToString(value, '"');
         }
 
         /// <summary>
-        /// Converts the <see cref="String"/> to its JSON string representation.
+        ///     Converts the <see cref="String" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="delimiter">The string delimiter character.</param>
-        /// <returns>A JSON string representation of the <see cref="String"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="String" />.</returns>
         public static string ToString(string value, char delimiter)
         {
             return ToString(value, delimiter, StringEscapeHandling.Default);
         }
 
         /// <summary>
-        /// Converts the <see cref="String"/> to its JSON string representation.
+        ///     Converts the <see cref="String" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="delimiter">The string delimiter character.</param>
         /// <param name="stringEscapeHandling">The string escape handling.</param>
-        /// <returns>A JSON string representation of the <see cref="String"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="String" />.</returns>
         public static string ToString(string value, char delimiter, StringEscapeHandling stringEscapeHandling)
         {
             if (delimiter != '"' && delimiter != '\'') throw new ArgumentException("Delimiter must be a single or double quote.", "delimiter");
@@ -405,10 +410,10 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Converts the <see cref="Object"/> to its JSON string representation.
+        ///     Converts the <see cref="Object" /> to its JSON string representation.
         /// </summary>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A JSON string representation of the <see cref="Object"/>.</returns>
+        /// <returns>A JSON string representation of the <see cref="Object" />.</returns>
         public static string ToString(object value)
         {
             if (value == null) return Null;
@@ -418,89 +423,89 @@ namespace CODE.Framework.Core.Newtonsoft
             switch (typeCode)
             {
                 case PrimitiveTypeCode.String:
-                    return ToString((string)value);
+                    return ToString((string) value);
                 case PrimitiveTypeCode.Char:
-                    return ToString((char)value);
+                    return ToString((char) value);
                 case PrimitiveTypeCode.Boolean:
-                    return ToString((bool)value);
+                    return ToString((bool) value);
                 case PrimitiveTypeCode.SByte:
-                    return ToString((sbyte)value);
+                    return ToString((sbyte) value);
                 case PrimitiveTypeCode.Int16:
-                    return ToString((short)value);
+                    return ToString((short) value);
                 case PrimitiveTypeCode.UInt16:
-                    return ToString((ushort)value);
+                    return ToString((ushort) value);
                 case PrimitiveTypeCode.Int32:
-                    return ToString((int)value);
+                    return ToString((int) value);
                 case PrimitiveTypeCode.Byte:
-                    return ToString((byte)value);
+                    return ToString((byte) value);
                 case PrimitiveTypeCode.UInt32:
-                    return ToString((uint)value);
+                    return ToString((uint) value);
                 case PrimitiveTypeCode.Int64:
-                    return ToString((long)value);
+                    return ToString((long) value);
                 case PrimitiveTypeCode.UInt64:
-                    return ToString((ulong)value);
+                    return ToString((ulong) value);
                 case PrimitiveTypeCode.Single:
-                    return ToString((float)value);
+                    return ToString((float) value);
                 case PrimitiveTypeCode.Double:
-                    return ToString((double)value);
+                    return ToString((double) value);
                 case PrimitiveTypeCode.DateTime:
-                    return ToString((DateTime)value);
+                    return ToString((DateTime) value);
                 case PrimitiveTypeCode.Decimal:
-                    return ToString((decimal)value);
+                    return ToString((decimal) value);
                 case PrimitiveTypeCode.DBNull:
                     return Null;
                 case PrimitiveTypeCode.DateTimeOffset:
-                    return ToString((DateTimeOffset)value);
+                    return ToString((DateTimeOffset) value);
                 case PrimitiveTypeCode.Guid:
-                    return ToString((Guid)value);
+                    return ToString((Guid) value);
                 case PrimitiveTypeCode.Uri:
-                    return ToString((Uri)value);
+                    return ToString((Uri) value);
                 case PrimitiveTypeCode.TimeSpan:
-                    return ToString((TimeSpan)value);
+                    return ToString((TimeSpan) value);
                 case PrimitiveTypeCode.BigInteger:
-                    return ToStringInternal((BigInteger)value);
+                    return ToStringInternal((BigInteger) value);
             }
 
             throw new ArgumentException("Unsupported type: {0}. Use the JsonSerializer class to get the object's JSON representation.".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string.
+        ///     Serializes the specified object to a JSON string.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <returns>A JSON string representation of the object.</returns>
         public static string SerializeObject(object value)
         {
-            return SerializeObject(value, null, (JsonSerializerSettings)null);
+            return SerializeObject(value, null, (JsonSerializerSettings) null);
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using formatting.
+        ///     Serializes the specified object to a JSON string using formatting.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
         /// <returns>
-        /// A JSON string representation of the object.
+        ///     A JSON string representation of the object.
         /// </returns>
         public static string SerializeObject(object value, Formatting formatting)
         {
-            return SerializeObject(value, formatting, (JsonSerializerSettings)null);
+            return SerializeObject(value, formatting, (JsonSerializerSettings) null);
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using a collection of <see cref="JsonConverter"/>.
+        ///     Serializes the specified object to a JSON string using a collection of <see cref="JsonConverter" />.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="converters">A collection converters used while serializing.</param>
         /// <returns>A JSON string representation of the object.</returns>
         public static string SerializeObject(object value, params JsonConverter[] converters)
         {
-            var settings = (converters != null && converters.Length > 0) ? new JsonSerializerSettings { Converters = converters } : null;
+            var settings = converters != null && converters.Length > 0 ? new JsonSerializerSettings {Converters = converters} : null;
             return SerializeObject(value, null, settings);
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using formatting and a collection of <see cref="JsonConverter"/>.
+        ///     Serializes the specified object to a JSON string using formatting and a collection of <see cref="JsonConverter" />.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -508,18 +513,20 @@ namespace CODE.Framework.Core.Newtonsoft
         /// <returns>A JSON string representation of the object.</returns>
         public static string SerializeObject(object value, Formatting formatting, params JsonConverter[] converters)
         {
-            var settings = (converters != null && converters.Length > 0) ? new JsonSerializerSettings { Converters = converters } : null;
+            var settings = converters != null && converters.Length > 0 ? new JsonSerializerSettings {Converters = converters} : null;
             return SerializeObject(value, null, formatting, settings);
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using <see cref="JsonSerializerSettings"/>.
+        ///     Serializes the specified object to a JSON string using <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
-        /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be used.</param>
+        /// <param name="settings">
+        ///     The <see cref="JsonSerializerSettings" /> used to serialize the object.
+        ///     If this is null, default serialization settings will be used.
+        /// </param>
         /// <returns>
-        /// A JSON string representation of the object.
+        ///     A JSON string representation of the object.
         /// </returns>
         public static string SerializeObject(object value, JsonSerializerSettings settings)
         {
@@ -527,18 +534,22 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using a type, formatting and <see cref="JsonSerializerSettings"/>.
+        ///     Serializes the specified object to a JSON string using a type, formatting and <see cref="JsonSerializerSettings" />
+        ///     .
         /// </summary>
         /// <param name="value">The object to serialize.</param>
-        /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be used.</param>
+        /// <param name="settings">
+        ///     The <see cref="JsonSerializerSettings" /> used to serialize the object.
+        ///     If this is null, default serialization settings will be used.
+        /// </param>
         /// <param name="type">
-        /// The type of the value being serialized.
-        /// This parameter is used when <see cref="TypeNameHandling"/> is Auto to write out the type name if the type of the value does not match.
-        /// Specifing the type is optional.
+        ///     The type of the value being serialized.
+        ///     This parameter is used when <see cref="TypeNameHandling" /> is Auto to write out the type name if the type of the
+        ///     value does not match.
+        ///     Specifing the type is optional.
         /// </param>
         /// <returns>
-        /// A JSON string representation of the object.
+        ///     A JSON string representation of the object.
         /// </returns>
         public static string SerializeObject(object value, Type type, JsonSerializerSettings settings)
         {
@@ -547,14 +558,16 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using formatting and <see cref="JsonSerializerSettings"/>.
+        ///     Serializes the specified object to a JSON string using formatting and <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
-        /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be used.</param>
+        /// <param name="settings">
+        ///     The <see cref="JsonSerializerSettings" /> used to serialize the object.
+        ///     If this is null, default serialization settings will be used.
+        /// </param>
         /// <returns>
-        /// A JSON string representation of the object.
+        ///     A JSON string representation of the object.
         /// </returns>
         public static string SerializeObject(object value, Formatting formatting, JsonSerializerSettings settings)
         {
@@ -562,19 +575,23 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the specified object to a JSON string using a type, formatting and <see cref="JsonSerializerSettings"/>.
+        ///     Serializes the specified object to a JSON string using a type, formatting and <see cref="JsonSerializerSettings" />
+        ///     .
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
-        /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be used.</param>
+        /// <param name="settings">
+        ///     The <see cref="JsonSerializerSettings" /> used to serialize the object.
+        ///     If this is null, default serialization settings will be used.
+        /// </param>
         /// <param name="type">
-        /// The type of the value being serialized.
-        /// This parameter is used when <see cref="TypeNameHandling"/> is Auto to write out the type name if the type of the value does not match.
-        /// Specifing the type is optional.
+        ///     The type of the value being serialized.
+        ///     This parameter is used when <see cref="TypeNameHandling" /> is Auto to write out the type name if the type of the
+        ///     value does not match.
+        ///     Specifing the type is optional.
         /// </param>
         /// <returns>
-        /// A JSON string representation of the object.
+        ///     A JSON string representation of the object.
         /// </returns>
         public static string SerializeObject(object value, Type type, Formatting formatting, JsonSerializerSettings settings)
         {
@@ -598,22 +615,22 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the JSON to a .NET object.
+        ///     Deserializes the JSON to a .NET object.
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value)
         {
-            return DeserializeObject(value, null, (JsonSerializerSettings)null);
+            return DeserializeObject(value, null, (JsonSerializerSettings) null);
         }
 
         /// <summary>
-        /// Deserializes the JSON to a .NET object using <see cref="JsonSerializerSettings"/>.
+        ///     Deserializes the JSON to a .NET object using <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="settings">
-        /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be used.
+        ///     The <see cref="JsonSerializerSettings" /> used to deserialize the object.
+        ///     If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, JsonSerializerSettings settings)
@@ -622,34 +639,34 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the JSON to the specified .NET type.
+        ///     Deserializes the JSON to the specified .NET type.
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
-        /// <param name="type">The <see cref="Type"/> of object being deserialized.</param>
+        /// <param name="type">The <see cref="Type" /> of object being deserialized.</param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, Type type)
         {
-            return DeserializeObject(value, type, (JsonSerializerSettings)null);
+            return DeserializeObject(value, type, (JsonSerializerSettings) null);
         }
 
         /// <summary>
-        /// Deserializes the JSON to the specified .NET type.
+        ///     Deserializes the JSON to the specified .NET type.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="value">The JSON to deserialize.</param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static T DeserializeObject<T>(string value)
         {
-            return DeserializeObject<T>(value, (JsonSerializerSettings)null);
+            return DeserializeObject<T>(value, (JsonSerializerSettings) null);
         }
 
         /// <summary>
-        /// Deserializes the JSON to the given anonymous type.
+        ///     Deserializes the JSON to the given anonymous type.
         /// </summary>
         /// <typeparam name="T">
-        /// The anonymous type to deserialize to. This can't be specified
-        /// traditionally and must be infered from the anonymous type passed
-        /// as a parameter.
+        ///     The anonymous type to deserialize to. This can't be specified
+        ///     traditionally and must be infered from the anonymous type passed
+        ///     as a parameter.
         /// </typeparam>
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="anonymousTypeObject">The anonymous type object.</param>
@@ -660,18 +677,18 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the JSON to the given anonymous type using <see cref="JsonSerializerSettings"/>.
+        ///     Deserializes the JSON to the given anonymous type using <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <typeparam name="T">
-        /// The anonymous type to deserialize to. This can't be specified
-        /// traditionally and must be infered from the anonymous type passed
-        /// as a parameter.
+        ///     The anonymous type to deserialize to. This can't be specified
+        ///     traditionally and must be infered from the anonymous type passed
+        ///     as a parameter.
         /// </typeparam>
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="anonymousTypeObject">The anonymous type object.</param>
         /// <param name="settings">
-        /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be used.
+        ///     The <see cref="JsonSerializerSettings" /> used to deserialize the object.
+        ///     If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized anonymous type from the JSON string.</returns>
         public static T DeserializeAnonymousType<T>(string value, T anonymousTypeObject, JsonSerializerSettings settings)
@@ -680,7 +697,7 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the JSON to the specified .NET type using a collection of <see cref="JsonConverter"/>.
+        ///     Deserializes the JSON to the specified .NET type using a collection of <see cref="JsonConverter" />.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="value">The JSON to deserialize.</param>
@@ -688,26 +705,26 @@ namespace CODE.Framework.Core.Newtonsoft
         /// <returns>The deserialized object from the JSON string.</returns>
         public static T DeserializeObject<T>(string value, params JsonConverter[] converters)
         {
-            return (T)DeserializeObject(value, typeof(T), converters);
+            return (T) DeserializeObject(value, typeof(T), converters);
         }
 
         /// <summary>
-        /// Deserializes the JSON to the specified .NET type using <see cref="JsonSerializerSettings"/>.
+        ///     Deserializes the JSON to the specified .NET type using <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="value">The object to deserialize.</param>
         /// <param name="settings">
-        /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be used.
+        ///     The <see cref="JsonSerializerSettings" /> used to deserialize the object.
+        ///     If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static T DeserializeObject<T>(string value, JsonSerializerSettings settings)
         {
-            return (T)DeserializeObject(value, typeof(T), settings);
+            return (T) DeserializeObject(value, typeof(T), settings);
         }
 
         /// <summary>
-        /// Deserializes the JSON to the specified .NET type using a collection of <see cref="JsonConverter"/>.
+        ///     Deserializes the JSON to the specified .NET type using a collection of <see cref="JsonConverter" />.
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="type">The type of the object to deserialize.</param>
@@ -715,18 +732,18 @@ namespace CODE.Framework.Core.Newtonsoft
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, Type type, params JsonConverter[] converters)
         {
-            var settings = (converters != null && converters.Length > 0) ? new JsonSerializerSettings { Converters = converters } : null;
+            var settings = converters != null && converters.Length > 0 ? new JsonSerializerSettings {Converters = converters} : null;
             return DeserializeObject(value, type, settings);
         }
 
         /// <summary>
-        /// Deserializes the JSON to the specified .NET type using <see cref="JsonSerializerSettings"/>.
+        ///     Deserializes the JSON to the specified .NET type using <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="settings">
-        /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be used.
+        ///     The <see cref="JsonSerializerSettings" /> used to deserialize the object.
+        ///     If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, Type type, JsonSerializerSettings settings)
@@ -739,11 +756,13 @@ namespace CODE.Framework.Core.Newtonsoft
                 jsonSerializer.CheckAdditionalContent = true;
 
             using (var reader = new JsonTextReader(new StringReader(value)))
+            {
                 return jsonSerializer.Deserialize(reader, type);
+            }
         }
 
         /// <summary>
-        /// Populates the object with values from the JSON string.
+        ///     Populates the object with values from the JSON string.
         /// </summary>
         /// <param name="value">The JSON to populate values from.</param>
         /// <param name="target">The target object to populate values onto.</param>
@@ -753,13 +772,13 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Populates the object with values from the JSON string using <see cref="JsonSerializerSettings"/>.
+        ///     Populates the object with values from the JSON string using <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <param name="value">The JSON to populate values from.</param>
         /// <param name="target">The target object to populate values onto.</param>
         /// <param name="settings">
-        /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be used.
+        ///     The <see cref="JsonSerializerSettings" /> used to deserialize the object.
+        ///     If this is null, default serialization settings will be used.
         /// </param>
         public static void PopulateObject(string value, object target, JsonSerializerSettings settings)
         {
@@ -773,7 +792,7 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the XML node to a JSON string.
+        ///     Serializes the XML node to a JSON string.
         /// </summary>
         /// <param name="node">The node to serialize.</param>
         /// <returns>A JSON string of the XmlNode.</returns>
@@ -783,7 +802,7 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the XML node to a JSON string using formatting.
+        ///     Serializes the XML node to a JSON string using formatting.
         /// </summary>
         /// <param name="node">The node to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -795,7 +814,8 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the XML node to a JSON string using formatting and omits the root object if <paramref name="omitRootObject"/> is <c>true</c>.
+        ///     Serializes the XML node to a JSON string using formatting and omits the root object if
+        ///     <paramref name="omitRootObject" /> is <c>true</c>.
         /// </summary>
         /// <param name="node">The node to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -803,12 +823,12 @@ namespace CODE.Framework.Core.Newtonsoft
         /// <returns>A JSON string of the XmlNode.</returns>
         public static string SerializeXmlNode(XmlNode node, Formatting formatting, bool omitRootObject)
         {
-            var converter = new XmlNodeConverter { OmitRootObject = omitRootObject };
+            var converter = new XmlNodeConverter {OmitRootObject = omitRootObject};
             return SerializeObject(node, formatting, converter);
         }
 
         /// <summary>
-        /// Deserializes the XmlNode from a JSON string.
+        ///     Deserializes the XmlNode from a JSON string.
         /// </summary>
         /// <param name="value">The JSON string.</param>
         /// <returns>The deserialized XmlNode</returns>
@@ -818,7 +838,8 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the XmlNode from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>.
+        ///     Deserializes the XmlNode from a JSON string nested in a root elment specified by
+        ///     <paramref name="deserializeRootElementName" />.
         /// </summary>
         /// <param name="value">The JSON string.</param>
         /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
@@ -829,28 +850,29 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the XmlNode from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>
-        /// and writes a .NET array attribute for collections.
+        ///     Deserializes the XmlNode from a JSON string nested in a root elment specified by
+        ///     <paramref name="deserializeRootElementName" />
+        ///     and writes a .NET array attribute for collections.
         /// </summary>
         /// <param name="value">The JSON string.</param>
         /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
         /// <param name="writeArrayAttribute">
-        /// A flag to indicate whether to write the Json.NET array attribute.
-        /// This attribute helps preserve arrays when converting the written XML back to JSON.
+        ///     A flag to indicate whether to write the Json.NET array attribute.
+        ///     This attribute helps preserve arrays when converting the written XML back to JSON.
         /// </param>
         /// <returns>The deserialized XmlNode</returns>
         public static XmlDocument DeserializeXmlNode(string value, string deserializeRootElementName, bool writeArrayAttribute)
         {
             var converter = new XmlNodeConverter
             {
-                DeserializeRootElementName = deserializeRootElementName, 
+                DeserializeRootElementName = deserializeRootElementName,
                 WriteArrayAttribute = writeArrayAttribute
             };
-            return (XmlDocument)DeserializeObject(value, typeof(XmlDocument), converter);
+            return (XmlDocument) DeserializeObject(value, typeof(XmlDocument), converter);
         }
 
         /// <summary>
-        /// Serializes the <see cref="XNode"/> to a JSON string.
+        ///     Serializes the <see cref="XNode" /> to a JSON string.
         /// </summary>
         /// <param name="node">The node to convert to JSON.</param>
         /// <returns>A JSON string of the XNode.</returns>
@@ -860,7 +882,7 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the <see cref="XNode"/> to a JSON string using formatting.
+        ///     Serializes the <see cref="XNode" /> to a JSON string using formatting.
         /// </summary>
         /// <param name="node">The node to convert to JSON.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -871,7 +893,8 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Serializes the <see cref="XNode"/> to a JSON string using formatting and omits the root object if <paramref name="omitRootObject"/> is <c>true</c>.
+        ///     Serializes the <see cref="XNode" /> to a JSON string using formatting and omits the root object if
+        ///     <paramref name="omitRootObject" /> is <c>true</c>.
         /// </summary>
         /// <param name="node">The node to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -879,12 +902,12 @@ namespace CODE.Framework.Core.Newtonsoft
         /// <returns>A JSON string of the XNode.</returns>
         public static string SerializeXNode(XObject node, Formatting formatting, bool omitRootObject)
         {
-            var converter = new XmlNodeConverter { OmitRootObject = omitRootObject };
+            var converter = new XmlNodeConverter {OmitRootObject = omitRootObject};
             return SerializeObject(node, formatting, converter);
         }
 
         /// <summary>
-        /// Deserializes the <see cref="XNode"/> from a JSON string.
+        ///     Deserializes the <see cref="XNode" /> from a JSON string.
         /// </summary>
         /// <param name="value">The JSON string.</param>
         /// <returns>The deserialized XNode</returns>
@@ -894,7 +917,8 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the <see cref="XNode"/> from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>.
+        ///     Deserializes the <see cref="XNode" /> from a JSON string nested in a root elment specified by
+        ///     <paramref name="deserializeRootElementName" />.
         /// </summary>
         /// <param name="value">The JSON string.</param>
         /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
@@ -905,24 +929,25 @@ namespace CODE.Framework.Core.Newtonsoft
         }
 
         /// <summary>
-        /// Deserializes the <see cref="XNode"/> from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>
-        /// and writes a .NET array attribute for collections.
+        ///     Deserializes the <see cref="XNode" /> from a JSON string nested in a root elment specified by
+        ///     <paramref name="deserializeRootElementName" />
+        ///     and writes a .NET array attribute for collections.
         /// </summary>
         /// <param name="value">The JSON string.</param>
         /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
         /// <param name="writeArrayAttribute">
-        /// A flag to indicate whether to write the Json.NET array attribute.
-        /// This attribute helps preserve arrays when converting the written XML back to JSON.
+        ///     A flag to indicate whether to write the Json.NET array attribute.
+        ///     This attribute helps preserve arrays when converting the written XML back to JSON.
         /// </param>
         /// <returns>The deserialized XNode</returns>
         public static XDocument DeserializeXNode(string value, string deserializeRootElementName, bool writeArrayAttribute)
         {
             var converter = new XmlNodeConverter
             {
-                DeserializeRootElementName = deserializeRootElementName, 
+                DeserializeRootElementName = deserializeRootElementName,
                 WriteArrayAttribute = writeArrayAttribute
             };
-            return (XDocument)DeserializeObject(value, typeof(XDocument), converter);
+            return (XDocument) DeserializeObject(value, typeof(XDocument), converter);
         }
     }
 }

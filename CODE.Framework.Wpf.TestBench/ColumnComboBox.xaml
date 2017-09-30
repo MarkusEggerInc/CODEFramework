@@ -1,0 +1,68 @@
+﻿<Window x:Class="CODE.Framework.Wpf.TestBench.ColumnComboBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" 
+        Title="ColumnComboBox" Height="600" Width="1300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Battleship;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Geek;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Metro;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Universe;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Vapor;component/ThemeRoot.xaml"/>-->
+                <!--<ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Wildcat;component/ThemeRoot.xaml"/>-->
+                <ResourceDictionary Source="/CODE.Framework.Wpf.Theme.Workplace;component/ThemeRoot.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <ComboBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300" x:Name="combo">
+            <c:ListEx.Columns>
+                <c:ListColumnsCollection EditModeBindingPath="" AllowColumnMove="True" ShowFooters="True" DetailExpandedPath="IsExpanded" DefaultDisplayBindingPath="Text3" x:Name="columns">
+                    <c:ListColumnsCollection.DetailTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10" TextWrapping="Wrap" Text="The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. "/>
+                        </DataTemplate>
+                    </c:ListColumnsCollection.DetailTemplate>
+                    <c:ListColumn BindingPath="Text1" Header="Text 1" Footer="Footer 1" IsResizable="True" Width="100" AutoFilter="True" CellContentAlignment="Stretch" />
+                    <c:ListColumn BindingPath="IsChecked" Header="C1" EditMode="ReadWriteAll" IsResizable="True" Width="50" ColumnControl="Checkmark" />
+                    <c:ListColumn BindingPath="IsChecked" Header="C2" IsResizable="True" Width="50" ColumnControl="Checkmark" x:Name="c2" />
+                    <c:ListColumn BindingPath="Text2" Header="Text 2" IsResizable="True" Width="200" HeaderClickCommandBindingPath="HeaderClick" HeaderTextAlignment="Right" EditMode="ReadWriteAll" AutoSort="True" SortOrder="Ascending" />
+                    <c:ListColumn BindingPath="Text3" Header="Text 3" IsResizable="True" Width="150" HeaderClickCommandBindingPath="HeaderClick" HeaderTextAlignment="Center" SortOrder="Descending" CellBackground="CornflowerBlue" />
+                    <c:ListColumn BindingPath="Text4" Header="Text 4" IsResizable="True" Width="200" HeaderClickCommandBindingPath="HeaderClick">
+                        <c:ListColumn.HeaderTemplate>
+                            <ControlTemplate>
+                                <Grid c:GridEx.RowHeights="Auto,10" HorizontalAlignment="Stretch">
+                                    <TextBox Margin="3">This is some text</TextBox>
+                                </Grid>
+                            </ControlTemplate>
+                        </c:ListColumn.HeaderTemplate>
+                        <c:ListColumn.FooterTemplate>
+                            <ControlTemplate>
+                                <Grid c:GridEx.RowHeights="Auto,10" HorizontalAlignment="Stretch">
+                                    <TextBox Margin="3">This is some text</TextBox>
+                                </Grid>
+                            </ControlTemplate>
+                        </c:ListColumn.FooterTemplate>
+                    </c:ListColumn>
+                    <c:ListColumn Header="Text 5" IsResizable="True" Width="100" HeaderClickCommandBindingPath="HeaderClick">
+                        <c:ListColumn.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                    <Rectangle Fill="Red" Height="10" Width="10" Margin="2"/>
+                                    <TextBox Text="{Binding Text5}"/>
+                                    <Rectangle Fill="Green" Height="10" Width="10" Margin="2"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </c:ListColumn.ItemTemplate>
+                    </c:ListColumn>
+                    <c:ListColumn BindingPath="Text6" Header="List 1" IsResizable="True" Width="150" EditMode="ReadWriteAll"
+                                  ColumnControl="TextList" TextListItemsSourceBindingPath="TextList" />
+                    <c:ListColumn BindingPath="Text6" Header="List 1 Control" IsResizable="True" Width="150" CellBackground="#CAFFD5" />
+                </c:ListColumnsCollection>
+            </c:ListEx.Columns>
+         </ComboBox>
+    </Grid>
+</Window>

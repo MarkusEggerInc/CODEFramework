@@ -1395,6 +1395,15 @@ namespace CODE.Framework.Wpf.Mvvm
             get { return (bool)GetValue(IsActivatingProperty); }
             set { SetValue(IsActivatingProperty, value); }
         }
+
+        /// <summary>
+        /// Reference to a special button that has most recently been activated
+        /// </summary>
+        /// <value>
+        /// The last selected button.
+        /// </value>
+        public SpecialFirstPageRibbonButton LastSelectedButton { get; set; }
+
         /// <summary>
         /// For internal use only
         /// </summary>
@@ -1412,17 +1421,26 @@ namespace CODE.Framework.Wpf.Mvvm
             var selectedItem = list.Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b => b.IsSelected);
             if (selectedItem == null || list.ActiveView == null || list.ActiveView != selectedItem.ActionView)
             {
-                var initialButton = list.Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b =>
+                SpecialFirstPageRibbonButton initialButton = null;
+                if (list.LastSelectedButton != null)
                 {
-                    var command = b.Command as OnDemandLoadCustomViewViewAction;
-                    if (command == null) return false;
-                    return command.IsInitiallySelected;
-                });
+                    // We had a previously selected button. However, the reference to the button may 
+                    // be outdated, as the list may be repopulated. Therefore, we can't use the button 
+                    // directly, but instead we look at the actions associated with the button
+                    initialButton = list.Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b => b.Command == list.LastSelectedButton.Command);
+                }
+                if (initialButton == null)
+                    initialButton = list.Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b =>
+                    {
+                        var command = b.Command as OnDemandLoadCustomViewViewAction;
+                        if (command == null) return false;
+                        return command.IsInitiallySelected;
+                    });
                 if (initialButton != null)
                 {
                     if (list.ActiveView != null)
                         list.ActiveView = null;
-                    initialButton.ActivateButton();
+                    initialButton.ActivateButton(list);
                 }
             }
         }
@@ -1463,7 +1481,6 @@ namespace CODE.Framework.Wpf.Mvvm
         private void PopulateList(IHaveActions actions, IHaveActions actions2 = null, string selectedViewTitle = "")
         {
             Children.Clear();
-            //ActiveView = null;
 
             if (actions == null) return;
             var actionList = ViewActionPolicy != null ? ViewActionPolicy.GetConsolidatedActions(actions, actions2, selectedViewTitle, viewModel: this) : ViewActionHelper.GetConsolidatedActions(actions, actions2, selectedViewTitle);
@@ -1507,16 +1524,6 @@ namespace CODE.Framework.Wpf.Mvvm
                         CreateMenuItemBinding(action, button);
                         Children.Add(button);
                     }
-
-                //var selectedActionButton = Children.OfType<SpecialFirstPageRibbonButton>().FirstOrDefault(b =>
-                //{
-                //    if (b.IsSelected) return false;
-                //    var command = b.Command as OnDemandLoadCustomViewViewAction;
-                //    if (command == null) return false;
-                //    return command.IsInitiallySelected;
-                //});
-                //if (selectedActionButton != null)
-                //    selectedActionButton.ActivateButton();
             }
         }
 
@@ -1787,13 +1794,15 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Activates the button
         /// </summary>
-        public void ActivateButton()
+        /// <param name="list">Parent action list</param>
+        public void ActivateButton(SpecialFirstPageActionList list = null)
         {
-            var list = ElementHelper.FindVisualTreeParent<SpecialFirstPageActionList>(this);
+            if (list == null)
+                list = ElementHelper.FindVisualTreeParent<SpecialFirstPageActionList>(this);
             if (list == null) return;
 
-            foreach (var button in list.Children.OfType<SpecialFirstPageRibbonButton>())
-                if (button != this) button.IsSelected = false;
+            foreach (var button in list.Children.OfType<SpecialFirstPageRibbonButton>().Where(b => b.IsSelected))
+                button.IsSelected = false;
 
             if (ActionView == null && Command != null)
             {
@@ -1819,6 +1828,9 @@ namespace CODE.Framework.Wpf.Mvvm
             }
 
             IsSelected = true;
+
+            if (ActionView != null)
+                list.LastSelectedButton = this;
         }
     }
 }

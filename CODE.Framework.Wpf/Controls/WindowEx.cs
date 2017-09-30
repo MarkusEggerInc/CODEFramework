@@ -19,6 +19,39 @@ namespace CODE.Framework.Wpf.Controls
     public class WindowEx : Window
     {
         /// <summary>
+        /// Creates a stylable version of the window startup position (the default property on the Window class is not a dependency property)
+        /// </summary>
+        public static readonly DependencyProperty WindowStartupLocationStylableProperty = DependencyProperty.RegisterAttached("WindowStartupLocationStylable", typeof(WindowStartupLocation), typeof(WindowEx), new PropertyMetadata(WindowStartupLocation.Manual, OnWindowStartupLocationStylableChanged));
+
+        /// <summary>
+        /// Fires when the WindowStartupPosition attached property changes
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnWindowStartupLocationStylableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as Window;
+            if (window == null) return;
+            window.WindowStartupLocation = (WindowStartupLocation) e.NewValue;
+        }
+
+        /// <summary>
+        /// Creates a stylable version of the window startup position (the default property on the Window class is not a dependency property)
+        /// </summary>
+        public static WindowStartupLocation GetWindowStartupLocationStylable(DependencyObject obj)
+        {
+            return (WindowStartupLocation)obj.GetValue(WindowStartupLocationStylableProperty);
+        }
+
+        /// <summary>
+        /// Creates a stylable version of the window startup position (the default property on the Window class is not a dependency property)
+        /// </summary>
+        public static void SetWindowStartupLocationStylable(DependencyObject obj, WindowStartupLocation value)
+        {
+            obj.SetValue(WindowStartupLocationStylableProperty, value);
+        }
+
+        /// <summary>
         /// If set to true, the Window will remember the last size and position it had and re-open at that same position
         /// </summary>
         public static readonly DependencyProperty AutoSaveWindowPositionProperty = DependencyProperty.RegisterAttached("AutoSaveWindowPosition", typeof(bool), typeof(WindowEx), new PropertyMetadata(false, OnAutoSaveWindowPositionChanged));
@@ -142,19 +175,19 @@ namespace CODE.Framework.Wpf.Controls
             foreach (var display in _currentDisplays)
                 if (display.MonitorArea.Contains(currentAbsoluteMousePosition))
                     if (window.WindowState == WindowState.Normal && currentAbsoluteMousePosition.Y < display.MonitorArea.Top + SystemParameters.MinimumVerticalDragDistance && currentAbsoluteMousePosition.Y >= display.MonitorArea.Top)
-                    {
                         // The user has snapped the window to the top of the screen it is in, so we maximize it (but only for windows that support resizing)
-                        if (WindowEx.GetAutoWindowResizingEnabled(window))
+                        if (GetAutoWindowResizingEnabled(window))
                         {
                             window.WindowState = WindowState.Maximized;
                             return;
                         }
-                    }
 
             // No special mode interfered, so we simply move the window
             var originalWindowPosition = GetCurrentDragOperationStartWindowPosition(window);
             if (!(originalWindowPosition.X > double.MinValue)) return;
-            window.Top = originalWindowPosition.Y - deltaY;
+            var windowTop = originalWindowPosition.Y - deltaY;
+            if (windowTop < -10) windowTop = -10;
+            window.Top = windowTop;
             window.Left = originalWindowPosition.X - deltaX;
         }
 

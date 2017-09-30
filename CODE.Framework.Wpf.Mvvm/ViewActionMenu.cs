@@ -225,7 +225,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                // We are bound to a property of the items collection, but we do not really care and always go after the items colletion itself to detirmined visibility
+                // We are bound to a property of the items collection, but we do not really care and always go after the items colletion itself to determined visibility
                 if (_items == null) return Visibility.Collapsed;
                 foreach (var item in _items)
                 {

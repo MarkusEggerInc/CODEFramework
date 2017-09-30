@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf"
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
 
     <Style x:Key="Universe-Control-TextBox" TargetType="TextBox">
         <Setter Property="BorderBrush">
@@ -9,6 +10,7 @@
             </Setter.Value>
         </Setter>
         <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Padding" Value="2"/>
         <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
         <Setter Property="Background">
             <Setter.Value>
@@ -20,13 +22,15 @@
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
     </Style>
 
-    <ControlTemplate x:Key="Universe-TextBox-Template" TargetType="TextBoxBase">
+    <ControlTemplate x:Key="Universe-TextBox-Template" TargetType="TextBox">
         <Grid>
             <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" 
                     Background="{TemplateBinding Background}" 
                     SnapsToDevicePixels="True" x:Name="bd">
-                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="2"/>
+                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
             </Border>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="8,4,4,4"
+                       Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
             <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
         </Grid>
         <ControlTemplate.Triggers>
@@ -34,6 +38,13 @@
                 <Setter Property="Background" TargetName="bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
             </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                    <Condition Property="Text" Value=""/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+            </MultiTrigger>
             <Trigger Property="IsFocused" Value="True">
                 <Setter Property="Background">
                     <Setter.Value>
@@ -54,5 +65,82 @@
     </ControlTemplate>
 
     <Style TargetType="TextBox" BasedOn="{StaticResource Universe-Control-TextBox}" />
+    
+    <Style TargetType="controls:FilterHeaderTextBox" BasedOn="{StaticResource Universe-Control-TextBox}">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Smaller}"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" 
+                                Background="{TemplateBinding Background}" SnapsToDevicePixels="True" x:Name="bd">
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="8,4,4,4"
+                                   Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                        <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
+                        <controls:ClearTextButton VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2,2,4,2" x:Name="clearButton">
+                            <controls:ClearTextButton.Template>
+                                <ControlTemplate TargetType="controls:ClearTextButton">
+                                    <Grid>
+                                        <Rectangle Height="16" Width="16" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                            <Rectangle.Fill>
+                                                <DrawingBrush Stretch="Uniform">
+                                                    <DrawingBrush.Drawing>
+                                                        <DrawingGroup>
+                                                            <DrawingGroup.Children>
+                                                                <GeometryDrawing Brush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" Geometry="F1 M 6,0C 9.31371,0 12,2.68629 12,6C 12,9.31371 9.31371,12 6,12C 2.68629,12 -6.35783e-007,9.31371 -6.35783e-007,6C -6.35783e-007,2.68629 2.68629,0 6,0 Z "/>
+                                                                <GeometryDrawing Geometry="F1 M 3,2.99219L 9,8.99219">
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen LineJoin="Round" Brush="#FFFFFFFF"/>
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+                                                                <GeometryDrawing Geometry="F1 M 9,2.99219L 3,8.99219">
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen LineJoin="Round" Brush="#FFFFFFFF"/>
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+                                                            </DrawingGroup.Children>
+                                                        </DrawingGroup>
+                                                    </DrawingBrush.Drawing>
+                                                </DrawingBrush>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                    </Grid>
+                                </ControlTemplate>
+                            </controls:ClearTextButton.Template>
+                        </controls:ClearTextButton>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="">
+                            <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="clearButton"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource CODE.Framework-Application-BackgroundColor1}" Opacity="1"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource CODE.Framework-Application-ForegroundColor1}" Opacity="1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="val:InputValidation.IsValid" Value="False">
+                            <Setter Property="BorderBrush" TargetName="bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                            <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

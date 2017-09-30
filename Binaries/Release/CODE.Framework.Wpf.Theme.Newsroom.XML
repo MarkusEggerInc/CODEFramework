@@ -219,10 +219,10 @@
             <summary>Brush used to draw each dot</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactor">
-            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+            <summary>determines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotSpaceFactorProperty">
-            <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+            <summary>determines the spacing of the individual dots (1 = neutral)</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Theme.Newsroom.Controls.LinearProgressAnimation.DotAnimationSpeedFactor">
             <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>

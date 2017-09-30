@@ -9,6 +9,8 @@
         <Setter Property="ShowInTaskbar" Value="True" />
         <Setter Property="SizeToContent"  Value="WidthAndHeight" />
         <Setter Property="ResizeMode"  Value="NoResize" />
+        <Setter Property="mvvm:Closable.RaiseClosingEvents" Value="True" />
+        <Setter Property="controls:WindowEx.WindowStartupLocationStylable" Value="CenterScreen"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -46,6 +48,7 @@
         <Setter Property="ShowInTaskbar" Value="True" />
         <Setter Property="SizeToContent"  Value="WidthAndHeight" />
         <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="controls:WindowEx.WindowStartupLocationStylable" Value="CenterOwner"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -324,6 +327,7 @@
                 <ControlTemplate TargetType="mvvm:ViewActionToolbarButton">
                     <Grid controls:GridEx.ColumnWidths="Auto,Auto">
                         <Border x:Name="highlight" Background="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush1}" BorderBrush="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush2}" BorderThickness="1" Visibility="Hidden" Grid.ColumnSpan="2" />
+                        <Border x:Name="checked" Background="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush2}" BorderBrush="{DynamicResource CODE.Framework-Application-ToolbarButtonHighlightBrush1}" BorderThickness="1" Visibility="Hidden" Opacity=".5" Grid.ColumnSpan="2" />
                         <mvvm:ThemeIcon IconResourceKey="{Binding Action.BrushResourceKey, RelativeSource={RelativeSource TemplatedParent}}" Height="14" Width="14" x:Name="icon" Margin="4" />
                         <TextBlock Text="{TemplateBinding Title}" FontFamily="{DynamicResource DefaultFont}" FontSize="{DynamicResource FontSize-Normal}" Grid.Column="1" VerticalAlignment="Center" Margin="4,2" x:Name="title" />
                     </Grid>
@@ -337,6 +341,9 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="highlight" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="checked" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

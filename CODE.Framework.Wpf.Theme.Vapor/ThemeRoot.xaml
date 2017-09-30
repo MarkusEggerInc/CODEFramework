@@ -11,8 +11,9 @@
 
         <!-- Standard controls -->
         <ResourceDictionary Source="Vapor-Control-Button.xaml"/>
-        <ResourceDictionary Source="Vapor-Control-CheckBox.xaml"/>
         <ResourceDictionary Source="Vapor-Control-CapsLockWarning.xaml"/>
+        <ResourceDictionary Source="Vapor-Control-CheckBox.xaml"/>
+        <ResourceDictionary Source="Vapor-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Vapor-Control-FlowDocumentReader.xaml"/>
         <ResourceDictionary Source="Vapor-Control-Label.xaml"/>
         <ResourceDictionary Source="Vapor-Control-ListBox.xaml"/>
@@ -25,6 +26,7 @@
         <ResourceDictionary Source="Vapor-Control-TextBox.xaml"/>
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Vapor-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-MultiPanel.xaml"/>
@@ -32,6 +34,7 @@
         <ResourceDictionary Source="Vapor-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Vapor-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Vapor-Layout-Tabs.xaml"/>
 
         <!-- Icons for message boxes-->
         <ResourceDictionary Source="Vapor-MessageBox-Icon-Asterisk.xaml"/>

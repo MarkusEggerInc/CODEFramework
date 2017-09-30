@@ -8,6 +8,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
         <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush2}"/>
         <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}"/>
+        <Setter Property="Orientation" Value="Vertical"/>
         <Setter Property="MaxCloseIconSize" Value="16"/>
         <Setter Property="CloseIcon">
             <Setter.Value>

@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,45 +22,54 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
 using CODE.Framework.Core.Newtonsoft.Serialization;
-using System.Globalization;
 
 namespace CODE.Framework.Core.Newtonsoft.Utilities
 {
     internal class DynamicReflectionDelegateFactory : ReflectionDelegateFactory
     {
-        public static DynamicReflectionDelegateFactory Instance = new DynamicReflectionDelegateFactory();
+        internal static DynamicReflectionDelegateFactory Instance { get; } = new DynamicReflectionDelegateFactory();
 
         private static DynamicMethod CreateDynamicMethod(string name, Type returnType, Type[] parameterTypes, Type owner)
         {
-            var dynamicMethod = !owner.IsInterface() ? new DynamicMethod(name, returnType, parameterTypes, owner, true) : new DynamicMethod(name, returnType, parameterTypes, owner.Module, true);
+            var dynamicMethod = !owner.IsInterface()
+                ? new DynamicMethod(name, returnType, parameterTypes, owner, true)
+                : new DynamicMethod(name, returnType, parameterTypes, owner.Module, true);
+
             return dynamicMethod;
         }
 
-        public override ObjectConstructor<object> CreateParametrizedConstructor(MethodBase method)
+        public override ObjectConstructor<object> CreateParameterizedConstructor(MethodBase method)
         {
-            var dynamicMethod = CreateDynamicMethod(method.ToString(), typeof(object), new[] { typeof(object[]) }, method.DeclaringType);
+            var dynamicMethod = CreateDynamicMethod(method.ToString(), typeof(object), new[] {typeof(object[])}, method.DeclaringType);
             var generator = dynamicMethod.GetILGenerator();
+
             GenerateCreateMethodCallIL(method, generator, 0);
-            return (ObjectConstructor<object>)dynamicMethod.CreateDelegate(typeof(ObjectConstructor<object>));
+
+            return (ObjectConstructor<object>) dynamicMethod.CreateDelegate(typeof(ObjectConstructor<object>));
         }
 
         public override MethodCall<T, object> CreateMethodCall<T>(MethodBase method)
         {
-            var dynamicMethod = CreateDynamicMethod(method.ToString(), typeof(object), new[] { typeof(object), typeof(object[]) }, method.DeclaringType);
+            var dynamicMethod = CreateDynamicMethod(method.ToString(), typeof(object), new[] {typeof(object), typeof(object[])}, method.DeclaringType);
             var generator = dynamicMethod.GetILGenerator();
+
             GenerateCreateMethodCallIL(method, generator, 1);
-            return (MethodCall<T, object>)dynamicMethod.CreateDelegate(typeof(MethodCall<T, object>));
+
+            return (MethodCall<T, object>) dynamicMethod.CreateDelegate(typeof(MethodCall<T, object>));
         }
 
         private void GenerateCreateMethodCallIL(MethodBase method, ILGenerator generator, int argsIndex)
         {
             var args = method.GetParameters();
+
             var argsOk = generator.DefineLabel();
 
             // throw an error if the number of argument values doesn't match method parameters
@@ -75,7 +85,8 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             if (!method.IsConstructor && !method.IsStatic)
                 generator.PushInstance(method.DeclaringType);
 
-            var localVariableCount = 0;
+            var localConvertible = generator.DeclareLocal(typeof(IConvertible));
+            var localObject = generator.DeclareLocal(typeof(object));
 
             for (var i = 0; i < args.Length; i++)
             {
@@ -110,7 +121,7 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                             generator.MarkLabel(skipSettingDefault);
                             generator.PushArrayInstance(argsIndex, i);
                             generator.UnboxIfNeeded(parameterType);
-                            generator.Emit(OpCodes.Stloc, localVariableCount);
+                            generator.Emit(OpCodes.Stloc_S, localVariable);
 
                             // parameter finished, we out!
                             generator.MarkLabel(finishedProcessingParameter);
@@ -118,17 +129,16 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                         else
                         {
                             generator.UnboxIfNeeded(parameterType);
-                            generator.Emit(OpCodes.Stloc, localVariableCount);
+                            generator.Emit(OpCodes.Stloc_S, localVariable);
                         }
                     }
 
                     generator.Emit(OpCodes.Ldloca_S, localVariable);
-
-                    localVariableCount++;
                 }
                 else if (parameterType.IsValueType())
                 {
                     generator.PushArrayInstance(argsIndex, i);
+                    generator.Emit(OpCodes.Stloc_S, localObject);
 
                     // have to check that value type parameters aren't null
                     // otherwise they will error when unboxed
@@ -136,37 +146,77 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                     var finishedProcessingParameter = generator.DefineLabel();
 
                     // check if parameter is not null
+                    generator.Emit(OpCodes.Ldloc_S, localObject);
                     generator.Emit(OpCodes.Brtrue_S, skipSettingDefault);
 
                     // parameter has no value, initialize to default
                     var localVariable = generator.DeclareLocal(parameterType);
                     generator.Emit(OpCodes.Ldloca_S, localVariable);
                     generator.Emit(OpCodes.Initobj, parameterType);
-                    generator.Emit(OpCodes.Ldloc, localVariableCount);
+                    generator.Emit(OpCodes.Ldloc_S, localVariable);
                     generator.Emit(OpCodes.Br_S, finishedProcessingParameter);
 
-                    // parameter has value, get value from array again and unbox
+                    // argument has value, try to convert it to parameter type
                     generator.MarkLabel(skipSettingDefault);
-                    generator.PushArrayInstance(argsIndex, i);
+
+                    if (parameterType.IsPrimitive)
+                    {
+                        // for primitive types we need to handle type widening (e.g. short -> int)
+                        var toParameterTypeMethod = typeof(IConvertible)
+                            .GetMethod("To" + parameterType.Name, new[] {typeof(IFormatProvider)});
+
+                        if (toParameterTypeMethod != null)
+                        {
+                            var skipConvertible = generator.DefineLabel();
+
+                            // check if argument type is an exact match for parameter type
+                            // in this case we may use cheap unboxing instead
+                            generator.Emit(OpCodes.Ldloc_S, localObject);
+                            generator.Emit(OpCodes.Isinst, parameterType);
+                            generator.Emit(OpCodes.Brtrue_S, skipConvertible);
+
+                            // types don't match, check if argument implements IConvertible
+                            generator.Emit(OpCodes.Ldloc_S, localObject);
+                            generator.Emit(OpCodes.Isinst, typeof(IConvertible));
+                            generator.Emit(OpCodes.Stloc_S, localConvertible);
+                            generator.Emit(OpCodes.Ldloc_S, localConvertible);
+                            generator.Emit(OpCodes.Brfalse_S, skipConvertible);
+
+                            // convert argument to parameter type
+                            generator.Emit(OpCodes.Ldloc_S, localConvertible);
+                            generator.Emit(OpCodes.Ldnull);
+                            generator.Emit(OpCodes.Callvirt, toParameterTypeMethod);
+                            generator.Emit(OpCodes.Br_S, finishedProcessingParameter);
+
+                            generator.MarkLabel(skipConvertible);
+                        }
+                    }
+
+                    // we got here because either argument type matches parameter (conversion will succeed),
+                    // or argument type doesn't match parameter, but we're out of options (conversion will fail)
+                    generator.Emit(OpCodes.Ldloc_S, localObject);
+
                     generator.UnboxIfNeeded(parameterType);
 
                     // parameter finished, we out!
                     generator.MarkLabel(finishedProcessingParameter);
-                    localVariableCount++;
                 }
                 else
                 {
                     generator.PushArrayInstance(argsIndex, i);
+
                     generator.UnboxIfNeeded(parameterType);
                 }
             }
 
             if (method.IsConstructor)
-                generator.Emit(OpCodes.Newobj, (ConstructorInfo)method);
+                generator.Emit(OpCodes.Newobj, (ConstructorInfo) method);
             else
-                generator.CallMethod((MethodInfo)method);
+                generator.CallMethod((MethodInfo) method);
 
-            var returnType = method.IsConstructor ? method.DeclaringType : ((MethodInfo)method).ReturnType;
+            var returnType = method.IsConstructor
+                ? method.DeclaringType
+                : ((MethodInfo) method).ReturnType;
 
             if (returnType != typeof(void))
                 generator.BoxIfNeeded(returnType);
@@ -181,22 +231,31 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             var dynamicMethod = CreateDynamicMethod("Create" + type.FullName, typeof(T), ReflectionUtils.EmptyTypes, type);
             dynamicMethod.InitLocals = true;
             var generator = dynamicMethod.GetILGenerator();
-            GenerateCreateDefaultConstructorIL(type, generator);
-            return (Func<T>)dynamicMethod.CreateDelegate(typeof(Func<T>));
+
+            GenerateCreateDefaultConstructorIL(type, generator, typeof(T));
+
+            return (Func<T>) dynamicMethod.CreateDelegate(typeof(Func<T>));
         }
 
-        private void GenerateCreateDefaultConstructorIL(Type type, ILGenerator generator)
+        private void GenerateCreateDefaultConstructorIL(Type type, ILGenerator generator, Type delegateType)
         {
             if (type.IsValueType())
             {
                 generator.DeclareLocal(type);
                 generator.Emit(OpCodes.Ldloc_0);
-                generator.Emit(OpCodes.Box, type);
+
+                // only need to box if the delegate isn't returning the value type
+                if (type != delegateType)
+                    generator.Emit(OpCodes.Box, type);
             }
             else
             {
-                var constructorInfo = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, ReflectionUtils.EmptyTypes, null);
-                if (constructorInfo == null) throw new ArgumentException("Could not get constructor for {0}.".FormatWith(CultureInfo.InvariantCulture, type));
+                var constructorInfo =
+                    type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, ReflectionUtils.EmptyTypes, null);
+
+                if (constructorInfo == null)
+                    throw new ArgumentException("Could not get constructor for {0}.".FormatWith(CultureInfo.InvariantCulture, type));
+
                 generator.Emit(OpCodes.Newobj, constructorInfo);
             }
 
@@ -205,16 +264,19 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         public override Func<T, object> CreateGet<T>(PropertyInfo propertyInfo)
         {
-            var dynamicMethod = CreateDynamicMethod("Get" + propertyInfo.Name, typeof(T), new[] { typeof(object) }, propertyInfo.DeclaringType);
+            var dynamicMethod = CreateDynamicMethod("Get" + propertyInfo.Name, typeof(object), new[] {typeof(T)}, propertyInfo.DeclaringType);
             var generator = dynamicMethod.GetILGenerator();
+
             GenerateCreateGetPropertyIL(propertyInfo, generator);
-            return (Func<T, object>)dynamicMethod.CreateDelegate(typeof(Func<T, object>));
+
+            return (Func<T, object>) dynamicMethod.CreateDelegate(typeof(Func<T, object>));
         }
 
         private void GenerateCreateGetPropertyIL(PropertyInfo propertyInfo, ILGenerator generator)
         {
             var getMethod = propertyInfo.GetGetMethod(true);
-            if (getMethod == null) throw new ArgumentException("Property '{0}' does not have a getter.".FormatWith(CultureInfo.InvariantCulture, propertyInfo.Name));
+            if (getMethod == null)
+                throw new ArgumentException("Property '{0}' does not have a getter.".FormatWith(CultureInfo.InvariantCulture, propertyInfo.Name));
 
             if (!getMethod.IsStatic)
                 generator.PushInstance(propertyInfo.DeclaringType);
@@ -233,10 +295,12 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 return getter;
             }
 
-            var dynamicMethod = CreateDynamicMethod("Get" + fieldInfo.Name, typeof(T), new[] { typeof(object) }, fieldInfo.DeclaringType);
+            var dynamicMethod = CreateDynamicMethod("Get" + fieldInfo.Name, typeof(T), new[] {typeof(object)}, fieldInfo.DeclaringType);
             var generator = dynamicMethod.GetILGenerator();
+
             GenerateCreateGetFieldIL(fieldInfo, generator);
-            return (Func<T, object>)dynamicMethod.CreateDelegate(typeof(Func<T, object>));
+
+            return (Func<T, object>) dynamicMethod.CreateDelegate(typeof(Func<T, object>));
         }
 
         private void GenerateCreateGetFieldIL(FieldInfo fieldInfo, ILGenerator generator)
@@ -257,10 +321,12 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         public override Action<T, object> CreateSet<T>(FieldInfo fieldInfo)
         {
-            var dynamicMethod = CreateDynamicMethod("Set" + fieldInfo.Name, null, new[] { typeof(T), typeof(object) }, fieldInfo.DeclaringType);
+            var dynamicMethod = CreateDynamicMethod("Set" + fieldInfo.Name, null, new[] {typeof(T), typeof(object)}, fieldInfo.DeclaringType);
             var generator = dynamicMethod.GetILGenerator();
+
             GenerateCreateSetFieldIL(fieldInfo, generator);
-            return (Action<T, object>)dynamicMethod.CreateDelegate(typeof(Action<T, object>));
+
+            return (Action<T, object>) dynamicMethod.CreateDelegate(typeof(Action<T, object>));
         }
 
         internal static void GenerateCreateSetFieldIL(FieldInfo fieldInfo, ILGenerator generator)
@@ -270,16 +336,23 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
             generator.Emit(OpCodes.Ldarg_1);
             generator.UnboxIfNeeded(fieldInfo.FieldType);
-            generator.Emit(!fieldInfo.IsStatic ? OpCodes.Stfld : OpCodes.Stsfld, fieldInfo);
+
+            if (!fieldInfo.IsStatic)
+                generator.Emit(OpCodes.Stfld, fieldInfo);
+            else
+                generator.Emit(OpCodes.Stsfld, fieldInfo);
+
             generator.Return();
         }
 
         public override Action<T, object> CreateSet<T>(PropertyInfo propertyInfo)
         {
-            var dynamicMethod = CreateDynamicMethod("Set" + propertyInfo.Name, null, new[] { typeof(T), typeof(object) }, propertyInfo.DeclaringType);
+            var dynamicMethod = CreateDynamicMethod("Set" + propertyInfo.Name, null, new[] {typeof(T), typeof(object)}, propertyInfo.DeclaringType);
             var generator = dynamicMethod.GetILGenerator();
+
             GenerateCreateSetPropertyIL(propertyInfo, generator);
-            return (Action<T, object>)dynamicMethod.CreateDelegate(typeof(Action<T, object>));
+
+            return (Action<T, object>) dynamicMethod.CreateDelegate(typeof(Action<T, object>));
         }
 
         internal static void GenerateCreateSetPropertyIL(PropertyInfo propertyInfo, ILGenerator generator)

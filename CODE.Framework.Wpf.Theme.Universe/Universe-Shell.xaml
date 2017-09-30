@@ -406,6 +406,7 @@
         <Setter Property="c1:WindowEx.AutoWindowDragEnabled" Value="True" />
         <Setter Property="ShowInTaskbar" Value="True" />
         <Setter Property="SizeToContent"  Value="WidthAndHeight" />
+        <Setter Property="c1:WindowEx.WindowStartupLocationStylable" Value="CenterOwner"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
@@ -451,6 +452,8 @@
         <Setter Property="c1:WindowEx.AutoWindowDragEnabled" Value="True" />
         <Setter Property="c1:WindowEx.AutoWindowMaximizeEnabled" Value="True" />
         <Setter Property="c1:WindowEx.AutoWindowResizingEnabled" Value="True"/>
+        <Setter Property="mvvm:Closable.RaiseClosingEvents" Value="True" />
+        <Setter Property="c1:WindowEx.WindowStartupLocationStylable" Value="CenterScreen"/>
     </Style>
 
     <ControlTemplate TargetType="Window" x:Key="Universe-TopLevelWindow-Template">
@@ -463,7 +466,7 @@
             <AdornerDecorator Grid.Row="1">
                 <ContentPresenter Margin="20,10" />
             </AdornerDecorator>
-            <mvvm:ModelStatusGrid Model="{Binding}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="8" x:Name="modelStatus" Grid.Row="1">
+            <mvvm:ModelStatusGrid Model="{Binding}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="modelStatus" Grid.Row="1">
                 <c2:CircularProgressAnimation IsActive="True" Height="50" Width="50" DotDiameter="5" HorizontalAlignment="Center" VerticalAlignment="Center"
                                               DotBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}"
                                               Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}" />

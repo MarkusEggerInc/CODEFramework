@@ -1950,6 +1950,14 @@
             Internal list of defined maps
             </summary>
         </member>
+        <member name="P:CODE.Framework.Core.Utilities.Mapper.Maps">
+            <summary>
+            A list of all maps.
+            </summary>
+            <value>
+            The maps.
+            </value>
+        </member>
         <member name="P:CODE.Framework.Core.Utilities.Mapper.MilosDefaultMaps">
             <summary>
             Provides a list of default maps as typically used by Milos
@@ -1960,7 +1968,7 @@
             PKString -> Id
             PKInteger -> Id
             </remarks>
-            <value>The milos default maps.</value>
+            <value>The Milos default maps.</value>
         </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.AddMap(System.String,System.String)">
             <summary>
@@ -1984,7 +1992,7 @@
             <param name="destination">The destination.</param>
             <remarks>
             This is identical to the MapObjects() instance method.
-            This method is simply provided for concenience.
+            This method is simply provided for convenience.
             </remarks>
             <returns></returns>
         </member>
@@ -1998,7 +2006,7 @@
             <param name="options">The options.</param>
             <remarks>
             This is identical to the MapObjects() instance method.
-            This method is simply provided for concenience.
+            This method is simply provided for convenience.
             </remarks>
             <returns>True if map operation is a success</returns>
         </member>
@@ -2021,9 +2029,16 @@
             <param name="options">The options.</param>
             <returns>True if successful</returns>
         </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.PropertyTypeIsNumeric(System.Type)">
+            <summary>
+            Returns true if the property's type is some numeric type
+            </summary>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.Collections(System.Collections.IList,System.Collections.IList,System.String,System.Type)">
             <summary>
-            Maps collections and all the objets in the collection
+            Maps collections and all the objects in the collection
             </summary>
             <param name="source">The source.</param>
             <param name="destination">The destination.</param>
@@ -2033,7 +2048,7 @@
         </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.Collections(System.Collections.IList,System.Collections.IList,System.String,System.Type,CODE.Framework.Core.Utilities.MappingOptions)">
             <summary>
-            Maps collections and all the objets in the collection
+            Maps collections and all the objects in the collection
             </summary>
             <param name="source">The source.</param>
             <param name="destination">The destination.</param>
@@ -2058,6 +2073,14 @@
             <param name="options">Mapping options</param>
             <returns>True if the operation is a success</returns>
         </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.SetPrimaryKeyValue(System.Object,System.Object,System.String)">
+            <summary>
+            Sets the primary key value.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="destination">The destination.</param>
+            <param name="sourceKeyFieldName">Name of the source key field.</param>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.GetSourceKeyField(CODE.Framework.Core.Utilities.MapKeyType)">
             <summary>
             Attempts to find the key property name on a source object
@@ -2081,7 +2104,7 @@
         </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.MapCollections(System.Collections.IList,System.Collections.IList,System.String,System.Type)">
             <summary>
-            Maps collections and all the objets in the collection
+            Maps collections and all the objects in the collection
             </summary>
             <param name="source">The source.</param>
             <param name="destination">The destination.</param>
@@ -2110,6 +2133,24 @@
             <param name="sourceProperty">The source property.</param>
             <param name="options">The options.</param>
         </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.MapNumericToEnum(System.Object,System.Object,System.Reflection.PropertyInfo,System.Reflection.PropertyInfo)">
+            <summary>
+            Maps the numeric to enum.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="destination">The destination.</param>
+            <param name="destinationProperty">The destination property.</param>
+            <param name="sourceProperty">The source property.</param>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.MapEnumToNumeric(System.Object,System.Object,System.Reflection.PropertyInfo,System.Reflection.PropertyInfo)">
+            <summary>
+            Maps the enum to numeric.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="destination">The destination.</param>
+            <param name="destinationProperty">The destination property.</param>
+            <param name="sourceProperty">The source property.</param>
+        </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.UpdateEnumIfNeeded(System.Object,System.Reflection.PropertyInfo,System.Object,System.Object)">
             <summary>
             Updates the enum if needed.
@@ -2130,7 +2171,7 @@
         </member>
         <member name="M:CODE.Framework.Core.Utilities.Mapper.SetValueOnProperty(System.Object,System.Reflection.PropertyInfo,System.Object)">
             <summary>
-            Sets the given value to the given propery.
+            Sets the given value to the given property.
             </summary>
             <param name="parentObject"></param>
             <param name="property"></param>
@@ -2349,9 +2390,94 @@
             <param name="numberOfRowsToMap">Number of rows to map (start index = 20, number of rows = 10 means that rows 21-30 will be mapped)</param>
             <returns></returns>
         </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.Compare(System.Object,System.Object)">
+            <summary>
+            Attempts to compare all the read/write properties in the first object
+            and the properties in the second object and return those that don't match
+            </summary>
+            <param name="first">The first object.</param>
+            <param name="second">The second object.</param>
+            <remarks>
+            This is identical to the CompareObjects() instance method.
+            This method is simply provided for convenience.
+            </remarks>
+            <returns>A list of all the properties that don't match</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.Compare(System.Object,System.Object,CODE.Framework.Core.Utilities.MappingOptions)">
+            <summary>
+            Attempts to compare all the read/write properties in the first object
+            and the properties in the second object and return those that don't 
+            match based on the options provided.
+            </summary>
+            <param name="first">The source.</param>
+            <param name="second">The destination.</param>
+            <param name="options">The options.</param>
+            <remarks>
+            This is identical to the CompareObjects() instance method.
+            This method is simply provided for convenience.
+            </remarks>
+            <returns>A list of all the properties that don't match</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.CompareObjects(System.Object,System.Object)">
+            <summary>
+            Attempts to compare all the read/write properties in the first object
+            to the properties in the second object and returns those that
+            that don't match
+            </summary>
+            <param name="first">The first object.</param>
+            <param name="second">The second object.</param>
+            <returns>A list of all the properties that don't match</returns>
+        </member>
+        <member name="M:CODE.Framework.Core.Utilities.Mapper.CompareObjects(System.Object,System.Object,CODE.Framework.Core.Utilities.MappingOptions,System.Int32)">
+            <summary>
+            Attempts to compare all the read/write properties in the 
+            first object with the properties in the second object and
+            returns a list of those that don't match and info on why.
+            </summary>
+            <param name="first">The source.</param>
+            <param name="second">The destination.</param>
+            <param name="options">Options - but the only one 
+            supported is the ExcludedFields at this time.</param>
+            <param name="level">This is only used internally and tracks how many levels down the conflict may be.</param>
+            <returns>A list of all the properties that don't match</returns>
+        </member>
         <member name="T:CODE.Framework.Core.Utilities.Mapper.ReflectionHelper">
             <summary>
             Class used internally to aid in reflection tasks
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Core.Utilities.MappperCompareResults">
+            <summary>
+            Used as a return type for Mapper.Compare()
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MappperCompareResults.Conflict">
+            <summary>
+            If there is an error or other message
+            (other than not equal) this should explain
+            the issue.  Most commonly, it's for data
+            types that don't agree....
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MappperCompareResults.Level">
+            <summary>
+            This can be used when processing lists/collections
+            of objects....
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MappperCompareResults.Property">
+            <summary>
+            Name of the property that does not compare
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MappperCompareResults.ValueFirstObject">
+            <summary>
+            The value of the property in the first object
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MappperCompareResults.ValueSecondObject">
+            <summary>
+            The value of the property in the 2nd object 
             </summary>
         </member>
         <member name="T:CODE.Framework.Core.Utilities.MapKeyType">
@@ -2455,7 +2581,7 @@
         </member>
         <member name="P:CODE.Framework.Core.Utilities.MappingOptions.MatchEnumCase">
             <summary>
-            Indicates wheter auto-map enum attempts shall be case sensitive or not
+            Indicates whether auto-map enum attempts shall be case sensitive or not
             </summary>
             <value><c>true</c> if case sensitive, otherwise, <c>false</c>.</value>
         </member>
@@ -2483,17 +2609,31 @@
             Direction of the mapping operation
             </summary>
             <remarks>
-            Forward = Source to destinction
+            Forward = Source to destination
             Backward = Destination to source
             </remarks>
             <value>The map direction.</value>
         </member>
         <member name="P:CODE.Framework.Core.Utilities.MappingOptions.MapFunctions">
             <summary>
-            A list of functions that get called for mapped objets.
+            A list of functions that get called for mapped objects.
             For iterative maps (tables,...), map functions are called for each record.
             </summary>
             <value>The map functions.</value>
+            <remarks>
+            Parameter 1 = source object (forward map, otherwise destination)
+            Parameter 2 = destination object (forward map, otherwise source)
+            Parameter 3 = direction
+            Return value = true if successful
+            </remarks>
+        </member>
+        <member name="P:CODE.Framework.Core.Utilities.MappingOptions.MapFunctionsFiltered">
+            <summary>
+            A list of functions that get called for mapped objects.
+            Maps are only called for properties that match the key in the dictionary.
+            For iterative maps (tables,...), map functions are called for each record.
+            </summary>
+            <value>The map functions. </value>
             <remarks>
             Parameter 1 = source object (forward map, otherwise destination)
             Parameter 2 = destination object (forward map, otherwise source)

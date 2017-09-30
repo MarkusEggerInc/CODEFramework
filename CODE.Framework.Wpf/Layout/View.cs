@@ -34,7 +34,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <remarks>
         ///     This attached property can be attached to any UI Element to define an element's logical minimum width. The
         ///     width is typically calculated on the current font's width based on the letter 'N'. So a width of 10 can typically
-        ///     accomodate 10 'N' letters. Note that this may vary with different skins.
+        ///     accommodate 10 'N' letters. Note that this may vary with different skins.
         /// </remarks>
         public static readonly DependencyProperty MinWidthExProperty = DependencyProperty.RegisterAttached("MinWidthEx", typeof (double), typeof (SimpleView), new PropertyMetadata(double.NaN, OnMinWidthExChanged));
 
@@ -144,25 +144,25 @@ namespace CODE.Framework.Wpf.Layout
         /// <summary>Attached property used to define column breaks</summary>
         public static readonly DependencyProperty ColumnBreakProperty = DependencyProperty.RegisterAttached("ColumnBreak", typeof (bool), typeof (SimpleView), new PropertyMetadata(false, (s, e) => InvalidateAllVisuals(s)));
 
-        /// <summary>Property used to detirmine group break (adds a space between elements)</summary>
+        /// <summary>Property used to determine group break (adds a space between elements)</summary>
         public static readonly DependencyProperty GroupBreakProperty = DependencyProperty.RegisterAttached("GroupBreak", typeof (bool), typeof (SimpleView), new PropertyMetadata(false, (s, e) => InvalidateAllVisuals(s)));
 
         /// <summary>Group caption/title</summary>
         public static readonly DependencyProperty GroupTitleProperty = DependencyProperty.RegisterAttached("GroupTitle", typeof (string), typeof (SimpleView), new PropertyMetadata("", (s, e) => InvalidateAllVisuals(s)));
 
         /// <summary>
-        ///     Property used to detirmine whether the control is to be seen as a standard flow element, or whether it is to
+        ///     Property used to determine whether the control is to be seen as a standard flow element, or whether it is to
         ///     be put together with the previous element
         /// </summary>
         public static readonly DependencyProperty FlowsWithPreviousProperty = DependencyProperty.RegisterAttached("FlowsWithPrevious", typeof (bool), typeof (SimpleView), new PropertyMetadata(false, (s, e) => InvalidateAllVisuals(s)));
 
-        /// <summary>Property used to detirmine whether a line break shall be forced before the control</summary>
+        /// <summary>Property used to determine whether a line break shall be forced before the control</summary>
         public static readonly DependencyProperty LineBreakProperty = DependencyProperty.RegisterAttached("LineBreak", typeof (bool), typeof (SimpleView), new PropertyMetadata(false, (s, e) => InvalidateAllVisuals(s)));
 
-        /// <summary>Property used to detirmine whether the control shall span the complete available width</summary>
+        /// <summary>Property used to determine whether the control shall span the complete available width</summary>
         public static readonly DependencyProperty SpanFullWidthProperty = DependencyProperty.RegisterAttached("SpanFullWidth", typeof (bool), typeof (SimpleView), new PropertyMetadata(false, (s, e) => InvalidateAllVisuals(s)));
 
-        /// <summary>Property used to detirmine group break (adds a space between elements)</summary>
+        /// <summary>Property used to determine group break (adds a space between elements)</summary>
         public static readonly DependencyProperty UIElementTypeProperty = DependencyProperty.RegisterAttached("UIElementType", typeof (UIElementTypes), typeof (SimpleView), new PropertyMetadata(UIElementTypes.Primary, (s, e) => InvalidateAllVisuals(s)));
 
         /// <summary>Defines the title of the UI element</summary>
@@ -844,7 +844,7 @@ namespace CODE.Framework.Wpf.Layout
         }
 
         /// <summary>
-        ///     Property used to detirmine whether the control is to be seen as a standard flow element, or whether it is to
+        ///     Property used to determine whether the control is to be seen as a standard flow element, or whether it is to
         ///     be put together with the previous element
         /// </summary>
         public static bool GetFlowsWithPrevious(DependencyObject obj)
@@ -853,7 +853,7 @@ namespace CODE.Framework.Wpf.Layout
         }
 
         /// <summary>
-        ///     Property used to detirmine whether the control is to be seen as a standard flow element, or whether it is to
+        ///     Property used to determine whether the control is to be seen as a standard flow element, or whether it is to
         ///     be put together with the previous element
         /// </summary>
         public static void SetFlowsWithPrevious(DependencyObject obj, bool value)
@@ -861,25 +861,25 @@ namespace CODE.Framework.Wpf.Layout
             obj.SetValue(FlowsWithPreviousProperty, value);
         }
 
-        /// <summary>Property used to detirmine whether a line break shall be forced before the control</summary>
+        /// <summary>Property used to determine whether a line break shall be forced before the control</summary>
         public static bool GetLineBreak(DependencyObject obj)
         {
             return (bool) obj.GetValue(LineBreakProperty);
         }
 
-        /// <summary>Property used to detirmine whether a line break shall be forced before the control</summary>
+        /// <summary>Property used to determine whether a line break shall be forced before the control</summary>
         public static void SetLineBreak(DependencyObject obj, bool value)
         {
             obj.SetValue(LineBreakProperty, value);
         }
 
-        /// <summary>Property used to detirmine whether the control shall span the complete available width</summary>
+        /// <summary>Property used to determine whether the control shall span the complete available width</summary>
         public static bool GetSpanFullWidth(DependencyObject obj)
         {
             return (bool) obj.GetValue(SpanFullWidthProperty);
         }
 
-        /// <summary>Property used to detirmine whether the control shall span the complete available width</summary>
+        /// <summary>Property used to determine whether the control shall span the complete available width</summary>
         public static void SetSpanFullWidth(DependencyObject obj, bool value)
         {
             obj.SetValue(SpanFullWidthProperty, value);

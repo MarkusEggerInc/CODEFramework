@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -33,36 +35,19 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 {
     internal abstract class JsonSerializerInternalBase
     {
-        private class ReferenceEqualsEqualityComparer : IEqualityComparer<object>
-        {
-            bool IEqualityComparer<object>.Equals(object x, object y)
-            {
-                return ReferenceEquals(x, y);
-            }
-
-            int IEqualityComparer<object>.GetHashCode(object obj)
-            {
-                // put objects in a bucket based on their reference
-                return RuntimeHelpers.GetHashCode(obj);
-            }
-        }
-
-        private ErrorContext _currentErrorContext;
-        private BidirectionalDictionary<string, object> _mappings;
-        private readonly bool _serializing;
-
         internal readonly JsonSerializer Serializer;
         internal readonly ITraceWriter TraceWriter;
 
+        private ErrorContext _currentErrorContext;
+        private BidirectionalDictionary<string, object> _mappings;
+        protected JsonSerializerProxy InternalSerializer;
+
         protected JsonSerializerInternalBase(JsonSerializer serializer)
         {
-            ValidationUtils.ArgumentNotNull(serializer, "serializer");
+            ValidationUtils.ArgumentNotNull(serializer, nameof(serializer));
 
             Serializer = serializer;
             TraceWriter = serializer.TraceWriter;
-
-            // kind of a hack but meh. might clean this up later
-            _serializing = (GetType() == typeof(JsonSerializerInternalWriter));
         }
 
         internal BidirectionalDictionary<string, object> DefaultReferenceMappings
@@ -71,7 +56,14 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             {
                 // override equality comparer for object key dictionary
                 // object will be modified as it deserializes and might have mutable hashcode
-                return _mappings ?? (_mappings = new BidirectionalDictionary<string, object>(EqualityComparer<string>.Default, new ReferenceEqualsEqualityComparer(), "A different value already has the Id '{0}'.", "A different Id has already been assigned for value '{0}'."));
+                if (_mappings == null)
+                    _mappings = new BidirectionalDictionary<string, object>(
+                        EqualityComparer<string>.Default,
+                        new ReferenceEqualsEqualityComparer(),
+                        "A different value already has the Id '{0}'.",
+                        "A different Id has already been assigned for value '{0}'. This error may be caused by an object being reused multiple times during deserialization and can be fixed with the setting ObjectCreationHandling.Replace.");
+
+                return _mappings;
             }
         }
 
@@ -79,13 +71,18 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         {
             if (_currentErrorContext == null)
                 _currentErrorContext = new ErrorContext(currentObject, member, path, error);
-            if (_currentErrorContext.Error != error) throw new InvalidOperationException("Current error context error is different to requested error.");
+
+            if (_currentErrorContext.Error != error)
+                throw new InvalidOperationException("Current error context error is different to requested error.");
+
             return _currentErrorContext;
         }
 
         protected void ClearErrorContext()
         {
-            if (_currentErrorContext == null) throw new InvalidOperationException("Could not clear error context. Error context is already null.");
+            if (_currentErrorContext == null)
+                throw new InvalidOperationException("Could not clear error context. Error context is already null.");
+
             _currentErrorContext = null;
         }
 
@@ -98,7 +95,8 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 // only write error once
                 errorContext.Traced = true;
 
-                var message = (_serializing) ? "Error serializing" : "Error deserializing";
+                // kind of a hack but meh. might clean this up later
+                var message = GetType() == typeof(JsonSerializerInternalWriter) ? "Error serializing" : "Error deserializing";
                 if (contract != null)
                     message += " " + contract.UnderlyingType;
                 message += ". " + ex.Message;
@@ -118,6 +116,20 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 Serializer.OnError(new ErrorEventArgs(currentObject, errorContext));
 
             return errorContext.Handled;
+        }
+
+        private class ReferenceEqualsEqualityComparer : IEqualityComparer<object>
+        {
+            bool IEqualityComparer<object>.Equals(object x, object y)
+            {
+                return ReferenceEquals(x, y);
+            }
+
+            int IEqualityComparer<object>.GetHashCode(object obj)
+            {
+                // put objects in a bucket based on their reference
+                return RuntimeHelpers.GetHashCode(obj);
+            }
         }
     }
 }

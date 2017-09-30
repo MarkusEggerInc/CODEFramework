@@ -238,6 +238,61 @@ namespace CODE.Framework.Wpf.Mvvm
                 handler.CloseViewForModel(model);
         }
 
+        /// <summary>Activates (shows) the view associated with the provided model.</summary>
+        /// <param name="model">Model associated with the view that is to be activate</param>
+        /// <remarks>This only works if the model is only used with a single view. This will not work (or work unpredictably) for models that are shared across views.</remarks>
+        public static void ActivateViewForModel(object model)
+        {
+            if (_viewHandlers == null) return;
+
+            var handlers = new IViewHandler[_viewHandlers.Values.Count];
+            _viewHandlers.Values.CopyTo(handlers, 0);
+            foreach (var handler in handlers)
+                handler.ActivateViewForModel(model);
+        }
+
+        /// <summary>
+        /// Returns the first instance of a model instance of the specified type (or null, if none is instantiated)
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>Model, or null</returns>
+        public static TModel GetOpenModel<TModel>() where TModel : class
+        {
+            if (_viewHandlers == null) return default(TModel);
+
+            var handlers = new IViewHandler[_viewHandlers.Values.Count];
+            _viewHandlers.Values.CopyTo(handlers, 0);
+            foreach (var handler in handlers)
+            {
+                var openModel = handler.GetOpenModel<TModel>();
+                if (openModel != null)
+                    return openModel;
+            }
+            
+            return default(TModel);
+        }
+
+        /// <summary>
+        /// Returns the first instance of a model instance of the specified type (or null, if none is instantiated)
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>Model, or null</returns>
+        public static TModel GetOpenModel<TModel>(Func<TModel, bool> selector) where TModel : class
+        {
+            if (_viewHandlers == null) return default(TModel);
+
+            var handlers = new IViewHandler[_viewHandlers.Values.Count];
+            _viewHandlers.Values.CopyTo(handlers, 0);
+            foreach (var handler in handlers)
+            {
+                var openModel = handler.GetOpenModel(selector);
+                if (openModel != null)
+                    return openModel;
+            }
+
+            return default(TModel);
+        }
+
         /// <summary>
         /// Closes all currently open views.
         /// </summary>
@@ -598,6 +653,16 @@ namespace CODE.Framework.Wpf.Mvvm
         {
             var viewName = "CODEFrameworkStandardView" + standardView;
             return View(viewName, model, level, forceNewShell);
+        }
+
+        /// <summary>
+        /// Activates (shows) an existing view
+        /// </summary>
+        /// <param name="model">The model that is associated with the view that is to be activated.</param>
+        /// <returns></returns>
+        protected virtual ExistingViewResult ActivateView(object model)
+        {
+            return new ExistingViewResult {Model = model};
         }
 
         /// <summary>Returns a named document (view) associated with the current action and assigns the model</summary>
@@ -1336,6 +1401,19 @@ namespace CODE.Framework.Wpf.Mvvm
         public event EventHandler<ViewResultEventArgs> ViewClosed;
 
         /// <summary>
+        /// Method used to raise the BeforeViewClosed event
+        /// </summary>
+        /// <returns>True, if closing has been canceled</returns>
+        public bool RaiseBeforeViewClosed()
+        {
+            var closable = Model as IClosable;
+            if (closable != null)
+                return closable.RaiseBeforeClosingEvent();
+
+            return false;
+        }
+
+        /// <summary>
         /// Method used to raise the ViewClosed event
         /// </summary>
         public void RaiseViewClosed()
@@ -1411,6 +1489,13 @@ namespace CODE.Framework.Wpf.Mvvm
 
         /// <summary>Source the view originated with</summary>
         public string ViewSource { get; set; }
+    }
+
+    /// <summary>Action result used to indicate the desire to activate an existing view/model</summary>
+    public class ExistingViewResult : ViewResult
+    {
+        /// <summary>Model object</summary>
+        public object Model { get; set; }
     }
 
     /// <summary>This class can be used to provide event handlers/sinks that are later attached to view results</summary>
@@ -1634,6 +1719,11 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <returns>True if successful</returns>
         bool CloseViewForModel(object model);
 
+        /// <summary>This method is invoked when a view that is associated with a certain model should be activated/shown</summary>
+        /// <param name="model">Model</param>
+        /// <returns>True if successful</returns>
+        bool ActivateViewForModel(object model);
+
         /// <summary>
         /// This method closes all currently open views
         /// </summary>
@@ -1644,6 +1734,23 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="model">Model</param>
         /// <returns>Document if found (null otherwise)</returns>
         object GetViewForModel(object model);
+
+        /// <summary>
+        /// Returns true, if a model instance of the specified type is already open
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>A reference to the open model instance</returns>
+        TModel GetOpenModel<TModel>() where TModel : class;
+
+        /// <summary>
+        /// Returns true, if a model instance of the specified type and selector criteria is already open
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="selector">Selector used to pick an appropriate model instance</param>
+        /// <returns>
+        /// A reference to the open model instance
+        /// </returns>
+        TModel GetOpenModel<TModel>(Func<TModel, bool> selector) where TModel : class;
     }
 
     /// <summary>MessageBox button options</summary>

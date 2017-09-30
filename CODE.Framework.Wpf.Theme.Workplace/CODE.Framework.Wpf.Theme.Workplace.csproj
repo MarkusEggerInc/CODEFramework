@@ -54,7 +54,6 @@
     <Compile Include="..\_SharedFiles\Properties\AssemblyInfoShared.cs">
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
-    <Compile Include="Classes\ClearTextButton.cs" />
     <Compile Include="Classes\ScrollButtons.cs" />
     <Compile Include="Classes\ToUpperTextConverter.cs" />
     <Compile Include="Classes\WorkplaceStandardFeatures.cs" />
@@ -100,6 +99,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Workplace-Control-CapsLockWarning.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Workplace-Control-ComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -192,6 +195,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Workplace-Layout-BladePanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Workplace-Layout-Tabs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

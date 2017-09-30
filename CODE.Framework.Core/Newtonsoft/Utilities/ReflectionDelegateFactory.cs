@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -35,23 +37,31 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         public Func<T, object> CreateGet<T>(MemberInfo memberInfo)
         {
             var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null) return CreateGet<T>(propertyInfo);
+            if (propertyInfo != null)
+                return CreateGet<T>(propertyInfo);
+
             var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null) return CreateGet<T>(fieldInfo);
+            if (fieldInfo != null)
+                return CreateGet<T>(fieldInfo);
+
             throw new Exception("Could not create getter for {0}.".FormatWith(CultureInfo.InvariantCulture, memberInfo));
         }
 
         public Action<T, object> CreateSet<T>(MemberInfo memberInfo)
         {
             var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null) return CreateSet<T>(propertyInfo);
+            if (propertyInfo != null)
+                return CreateSet<T>(propertyInfo);
+
             var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null) return CreateSet<T>(fieldInfo);
+            if (fieldInfo != null)
+                return CreateSet<T>(fieldInfo);
+
             throw new Exception("Could not create setter for {0}.".FormatWith(CultureInfo.InvariantCulture, memberInfo));
         }
 
         public abstract MethodCall<T, object> CreateMethodCall<T>(MethodBase method);
-        public abstract ObjectConstructor<object> CreateParametrizedConstructor(MethodBase method);
+        public abstract ObjectConstructor<object> CreateParameterizedConstructor(MethodBase method);
         public abstract Func<T> CreateDefaultConstructor<T>(Type type);
         public abstract Func<T, object> CreateGet<T>(PropertyInfo propertyInfo);
         public abstract Func<T, object> CreateGet<T>(FieldInfo fieldInfo);

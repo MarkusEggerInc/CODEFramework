@@ -133,7 +133,7 @@ namespace CODE.Framework.Services.Server
             Type contractType;
             var interfaces = serviceType.GetInterfaces();
             if (interfaces.Length == 1) contractType = interfaces[0];
-            else throw new Core.Exceptions.IndexOutOfBoundsException("Service contract cannot be automatically detirmined for the specified service type.");
+            else throw new Core.Exceptions.IndexOutOfBoundsException("Service contract cannot be automatically determined for the specified service type.");
             return contractType;
         }
 
@@ -562,7 +562,7 @@ namespace CODE.Framework.Services.Server
         }
 
         /// <summary>
-        /// Detirmines the namespace for a given type
+        /// determines the namespace for a given type
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
         /// <param name="contractType">Type of the contract.</param>

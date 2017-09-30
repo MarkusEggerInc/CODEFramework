@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,14 +22,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
-using CODE.Framework.Core.Newtonsoft.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using CODE.Framework.Core.Newtonsoft.Serialization;
 
 namespace CODE.Framework.Core.Newtonsoft.Utilities
 {
@@ -41,23 +43,24 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
     internal class ReflectionObject
     {
-        public ObjectConstructor<object> Creator { get; private set; }
-        public IDictionary<string, ReflectionMember> Members { get; private set; }
-
-        public ReflectionObject()
+        private ReflectionObject(ObjectConstructor<object> creator)
         {
             Members = new Dictionary<string, ReflectionMember>();
+            Creator = creator;
         }
+
+        public ObjectConstructor<object> Creator { get; }
+        public IDictionary<string, ReflectionMember> Members { get; }
 
         public object GetValue(object target, string member)
         {
-            Func<object, object> getter = Members[member].Getter;
+            var getter = Members[member].Getter;
             return getter(target);
         }
 
         public void SetValue(object target, string member, object value)
         {
-            Action<object, object> setter = Members[member].Setter;
+            var setter = Members[member].Setter;
             setter(target, value);
         }
 
@@ -73,38 +76,47 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         public static ReflectionObject Create(Type t, MethodBase creator, params string[] memberNames)
         {
-            var d = new ReflectionObject();
             var delegateFactory = JsonTypeReflector.ReflectionDelegateFactory;
 
+            ObjectConstructor<object> creatorConstructor = null;
             if (creator != null)
-                d.Creator = delegateFactory.CreateParametrizedConstructor(creator);
+            {
+                creatorConstructor = delegateFactory.CreateParameterizedConstructor(creator);
+            }
             else
             {
                 if (ReflectionUtils.HasDefaultConstructor(t, false))
                 {
                     var ctor = delegateFactory.CreateDefaultConstructor<object>(t);
-                    d.Creator = args => ctor();
+
+                    creatorConstructor = args => ctor();
                 }
             }
+
+            var d = new ReflectionObject(creatorConstructor);
 
             foreach (var memberName in memberNames)
             {
                 var members = t.GetMember(memberName, BindingFlags.Instance | BindingFlags.Public);
-                if (members.Length != 1) throw new ArgumentException("Expected a single member with the name '{0}'.".FormatWith(CultureInfo.InvariantCulture, memberName));
+                if (members.Length != 1)
+                    throw new ArgumentException("Expected a single member with the name '{0}'.".FormatWith(CultureInfo.InvariantCulture, memberName));
 
                 var member = members.Single();
+
                 var reflectionMember = new ReflectionMember();
+
                 switch (member.MemberType())
                 {
                     case MemberTypes.Field:
                     case MemberTypes.Property:
                         if (ReflectionUtils.CanReadMemberValue(member, false))
                             reflectionMember.Getter = delegateFactory.CreateGet<object>(member);
+
                         if (ReflectionUtils.CanSetMemberValue(member, false, false))
                             reflectionMember.Setter = delegateFactory.CreateSet<object>(member);
                         break;
                     case MemberTypes.Method:
-                        var method = (MethodInfo)member;
+                        var method = (MethodInfo) member;
                         if (method.IsPublic)
                         {
                             var parameters = method.GetParameters();
@@ -126,9 +138,12 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
                 if (ReflectionUtils.CanReadMemberValue(member, false))
                     reflectionMember.Getter = delegateFactory.CreateGet<object>(member);
+
                 if (ReflectionUtils.CanSetMemberValue(member, false, false))
                     reflectionMember.Setter = delegateFactory.CreateSet<object>(member);
+
                 reflectionMember.MemberType = ReflectionUtils.GetMemberUnderlyingType(member);
+
                 d.Members[memberName] = reflectionMember;
             }
 

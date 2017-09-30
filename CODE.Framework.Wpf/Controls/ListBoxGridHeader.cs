@@ -49,10 +49,51 @@ namespace CODE.Framework.Wpf.Controls
         {
             var header = o as ListBoxGridHeader;
             if (header == null) return;
-            header.RepopulateHeaders();
+            header.TriggerConsolidatedColumnRepopulate();
             var columns = args.NewValue as ListColumnsCollection;
             if (columns == null) return;
-            columns.CollectionChanged += (o2, a) => header.RepopulateHeaders();
+            columns.CollectionChangedDelayed -= header.HandleColumnCollectionChanged;
+            columns.CollectionChangedDelayed += header.HandleColumnCollectionChanged;
+            foreach (var column in columns)
+            {
+                column.VisibilityChanged -= header.HandleColumnVisibilityChanged;
+                column.VisibilityChanged += header.HandleColumnVisibilityChanged;
+            }
+            columns.PropertyChangedPublic += (s, e) =>
+            {
+                if (e.PropertyName == "ShowHeaders")
+                    header.TriggerConsolidatedColumnRepopulate();
+            };
+        }
+
+        private void HandleColumnVisibilityChanged(object sender, EventArgs e)
+        {
+            TriggerConsolidatedColumnRepopulate();
+        }
+
+        private void HandleColumnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RepopulateHeaders(); // This handler is already triggered delayed, so we can go right ahead
+        }
+
+        private DispatcherTimer _delayTimer;
+
+        private void TriggerConsolidatedColumnRepopulate()
+        {
+            // This timer fires with a delay of 25ms. This means that if this method gets called often on a tight loop, 
+            // it will always reset the timer so it only fires once the last call happened and 25ms have gone by.
+            if (_delayTimer == null)
+                _delayTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(25), DispatcherPriority.Normal, (s, e) =>
+                    {
+                        _delayTimer.IsEnabled = false;
+                        RepopulateHeaders();
+                    }, Application.Current.Dispatcher)
+                    {IsEnabled = false};
+            else
+                _delayTimer.IsEnabled = false; // Resets the timer
+
+            // Triggering the next timer run
+            _delayTimer.IsEnabled = true;
         }
 
         /// <summary>Reference to the parent listbox this header belongs to</summary>
@@ -157,15 +198,24 @@ namespace CODE.Framework.Wpf.Controls
         {
             if (Columns == null)
             {
-                Visibility = Visibility.Collapsed;
-                ForceParentRefresh();
+                if (Visibility != Visibility.Collapsed)
+                {
+                    Visibility = Visibility.Collapsed;
+                    ForceParentRefresh();
+                }
                 return;
             }
 
+            // We handle header visibility through a 0 column height, since the existence of headers is important for the operation of the list
+            Height = !Columns.ShowHeaders ? 0 : double.NaN;
+
             if (Visibility != Visibility.Visible)
             {
-                Visibility = Visibility.Visible;
-                ForceParentRefresh();
+                if (Visibility != Visibility.Visible)
+                {
+                    Visibility = Visibility.Visible;
+                    ForceParentRefresh();
+                }
             }
 
             if (Content != null)
@@ -190,7 +240,7 @@ namespace CODE.Framework.Wpf.Controls
             _headerContentGrids.Clear();
             var columnCounter = -1;
             var starColumnFound = false;
-            foreach (var column in Columns)
+            foreach (var column in Columns.Where(c => c.Visibility == Visibility.Visible))
             {
                 columnCounter++;
 
@@ -251,6 +301,8 @@ namespace CODE.Framework.Wpf.Controls
                             column.Header = " ";
                         if (column.HeaderForeground != null)
                             headerText.SetBinding(TextBlock.ForegroundProperty, new Binding("HeaderForeground") {Source = column});
+                        else
+                            headerText.SetBinding(TextBlock.ForegroundProperty, new Binding("Foreground") {RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof (HeaderContentControl), 1)});
                         var sort = new SortOrderIndicator();
                         if (!string.IsNullOrEmpty(column.SortOrderBindingPath))
                             sort.SetBinding(SortOrderIndicator.OrderProperty, new Binding(column.SortOrderBindingPath));
@@ -258,6 +310,7 @@ namespace CODE.Framework.Wpf.Controls
                             sort.SetBinding(SortOrderIndicator.OrderProperty, new Binding("SortOrder") {Source = column});
                         textPlusGraphic.Children.Add(sort);
                         Grid.SetRow(textPlusGraphic, 1);
+                        headerText.SetBinding(TextBlock.TextAlignmentProperty, new Binding("HeaderTextAlignment") {Source = column});
                         contentGrid.Children.Add(textPlusGraphic);
                     }
                     FrameworkElement headerEditControl = null;
@@ -336,10 +389,9 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="MouseButtonEventArgs" /> instance containing the event data.</param>
-        /// <exception cref="NotImplementedException"></exception>
         private void HandleMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.Source == this || e.Source is Label || e.Source is TextBlock || e.Source is ContentControl || e.Source is Grid)
+            if (Equals(e.Source, this) || e.Source is Label || e.Source is TextBlock || e.Source is ContentControl || e.Source is Grid)
             {
                 var clickPosition = e.GetPosition(this);
                 _mouseDownPosition = new Point(clickPosition.X + HorizontalHeaderOffset, clickPosition.Y);
@@ -374,7 +426,7 @@ namespace CODE.Framework.Wpf.Controls
                             var grid = Content as Grid;
                             if (grid != null)
                             {
-                                var dragColumnElement = grid.Children.OfType<HeaderContentControl>().FirstOrDefault(c => c.Column == draggedColumn);
+                                var dragColumnElement = grid.Children.OfType<HeaderContentControl>().FirstOrDefault(c => Equals(c.Column, draggedColumn));
                                 if (dragColumnElement != null)
                                 {
                                     _dragHeaderAdorner = new DragHeaderAdorner(this, new Rectangle
@@ -492,6 +544,40 @@ namespace CODE.Framework.Wpf.Controls
             for (var counter = 0; counter < columnIndex; counter++)
                 left += Columns[counter].ActualWidth;
             return left;
+        }
+    }
+
+    /// <summary>
+    /// Header class very similar to the listbox one, but it measures itself slightly different.
+    /// </summary>
+    /// <seealso cref="CODE.Framework.Wpf.Controls.ListBoxGridHeader" />
+    public class ComboBoxGridHeader : ListBoxGridHeader
+    {
+        private double GetActualColumnWidth()
+        {
+            if (Columns == null || Columns.Count < 1) return 0d;
+
+            var totalPixelWidth = 0d;
+            for (var columnCounter = 0; columnCounter < Columns.Count; columnCounter++)
+                if (Columns[columnCounter].Visibility == Visibility.Visible)
+                    if (Columns[columnCounter].Width.GridUnitType == GridUnitType.Pixel)
+                        totalPixelWidth += Columns[columnCounter].Width.Value;
+                    else
+                        // We treat autos as if they were stars
+                        throw new NotSupportedException("Only pixek-width columns are supported in drop-downs.");
+
+            return totalPixelWidth;
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+        /// </summary>
+        /// <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+        /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var baseSize = base.MeasureOverride(availableSize);
+            return new Size(GetActualColumnWidth(), baseSize.Height);
         }
     }
 
@@ -681,8 +767,8 @@ namespace CODE.Framework.Wpf.Controls
                             case FilterMode.Number:
                                 var localText = Text.Trim();
                                 var comparison = GetComparisonOperator(ref localText);
-                                var decimalFilterValue = 0m;
-                                var decimalPropertyValue = 0m;
+                                decimal decimalFilterValue;
+                                decimal decimalPropertyValue;
                                 if (decimal.TryParse(localText, out decimalFilterValue) && decimal.TryParse(propertyValue, out decimalPropertyValue))
                                     return CompareNumbers(comparison, decimalPropertyValue, decimalFilterValue);
                                 break;
@@ -728,8 +814,8 @@ namespace CODE.Framework.Wpf.Controls
                                     case FilterMode.Number:
                                         var localText = option.Text.Trim();
                                         var comparison = GetComparisonOperator(ref localText);
-                                        var decimalFilterValue = 0m;
-                                        var decimalPropertyValue = 0m;
+                                        decimal decimalFilterValue;
+                                        decimal decimalPropertyValue;
                                         if (decimal.TryParse(localText, out decimalFilterValue) && decimal.TryParse(propertyValue, out decimalPropertyValue))
                                             if (!CompareNumbers(comparison, decimalPropertyValue, decimalFilterValue))
                                                 include = false;
@@ -777,7 +863,7 @@ namespace CODE.Framework.Wpf.Controls
                                     case FilterMode.Number:
                                         var localText = option.Text.Trim();
                                         var comparison = GetComparisonOperator(ref localText);
-                                        var decimalFilterValue = 0m;
+                                        decimal decimalFilterValue;
                                         var decimalPropertyValue = 0m;
                                         if (decimal.TryParse(localText, out decimalFilterValue) && decimal.TryParse(propertyValue, out decimalPropertyValue))
                                             if (!CompareNumbers(comparison, decimalPropertyValue, decimalFilterValue))
@@ -953,12 +1039,12 @@ namespace CODE.Framework.Wpf.Controls
             MouseLeftButtonDown += (s, e) =>
             {
                 Mouse.Capture(this);
-                e.Handled = true;
+                //e.Handled = true;
             };
 
             MouseLeftButtonUp += (s, e) =>
             {
-                if (Mouse.Captured == this) Mouse.Capture(null);
+                if (Equals(Mouse.Captured, this)) Mouse.Capture(null);
                 var position = Mouse.GetPosition(this);
                 if (position.X < 0 || position.Y < 0 || position.X > ActualWidth || position.Y > ActualHeight) return;
                 var localContent = s as HeaderContentControl;
@@ -1038,12 +1124,12 @@ namespace CODE.Framework.Wpf.Controls
             if (list.ItemsSource.GetType().Name.StartsWith("ObservableCollection`1") || list.ItemsSource.GetType().Name.StartsWith("List`1"))
             {
                 var dynamicSource = list.ItemsSource as dynamic;
-                //var selectedItem = list.SelectedItem;
+                var selectedItem = list.SelectedItem;
                 dynamicSource.Clear();
                 foreach (dynamic item in sortedSource)
                     dynamicSource.Add(item);
-                //if (selectedItem != null)
-                //    list.SelectedItem = selectedItem;
+                if (selectedItem != null && ListEx.GetPreserveSelectionAfterResort(list) && list.SelectedItem != selectedItem)
+                    list.SelectedItem = selectedItem;
             }
             else
                 throw new Exception("Automatic sorting only works with observable data sources"); // Which a List<T> isn't, but we ignore that detail :-)
@@ -1115,14 +1201,16 @@ namespace CODE.Framework.Wpf.Controls
         /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (Children.Count != 2)
-                return base.MeasureOverride(availableSize);
+            if (Children.Count < 1) return base.MeasureOverride(availableSize);
 
-            var text = Children[0];
-            var graphic = Children[1];
             var large = new Size(100000d, availableSize.Height);
+            var text = Children[0];
             text.Measure(large);
+
+            if (Children.Count < 2) return base.MeasureOverride(availableSize);
+            var graphic = Children[1];
             graphic.Measure(large);
+
             var width = text.DesiredSize.Width + graphic.DesiredSize.Width;
             var height = Math.Min(Math.Max(text.DesiredSize.Height, graphic.DesiredSize.Height), availableSize.Height);
 
@@ -1144,29 +1232,66 @@ namespace CODE.Framework.Wpf.Controls
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (Children.Count != 2)
-                return base.ArrangeOverride(finalSize);
+            if (Children.Count < 1) return base.ArrangeOverride(finalSize);
 
             var text = Children[0];
-            var graphic = Children[1];
-
-            if (finalSize.Width >= text.DesiredSize.Width + graphic.DesiredSize.Width)
+            if (Children.Count < 2)
             {
-                text.Arrange(new Rect(0d, 0d, text.DesiredSize.Width, finalSize.Height));
-                graphic.Arrange(new Rect(text.DesiredSize.Width + 1d, 0d, graphic.DesiredSize.Width, finalSize.Height));
+                text.Arrange(NewRect(0d, 0d, finalSize.Width, finalSize.Height));
+                return finalSize;
+            }
+
+            var graphic = Children[1];
+            if (graphic.Visibility != Visibility.Visible)
+            {
+                // This will also handle alignment automatically, since we give it the entire width
+                text.Arrange(NewRect(0d, 0d, finalSize.Width, finalSize.Height));
+                return finalSize;
+            }
+
+            var textBlock = text as TextBlock;
+            if (finalSize.Width >= text.DesiredSize.Width + graphic.DesiredSize.Width + 1)
+            {
+                // We have plenty of room, so we can display both controls in full
+                if (textBlock == null || textBlock.TextAlignment == TextAlignment.Left)
+                {
+                    text.Arrange(NewRect(0d, 0d, text.DesiredSize.Width, finalSize.Height));
+                    graphic.Arrange(NewRect(text.DesiredSize.Width + 1d, 0d, graphic.DesiredSize.Width, finalSize.Height));
+                }
+                else if (textBlock.TextAlignment == TextAlignment.Right)
+                {
+                    text.Arrange(NewRect(0d, 0d, finalSize.Width - graphic.DesiredSize.Width - 1d, finalSize.Height));
+                    graphic.Arrange(NewRect(finalSize.Width - graphic.DesiredSize.Width, 0d, graphic.DesiredSize.Width, finalSize.Height));
+                }
+                else
+                {
+                    var totalDesiredWidth = text.DesiredSize.Width + 1 + graphic.DesiredSize.Width;
+                    var margin = (int) ((finalSize.Width - totalDesiredWidth)/2);
+                    text.Arrange(NewRect(margin, 0d, text.DesiredSize.Width, finalSize.Height));
+                    graphic.Arrange(NewRect(margin + text.DesiredSize.Width + 1d, 0d, graphic.DesiredSize.Width, finalSize.Height));
+                }
             }
             else if (finalSize.Width > graphic.DesiredSize.Width)
             {
-                text.Arrange(new Rect(0d, 0d, finalSize.Width - graphic.DesiredSize.Width - 1, finalSize.Height));
-                graphic.Arrange(new Rect(finalSize.Width - graphic.DesiredSize.Width, 0d, graphic.DesiredSize.Width, finalSize.Height));
+                // We don't have enough room to display both, so we do our best with the text and show the graphic in full
+                text.Arrange(NewRect(0d, 0d, finalSize.Width - graphic.DesiredSize.Width - 1, finalSize.Height));
+                graphic.Arrange(NewRect(finalSize.Width - graphic.DesiredSize.Width, 0d, graphic.DesiredSize.Width, finalSize.Height));
             }
             else if (finalSize.Width <= graphic.DesiredSize.Width)
             {
-                text.Arrange(new Rect(0d, 0d, 0d, finalSize.Height));
-                graphic.Arrange(new Rect(0d, 0d, finalSize.Width, finalSize.Height));
+                // We don't have enough room to even show the graphic, so we hide the text and do our best with the graphic
+                text.Arrange(NewRect(0d, 0d, 0d, finalSize.Height));
+                graphic.Arrange(NewRect(0d, 0d, finalSize.Width, finalSize.Height));
             }
 
             return finalSize;
+        }
+
+        private static Rect NewRect(double x, double y, double width, double height)
+        {
+            if (width < 0) width = 0d;
+            if (height < 0) height = 0d;
+            return new Rect(x, y, width, height);
         }
     }
 

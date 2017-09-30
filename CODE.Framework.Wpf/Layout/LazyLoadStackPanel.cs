@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using CODE.Framework.Wpf.Controls;
 using CODE.Framework.Wpf.Interfaces;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -165,7 +166,7 @@ namespace CODE.Framework.Wpf.Layout
             ExtentWidth = widthUsed;
             InvalidateScrollInfo();
 
-            return new Size(maxWidth, maxHeight);
+            return GeometryHelper.NewSize(maxWidth, maxHeight);
         }
 
         private TChildItem FindVisualChild<TChildItem>(DependencyObject obj) where TChildItem : DependencyObject
@@ -192,7 +193,7 @@ namespace CODE.Framework.Wpf.Layout
                 height = Math.Round(height);
             }
 
-            return new Rect(left, top, width, height);
+            return GeometryHelper.NewRect(left, top, width, height);
         }
 
         /// <summary>
@@ -202,7 +203,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var displayPortRect = new Rect(0d, 0d, finalSize.Width, finalSize.Height);
+            var displayPortRect = GeometryHelper.NewRect(0d, 0d, finalSize.Width, finalSize.Height);
 
             foreach (var item in _childItems)
             {
@@ -213,11 +214,11 @@ namespace CODE.Framework.Wpf.Layout
                 {
                     if (offsetElement == null) offsetElement = listBoxItem.Content as IHorizontalOffset;
                     offsetElement.Offset = item.ClientArea.Left;
-                    child.Arrange(new Rect(0d, item.ClientArea.Top, item.ClientArea.Width, item.ClientArea.Height));
+                    child.Arrange(GeometryHelper.NewRect(0d, item.ClientArea.Top, item.ClientArea.Width, item.ClientArea.Height));
                 }
                 else if (item.ScrollInfo != null)
                 {
-                    child.Arrange(new Rect(0d, item.ClientArea.Top, finalSize.Width, item.ClientArea.Height));
+                    child.Arrange(GeometryHelper.NewRect(0d, item.ClientArea.Top, finalSize.Width, item.ClientArea.Height));
                     if (item.ScrollInfo.ScrollOwner == null)
                         item.ScrollInfo.ScrollOwner = ScrollOwner;
                 }

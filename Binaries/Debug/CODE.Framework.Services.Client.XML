@@ -223,7 +223,7 @@
         </member>
         <member name="P:CODE.Framework.Services.Client.ServiceClient.CacheSettings">
             <summary>
-            Indicates whether configuration settings shoudl be cached (default = yes)
+            Indicates whether configuration settings should be cached (default = yes)
             </summary>
             <value><c>true</c> if [cache settings]; otherwise, <c>false</c>.</value>
             <remarks>
@@ -244,13 +244,13 @@
             <summary>Defines the list of exception types for which to auto-retry calls</summary>
         </member>
         <member name="E:CODE.Framework.Services.Client.ServiceClient.ChannelException">
-            <summary>Exception callback for exceptions occuring on the channel</summary>
+            <summary>Exception callback for exceptions occurring on the channel</summary>
         </member>
         <member name="F:CODE.Framework.Services.Client.ServiceClient.CachedMessageSizes">
             <summary>Internal message size cache</summary>
         </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.MustRetryCall(System.Exception)">
-            <summary>Detirmines whether a call needs to be auto-retried</summary>
+            <summary>Determines whether a call needs to be auto-retried</summary>
             <param name="exception">The exception that caused the original failure.</param>
             <returns>True if the call should be retried</returns>
         </member>
@@ -1055,7 +1055,7 @@
             Aborts the channel.
             </summary>
             <param name="channel">The channel.</param>
-            <param name="ex">The ex.</param>
+            <param name="exceptionCausingAbort">The exception that lead to causing this abort operation.</param>
         </member>
         <member name="M:CODE.Framework.Services.Client.ServiceClient.CloseChannel(System.Object,System.Boolean)">
             <summary>
@@ -1519,17 +1519,34 @@
             </summary>
             <value>The response.</value>
         </member>
+        <member name="P:CODE.Framework.Services.Client.AfterServiceOperationCallEventArgs.ServiceCallDuration">
+            <summary>
+            Provides information about the duration of the call
+            </summary>
+            <value>
+            The duration of the service call.
+            </value>
+        </member>
         <member name="T:CODE.Framework.Services.Client.ServiceProxyEventWrapper">
             <summary>
             Wrapper object used to wrap service proxies for the purpose of raising ServiceClient events
             </summary>
             <seealso cref="T:CODE.Framework.Core.Utilities.IProxyHandler" />
         </member>
+        <member name="P:CODE.Framework.Services.Client.ServiceProxyEventWrapper.OriginalProxy">
+            <summary>
+            Gets the original proxy.
+            </summary>
+            <value>
+            The original proxy.
+            </value>
+        </member>
         <member name="M:CODE.Framework.Services.Client.ServiceProxyEventWrapper.#ctor(System.Object,System.Type)">
             <summary>
-            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.ServiceProxyEventWrapper"/> class.
+            Initializes a new instance of the <see cref="T:CODE.Framework.Services.Client.ServiceProxyEventWrapper" /> class.
             </summary>
             <param name="originalProxy">The original proxy.</param>
+            <param name="contractType">Type of the contract.</param>
         </member>
         <member name="M:CODE.Framework.Services.Client.ServiceProxyEventWrapper.OnMethod(System.Reflection.MethodInfo,System.Object[])">
             <summary>
@@ -1561,7 +1578,7 @@
             </summary>
             <param name="serviceType">Type of the service.</param>
             <returns>True if successful</returns>
-            <remarks>The interface used by the service is automatically detirmined.</remarks>
+            <remarks>The interface used by the service is automatically determined.</remarks>
             <example>
             ServiceGardenLocal.AddServiceHost(typeof(MyNamespace.CustomerService));
             </example>

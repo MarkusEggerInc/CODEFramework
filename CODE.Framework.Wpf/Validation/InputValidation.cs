@@ -21,7 +21,7 @@ namespace CODE.Framework.Wpf.Validation
         /// </summary>
         public static bool GetIsValid(DependencyObject d)
         {
-            return (bool) d.GetValue(IsValidProperty);
+            return (bool)d.GetValue(IsValidProperty);
         }
         /// <summary>
         /// Defines whether an element is valid (true) or not (false)
@@ -97,7 +97,7 @@ namespace CODE.Framework.Wpf.Validation
         /// </summary>
         public static IEnumerable<Attribute> GetValidationAttributes(DependencyObject d)
         {
-            return (IEnumerable<Attribute>) d.GetValue(ValidationAttributesProperty);
+            return (IEnumerable<Attribute>)d.GetValue(ValidationAttributesProperty);
         }
 
         /// <summary>
@@ -284,33 +284,59 @@ namespace CODE.Framework.Wpf.Validation
         /// Performs data validation on all properties of the provided object.
         /// </summary>
         /// <param name="objectToValidate">The object to validate.</param>
-        /// <param name="results">An existing results object (can be useful if you want to add up multiple valdations for multiple objects)</param>
+        /// <param name="results">An existing results object (can be useful if you want to add up multiple validations for multiple objects)</param>
         /// <returns>ValidationResults.</returns>
         public static ValidationResults ValidateObject(object objectToValidate, ValidationResults results = null)
         {
-            if (results == null) results = new ValidationResults {IsValid = true};
+            if (results == null) results = new ValidationResults { IsValid = true };
             if (objectToValidate == null) return results;
 
             var objectType = objectToValidate.GetType();
-            var properties = objectType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
+            var properties = objectType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            foreach (var property in properties)
+            foreach (var property in properties.Where(p => p.CanRead))
             {
                 var propertyError = new PropertyValidationResult(objectToValidate, property.Name);
-                var propertyValue = property.GetValue(objectToValidate, null);
                 var validationAttributes = property.GetCustomAttributes(true).OfType<ValidationAttribute>().ToList();
-                foreach (var validationAttribute in validationAttributes)
-                    if (!validationAttribute.IsValid(propertyValue.ToString()))
+                if (validationAttributes.Count > 0)
+                {
+                    var propertyValue = property.GetValue(objectToValidate, null);
+                    foreach (var validationAttribute in validationAttributes)
                     {
-                        results.IsValid = false;
-                        propertyError.ErrorMessages.Add(validationAttribute.FormatErrorMessage(property.Name));
+                        var contextObjectAttribute = validationAttribute as IValidationWithContextObject;
+                        if (contextObjectAttribute != null) contextObjectAttribute.ContextObject = objectToValidate;
+
+                        var realValue = propertyValue != null ? propertyValue.ToString() : string.Empty;
+                        if (!validationAttribute.IsValid(realValue))
+                        {
+                            results.IsValid = false;
+                            propertyError.ErrorMessages.Add(validationAttribute.FormatErrorMessage(property.Name));
+                        }
                     }
-                if (propertyError.ErrorMessages.Count > 0)
-                    results.InvalidProperties.Add(propertyError);
+                    if (propertyError.ErrorMessages.Count > 0)
+                        results.InvalidProperties.Add(propertyError);
+                }
             }
 
             return results;
         }
+    }
+
+    /// <summary>
+    /// This interface can be implemented by a custom validation attribute. 
+    /// If this interface is implemented, then the current main object will be set before validation is executed.
+    /// Example: A CustomerEditViewModel class has a property called ValueMayBeRequired with a custom validation attribute.
+    /// Let's say the custom attribute wants to check other properties within the view-model before deciding whether the value is
+    /// indeed required. For this, the attribute needs access to the view-model. The ContextObject is the view-model (it's always the object
+    /// that defines the property that has the attribute).
+    /// </summary>
+    public interface IValidationWithContextObject
+    {
+        /// <summary>
+        /// Gets or sets the context object.
+        /// </summary>
+        /// <value>The context object.</value>
+        object ContextObject { get; set; }
     }
 
     /// <summary>

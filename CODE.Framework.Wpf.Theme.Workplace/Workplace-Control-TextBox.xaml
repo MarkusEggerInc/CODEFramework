@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:BindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
                     xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
-                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf"
+                    xmlns:classes="clr-namespace:CODE.Framework.Wpf.Theme.Workplace.Classes">
 
     <Style x:Key="Workplace-Control-TextBox" TargetType="TextBox">
         <Setter Property="BorderBrush" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
@@ -54,6 +55,60 @@
     </ControlTemplate>
 
     <Style TargetType="TextBox" BasedOn="{StaticResource Workplace-Control-TextBox}" />
-    <Style TargetType="controls:FilterHeaderTextBox" BasedOn="{StaticResource Workplace-Control-TextBox}" />
+    <Style TargetType="controls:FilterHeaderTextBox" BasedOn="{StaticResource Workplace-Control-TextBox}">
+        <Setter Property="Margin" Value="0,2,-2,1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="2,2,20,2" />
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="4,2,2,2"
+                                       Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                            <controls:ClearTextButton VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2" x:Name="clearButton">
+                                <controls:ClearTextButton.Template>
+                                    <ControlTemplate TargetType="controls:ClearTextButton">
+                                        <Grid>
+                                            <Rectangle Height="12" Width="12" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                <Rectangle.Fill>
+                                                    <DrawingBrush Stretch="Uniform">
+                                                        <DrawingBrush.Drawing>
+                                                            <DrawingGroup>
+                                                                <DrawingGroup.Children>
+                                                                    <GeometryDrawing Brush="#FFA8A8A8" Geometry="F1 M 6,0C 9.31371,0 12,2.68629 12,6C 12,9.31371 9.31371,12 6,12C 2.68629,12 -6.35783e-007,9.31371 -6.35783e-007,6C -6.35783e-007,2.68629 2.68629,0 6,0 Z "/>
+                                                                    <GeometryDrawing Geometry="F1 M 3,2.99219L 9,8.99219">
+                                                                        <GeometryDrawing.Pen>
+                                                                            <Pen LineJoin="Round" Brush="#FFFFFFFF"/>
+                                                                        </GeometryDrawing.Pen>
+                                                                    </GeometryDrawing>
+                                                                    <GeometryDrawing Geometry="F1 M 9,2.99219L 3,8.99219">
+                                                                        <GeometryDrawing.Pen>
+                                                                            <Pen LineJoin="Round" Brush="#FFFFFFFF"/>
+                                                                        </GeometryDrawing.Pen>
+                                                                    </GeometryDrawing>
+                                                                </DrawingGroup.Children>
+                                                            </DrawingGroup>
+                                                        </DrawingBrush.Drawing>
+                                                    </DrawingBrush>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </controls:ClearTextButton.Template>
+                            </controls:ClearTextButton>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="clearButton"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

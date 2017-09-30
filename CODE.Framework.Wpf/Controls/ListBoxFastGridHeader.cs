@@ -275,7 +275,7 @@ namespace CODE.Framework.Wpf.Controls
             return _gridLinePen ?? (_gridLinePen = new Pen(GridLineColor, 1d));
         }
 
-        private ListColumn _resizingColunn;
+        private ListColumn _resizingColumn;
         private double _originalResizeX = -1d;
         private double _originalResizeWidth = -1d;
 
@@ -287,11 +287,11 @@ namespace CODE.Framework.Wpf.Controls
         {
             var position = e.GetPosition(this);
 
-            if (_resizingColunn != null)
+            if (_resizingColumn != null)
             {
                 var deltaX = _originalResizeX - position.X;
                 var newWidth = Math.Max(_originalResizeWidth - deltaX, 2d);
-                _resizingColunn.Width = new GridLength(newWidth);
+                _resizingColumn.Width = new GridLength(newWidth);
                 e.Handled = true;
                 return;
             }
@@ -319,8 +319,8 @@ namespace CODE.Framework.Wpf.Controls
                 if (resizeArea.HotArea.Contains(position))
                 {
                     Mouse.Capture(this);
-                    _resizingColunn = resizeArea.Column;
-                    _originalResizeWidth = _resizingColunn.Width.Value;
+                    _resizingColumn = resizeArea.Column;
+                    _originalResizeWidth = _resizingColumn.Width.Value;
                     _originalResizeX = position.X;
                     e.Handled = true;
                     return;
@@ -335,9 +335,9 @@ namespace CODE.Framework.Wpf.Controls
         /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the mouse button was released.</param>
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
-            if (_resizingColunn != null)
+            if (_resizingColumn != null)
             {
-                _resizingColunn = null;
+                _resizingColumn = null;
                 Mouse.Capture(null);
                 e.Handled = true;
                 return;

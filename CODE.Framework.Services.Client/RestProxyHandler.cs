@@ -2,6 +2,7 @@
 using System.Net;
 using System.Reflection;
 using System.ServiceModel;
+using System.Text;
 using CODE.Framework.Core.Utilities;
 
 namespace CODE.Framework.Services.Client
@@ -37,13 +38,13 @@ namespace CODE.Framework.Services.Client
             if (_contractType == null)
             {
                 var declaringType = method.DeclaringType;
-                if (declaringType == null) throw new Exception("Can't detirmine declaring type of method '" + method.Name + "'.");
+                if (declaringType == null) throw new Exception("Can't determine declaring type of method '" + method.Name + "'.");
                 if (declaringType.IsInterface)
                     _contractType = declaringType;
                 else
                 {
                     var interfaces = declaringType.GetInterfaces();
-                    if (interfaces.Length != 1) throw new Exception("Can't detirmine declaring contract interface for method '" + method.Name + "'.");
+                    if (interfaces.Length != 1) throw new Exception("Can't determine declaring contract interface for method '" + method.Name + "'.");
                     _contractType = interfaces[0];
                 }
             }
@@ -56,6 +57,7 @@ namespace CODE.Framework.Services.Client
                 using (var client = new WebClient())
                 {
                     client.Headers.Add("Content-Type", "application/json; charset=utf-8");
+                    client.Encoding = Encoding.UTF8;
                     string restResponse;
                     switch (httpMethod)
                     {

@@ -3,22 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:layout="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf"
         xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
-        Title="BiStackTest" Height="400" Width="600">
-    <Grid controls:GridEx.RowHeights="75,3,*">
-        <TabControl VerticalAlignment="Stretch">
-            <TabItem Header="Test">
-                <layout:BidirectionalStackPanel Orientation="Horizontal">
-                    <Button Width="25">1</Button>
-                    <Button Width="25">2</Button>
-                    <Button Width="25">3</Button>
-                    <Button Width="25">4</Button>
-                    <Button Width="25">5</Button>
-                    <Button Width="25">6</Button>
-                    <Label HorizontalAlignment="Right">Search:</Label>
-                    <TextBox Text="Google..." HorizontalAlignment="Right" Width="100" />
-                </layout:BidirectionalStackPanel>
-            </TabItem>
-        </TabControl>
+        xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+        Title="BiStackTest" Height="600" Width="600">
+    <Grid controls:GridEx.RowHeights="45,3,*">
+        <layout:BidirectionalStackPanel Orientation="Horizontal">
+            <Button Width="25">1</Button>
+            <Button Width="25">2</Button>
+            <Button mvvm:View.GroupBreak="True" Width="25">3</Button>
+            <Button Width="25">4</Button>
+            <Button Width="25">5</Button>
+            <Button Width="25">6</Button>
+            <Label HorizontalAlignment="Right">Search:</Label>
+            <TextBox Text="Google..." HorizontalAlignment="Right" Width="100" />
+            <Label HorizontalAlignment="Right" mvvm:View.GroupBreak="True">Test:</Label>
+        </layout:BidirectionalStackPanel>
 
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
         
@@ -26,13 +24,29 @@
             <Button>Hello World #1</Button>
             <Button>Hello World #2</Button>
             <Button>Hello World #3</Button>
-            <Button>Hello World #4</Button>
+            <Button mvvm:View.GroupBreak="True">Hello World #4</Button>
             <Button>Hello World #5</Button>
             <Button>Hello World #6</Button>
             
             <Rectangle Fill="LimeGreen" MinHeight="100" />
             
             <Label VerticalAlignment="Bottom">Legend:</Label>
+            <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Red" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Green" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Blue" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Orange" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Red" />
+            </StackPanel>
+            <Label VerticalAlignment="Bottom">Legend:</Label>
+            <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Red" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Green" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Blue" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Orange" />
+                <Rectangle Margin="5" Height="20" Width="20" Fill="Red" />
+            </StackPanel>
+            <Label mvvm:View.GroupBreak="True"  VerticalAlignment="Bottom">Legend:</Label>
             <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
                 <Rectangle Margin="5" Height="20" Width="20" Fill="Red" />
                 <Rectangle Margin="5" Height="20" Width="20" Fill="Green" />

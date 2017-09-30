@@ -192,7 +192,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>A <see cref="T:System.Windows.Rect" /> that is visible.</returns>
         public Rect MakeVisible(Visual visual, Rect rectangle)
         {
-            if (_childScrollInfo == null) return new Rect();
+            if (_childScrollInfo == null) return Rect.Empty;
             return _childScrollInfo.MakeVisible(visual, rectangle);
         }
 

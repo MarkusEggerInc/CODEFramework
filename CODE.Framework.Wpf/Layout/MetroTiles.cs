@@ -298,7 +298,7 @@ namespace CODE.Framework.Wpf.Layout
         protected override Size ArrangeOverride(Size finalSize)
         {
             var arrangedSize = IterateChildren(finalSize, (child, rect) => child.Arrange(rect));
-            return new Size(arrangedSize.Width, finalSize.Height);
+            return GeometryHelper.NewSize(arrangedSize.Width, finalSize.Height);
         }
 
         private Size IterateChildren(Size availableSize, Action<UIElement, Rect> methodToCall)
@@ -410,28 +410,28 @@ namespace CODE.Framework.Wpf.Layout
                                 switch (currentTinyCount)
                                 {
                                     case 0:
-                                        var tinyTileRect0 = new Rect(tinyAreaLeft, top, tileWidthTiny, tileWidthTiny);
+                                        var tinyTileRect0 = GeometryHelper.NewRect(tinyAreaLeft, top, tileWidthTiny, tileWidthTiny);
                                         methodToCall(child, tinyTileRect0);
                                         heightUsed = Math.Max(heightUsed, tinyTileRect0.Bottom);
                                         widthUsed = Math.Max(widthUsed, tinyTileRect0.Right);
                                         currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthTiny);
                                         break;
                                     case 1:
-                                        var tinyTileRect1 = new Rect(tinyAreaLeft + horizontalSpacing + tileWidthTiny, top, tileWidthTiny, tileWidthTiny);
+                                        var tinyTileRect1 = GeometryHelper.NewRect(tinyAreaLeft + horizontalSpacing + tileWidthTiny, top, tileWidthTiny, tileWidthTiny);
                                         methodToCall(child, tinyTileRect1);
                                         heightUsed = Math.Max(heightUsed, tinyTileRect1.Bottom);
                                         widthUsed = Math.Max(widthUsed, tinyTileRect1.Right);
                                         currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny + horizontalSpacing + tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthNormal);
                                         break;
                                     case 2:
-                                        var tinyTileRect2 = new Rect(tinyAreaLeft, top + verticalSpacing + tileWidthTiny, tileWidthTiny, tileWidthTiny);
+                                        var tinyTileRect2 = GeometryHelper.NewRect(tinyAreaLeft, top + verticalSpacing + tileWidthTiny, tileWidthTiny, tileWidthTiny);
                                         methodToCall(child, tinyTileRect2);
                                         heightUsed = Math.Max(heightUsed, tinyTileRect2.Bottom);
                                         widthUsed = Math.Max(widthUsed, tinyTileRect2.Right);
                                         currentMaxColumnWidth = Math.Max(currentMaxColumnWidth, currentNormalCount == 0 ? tileWidthTiny + horizontalSpacing + tileWidthTiny : tileWidthNormal + horizontalSpacing + tileWidthNormal);
                                         break;
                                     case 3:
-                                        var tinyTileRect3 = new Rect(tinyAreaLeft + horizontalSpacing + tileWidthTiny, top + verticalSpacing + tileWidthTiny, tileWidthTiny, tileWidthTiny);
+                                        var tinyTileRect3 = GeometryHelper.NewRect(tinyAreaLeft + horizontalSpacing + tileWidthTiny, top + verticalSpacing + tileWidthTiny, tileWidthTiny, tileWidthTiny);
                                         methodToCall(child, tinyTileRect3);
                                         heightUsed = Math.Max(heightUsed, tinyTileRect3.Bottom);
                                         widthUsed = Math.Max(widthUsed, tinyTileRect3.Right);
@@ -463,7 +463,7 @@ namespace CODE.Framework.Wpf.Layout
                                     groupWidth += currentMaxColumnWidth + horizontalSpacing;
                                     currentMaxColumnWidth = 0d;
                                 }
-                                var normalTileRect = new Rect(currentNormalCount == 1 ? left + tileWidthNormal + horizontalSpacing : left, top, tileWidthNormal, tileHeight);
+                                var normalTileRect = GeometryHelper.NewRect(currentNormalCount == 1 ? left + tileWidthNormal + horizontalSpacing : left, top, tileWidthNormal, tileHeight);
                                 currentTinyCount = 0;
                                 currentNormalCount++;
                                 methodToCall(child, normalTileRect);
@@ -487,7 +487,7 @@ namespace CODE.Framework.Wpf.Layout
                                 }
                                 currentNormalCount = 0;
                                 currentTinyCount = 0;
-                                var dobleTileRect = new Rect(left, top, tileWidthDouble, tileHeight);
+                                var dobleTileRect = GeometryHelper.NewRect(left, top, tileWidthDouble, tileHeight);
                                 methodToCall(child, dobleTileRect);
                                 heightUsed = Math.Max(heightUsed, dobleTileRect.Bottom);
                                 widthUsed = Math.Max(widthUsed, dobleTileRect.Right);
@@ -505,7 +505,7 @@ namespace CODE.Framework.Wpf.Layout
                                 }
                                 currentNormalCount = 0;
                                 currentTinyCount = 0;
-                                var dobleSquareTileRect = new Rect(left, top, tileWidthDouble, tileWidthDouble);
+                                var dobleSquareTileRect = GeometryHelper.NewRect(left, top, tileWidthDouble, tileWidthDouble);
                                 methodToCall(child, dobleSquareTileRect);
                                 heightUsed = Math.Max(heightUsed, dobleSquareTileRect.Bottom);
                                 widthUsed = Math.Max(widthUsed, dobleSquareTileRect.Right);
@@ -517,7 +517,7 @@ namespace CODE.Framework.Wpf.Layout
                         // Possible headers
                         if (RenderHeaders && _headers.Count > groupCount)
                         {
-                            _headers[groupCount].RenderRect = new Rect(groupLeft, 0d, groupWidth, _headers[groupCount].FormattedText.Height +4);
+                            _headers[groupCount].RenderRect = GeometryHelper.NewRect(groupLeft, 0d, groupWidth, _headers[groupCount].FormattedText.Height +4);
                             InvalidateVisual();
                         }
                     }
@@ -526,8 +526,8 @@ namespace CODE.Framework.Wpf.Layout
                     left += horizontalGroupSpacing - horizontalSpacing;
                     left += currentMaxColumnWidth;
                 }
-                //return new Size(left + tileWidthDouble, top + tileHeight);
-                return new Size(widthUsed, heightUsed);
+                //return GeometryHelper.NewSize(left + tileWidthDouble, top + tileHeight);
+                return GeometryHelper.NewSize(widthUsed, heightUsed);
             }
             catch (Exception ex)
             {

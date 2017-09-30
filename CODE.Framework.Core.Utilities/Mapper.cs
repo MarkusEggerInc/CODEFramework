@@ -21,6 +21,18 @@ namespace CODE.Framework.Core.Utilities
         private List<Map> _maps = new List<Map>();
 
         /// <summary>
+        /// A list of all maps.
+        /// </summary>
+        /// <value>
+        /// The maps.
+        /// </value>
+        public List<Map> Maps
+        {
+            get { return _maps; }
+            set { _maps = value; }
+        }
+
+        /// <summary>
         /// Provides a list of default maps as typically used by Milos
         /// </summary>
         /// <remarks>
@@ -29,17 +41,17 @@ namespace CODE.Framework.Core.Utilities
         /// PKString -> Id
         /// PKInteger -> Id
         /// </remarks>
-        /// <value>The milos default maps.</value>
+        /// <value>The Milos default maps.</value>
         public static List<Map> MilosDefaultMaps
         {
             get
             {
                 var maps = new List<Map>
-                    {
-                        new Map("PK", "Id"),
-                        new Map("PKString", "Id"),
-                        new Map("PKInteger", "Id")
-                    };
+                {
+                    new Map("PK", "Id"),
+                    new Map("PKString", "Id"),
+                    new Map("PKInteger", "Id")
+                };
                 return maps;
             }
         }
@@ -72,7 +84,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="destination">The destination.</param>
         /// <remarks>
         /// This is identical to the MapObjects() instance method.
-        /// This method is simply provided for concenience.
+        /// This method is simply provided for convenience.
         /// </remarks>
         /// <returns></returns>
         public static bool Map(object source, object destination)
@@ -90,7 +102,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="options">The options.</param>
         /// <remarks>
         /// This is identical to the MapObjects() instance method.
-        /// This method is simply provided for concenience.
+        /// This method is simply provided for convenience.
         /// </remarks>
         /// <returns>True if map operation is a success</returns>
         public static bool Map(object source, object destination, MappingOptions options)
@@ -139,14 +151,18 @@ namespace CODE.Framework.Core.Utilities
                         var sourceProperty = sourceType.GetProperty(sourcePropertyName, BindingFlags.Public | BindingFlags.Instance);
                         if (sourceProperty == null) continue;
                         if (sourceProperty.CanRead && property.CanWrite)
-                            if (sourceProperty.PropertyType == property.PropertyType)
+                            if (options.MapFunctionsFiltered.ContainsKey(sourceProperty.Name) && options.MapFunctionsFiltered[property.Name](source, destination, options.MapDirection))
+                                continue; // Successfully mapped with a function filtered to this property
+                            else if (sourceProperty.PropertyType == property.PropertyType)
                                 try
                                 {
                                     var currentValue = property.GetValue(destination, null);
                                     var newValue = sourceProperty.GetValue(source, null);
                                     UpdateValueIfNeeded(destination, property, currentValue, newValue);
                                 }
-                                catch { } // Nothing we can do, really
+                                catch
+                                {
+                                } // Nothing we can do, really
                             else if (sourceProperty.PropertyType.Name == "Nullable`1" && !property.PropertyType.Name.StartsWith("Nullable"))
                                 try
                                 {
@@ -155,7 +171,9 @@ namespace CODE.Framework.Core.Utilities
                                     if (newValue != null) // Can't set it if it is null.
                                         property.SetValue(destination, newValue, null);
                                 }
-                                catch { } // Nothing we can do, really
+                                catch
+                                {
+                                } // Nothing we can do, really
                             else if (property.PropertyType.Name == "Nullable`1" && !sourceProperty.PropertyType.Name.StartsWith("Nullable"))
                                 try
                                 {
@@ -163,9 +181,11 @@ namespace CODE.Framework.Core.Utilities
                                     var newValue = sourceProperty.GetValue(source, null);
                                     property.SetValue(destination, newValue, null);
                                 }
-                                catch { } // Nothing we can do, really
+                                catch
+                                {
+                                } // Nothing we can do, really
                             else
-                                // Property types differ, but maybe we can still map them
+                            // Property types differ, but maybe we can still map them
                                 if (options.MapEnums)
                                     if (sourceProperty.PropertyType.IsEnum && property.PropertyType.IsEnum)
                                         MapEnumValues(source, destination, property, sourceProperty, options);
@@ -194,7 +214,12 @@ namespace CODE.Framework.Core.Utilities
             return retVal;
         }
 
-        private bool PropertyTypeIsNumeric(Type type)
+        /// <summary>
+        /// Returns true if the property's type is some numeric type
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        protected virtual bool PropertyTypeIsNumeric(Type type)
         {
             return type == typeof (Byte)
                    || type == typeof (SByte)
@@ -210,7 +235,7 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>
-        /// Maps collections and all the objets in the collection
+        /// Maps collections and all the objects in the collection
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="destination">The destination.</param>
@@ -224,7 +249,7 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>
-        /// Maps collections and all the objets in the collection
+        /// Maps collections and all the objects in the collection
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="destination">The destination.</param>
@@ -335,7 +360,13 @@ namespace CODE.Framework.Core.Utilities
             return true;
         }
 
-        private void SetPrimaryKeyValue(object source, object destination, string sourceKeyFieldName)
+        /// <summary>
+        /// Sets the primary key value.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="destination">The destination.</param>
+        /// <param name="sourceKeyFieldName">Name of the source key field.</param>
+        protected virtual void SetPrimaryKeyValue(object source, object destination, string sourceKeyFieldName)
         {
             try
             {
@@ -381,7 +412,7 @@ namespace CODE.Framework.Core.Utilities
         /// </summary>
         /// <param name="keyType">Key type for which to find the appropriate property</param>
         /// <returns>Field name</returns>
-        private string GetSourceKeyField(MapKeyType keyType)
+        protected virtual string GetSourceKeyField(MapKeyType keyType)
         {
             switch (keyType)
             {
@@ -400,7 +431,7 @@ namespace CODE.Framework.Core.Utilities
         /// </summary>
         /// <param name="keyType">Key type</param>
         /// <returns>Key field name</returns>
-        private string GetMilosKeyField(MapKeyType keyType)
+        protected virtual string GetMilosKeyField(MapKeyType keyType)
         {
             switch (keyType)
             {
@@ -445,7 +476,7 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>
-        /// Maps collections and all the objets in the collection
+        /// Maps collections and all the objects in the collection
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="destination">The destination.</param>
@@ -541,7 +572,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="property">The property.</param>
         /// <param name="sourceProperty">The source property.</param>
         /// <param name="options">The options.</param>
-        private void MapEnumValues(object source, object destination, PropertyInfo property, PropertyInfo sourceProperty, MappingOptions options)
+        protected virtual void MapEnumValues(object source, object destination, PropertyInfo property, PropertyInfo sourceProperty, MappingOptions options)
         {
             var currentValue = property.GetValue(destination, null);
             var newValue = sourceProperty.GetValue(source, null);
@@ -577,7 +608,14 @@ namespace CODE.Framework.Core.Utilities
             }
         }
 
-        private void MapNumericToEnum(object source, object destination, PropertyInfo destinationProperty, PropertyInfo sourceProperty)
+        /// <summary>
+        /// Maps the numeric to enum.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="destination">The destination.</param>
+        /// <param name="destinationProperty">The destination property.</param>
+        /// <param name="sourceProperty">The source property.</param>
+        protected virtual void MapNumericToEnum(object source, object destination, PropertyInfo destinationProperty, PropertyInfo sourceProperty)
         {
             try
             {
@@ -596,7 +634,14 @@ namespace CODE.Framework.Core.Utilities
             }
         }
 
-        private void MapEnumToNumeric(object source, object destination, PropertyInfo destinationProperty, PropertyInfo sourceProperty)
+        /// <summary>
+        /// Maps the enum to numeric.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="destination">The destination.</param>
+        /// <param name="destinationProperty">The destination property.</param>
+        /// <param name="sourceProperty">The source property.</param>
+        protected virtual void MapEnumToNumeric(object source, object destination, PropertyInfo destinationProperty, PropertyInfo sourceProperty)
         {
             try
             {
@@ -605,60 +650,60 @@ namespace CODE.Framework.Core.Utilities
 
                 object currentValue = null;
                 object newValue = null;
-                if (destinationProperty.PropertyType == typeof (Byte))
+                if (destinationProperty.PropertyType == typeof (byte))
                 {
-                    currentValue = Byte.Parse(currentObject.ToString());
-                    newValue = (Byte) (int) newObject;
+                    currentValue = byte.Parse(currentObject.ToString());
+                    newValue = (byte) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (SByte))
+                else if (destinationProperty.PropertyType == typeof (sbyte))
                 {
-                    currentValue = SByte.Parse(currentObject.ToString());
-                    newValue = (SByte) (int) newObject;
+                    currentValue = sbyte.Parse(currentObject.ToString());
+                    newValue = (sbyte) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (Int16))
+                else if (destinationProperty.PropertyType == typeof (short))
                 {
-                    currentValue = Int16.Parse(currentObject.ToString());
-                    newValue = (Int16) (int) newObject;
+                    currentValue = short.Parse(currentObject.ToString());
+                    newValue = (short) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (UInt16))
+                else if (destinationProperty.PropertyType == typeof (ushort))
                 {
-                    currentValue = UInt16.Parse(currentObject.ToString());
-                    newValue = (UInt16) (int) newObject;
+                    currentValue = ushort.Parse(currentObject.ToString());
+                    newValue = (ushort) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (Int32))
+                else if (destinationProperty.PropertyType == typeof (int))
                 {
-                    currentValue = Int32.Parse(currentObject.ToString());
+                    currentValue = int.Parse(currentObject.ToString());
                     newValue = (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (UInt32))
+                else if (destinationProperty.PropertyType == typeof (uint))
                 {
-                    currentValue = UInt32.Parse(currentObject.ToString());
-                    newValue = (UInt32) (int) newObject;
+                    currentValue = uint.Parse(currentObject.ToString());
+                    newValue = (uint) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (Int64))
+                else if (destinationProperty.PropertyType == typeof (long))
                 {
-                    currentValue = Int64.Parse(currentObject.ToString());
-                    newValue = (Int64) newObject;
+                    currentValue = long.Parse(currentObject.ToString());
+                    newValue = (long) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (UInt64))
+                else if (destinationProperty.PropertyType == typeof (ulong))
                 {
-                    currentValue = UInt64.Parse(currentObject.ToString());
-                    newValue = (UInt64) (int) newObject;
+                    currentValue = ulong.Parse(currentObject.ToString());
+                    newValue = (ulong) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (Single))
+                else if (destinationProperty.PropertyType == typeof (float))
                 {
-                    currentValue = Single.Parse(currentObject.ToString());
-                    newValue = (Single) (int) newObject;
+                    currentValue = float.Parse(currentObject.ToString());
+                    newValue = (float) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (Double))
+                else if (destinationProperty.PropertyType == typeof (double))
                 {
-                    currentValue = Double.Parse(currentObject.ToString());
-                    newValue = (Double) (int) newObject;
+                    currentValue = double.Parse(currentObject.ToString());
+                    newValue = (double) (int) newObject;
                 }
-                else if (destinationProperty.PropertyType == typeof (Decimal))
+                else if (destinationProperty.PropertyType == typeof (decimal))
                 {
-                    currentValue = Decimal.Parse(currentObject.ToString());
-                    newValue = (Decimal) (int) newObject;
+                    currentValue = decimal.Parse(currentObject.ToString());
+                    newValue = (decimal) (int) newObject;
                 }
 
                 UpdateValueIfNeeded(destination, destinationProperty, currentValue, newValue);
@@ -678,7 +723,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="property">The property.</param>
         /// <param name="currentValue">The current value.</param>
         /// <param name="newValue">The new value.</param>
-        private void UpdateEnumIfNeeded(object parentObject, PropertyInfo property, object currentValue, object newValue)
+        protected virtual void UpdateEnumIfNeeded(object parentObject, PropertyInfo property, object currentValue, object newValue)
         {
             try
             {
@@ -710,7 +755,7 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>
-        /// Sets the given value to the given propery.
+        /// Sets the given value to the given property.
         /// </summary>
         /// <param name="parentObject"></param>
         /// <param name="property"></param>
@@ -726,7 +771,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="destinationProperty">The destination property.</param>
         /// <param name="direction">The direction.</param>
         /// <returns></returns>
-        private string GetMappedSourcePropertyName(string destinationProperty, MapDirection direction)
+        protected virtual string GetMappedSourcePropertyName(string destinationProperty, MapDirection direction)
         {
             return GetMappedSourcePropertyName(destinationProperty, direction, string.Empty, string.Empty);
         }
@@ -739,12 +784,10 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="destinationContainer">The destination container.</param>
         /// <param name="sourceContainer">The source container.</param>
         /// <returns></returns>
-        private string GetMappedSourcePropertyName(string destinationProperty, MapDirection direction, string destinationContainer, string sourceContainer)
+        protected virtual string GetMappedSourcePropertyName(string destinationProperty, MapDirection direction, string destinationContainer, string sourceContainer)
         {
             foreach (var map in _maps)
-            {
                 if (StringHelper.Compare(sourceContainer, map.SourceContainer, false) && StringHelper.Compare(destinationContainer, map.DestinationContainer))
-                {
                     if (direction == MapDirection.Forward)
                     {
                         if (StringHelper.Compare(destinationProperty, map.DestinationField, false))
@@ -761,8 +804,6 @@ namespace CODE.Framework.Core.Utilities
                             break;
                         }
                     }
-                }
-            }
             return destinationProperty;
         }
 
@@ -865,7 +906,7 @@ namespace CODE.Framework.Core.Utilities
         /// <param name="properties">The properties.</param>
         /// <param name="activator">Activator</param>
         /// <returns></returns> 
-        private TDestination CopyFromRowToItem<TDestination>(DataRow row, MappingOptions options, IEnumerable<PropertyInfo> properties, ExpressionTreeObjectActivator activator)
+        protected virtual TDestination CopyFromRowToItem<TDestination>(DataRow row, MappingOptions options, IEnumerable<PropertyInfo> properties, ExpressionTreeObjectActivator activator)
         {
             var item = (TDestination) activator.InstantiateType();
 
@@ -1185,6 +1226,232 @@ namespace CODE.Framework.Core.Utilities
             return result;
         }
 
+         /// <summary>
+        /// Attempts to compare all the read/write properties in the first object
+        /// and the properties in the second object and return those that don't match
+        /// </summary>
+        /// <param name="first">The first object.</param>
+        /// <param name="second">The second object.</param>
+        /// <remarks>
+        /// This is identical to the CompareObjects() instance method.
+        /// This method is simply provided for convenience.
+        /// </remarks>
+        /// <returns>A list of all the properties that don't match</returns>
+        public static List<MappperCompareResults> Compare(object first, object second)
+        {
+            var mapper = new Mapper();
+            return mapper.CompareObjects(first, second);
+        }
+
+        /// <summary>
+        /// Attempts to compare all the read/write properties in the first object
+        /// and the properties in the second object and return those that don't 
+        /// match based on the options provided.
+        /// </summary>
+        /// <param name="first">The source.</param>
+        /// <param name="second">The destination.</param>
+        /// <param name="options">The options.</param>
+        /// <remarks>
+        /// This is identical to the CompareObjects() instance method.
+        /// This method is simply provided for convenience.
+        /// </remarks>
+        /// <returns>A list of all the properties that don't match</returns>
+        public static List<MappperCompareResults> Compare(object first, object second, MappingOptions options)
+        {
+            var mapper = new Mapper();
+            return mapper.CompareObjects(first, second, options);
+        }
+
+        /// <summary>
+        /// Attempts to compare all the read/write properties in the first object
+        /// to the properties in the second object and returns those that
+        /// that don't match
+        /// </summary>
+        /// <param name="first">The first object.</param>
+        /// <param name="second">The second object.</param>
+        /// <returns>A list of all the properties that don't match</returns>
+        public List<MappperCompareResults> CompareObjects(object first, object second)
+        {
+            return CompareObjects(first, second, new MappingOptions());
+        }
+
+        /// <summary>
+        /// Attempts to compare all the read/write properties in the 
+        /// first object with the properties in the second object and
+        /// returns a list of those that don't match and info on why.
+        /// </summary>
+        /// <param name="first">The source.</param>
+        /// <param name="second">The destination.</param>
+        /// <param name="options">Options - but the only one 
+        /// supported is the ExcludedFields at this time.</param>
+        /// <param name="level">This is only used internally and tracks how many levels down the conflict may be.</param>
+        /// <returns>A list of all the properties that don't match</returns>
+        public List<MappperCompareResults> CompareObjects(object first, object second, MappingOptions options, int level = 0)
+        {
+            var results = new List<MappperCompareResults>();
+
+            var oldMaps = _maps;
+            if (options.Maps != null)
+                _maps = options.Maps;
+
+            var firstType = first.GetType();
+            var secondProperties = second.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var secondProperty in secondProperties)
+            {
+                if (!secondProperty.CanRead || !secondProperty.CanWrite ||options.ExcludedFields.Contains(secondProperty.Name)) continue;
+
+                // looks like we have one we are interested in,
+                //  find the property name so we can get the first 
+                //  property reference
+                var firstPropertyName = GetMappedSourcePropertyName(secondProperty.Name, options.MapDirection);
+                if (options.ExcludedFields.Contains(firstPropertyName)) continue;
+
+                var firstProperty = firstType.GetProperty(firstPropertyName, BindingFlags.Public | BindingFlags.Instance);
+
+                // If we don't have a property we can read or is null, skip it.
+                if (firstProperty == null || !firstProperty.CanRead || !secondProperty.CanRead) continue;
+
+                // Check the types first.  We won't bother if the types don't match
+                //  (too much work for a diagnostic feature.)
+                if (firstProperty.PropertyType != secondProperty.PropertyType)
+                {
+                    // Data types don't agree... 
+                    try
+                    {
+                        results.Add(new MappperCompareResults
+                        {
+                            Property = firstPropertyName,
+                            ValueFirstObject = firstProperty.GetValue(first, null),
+                            ValueSecondObject = secondProperty.GetValue(second, null),
+                            Conflict = "Property Type Mismatch",
+                            Level = level,
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        results.Add(new MappperCompareResults
+                        {
+                            Property = firstPropertyName,
+                            Conflict = "Property Type Mismatch - error including values: " + ex.Message,
+                        });
+                    }
+                }
+                else
+                {
+                    // Ok, see if they compare
+                    try
+                    {
+                        // The source is nullable, while the destination is not. This could be problematic, but we give it a try
+                        var value1 = firstProperty.GetValue(first, null);
+                        var value2 = secondProperty.GetValue(second, null);
+
+                        // Check for collections
+                        if (value1 != null && value2 != null && (value1.ToString().StartsWith("System.Collections.") || firstProperty.PropertyType.IsArray))
+                        {
+                            // We have a collection, are the counts different?
+                            if (((ICollection) value1).Count != ((ICollection) value2).Count)
+                                results.Add(new MappperCompareResults
+                                {
+                                    Property = firstPropertyName,
+                                    ValueFirstObject = value1,
+                                    ValueSecondObject = value2,
+                                    Conflict = "Collection Count Mismatch",
+                                    Level = level,
+                                });
+                            else if (((ICollection) value1).Count > 0)
+                            {
+                                // Ok, counts are the same and more than 0, 
+                                //  enumerate through the collections.  If this
+                                //  is a collection of data objects, call
+                                //  Mapper.Compare.  Otherwise, enumerate through
+                                //  the collection.
+
+                                // How will we compare the objects?
+                                var useMapperComp = value1.ToString().Contains(".Services.Contracts");
+
+                                // Note: this could probably be optimized and
+                                //  I am assuming that enumerators work the same
+                                //  with identical sets.  I could use LINQ and 
+                                //  search one element in the other list, but that
+                                //  could become a big issue....  Not sure at this time.
+                                // But the following does work.
+                                var en1 = ((ICollection) value1).GetEnumerator();
+                                var en2 = ((ICollection) value2).GetEnumerator();
+                                var matched = true;
+                                var working = en1.MoveNext();
+                                working = working && en2.MoveNext();
+
+                                // This is just to set the type of
+                                //  item1 & item2 so we can reference
+                                //  them after the loop, if we need to.
+                                var item1 = en1.Current;
+                                var item2 = en2.Current;
+                                var count = -1;
+
+                                while (matched && working)
+                                {
+                                    count++;
+                                    item1 = en1.Current;
+                                    item2 = en2.Current;
+                                    if (useMapperComp)
+                                    {
+                                        var tempResults = CompareObjects(item1, item2, options, level);
+                                        if (tempResults.Count > 0)
+                                            // Add whatever was returned from the above Compare
+                                            results.AddRange(tempResults);
+                                    }
+                                    else // Just see if they are equal.
+                                        matched = item1.Equals(item2);
+
+                                    // Move on to the next item
+                                    working = en1.MoveNext();
+                                    working = working && en2.MoveNext();
+                                }
+                                if (!matched)
+                                    // Ok, add this to the results
+                                    results.Add(new MappperCompareResults
+                                    {
+                                        Property = firstPropertyName,
+                                        ValueFirstObject = item1,
+                                        ValueSecondObject = item2,
+                                        Conflict = $"Element {count} does not match, no more elements checked.",
+                                        Level = level,
+                                    });
+                            }
+                        } //  if (value1 != null && value2 !=null && value1.ToString().StartsWith("System.Collections."))
+                        else
+                        {
+                            // Ok, not a collection, let's compare values.
+                            if (value1 == null && value2 != null || value1 != null && value2 == null || (value1 != null && !value1.Equals(value2)))
+                                // 1 is null, the other isn't OR they
+                                //  don't match - add it
+                                results.Add(new MappperCompareResults
+                                {
+                                    Property = firstPropertyName,
+                                    ValueFirstObject = value1,
+                                    ValueSecondObject = value2,
+                                    Conflict = "!=",
+                                    Level = level,
+                                });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // We had an error, at least track the property 
+                        //  that caused the error and report the error.
+                        results.Add(new MappperCompareResults
+                        {
+                            Property = firstPropertyName,
+                            Conflict = $"Error comparing values: {ex.Message}",
+                            Level = level,
+                        });
+                    }
+                }
+            }
+            _maps = oldMaps;
+            return results;
+        }
+
         /// <summary>
         /// Class used internally to aid in reflection tasks
         /// </summary>
@@ -1193,7 +1460,7 @@ namespace CODE.Framework.Core.Utilities
             public PropertyInfo[] GetAllProperties(Type type)
             {
                 var properties = from property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                 select property;
+                    select property;
 
                 var list = new List<PropertyInfo>();
                 list.AddRange(properties);
@@ -1221,6 +1488,43 @@ namespace CODE.Framework.Core.Utilities
             }
         }
     }
+
+    /// <summary>
+    /// Used as a return type for Mapper.Compare()
+    /// </summary>
+    public class MappperCompareResults
+    {
+        /// <summary>
+        /// If there is an error or other message
+        /// (other than not equal) this should explain
+        /// the issue.  Most commonly, it's for data
+        /// types that don't agree....
+        /// </summary>
+        public string Conflict { get; set; }
+
+        /// <summary>
+        /// This can be used when processing lists/collections
+        /// of objects....
+        /// </summary>
+        public int Level { get; set; }
+
+        /// <summary>
+        /// Name of the property that does not compare
+        /// </summary>
+        public string Property { get; set; }
+
+        /// <summary>
+        /// The value of the property in the first object
+        /// </summary>
+        public object ValueFirstObject { get; set; }
+
+        /// <summary>
+        /// The value of the property in the 2nd object 
+        /// </summary>
+        public object ValueSecondObject { get; set; }
+
+    }
+
 
     ///<summary>
     /// Key type used for mapping
@@ -1333,6 +1637,7 @@ namespace CODE.Framework.Core.Utilities
             ExcludedFields = new List<string>();
             MapDirection = MapDirection.Forward;
             MapFunctions = new List<Func<object, object, MapDirection, bool>>();
+            MapFunctionsFiltered = new Dictionary<string, Func<object, object, MapDirection, bool>>();
             SmartPrefixMap = false;
         }
 
@@ -1346,7 +1651,7 @@ namespace CODE.Framework.Core.Utilities
         public bool MapEnums { get; set; }
 
         /// <summary>
-        /// Indicates wheter auto-map enum attempts shall be case sensitive or not
+        /// Indicates whether auto-map enum attempts shall be case sensitive or not
         /// </summary>
         /// <value><c>true</c> if case sensitive, otherwise, <c>false</c>.</value>
         public bool MatchEnumCase { get; set; }
@@ -1368,20 +1673,20 @@ namespace CODE.Framework.Core.Utilities
         /// List of excluded fields
         /// </summary>
         /// <value>The excluded fields.</value>
-        public List<string> ExcludedFields { get; set; } 
+        public List<string> ExcludedFields { get; set; }
 
         /// <summary>
         /// Direction of the mapping operation
         /// </summary>
         /// <remarks>
-        /// Forward = Source to destinction
+        /// Forward = Source to destination
         /// Backward = Destination to source
         /// </remarks>
         /// <value>The map direction.</value>
         public MapDirection MapDirection { get; set; }
 
         /// <summary>
-        /// A list of functions that get called for mapped objets.
+        /// A list of functions that get called for mapped objects.
         /// For iterative maps (tables,...), map functions are called for each record.
         /// </summary>
         /// <value>The map functions.</value>
@@ -1392,6 +1697,20 @@ namespace CODE.Framework.Core.Utilities
         /// Return value = true if successful
         /// </remarks>
         public List<Func<object, object, MapDirection, bool>> MapFunctions { get; set; }
+
+        /// <summary>
+        /// A list of functions that get called for mapped objects.
+        /// Maps are only called for properties that match the key in the dictionary.
+        /// For iterative maps (tables,...), map functions are called for each record.
+        /// </summary>
+        /// <value>The map functions. </value>
+        /// <remarks>
+        /// Parameter 1 = source object (forward map, otherwise destination)
+        /// Parameter 2 = destination object (forward map, otherwise source)
+        /// Parameter 3 = direction
+        /// Return value = true if successful
+        /// </remarks>
+        public Dictionary<string, Func<object, object, MapDirection, bool>> MapFunctionsFiltered { get; set; }
     }
 
     /// <summary>
@@ -1401,7 +1720,6 @@ namespace CODE.Framework.Core.Utilities
     public class ExpressionTreeObjectActivator
     {
         private readonly ObjectActivator _activator;
-        private readonly ConstructorInfo _constructorInfo;
         private readonly Type _objectType;
 
         /// <summary>
@@ -1411,8 +1729,8 @@ namespace CODE.Framework.Core.Utilities
         public ExpressionTreeObjectActivator(Type objectType)
         {
             _objectType = objectType;
-            _constructorInfo = FindDefaultParameterlessConstructor();
-            _activator = GetActivator(_constructorInfo);
+            var constructorInfo = FindDefaultParameterlessConstructor();
+            _activator = GetActivator(constructorInfo);
         }
 
         private ConstructorInfo FindDefaultParameterlessConstructor()
@@ -1420,8 +1738,8 @@ namespace CODE.Framework.Core.Utilities
             var constructors = _objectType.GetConstructors().Where(x => x.GetParameters().Count().Equals(0));
 
             var constructorInfos = constructors as ConstructorInfo[] ?? constructors.ToArray();
-            if (constructorInfos.Count() == 0)
-                throw new InvalidOperationException("Parameterless constructore required on type '" + _objectType.FullName + "'.");
+            if (!constructorInfos.Any())
+                throw new InvalidOperationException("Parameterless constructor required on type '" + _objectType.FullName + "'.");
             return constructorInfos.Single();
         }
 
@@ -1434,18 +1752,17 @@ namespace CODE.Framework.Core.Utilities
             return _activator(null);
         }
 
-        private static ObjectActivator GetActivator(ConstructorInfo ctor)
+        private static ObjectActivator GetActivator(ConstructorInfo constructorInfo)
         {
-            var type = ctor.DeclaringType;
-            var paramsInfo = ctor.GetParameters();
+            var parameters = constructorInfo.GetParameters();
 
             // create a single param of type object[]
             var param = Expression.Parameter(typeof (object[]), "args");
 
-            var argsExp = new Expression[paramsInfo.Length];
+            var argsExp = new Expression[parameters.Length];
 
-            // make a NewExpression that calls the ctor with the args we just created
-            var newExp = Expression.New(ctor, argsExp);
+            // make a NewExpression that calls the constructor with the args we just created
+            var newExp = Expression.New(constructorInfo, argsExp);
 
             // create a lambda with the New
             // Expression as body and our param object[] as arg

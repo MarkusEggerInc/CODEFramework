@@ -11,9 +11,10 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
         public int? End { get; set; }
         public int? Step { get; set; }
 
-        public override IEnumerable<JToken> ExecuteFilter(IEnumerable<JToken> current, bool errorWhenNoMatch)
+        public override IEnumerable<JToken> ExecuteFilter(JToken root, IEnumerable<JToken> current, bool errorWhenNoMatch)
         {
-            if (Step == 0) throw new JsonException("Step cannot be zero.");
+            if (Step == 0)
+                throw new JsonException("Step cannot be zero.");
 
             foreach (var t in current)
             {
@@ -22,36 +23,52 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                 {
                     // set defaults for null arguments
                     var stepCount = Step ?? 1;
-                    var startIndex = Start ?? ((stepCount > 0) ? 0 : a.Count - 1);
-                    var stopIndex = End ?? ((stepCount > 0) ? a.Count : -1);
+                    var startIndex = Start ?? (stepCount > 0 ? 0 : a.Count - 1);
+                    var stopIndex = End ?? (stepCount > 0 ? a.Count : -1);
 
-                    // start from the end of the list if start is negitive
-                    if (Start < 0) startIndex = a.Count + startIndex;
+                    // start from the end of the list if start is negative
+                    if (Start < 0)
+                        startIndex = a.Count + startIndex;
 
-                    // end from the start of the list if stop is negitive
-                    if (End < 0) stopIndex = a.Count + stopIndex;
+                    // end from the start of the list if stop is negative
+                    if (End < 0)
+                        stopIndex = a.Count + stopIndex;
 
                     // ensure indexes keep within collection bounds
-                    startIndex = Math.Max(startIndex, (stepCount > 0) ? 0 : int.MinValue);
-                    startIndex = Math.Min(startIndex, (stepCount > 0) ? a.Count : a.Count - 1);
+                    startIndex = Math.Max(startIndex, stepCount > 0 ? 0 : int.MinValue);
+                    startIndex = Math.Min(startIndex, stepCount > 0 ? a.Count : a.Count - 1);
                     stopIndex = Math.Max(stopIndex, -1);
                     stopIndex = Math.Min(stopIndex, a.Count);
 
-                    var positiveStep = (stepCount > 0);
+                    var positiveStep = stepCount > 0;
 
                     if (IsValid(startIndex, stopIndex, positiveStep))
+                    {
                         for (var i = startIndex; IsValid(i, stopIndex, positiveStep); i += stepCount)
                             yield return a[i];
-                    else if (errorWhenNoMatch)
-                        throw new JsonException("Array slice of {0} to {1} returned no results.".FormatWith(CultureInfo.InvariantCulture, Start != null ? Start.Value.ToString(CultureInfo.InvariantCulture) : "*", End != null ? End.Value.ToString(CultureInfo.InvariantCulture) : "*"));
+                    }
+                    else
+                    {
+                        if (errorWhenNoMatch)
+                            throw new JsonException("Array slice of {0} to {1} returned no results.".FormatWith(CultureInfo.InvariantCulture,
+                                Start != null ? Start.GetValueOrDefault().ToString(CultureInfo.InvariantCulture) : "*",
+                                End != null ? End.GetValueOrDefault().ToString(CultureInfo.InvariantCulture) : "*"));
+                    }
                 }
-                else if (errorWhenNoMatch) throw new JsonException("Array slice is not valid on {0}.".FormatWith(CultureInfo.InvariantCulture, t.GetType().Name));
+                else
+                {
+                    if (errorWhenNoMatch)
+                        throw new JsonException("Array slice is not valid on {0}.".FormatWith(CultureInfo.InvariantCulture, t.GetType().Name));
+                }
             }
         }
 
-        private static bool IsValid(int index, int stopIndex, bool positiveStep)
+        private bool IsValid(int index, int stopIndex, bool positiveStep)
         {
-            return positiveStep ? index < stopIndex : index > stopIndex;
+            if (positiveStep)
+                return index < stopIndex;
+
+            return index > stopIndex;
         }
     }
 }

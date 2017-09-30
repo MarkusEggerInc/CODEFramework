@@ -73,7 +73,7 @@ namespace CODE.Framework.Wpf.Utilities
             if (Application.Current != null && Application.Current.Dispatcher != null)
                 try
                 {
-                    Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.ApplicationIdle, new object[] { focusElement1, focusElement2, focusElement3, focusElement4, delay });
+                    Application.Current.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal, focusElement1, focusElement2, focusElement3, focusElement4, delay);
                 }
                 catch
                 {
@@ -84,20 +84,28 @@ namespace CODE.Framework.Wpf.Utilities
 
         private static void FocusDelayed3(UIElement focusElement1, UIElement focusElement2, UIElement focusElement3, UIElement focusElement4, int delay)
         {
-            MoveFocusIfPossible(focusElement1, delay);
-            MoveFocusIfPossible(focusElement2, delay);
-            MoveFocusIfPossible(focusElement3, delay);
-            MoveFocusIfPossible(focusElement4, delay);
+            MoveFocusIfPossible(focusElement1);
+            MoveFocusIfPossible(focusElement2);
+            MoveFocusIfPossible(focusElement3);
+            MoveFocusIfPossible(focusElement4);
         }
 
-        private static void MoveFocusIfPossible(UIElement element, int delay)
+        private static void MoveFocusIfPossible(UIElement element)
         {
             if (element == null) return;
             if (element.IsVisible)
                 element.Focus();
             else
-                // Not there yet... we can try again
-                FocusDelayed(element, delay: delay);
+                element.IsVisibleChanged += TryAgainWhenVisible; // We try again when the control changes visibility
+        }
+
+        private static void TryAgainWhenVisible(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // Not there yet... we can try again
+            var element = sender as UIElement;
+            if (element == null) return;
+            element.IsVisibleChanged -= TryAgainWhenVisible;
+            FocusDelayed(element);
         }
     }
 }

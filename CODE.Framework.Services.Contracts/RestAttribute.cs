@@ -159,6 +159,8 @@ namespace CODE.Framework.Services.Contracts
         /// <summary>HTTP UNLOCK</summary>
         Unlock,
         /// <summary>HTTP OPTIONS</summary>
-        Options
+        Options,
+        /// <summary>HTTP POST or PUT (both are valid for this setting)</summary>
+        PostOrPut
     }
 }

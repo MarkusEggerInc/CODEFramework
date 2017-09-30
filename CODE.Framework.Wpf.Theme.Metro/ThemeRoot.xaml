@@ -34,6 +34,7 @@
         <ResourceDictionary Source="Metro-Control-ViewActionItemsControl.xaml"/>
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Metro-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Metro-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Metro-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Metro-Layout-MultiPanel.xaml"/>
@@ -41,6 +42,7 @@
         <ResourceDictionary Source="Metro-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Metro-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Metro-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Metro-Layout-Tabs.xaml"/>
 
         <!-- Standard Icons -->
         <ResourceDictionary Source="Metro-Icon-Arrow.xaml"/>

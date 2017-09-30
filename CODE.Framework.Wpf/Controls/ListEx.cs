@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 using CODE.Framework.Core.Utilities;
 
 namespace CODE.Framework.Wpf.Controls
@@ -43,6 +45,41 @@ namespace CODE.Framework.Wpf.Controls
         {
             return (bool)o.GetValue(ShowHeaderEditControlsProperty);
         }
+
+        /// <summary>Defines whether footer edit controls are to be displayed (if there are any defined)</summary>
+        public static readonly DependencyProperty ShowFooterEditControlsProperty = DependencyProperty.RegisterAttached("ShowFooterEditControls", typeof(bool), typeof(ListEx), new PropertyMetadata(true));
+        /// <summary>Defines whether footer edit controls are to be displayed (if there are any defined)</summary>
+        public static void SetShowFooterEditControls(DependencyObject o, bool value)
+        {
+            o.SetValue(ShowFooterEditControlsProperty, value);
+        }
+        /// <summary>Defines whether footer edit controls are to be displayed (if there are any defined)</summary>
+        public static bool GetShowFooterEditControls(DependencyObject o)
+        {
+            return (bool)o.GetValue(ShowFooterEditControlsProperty);
+        }
+
+        /// <summary>Defines whether row selection is to be preserved after a re-sort operation</summary>
+        public static readonly DependencyProperty PreserveSelectionAfterResortProperty = DependencyProperty.RegisterAttached("PreserveSelectionAfterResort", typeof(bool), typeof(ListEx), new PropertyMetadata(true));
+        /// <summary>
+        /// Defines whether row selection is to be preserved after a re-sort operation
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="value">if set to <c>true</c> [value].</param>
+        public static void SetPreserveSelectionAfterResort(DependencyObject o, bool value)
+        {
+            o.SetValue(PreserveSelectionAfterResortProperty, value);
+        }
+        /// <summary>
+        /// Defines whether row selection is to be preserved after a re-sort operation
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
+        public static bool GetPreserveSelectionAfterResort(DependencyObject o)
+        {
+            return (bool)o.GetValue(PreserveSelectionAfterResortProperty);
+        }
+
 
         /// <summary>
         /// Setting this property to true on a ListBox automatically loads appropriate templates for the ListBox to support rows and columns
@@ -223,24 +260,187 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         public ListColumnsCollection()
         {
-            ShowGridLines = ListGridLineMode.Never;
-            AllowColumnMove = true;
+            CollectionChanged += TriggerDelayedCollectionChanged;
+        }
+
+        /// <summary>
+        /// Acts very similar to CollectionChanged, but fires 25ms delayed, and only fires once
+        /// when a lot of CollectionChanged events fire within a tight loop.
+        /// </summary>
+        public event NotifyCollectionChangedEventHandler CollectionChangedDelayed;
+
+        private DispatcherTimer _delayTimer;
+        private bool _showHeaders = true;
+        private bool _showFooters;
+        private bool _allowColumnMove = true;
+        private ListGridLineMode _showGridLines = ListGridLineMode.Never;
+        private string _editModeBindingPath;
+        private DataTemplate _detailTemplate;
+        private string _detailExpandedPath;
+        private bool _detailSpansFullWidth = true;
+        private string _defaultDisplayBindingPath = "Text1";
+
+        private void TriggerDelayedCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (CollectionChangedDelayed == null) return; // No point in firing it
+
+            // This timer fires with a delay of 25ms. This means that if this method gets called often on a tight loop, 
+            // it will always reset the timer so it only fires once the last call happened and 25ms have gone by.
+            if (_delayTimer == null)
+                _delayTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(25), DispatcherPriority.Normal, (s, e) =>
+                    {
+                        _delayTimer.IsEnabled = false;
+                        var handler = CollectionChangedDelayed;
+                        if (handler != null)
+                            handler(sender, args);
+                    }, Application.Current.Dispatcher)
+                { IsEnabled = false };
+            else
+                _delayTimer.IsEnabled = false; // Resets the timer
+
+            // Triggering the next timer run
+            _delayTimer.IsEnabled = true;
         }
 
         /// <summary>
         /// Path to a boolean source that defines whether a row is editable or not
         /// </summary>
-        public string EditModeBindingPath { get; set; }
+        public string EditModeBindingPath
+        {
+            get { return _editModeBindingPath; }
+            set
+            {
+                if (value == _editModeBindingPath) return;
+                _editModeBindingPath = value;
+                NotifyChanged("EditModeBindingPath");
+            }
+        }
 
         /// <summary>
         /// Defines whether and when grid lines shall be displayed
         /// </summary>
-        public ListGridLineMode ShowGridLines { get; set; }
+        public ListGridLineMode ShowGridLines
+        {
+            get { return _showGridLines; }
+            set
+            {
+                if (value == _showGridLines) return;
+                _showGridLines = value;
+                NotifyChanged("ShowGridLines");
+            }
+        }
 
         /// <summary>
         /// Defines whether columns can be moved/dragged to change positions
         /// </summary>
-        public bool AllowColumnMove { get; set; }
+        public bool AllowColumnMove
+        {
+            get { return _allowColumnMove; }
+            set
+            {
+                if (value == _allowColumnMove) return;
+                _allowColumnMove = value;
+                NotifyChanged("AllowColumnMove");
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether or not column headers are desired
+        /// </summary>
+        public bool ShowHeaders
+        {
+            get { return _showHeaders; }
+            set
+            {
+                if (value == _showHeaders) return;
+                _showHeaders = value;
+                NotifyChanged("ShowHeaders");
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether or not column headers are desired
+        /// </summary>
+        public bool ShowFooters
+        {
+            get { return _showFooters; }
+            set
+            {
+                if (value == _showFooters) return;
+                _showFooters = value;
+                NotifyChanged("ShowFooters");
+            }
+        }
+
+        /// <summary>Template used for a potential detail area</summary>
+        public DataTemplate DetailTemplate
+        {
+            get { return _detailTemplate; }
+            set
+            {
+                _detailTemplate = value;
+                NotifyChanged("DetailTemplate");
+            }
+        }
+
+        /// <summary>
+        /// Defines whether the detail area is auto-assigned the full width available in the list (true),
+        /// or whether the controls in the detail template define their own width (false).
+        /// </summary>
+        public bool DetailSpansFullWidth
+        {
+            get { return _detailSpansFullWidth; }
+            set
+            {
+                _detailSpansFullWidth = value;
+                NotifyChanged("DetailSpansFullWidth");
+            }
+        }
+
+        /// <summary>
+        /// Path to a boolean property that indicates whether the detail area is expanded or not
+        /// </summary>
+        public string DetailExpandedPath
+        {
+            get { return _detailExpandedPath; }
+            set
+            {
+                _detailExpandedPath = value;
+                NotifyChanged("DetailExpandedPath");
+            }
+        }
+
+        /// <summary>
+        /// Binding path to a field that represents the entire row. Typically the same binding path as the first column in the list.
+        /// </summary>
+        public string DefaultDisplayBindingPath
+        {
+            get { return _defaultDisplayBindingPath; }
+            set
+            {
+                _defaultDisplayBindingPath = value;
+                NotifyChanged("DefaultDisplayBindingPath");
+            }
+        }
+
+        /// <summary>
+        /// Can be used to indicate a property changed
+        /// </summary>
+        /// <param name="propertyName">Name of the changed property (or empty string to indicate a refresh of all properties)</param>
+        protected virtual void NotifyChanged(string propertyName = "")
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+
+            var handler = PropertyChangedPublic;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Public version of property changed, which only happens for the properties defined in this class directly.
+        /// </summary>
+        /// <remarks>Requires since the default implementation is protected</remarks>
+        public event PropertyChangedEventHandler PropertyChangedPublic;
     }
 
     /// <summary>
@@ -257,6 +457,24 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Column Header</summary>
         public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register("Header", typeof(object), typeof(ListColumn), new UIPropertyMetadata(null));
 
+        /// <summary>Column Footer</summary>
+        public object Footer
+        {
+            get { return GetValue(FooterProperty); }
+            set { SetValue(FooterProperty, value); }
+        }
+        /// <summary>Column Footer</summary>
+        public static readonly DependencyProperty FooterProperty = DependencyProperty.Register("Footer", typeof(object), typeof(ListColumn), new UIPropertyMetadata(null));
+
+        /// <summary>Column Footer</summary>
+        public string FooterBindingPath
+        {
+            get { return (string)GetValue(FooterBindingPathProperty); }
+            set { SetValue(FooterBindingPathProperty, value); }
+        }
+        /// <summary>Column Footer</summary>
+        public static readonly DependencyProperty FooterBindingPathProperty = DependencyProperty.Register("FooterBindingPath", typeof(string), typeof(ListColumn), new UIPropertyMetadata(null));
+
         /// <summary>Defines whether a header label (text) shall be displayed</summary>
         /// <value>True (default) or false</value>
         public bool ShowColumnHeaderText
@@ -267,6 +485,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Defines whether a header label (text) shall be displayed</summary>
         /// <value>True (default) or false</value>
         public static readonly DependencyProperty ShowColumnHeaderTextProperty = DependencyProperty.Register("ShowColumnHeaderText", typeof(bool), typeof(ListColumn), new PropertyMetadata(true));
+
+        /// <summary>Defines whether a footer label (text) shall be displayed</summary>
+        /// <value>True (default) or false</value>
+        public bool ShowColumnFooterText
+        {
+            get { return (bool)GetValue(ShowColumnFooterTextProperty); }
+            set { SetValue(ShowColumnFooterTextProperty, value); }
+        }
+        /// <summary>Defines whether a footer label (text) shall be displayed</summary>
+        /// <value>True (default) or false</value>
+        public static readonly DependencyProperty ShowColumnFooterTextProperty = DependencyProperty.Register("ShowColumnFooterText", typeof(bool), typeof(ListColumn), new PropertyMetadata(true));
 
         /// <summary>Defines whether a header edit control (textbox) shall be displayed</summary>
         /// <value>True or false (default)</value>
@@ -279,6 +508,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <value>True or false (default)</value>
         public static readonly DependencyProperty ShowColumnHeaderEditControlProperty = DependencyProperty.Register("ShowColumnHeaderEditControl", typeof(bool), typeof(ListColumn), new PropertyMetadata(false));
 
+        /// <summary>Defines whether a footer edit control (textbox) shall be displayed</summary>
+        /// <value>True or false (default)</value>
+        public bool ShowColumnFooterEditControl
+        {
+            get { return (bool)GetValue(ShowColumnFooterEditControlProperty); }
+            set { SetValue(ShowColumnFooterEditControlProperty, value); }
+        }
+        /// <summary>Defines whether a footer edit control (textbox) shall be displayed</summary>
+        /// <value>True or false (default)</value>
+        public static readonly DependencyProperty ShowColumnFooterEditControlProperty = DependencyProperty.Register("ShowColumnFooterEditControl", typeof(bool), typeof(ListColumn), new PropertyMetadata(false));
+
         /// <summary>Binding path for a column header edit control</summary>
         /// <value>The column header edit control binding path.</value>
         public string ColumnHeaderEditControlBindingPath
@@ -289,6 +529,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Binding path for a column header edit control</summary>
         /// <value>The column header edit control binding path.</value>
         public static readonly DependencyProperty ColumnHeaderEditControlBindingPathProperty = DependencyProperty.Register("ColumnHeaderEditControlBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>Binding path for a column footer edit control</summary>
+        /// <value>The column footer edit control binding path.</value>
+        public string ColumnFooterEditControlBindingPath
+        {
+            get { return (string)GetValue(ColumnFooterEditControlBindingPathProperty); }
+            set { SetValue(ColumnFooterEditControlBindingPathProperty, value); }
+        }
+        /// <summary>Binding path for a column footer edit control</summary>
+        /// <value>The column footer edit control binding path.</value>
+        public static readonly DependencyProperty ColumnFooterEditControlBindingPathProperty = DependencyProperty.Register("ColumnFooterEditControlBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
 
         /// <summary>Binding update trigger for a column header edit control</summary>
         /// <value>The column header edit control update trigger.</value>
@@ -301,6 +552,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <value>The column header edit control update trigger.</value>
         public static readonly DependencyProperty ColumnHeaderEditControlUpdateTriggerProperty = DependencyProperty.Register("ColumnHeaderEditControlUpdateTrigger", typeof(UpdateSourceTrigger), typeof(ListColumn), new PropertyMetadata(UpdateSourceTrigger.Default));
 
+        /// <summary>Binding update trigger for a column footer edit control</summary>
+        /// <value>The column footer edit control update trigger.</value>
+        public UpdateSourceTrigger ColumnFooterEditControlUpdateTrigger
+        {
+            get { return (UpdateSourceTrigger)GetValue(ColumnFooterEditControlUpdateTriggerProperty); }
+            set { SetValue(ColumnFooterEditControlUpdateTriggerProperty, value); }
+        }
+        /// <summary>Binding update trigger for a column footer edit control</summary>
+        /// <value>The column footer edit control update trigger.</value>
+        public static readonly DependencyProperty ColumnFooterEditControlUpdateTriggerProperty = DependencyProperty.Register("ColumnFooterEditControlUpdateTrigger", typeof(UpdateSourceTrigger), typeof(ListColumn), new PropertyMetadata(UpdateSourceTrigger.Default));
+
         /// <summary>Watermark text for a potential header control</summary>
         /// <value>The column header edit control watermark text.</value>
         public string ColumnHeaderEditControlWatermarkText
@@ -311,6 +573,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Watermark text for a potential header control</summary>
         /// <value>The column header edit control watermark text.</value>
         public static readonly DependencyProperty ColumnHeaderEditControlWatermarkTextProperty = DependencyProperty.Register("ColumnHeaderEditControlWatermarkText", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>Watermark text for a potential footer control</summary>
+        /// <value>The column footer edit control watermark text.</value>
+        public string ColumnFooterEditControlWatermarkText
+        {
+            get { return (string)GetValue(ColumnFooterEditControlWatermarkTextProperty); }
+            set { SetValue(ColumnFooterEditControlWatermarkTextProperty, value); }
+        }
+        /// <summary>Watermark text for a potential footer control</summary>
+        /// <value>The column footer edit control watermark text.</value>
+        public static readonly DependencyProperty ColumnFooterEditControlWatermarkTextProperty = DependencyProperty.Register("ColumnFooterEditControlWatermarkText", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
 
         /// <summary>Column Width</summary>
         public GridLength Width
@@ -409,6 +682,15 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Template used for column headers</summary>
         public static readonly DependencyProperty HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof(ControlTemplate), typeof(ListColumn), new PropertyMetadata(null));
 
+        /// <summary>Template used for column footers</summary>
+        public ControlTemplate FooterTemplate
+        {
+            get { return (ControlTemplate)GetValue(FooterTemplateProperty); }
+            set { SetValue(FooterTemplateProperty, value); }
+        }
+        /// <summary>Template used for column footers</summary>
+        public static readonly DependencyProperty FooterTemplateProperty = DependencyProperty.Register("FooterTemplate", typeof(ControlTemplate), typeof(ListColumn), new PropertyMetadata(null));
+
         /// <summary>Defines whether the column is resizable</summary>
         public bool IsResizable
         {
@@ -452,6 +734,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Binding path to bind a header click command</summary>
         /// <remarks>Note that standard binding would not be applicable int his case, since column headers do not exist within the visual tree structure that would provide the standard data context</remarks>
         public static readonly DependencyProperty HeaderClickCommandBindingPathProperty = DependencyProperty.Register("HeaderClickCommandBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(null));
+
+        /// <summary>Binding path to bind a footer click command</summary>
+        /// <remarks>Note that standard binding would not be applicable int his case, since column footers do not exist within the visual tree structure that would provide the standard data context</remarks>
+        public string FooterClickCommandBindingPath
+        {
+            get { return (string)GetValue(FooterClickCommandBindingPathProperty); }
+            set { SetValue(FooterClickCommandBindingPathProperty, value); }
+        }
+        /// <summary>Binding path to bind a footer click command</summary>
+        /// <remarks>Note that standard binding would not be applicable int his case, since column headers do not exist within the visual tree structure that would provide the standard data context</remarks>
+        public static readonly DependencyProperty FooterClickCommandBindingPathProperty = DependencyProperty.Register("FooterClickCommandBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(null));
 
         /// <summary>Background brush for individual cells</summary>
         /// <value>The cell background.</value>
@@ -531,6 +824,34 @@ namespace CODE.Framework.Wpf.Controls
         /// <remarks>Only applies for columns without item templates</remarks>
         public static readonly DependencyProperty ColumnControlProperty = DependencyProperty.Register("ColumnControl", typeof(ListColumnControls), typeof(ListColumn), new PropertyMetadata(ListColumnControls.Auto));
 
+        /// <summary>
+        /// Binding path for the IsEnabled property of a contained control
+        /// </summary>
+        /// <value>The column control is enabled binding path.</value>
+        public string ColumnControlIsEnabledBindingPath
+        {
+            get { return (string)GetValue(ColumnControlIsEnabledBindingPathProperty); }
+            set { SetValue(ColumnControlIsEnabledBindingPathProperty, value); }
+        }
+        /// <summary>
+        /// Binding path for the IsEnabled property of a contained control
+        /// </summary>
+        public static readonly DependencyProperty ColumnControlIsEnabledBindingPathProperty = DependencyProperty.Register("ColumnControlIsEnabledBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>
+        /// Binding path for a double-click command/view-action associated with a contained control
+        /// </summary>
+        /// <value>The double click command binding path.</value>
+        public string DoubleClickCommandBindingPath
+        {
+            get { return (string)GetValue(DoubleClickCommandBindingPathProperty); }
+            set { SetValue(DoubleClickCommandBindingPathProperty, value); }
+        }
+        /// <summary>
+        /// Binding path for a double-click command/view-action associated with a contained control
+        /// </summary>
+        public static readonly DependencyProperty DoubleClickCommandBindingPathProperty = DependencyProperty.Register("DoubleClickCommandBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
         /// <summary>Content alignment for cell content</summary>
         /// <value>The cell content alignment.</value>
         public ListColumnContentAlignment CellContentAlignment
@@ -550,6 +871,15 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Text alignment for simple text headers</summary>
         public static readonly DependencyProperty HeaderTextAlignmentProperty = DependencyProperty.Register("HeaderTextAlignment", typeof(TextAlignment), typeof(ListColumn), new PropertyMetadata(TextAlignment.Left));
 
+        /// <summary>Text alignment for simple text footers</summary>
+        public TextAlignment FooterTextAlignment
+        {
+            get { return (TextAlignment)GetValue(FooterTextAlignmentProperty); }
+            set { SetValue(FooterTextAlignmentProperty, value); }
+        }
+        /// <summary>Text alignment for simple text headers</summary>
+        public static readonly DependencyProperty FooterTextAlignmentProperty = DependencyProperty.Register("FooterTextAlignment", typeof(TextAlignment), typeof(ListColumn), new PropertyMetadata(TextAlignment.Left));
+
         /// <summary>
         /// Gets or sets the header foreground color/brush.
         /// </summary>
@@ -565,6 +895,21 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty HeaderForegroundProperty = DependencyProperty.Register("HeaderForeground", typeof(Brush), typeof(ListColumn), new PropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the footer foreground color/brush.
+        /// </summary>
+        /// <value>The footer foreground.</value>
+        /// <remarks>Ignored when initially null</remarks>
+        public Brush FooterForeground
+        {
+            get { return (Brush)GetValue(FooterForegroundProperty); }
+            set { SetValue(FooterForegroundProperty, value); }
+        }
+        /// <summary>
+        /// Gets or sets the footer foreground color/brush.
+        /// </summary>
+        public static readonly DependencyProperty FooterForegroundProperty = DependencyProperty.Register("FooterForeground", typeof(Brush), typeof(ListColumn), new PropertyMetadata(null));
+
         /// <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
         /// <value>The text list item source binding path.</value>
         public string TextListItemsSourceBindingPath
@@ -575,6 +920,15 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
         /// <value>The text list item source binding path.</value>
         public static readonly DependencyProperty TextListItemsSourceBindingPathProperty = DependencyProperty.Register("TextListItemsSourceBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
+
+        /// <summary>Columns for text lists (drop-downs)</summary>
+        public ListColumnsCollection TextListColumns
+        {
+            get { return (ListColumnsCollection)GetValue(TextListColumnsProperty); }
+            set { SetValue(TextListColumnsProperty, value); }
+        }
+        /// <summary>Columns for text lists (drop-downs)</summary>
+        public static readonly DependencyProperty TextListColumnsProperty = DependencyProperty.Register("TextListColumns", typeof(ListColumnsCollection), typeof(ListColumn), new PropertyMetadata(null));
 
         /// <summary>Display member binding path path expression used for the list (such as a combobox) of a text list hosted control</summary>
         /// <value>The text list display member path.</value>
@@ -732,6 +1086,17 @@ namespace CODE.Framework.Wpf.Controls
         /// <value>The header event commands.</value>
         public static readonly DependencyProperty HeaderEventCommandsProperty = DependencyProperty.Register("HeaderEventCommands", typeof(EventCommandsCollection), typeof(ListColumn), new PropertyMetadata(new EventCommandsCollection()));
 
+        /// <summary>Collection of event commands associated with the footer control</summary>
+        /// <value>The footer event commands.</value>
+        public EventCommandsCollection FooterEventCommands
+        {
+            get { return (EventCommandsCollection)GetValue(FooterEventCommandsProperty); }
+            set { SetValue(FooterEventCommandsProperty, value); }
+        }
+        /// <summary>Collection of event commands associated with the footer control</summary>
+        /// <value>The footer event commands.</value>
+        public static readonly DependencyProperty FooterEventCommandsProperty = DependencyProperty.Register("FooterEventCommands", typeof(EventCommandsCollection), typeof(ListColumn), new PropertyMetadata(new EventCommandsCollection()));
+
         /// <summary>Column sort order indicator</summary>
         /// <value>The sort order indicator.</value>
         /// <remarks>Note that setting this value does NOT actually sort the bound data unless AutoSort = true. It simply creates a visual indicator showing that the column is sorted.</remarks>
@@ -832,6 +1197,36 @@ namespace CODE.Framework.Wpf.Controls
         /// <value>The tooltip binding path.</value>
         public static readonly DependencyProperty ToolTipBindingPathProperty = DependencyProperty.Register("ToolTipBindingPath", typeof(string), typeof(ListColumn), new PropertyMetadata(""));
 
+        /// <summary>Initial delay (in milliseconds) before tooltips show up</summary>
+        public int ToolTipInitialShowDelay
+        {
+            get { return (int)GetValue(ToolTipInitialShowDelayProperty); }
+            set { SetValue(ToolTipInitialShowDelayProperty, value); }
+        }
+
+        /// <summary>Initial delay (in milliseconds) before tooltips show up</summary>
+        public static readonly DependencyProperty ToolTipInitialShowDelayProperty = DependencyProperty.Register("ToolTipInitialShowDelay", typeof(int), typeof(ListColumn), new PropertyMetadata(int.MinValue));
+
+        /// <summary>Tooltip display duration (in milliseconds)</summary>
+        public int ToolTipShowDuration
+        {
+            get { return (int)GetValue(ToolTipShowDurationProperty); }
+            set { SetValue(ToolTipShowDurationProperty, value); }
+        }
+
+        /// <summary>Tooltip display duration (in milliseconds)</summary>
+        public static readonly DependencyProperty ToolTipShowDurationProperty = DependencyProperty.Register("ToolTipShowDuration", typeof(int), typeof(ListColumn), new PropertyMetadata(int.MinValue));
+
+        /// <summary>Tooltip placement</summary>
+        public PlacementMode ToolTipPlacement
+        {
+            get { return (PlacementMode)GetValue(ToolTipPlacementProperty); }
+            set { SetValue(ToolTipPlacementProperty, value); }
+        }
+
+        /// <summary>Tooltip placement</summary>
+        public static readonly DependencyProperty ToolTipPlacementProperty = DependencyProperty.Register("ToolTipPlacement", typeof(PlacementMode), typeof(ListColumn), new PropertyMetadata(PlacementMode.Mouse));
+
         /// <summary>Indicates whether the column is considered to be "frozen"</summary>
         /// <remarks>Frozen status usually indicates that all frozen columns are kept visible on the left side of the listbox. Note that different controls and styles may interpret this property differently.</remarks>
         public bool IsFrozen
@@ -867,15 +1262,38 @@ namespace CODE.Framework.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty ColumnHeaderEditControlTemplateProperty = DependencyProperty.Register("ColumnHeaderEditControlTemplate", typeof(DataTemplate), typeof(ListEx), new PropertyMetadata(null));
 
+        /// <summary>
+        /// Template for control footer edit controls
+        /// </summary>
+        public DataTemplate ColumnFooterEditControlTemplate
+        {
+            get { return (DataTemplate)GetValue(ColumnFooterEditControlTemplateProperty); }
+            set { SetValue(ColumnFooterEditControlTemplateProperty, value); }
+        }
+        /// <summary>
+        /// Template for control footer edit controls
+        /// </summary>
+        public static readonly DependencyProperty ColumnFooterEditControlTemplateProperty = DependencyProperty.Register("ColumnFooterEditControlTemplate", typeof(DataTemplate), typeof(ListEx), new PropertyMetadata(null));
+
         /// <summary>For internal use only</summary>
         [Browsable(false)]
         public FrameworkElement UtilizedHeaderEditControl { get; set; }
+
+        /// <summary>For internal use only</summary>
+        [Browsable(false)]
+        public FrameworkElement UtilizedFooterEditControl { get; set; }
 
         /// <summary>
         /// Gets or sets the column header edit control data context.
         /// </summary>
         /// <value>The column header edit control data context.</value>
         public object ColumnHeaderEditControlDataContext { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column footer edit control data context.
+        /// </summary>
+        /// <value>The column footer edit control data context.</value>
+        public object ColumnFooterEditControlDataContext { get; set; }
 
         /// <summary>
         /// Gets or sets the visible of the column.
@@ -892,8 +1310,9 @@ namespace CODE.Framework.Wpf.Controls
             var column = d as ListColumn;
             if (column == null) return;
 
-            if (column.VisibilityChanged != null)
-                column.VisibilityChanged(column, new EventArgs());
+            var handler = column.VisibilityChanged;
+            if (handler != null)
+                handler(column, new EventArgs());
         }
 
         /// <summary>
@@ -910,6 +1329,45 @@ namespace CODE.Framework.Wpf.Controls
             if (actualWidth > 0 && Math.Abs(ActualWidth - actualWidth) > .01)
                 ActualWidth = actualWidth;
         }
+
+        /// <summary>
+        /// Occurs when a control is added to a smart data template for a specific cell
+        /// </summary>
+        public event EventHandler<CellControlCreatedEventArgs> CellControlCreated;
+
+        /// <summary>
+        /// Raises the cell control created event.
+        /// </summary>
+        /// <param name="control">The created control.</param>
+        protected internal void RaiseCellControlCreated(FrameworkElement control)
+        {
+            var handler = CellControlCreated;
+            if (handler != null)
+                handler(this, new CellControlCreatedEventArgs(control));
+        }
+    }
+
+    /// <summary>
+    /// Event arguments for the CellControlCreated event
+    /// </summary>
+    public class CellControlCreatedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CellControlCreatedEventArgs"/> class.
+        /// </summary>
+        /// <param name="control">The control.</param>
+        public CellControlCreatedEventArgs(FrameworkElement control)
+        {
+            Control = control;
+        }
+
+        /// <summary>
+        /// Reference to the added control
+        /// </summary>
+        /// <value>
+        /// The control.
+        /// </value>
+        public FrameworkElement Control { get; }
     }
 
     /// <summary>
@@ -1023,8 +1481,16 @@ namespace CODE.Framework.Wpf.Controls
 
             foreach (var column in columns)
             {
-                jsonBuilder.Append("Column-" + column.BindingPath + "-Width", column.Width);
-                jsonBuilder.Append("Column-" + column.BindingPath + "-SortOrder", column.SortOrder);
+                var columnIdentifier = column.BindingPath;
+                if (string.IsNullOrEmpty(columnIdentifier))
+                    columnIdentifier = column.Header.ToString().Replace(" ", "");
+                if (string.IsNullOrEmpty(columnIdentifier))
+                    columnIdentifier = column.EditControlBindingPath;
+                if (string.IsNullOrEmpty(columnIdentifier))
+                    columnIdentifier = column.SortOrderBindingPath;
+                if (string.IsNullOrEmpty(columnIdentifier)) continue;
+                jsonBuilder.Append("Column-" + columnIdentifier + "-Width", column.Width);
+                jsonBuilder.Append("Column-" + columnIdentifier + "-SortOrder", column.SortOrder);
             }
 
             var json = jsonBuilder.ToString();
@@ -1048,8 +1514,8 @@ namespace CODE.Framework.Wpf.Controls
             {
                 var nameParts = n.Split('-');
                 if (nameParts.Length != 3) return;
-                var bindingPath = nameParts[1];
-                if (!columnOrders.Contains(bindingPath)) columnOrders.Add(bindingPath);
+                var columnIdentifier = nameParts[1];
+                if (!columnOrders.Contains(columnIdentifier)) columnOrders.Add(columnIdentifier);
             });
             var mustSort = false;
             if (columns.Count != columnOrders.Count)
@@ -1069,9 +1535,15 @@ namespace CODE.Framework.Wpf.Controls
                 columns.Clear();
 
                 // We add all the columns we have in the ordered source
-                foreach (var bindingPath in columnOrders)
+                foreach (var columnIdentifier in columnOrders)
                 {
-                    var column = tempCollection.FirstOrDefault(c => c.BindingPath == bindingPath);
+                    var column = tempCollection.FirstOrDefault(c => c.BindingPath == columnIdentifier);
+                    if (column == null)
+                        column = tempCollection.FirstOrDefault(c => c.Header.ToString() == columnIdentifier);
+                    if (column == null)
+                        column = tempCollection.FirstOrDefault(c => c.EditControlBindingPath == columnIdentifier);
+                    if (column == null)
+                        column = tempCollection.FirstOrDefault(c => c.SortOrderBindingPath == columnIdentifier);
                     if (column != null) columns.Add(column);
                 }
                 // We remove all the columns we already used from the ordered source
@@ -1085,8 +1557,14 @@ namespace CODE.Framework.Wpf.Controls
             {
                 var nameParts = n.Split('-');
                 if (nameParts.Length != 3) return;
-                var bindingPath = nameParts[1];
-                var column = columns.FirstOrDefault(c => c.BindingPath == bindingPath);
+                var columnIdentifier = nameParts[1];
+                var column = columns.FirstOrDefault(c => c.BindingPath == columnIdentifier);
+                if (column == null)
+                    column = columns.FirstOrDefault(c => c.Header.ToString() == columnIdentifier);
+                if (column == null)
+                    column = columns.FirstOrDefault(c => c.EditControlBindingPath == columnIdentifier);
+                if (column == null)
+                    column = columns.FirstOrDefault(c => c.SortOrderBindingPath == columnIdentifier);
                 if (column != null)
                 {
                     switch (nameParts[2])

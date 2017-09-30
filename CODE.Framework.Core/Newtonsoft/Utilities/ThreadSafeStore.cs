@@ -37,7 +37,8 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         public ThreadSafeStore(Func<TKey, TValue> creator)
         {
-            if (creator == null) throw new ArgumentNullException("creator");
+            ValidationUtils.ArgumentNotNull(creator, nameof(creator));
+
             _creator = creator;
             _store = new Dictionary<TKey, TValue>();
         }
@@ -45,12 +46,14 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         public TValue Get(TKey key)
         {
             TValue value;
-            return !_store.TryGetValue(key, out value) ? AddValue(key) : value;
+            if (!_store.TryGetValue(key, out value))
+                return AddValue(key);
+            return value;
         }
 
         private TValue AddValue(TKey key)
         {
-            var value = _creator(key);
+            TValue value = _creator(key);
 
             lock (_lock)
             {
@@ -63,10 +66,14 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 {
                     // double check locking
                     TValue checkValue;
-                    if (_store.TryGetValue(key, out checkValue)) return checkValue;
-                    var newStore = new Dictionary<TKey, TValue>(_store);
+                    if (_store.TryGetValue(key, out checkValue))
+                    {
+                        return checkValue;
+                    }
+
+                    Dictionary<TKey, TValue> newStore = new Dictionary<TKey, TValue>(_store);
                     newStore[key] = value;
-                    Thread.MemoryBarrier();
+
                     _store = newStore;
                 }
 

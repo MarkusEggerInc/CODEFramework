@@ -12,6 +12,7 @@
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Geek-Control-Button.xaml"/>
         <ResourceDictionary Source="Geek-Control-CapsLockWarning.xaml"/>
+        <ResourceDictionary Source="Geek-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Geek-Control-FlowDocumentReader.xaml"/>
         <ResourceDictionary Source="Geek-Control-Label.xaml"/>
         <ResourceDictionary Source="Geek-Control-ListBox.xaml"/>
@@ -34,6 +35,7 @@
         <ResourceDictionary Source="Geek-MessageBox-Icon-Warning.xaml"/>
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Geek-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Geek-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Geek-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Geek-Layout-MultiPanel.xaml"/>
@@ -41,6 +43,7 @@
         <ResourceDictionary Source="Geek-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Geek-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Geek-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Geek-Layout-Tabs.xaml"/>
 
         <!-- Standard Icons -->
         <ResourceDictionary Source="Geek-Icon-Standard.xaml"/>

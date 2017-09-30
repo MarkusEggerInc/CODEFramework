@@ -37,7 +37,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <summary>
         /// Margin between panels
         /// </summary>
-        public static readonly DependencyProperty SpacingProperty = DependencyProperty.Register("Spacing", typeof (double), typeof (MultiPanel), new FrameworkPropertyMetadata(5d) { AffectsArrange = true, AffectsMeasure = true });
+        public static readonly DependencyProperty SpacingProperty = DependencyProperty.Register("Spacing", typeof (double), typeof (MultiPanel), new FrameworkPropertyMetadata(5d) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>
         /// Optional header renderer object
@@ -52,7 +52,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <summary>
         /// Optional header renderer object
         /// </summary>
-        public static readonly DependencyProperty HeaderRendererProperty = DependencyProperty.Register("HeaderRenderer", typeof (IMultiPanelHeaderRenderer), typeof (MultiPanel), new FrameworkPropertyMetadata(null) { AffectsArrange = true, AffectsMeasure = true });
+        public static readonly DependencyProperty HeaderRendererProperty = DependencyProperty.Register("HeaderRenderer", typeof (IMultiPanelHeaderRenderer), typeof (MultiPanel), new FrameworkPropertyMetadata(null) {AffectsArrange = true, AffectsMeasure = true});
 
         /// <summary>
         /// Gets or sets the general orientation of the content alignment.
@@ -60,7 +60,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <value>The orientation.</value>
         public Orientation Orientation
         {
-            get { return (Orientation)GetValue(OrientationProperty); }
+            get { return (Orientation) GetValue(OrientationProperty); }
             set { SetValue(OrientationProperty, value); }
         }
 
@@ -76,7 +76,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            var visibleChildren = Children.Cast<UIElement>().Where(child => child.Visibility == Visibility.Visible).ToList();
+            var visibleChildren = Children.Cast<UIElement>().Where(child => child.Visibility != Visibility.Collapsed).ToList();
 
             foreach (var child in Children.Cast<FrameworkElement>())
             {
@@ -131,24 +131,24 @@ namespace CODE.Framework.Wpf.Layout
                         }
                         if (followerElement != null)
                         {
-                            followerElement.Measure(new Size(100000, Math.Max(rowHeights[elementCounter], 0d)));
+                            followerElement.Measure(GeometryHelper.NewSize(100000, rowHeights[elementCounter]));
                             var followerWidth = followerElement.DesiredSize.Width;
-                            if (followerWidth + (Spacing*2) > availableSize.Width) followerWidth = availableSize.Width - (Spacing*2);
-                            if (followerWidth > 0d) followerElement.Measure(new Size(followerWidth, Math.Max(rowHeights[elementCounter], 0d)));
-                            var elementSize = new Size(Math.Max(availableSize.Width - (Spacing*3) - followerWidth, 0), Math.Max(rowHeights[elementCounter], 0d));
+                            if (followerWidth + Spacing*2 > availableSize.Width) followerWidth = availableSize.Width - Spacing*2;
+                            if (followerWidth > 0d) followerElement.Measure(GeometryHelper.NewSize(followerWidth, rowHeights[elementCounter]));
+                            var elementSize = GeometryHelper.NewSize(availableSize.Width - Spacing*3 - followerWidth, rowHeights[elementCounter]);
                             if (headerRenderer != null)
                             {
-                                var clientArea = headerRenderer.GetClientArea(new Rect(new Point(0d, 0d), elementSize));
+                                var clientArea = headerRenderer.GetClientArea(GeometryHelper.NewRect(new Point(0d, 0d), elementSize));
                                 elementSize = clientArea.Size;
                             }
                             leadElement.Measure(elementSize);
                         }
                         else
                         {
-                            var elementSize = new Size(availableSize.Width - (Spacing*2), Math.Max(rowHeights[elementCounter], 0d));
+                            var elementSize = GeometryHelper.NewSize(availableSize.Width - Spacing*2, rowHeights[elementCounter]);
                             if (headerRenderer != null)
                             {
-                                var clientArea = headerRenderer.GetClientArea(new Rect(new Point(0d, 0d), elementSize));
+                                var clientArea = headerRenderer.GetClientArea(GeometryHelper.NewRect(new Point(0d, 0d), elementSize));
                                 elementSize = clientArea.Size;
                             }
                             leadElement.Measure(elementSize);
@@ -156,10 +156,10 @@ namespace CODE.Framework.Wpf.Layout
                     }
                     else
                     {
-                        var elementSize = new Size(availableSize.Width - (Spacing*2), Math.Max(rowHeights[elementCounter], 0d));
+                        var elementSize = GeometryHelper.NewSize(availableSize.Width - Spacing*2, rowHeights[elementCounter]);
                         if (headerRenderer != null)
                         {
-                            var clientArea = headerRenderer.GetClientArea(new Rect(new Point(0d, 0d), elementSize));
+                            var clientArea = headerRenderer.GetClientArea(GeometryHelper.NewRect(new Point(0d, 0d), elementSize));
                             elementSize = clientArea.Size;
                         }
                         leadElement.Measure(elementSize);
@@ -169,8 +169,8 @@ namespace CODE.Framework.Wpf.Layout
             else
             {
                 // General orientation is horizontal
-                var usableWidth = realSize.Width - (Spacing * 2);
-                if (childCount > 1) usableWidth -= Spacing * (childCount - 1);
+                var usableWidth = realSize.Width - (Spacing*2);
+                if (childCount > 1) usableWidth -= Spacing*(childCount - 1);
                 var columnLeaders = visibleChildren.Where(child => !SimpleView.GetFlowsWithPrevious(child)).ToList();
 
                 // Giving it a first measure pass to see what the maximum space is the elements would want
@@ -207,24 +207,24 @@ namespace CODE.Framework.Wpf.Layout
                         }
                         if (followerElement != null)
                         {
-                            followerElement.Measure(new Size(Math.Max(columnWidths[elementCounter], 0d), 100000));
+                            followerElement.Measure(GeometryHelper.NewSize(columnWidths[elementCounter], 100000));
                             var followerHeight = followerElement.DesiredSize.Height;
-                            if (followerHeight + (Spacing*2) > availableSize.Height) followerHeight = availableSize.Height - (Spacing*2);
-                            if (followerHeight > 0d) followerElement.Measure(new Size(Math.Max(columnWidths[elementCounter], 0d), followerHeight));
-                            var elementSize = new Size(Math.Max(columnWidths[elementCounter], 0d), Math.Max(availableSize.Width - (Spacing*3) - followerHeight, 0));
+                            if (followerHeight + Spacing*2 > availableSize.Height) followerHeight = availableSize.Height - Spacing*2;
+                            if (followerHeight > 0d) followerElement.Measure(GeometryHelper.NewSize(columnWidths[elementCounter], followerHeight));
+                            var elementSize = GeometryHelper.NewSize(columnWidths[elementCounter], availableSize.Width - Spacing*3 - followerHeight);
                             if (headerRenderer != null)
                             {
-                                var clientArea = headerRenderer.GetClientArea(new Rect(new Point(0d, 0d), elementSize));
+                                var clientArea = headerRenderer.GetClientArea(GeometryHelper.NewRect(new Point(0d, 0d), elementSize));
                                 elementSize = clientArea.Size;
                             }
                             leadElement.Measure(elementSize);
                         }
                         else
                         {
-                            var elementSize = new Size(Math.Max(columnWidths[elementCounter], 0d), availableSize.Height - (Spacing*2));
+                            var elementSize = GeometryHelper.NewSize(columnWidths[elementCounter], availableSize.Height - Spacing*2);
                             if (headerRenderer != null)
                             {
-                                var clientArea = headerRenderer.GetClientArea(new Rect(new Point(0d, 0d), elementSize));
+                                var clientArea = headerRenderer.GetClientArea(GeometryHelper.NewRect(new Point(0d, 0d), elementSize));
                                 elementSize = clientArea.Size;
                             }
                             leadElement.Measure(elementSize);
@@ -232,10 +232,10 @@ namespace CODE.Framework.Wpf.Layout
                     }
                     else
                     {
-                        var elementSize = new Size(Math.Max(columnWidths[elementCounter], 0d), availableSize.Height - (Spacing*2));
+                        var elementSize = GeometryHelper.NewSize(columnWidths[elementCounter], availableSize.Height - Spacing*2);
                         if (headerRenderer != null)
                         {
-                            var clientArea = headerRenderer.GetClientArea(new Rect(new Point(0d, 0d), elementSize));
+                            var clientArea = headerRenderer.GetClientArea(GeometryHelper.NewRect(new Point(0d, 0d), elementSize));
                             elementSize = clientArea.Size;
                         }
                         leadElement.Measure(elementSize);
@@ -346,14 +346,14 @@ namespace CODE.Framework.Wpf.Layout
                 columnLeaderCount++;
             }
             if (heightUsableByStarColumns < 0) heightUsableByStarColumns = 0;
-            var oneStarHeight = heightUsableByStarColumns / totalStarCount;
+            var oneStarHeight = heightUsableByStarColumns/totalStarCount;
             columnLeaderCount = 0;
             foreach (var columnLeader in rowLeaders)
             {
                 var relativeRowHeight = SimpleView.GetRelativeHeight(columnLeader);
                 if (relativeRowHeight.IsStar)
                 {
-                    rowHeights[columnLeaderCount] = oneStarHeight * relativeRowHeight.Value;
+                    rowHeights[columnLeaderCount] = oneStarHeight*relativeRowHeight.Value;
                     heightUsableByStarColumns -= rowHeights[columnLeaderCount];
                 }
                 columnLeaderCount++;
@@ -368,7 +368,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var visibleChildren = Children.Cast<UIElement>().Where(child => child.Visibility == Visibility.Visible).ToList();
+            var visibleChildren = Children.Cast<UIElement>().Where(child => child.Visibility != Visibility.Collapsed).ToList();
             var childCount = visibleChildren.Count;
 
             if (Orientation == Orientation.Vertical)
@@ -410,15 +410,15 @@ namespace CODE.Framework.Wpf.Layout
                         if (followerElement != null)
                         {
                             var followerWidth = followerElement.DesiredSize.Width;
-                            if (finalSize.Width > 0 && followerWidth + (Spacing*2) > finalSize.Width) followerWidth = finalSize.Width - (Spacing*2);
-                            var followerArea = NewRect(Math.Max(finalSize.Width - followerWidth - Spacing, 0), currentTop, followerWidth, Math.Max(rowHeights[elementCounter], 0d));
+                            if (finalSize.Width > 0 && followerWidth + Spacing*2 > finalSize.Width) followerWidth = finalSize.Width - Spacing*2;
+                            var followerArea = GeometryHelper.NewRect(finalSize.Width - followerWidth - Spacing, currentTop, followerWidth, rowHeights[elementCounter]);
                             if (headerRenderer != null)
                             {
                                 _headerRenderAreas.Add(new HeaderRenderInformation {Child = followerElement, TotalArea = followerArea});
                                 followerArea = headerRenderer.GetClientArea(followerArea);
                             }
                             followerElement.Arrange(followerArea);
-                            var elementArea = NewRect(Spacing, currentTop, Math.Max(finalSize.Width - (Spacing*3) - followerWidth, 0), Math.Max(rowHeights[elementCounter], 0d));
+                            var elementArea = GeometryHelper.NewRect(Spacing, currentTop, finalSize.Width - Spacing*3 - followerWidth, rowHeights[elementCounter]);
                             if (headerRenderer != null)
                             {
                                 _headerRenderAreas.Add(new HeaderRenderInformation {Child = leadElement, TotalArea = elementArea});
@@ -428,7 +428,7 @@ namespace CODE.Framework.Wpf.Layout
                         }
                         else
                         {
-                            var elementArea = NewRect(Spacing, currentTop, finalSize.Width - (Spacing*2), Math.Max(rowHeights[elementCounter], 0d));
+                            var elementArea = GeometryHelper.NewRect(Spacing, currentTop, finalSize.Width - Spacing*2, rowHeights[elementCounter]);
                             if (headerRenderer != null)
                             {
                                 _headerRenderAreas.Add(new HeaderRenderInformation {Child = leadElement, TotalArea = elementArea});
@@ -440,7 +440,7 @@ namespace CODE.Framework.Wpf.Layout
                     }
                     else
                     {
-                        var elementArea = NewRect(Spacing, currentTop, finalSize.Width - (Spacing*2), Math.Max(rowHeights[elementCounter], 0d));
+                        var elementArea = GeometryHelper.NewRect(Spacing, currentTop, finalSize.Width - Spacing*2, rowHeights[elementCounter]);
                         if (headerRenderer != null)
                         {
                             _headerRenderAreas.Add(new HeaderRenderInformation {Child = leadElement, TotalArea = elementArea});
@@ -491,15 +491,15 @@ namespace CODE.Framework.Wpf.Layout
                         if (followerElement != null)
                         {
                             var followerHeight = followerElement.DesiredSize.Height;
-                            if (finalSize.Height > 0 && followerHeight + (Spacing*2) > finalSize.Height) followerHeight = finalSize.Height - (Spacing*2);
-                            var followerArea = NewRect(currentLeft, Math.Max(finalSize.Height - followerHeight - Spacing, 0), Math.Max(columnWidths[elementCounter], 0d), followerHeight);
+                            if (finalSize.Height > 0 && followerHeight + Spacing*2 > finalSize.Height) followerHeight = finalSize.Height - Spacing*2;
+                            var followerArea = GeometryHelper.NewRect(currentLeft, finalSize.Height - followerHeight - Spacing, columnWidths[elementCounter], followerHeight);
                             if (headerRenderer != null)
                             {
                                 _headerRenderAreas.Add(new HeaderRenderInformation {Child = followerElement, TotalArea = followerArea});
                                 followerArea = headerRenderer.GetClientArea(followerArea);
                             }
                             followerElement.Arrange(followerArea);
-                            var elementArea = NewRect(currentLeft, Spacing, Math.Max(columnWidths[elementCounter], 0d), Math.Max(finalSize.Height - (Spacing*3) - followerHeight, 0));
+                            var elementArea = GeometryHelper.NewRect(currentLeft, Spacing, columnWidths[elementCounter], finalSize.Height - Spacing*3 - followerHeight);
                             if (headerRenderer != null)
                             {
                                 _headerRenderAreas.Add(new HeaderRenderInformation {Child = leadElement, TotalArea = elementArea});
@@ -509,7 +509,7 @@ namespace CODE.Framework.Wpf.Layout
                         }
                         else
                         {
-                            var elementArea = NewRect(currentLeft, Spacing, Math.Max(columnWidths[elementCounter], 0d), finalSize.Height - (Spacing*2));
+                            var elementArea = GeometryHelper.NewRect(currentLeft, Spacing, columnWidths[elementCounter], finalSize.Height - Spacing*2);
                             if (headerRenderer != null)
                             {
                                 _headerRenderAreas.Add(new HeaderRenderInformation {Child = leadElement, TotalArea = elementArea});
@@ -521,7 +521,7 @@ namespace CODE.Framework.Wpf.Layout
                     }
                     else
                     {
-                        var elementArea = NewRect(currentLeft, Spacing, Math.Max(columnWidths[elementCounter], 0d), finalSize.Height - (Spacing*2));
+                        var elementArea = GeometryHelper.NewRect(currentLeft, Spacing, columnWidths[elementCounter], finalSize.Height - Spacing*2);
                         if (headerRenderer != null)
                         {
                             _headerRenderAreas.Add(new HeaderRenderInformation {Child = leadElement, TotalArea = elementArea});
@@ -606,11 +606,6 @@ namespace CODE.Framework.Wpf.Layout
             base.OnMouseUp(e);
         }
 
-        private Rect NewRect(double x, double y, double width, double height)
-        {
-            return new Rect(x, y, Math.Max(width, 0), Math.Max(height, 0));
-        }
-
         private List<HeaderRenderInformation> _headerRenderAreas;
 
         /// <summary>
@@ -623,6 +618,7 @@ namespace CODE.Framework.Wpf.Layout
             /// </summary>
             /// <value>The total area.</value>
             public Rect TotalArea { get; set; }
+
             /// <summary>
             /// Gets or sets the child.
             /// </summary>
@@ -638,7 +634,7 @@ namespace CODE.Framework.Wpf.Layout
         {
             base.OnRender(dc);
 
-            dc.DrawRectangle(Brushes.Transparent, null, NewRect(0, 0, ActualWidth, ActualHeight)); // Do NOT remove this line, otherwise, hit-testing will not work anymore
+            dc.DrawRectangle(Brushes.Transparent, null, GeometryHelper.NewRect(0, 0, ActualWidth, ActualHeight)); // Do NOT remove this line, otherwise, hit-testing will not work anymore
 
             var headerRenderer = HeaderRenderer;
             if (headerRenderer == null) return;
@@ -835,13 +831,14 @@ namespace CODE.Framework.Wpf.Layout
         /// <value><c>true</c> if [use title color for foreground]; otherwise, <c>false</c>.</value>
         public bool UseTitleColorForForeground
         {
-            get { return (bool)GetValue(UseTitleColorForForegroundProperty); }
+            get { return (bool) GetValue(UseTitleColorForForegroundProperty); }
             set { SetValue(UseTitleColorForForegroundProperty, value); }
         }
+
         /// <summary>
         /// If true, the renderer attempts to pick up a View.TitleColor setting fore the foreground color of the header text
         /// </summary>
-        public static readonly DependencyProperty UseTitleColorForForegroundProperty = DependencyProperty.Register("UseTitleColorForForeground", typeof(bool), typeof(MultiPanelHeaderRenderer), new PropertyMetadata(false));
+        public static readonly DependencyProperty UseTitleColorForForegroundProperty = DependencyProperty.Register("UseTitleColorForForeground", typeof (bool), typeof (MultiPanelHeaderRenderer), new PropertyMetadata(false));
 
         /// <summary>
         /// If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
@@ -849,13 +846,14 @@ namespace CODE.Framework.Wpf.Layout
         /// <value><c>true</c> if [use title color for background]; otherwise, <c>false</c>.</value>
         public bool UseTitleColorForBackground
         {
-            get { return (bool)GetValue(UseTitleColorForBackgroundProperty); }
+            get { return (bool) GetValue(UseTitleColorForBackgroundProperty); }
             set { SetValue(UseTitleColorForBackgroundProperty, value); }
         }
+
         /// <summary>
         /// If true, the renderer attempts to pick up a View.TitleColor setting fore the background color of the header
         /// </summary>
-        public static readonly DependencyProperty UseTitleColorForBackgroundProperty = DependencyProperty.Register("UseTitleColorForBackground", typeof(bool), typeof(MultiPanelHeaderRenderer), new PropertyMetadata(false));
+        public static readonly DependencyProperty UseTitleColorForBackgroundProperty = DependencyProperty.Register("UseTitleColorForBackground", typeof (bool), typeof (MultiPanelHeaderRenderer), new PropertyMetadata(false));
 
         /// <summary>
         /// Brush used to render the close icon
@@ -878,13 +876,14 @@ namespace CODE.Framework.Wpf.Layout
         /// <value>The maximum size of the close icon.</value>
         public double MaxCloseIconSize
         {
-            get { return (double)GetValue(MaxCloseIconSizeProperty); }
+            get { return (double) GetValue(MaxCloseIconSizeProperty); }
             set { SetValue(MaxCloseIconSizeProperty, value); }
         }
+
         /// <summary>
         /// Max height/width for the close icon
         /// </summary>
-        public static readonly DependencyProperty MaxCloseIconSizeProperty = DependencyProperty.Register("MaxCloseIconSize", typeof(double), typeof(MultiPanelHeaderRenderer), new PropertyMetadata(20d));
+        public static readonly DependencyProperty MaxCloseIconSizeProperty = DependencyProperty.Register("MaxCloseIconSize", typeof (double), typeof (MultiPanelHeaderRenderer), new PropertyMetadata(20d));
 
         /// <summary>
         /// Optional style for windows in undock scenarios
@@ -893,15 +892,16 @@ namespace CODE.Framework.Wpf.Layout
         /// <remarks>The style needs to target type FloatingDockWindow</remarks>
         public Style FloatWindowStyle
         {
-            get { return (Style)GetValue(FloatWindowStyleProperty); }
+            get { return (Style) GetValue(FloatWindowStyleProperty); }
             set { SetValue(FloatWindowStyleProperty, value); }
         }
+
         /// <summary>
         /// Optional style for windows in undock scenarios
         /// </summary>
         /// <remarks>The style needs to target type FloatingDockWindow</remarks>
-        public static readonly DependencyProperty FloatWindowStyleProperty = DependencyProperty.Register("FloatWindowStyle", typeof(Style), typeof(MultiPanelHeaderRenderer), new PropertyMetadata(null));
-        
+        public static readonly DependencyProperty FloatWindowStyleProperty = DependencyProperty.Register("FloatWindowStyle", typeof (Style), typeof (MultiPanelHeaderRenderer), new PropertyMetadata(null));
+
         /// <summary>
         /// Returns the client area (the area available for the child control) based on the total area available for the child
         /// </summary>
@@ -915,8 +915,8 @@ namespace CODE.Framework.Wpf.Layout
         {
             var ft = GetFormattedText();
             if (Orientation == Orientation.Horizontal)
-                return NewRect(totalArea.X, totalArea.Y + ft.Height, totalArea.Width, totalArea.Height - ft.Height);
-            return NewRect(totalArea.X + ft.Height + 5, totalArea.Y, totalArea.Width - ft.Height - 5, totalArea.Height);
+                return GeometryHelper.NewRect(totalArea.X, totalArea.Y + ft.Height, totalArea.Width, totalArea.Height - ft.Height);
+            return GeometryHelper.NewRect(totalArea.X + ft.Height + 5, totalArea.Y, totalArea.Width - ft.Height - 5, totalArea.Height);
         }
 
         private FormattedText _standardHeight;
@@ -932,11 +932,6 @@ namespace CODE.Framework.Wpf.Layout
                 return _standardHeight;
             }
             return new FormattedText(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(FontFamily, FontStyle, FontWeight, FontStretches.Normal), FontSize, foreground) {MaxLineCount = 1};
-        }
-
-        private Rect NewRect(double x, double y, double width, double height)
-        {
-            return new Rect(x, y, Math.Max(width, 0), Math.Max(height, 0));
         }
 
         /// <summary>
@@ -985,7 +980,7 @@ namespace CODE.Framework.Wpf.Layout
                 var iconSize = Math.Min(headerRect.Height - 7, MaxCloseIconSize);
                 if (closable) ft.MaxTextWidth -= (iconSize - 3); // Making room for the close button
                 dc.DrawText(ft, new Point(2d, 0d));
-                if (closable) dc.DrawRectangle(CloseIcon, null, NewRect(headerRect.Width - iconSize - 4, (int) ((headerRect.Height - iconSize)/2), iconSize, iconSize));
+                if (closable) dc.DrawRectangle(CloseIcon, null, GeometryHelper.NewRect(headerRect.Width - iconSize - 4, (int) ((headerRect.Height - iconSize)/2), iconSize, iconSize));
             }
             else
             {
@@ -999,7 +994,7 @@ namespace CODE.Framework.Wpf.Layout
                 dc.DrawText(ft, new Point(0d, 0d));
                 dc.Pop();
                 dc.Pop();
-                if (closable) dc.DrawRectangle(CloseIcon, null, NewRect((int)((headerRect.Width + 1 - iconSize) / 2), 5, iconSize, iconSize));
+                if (closable) dc.DrawRectangle(CloseIcon, null, GeometryHelper.NewRect((int) ((headerRect.Width + 1 - iconSize)/2), 5, iconSize, iconSize));
             }
 
             dc.Pop(); // Remove the clip
@@ -1162,7 +1157,7 @@ namespace CODE.Framework.Wpf.Layout
                                 var itemsPresenter = TemplatedParent as ItemsPresenter;
                                 if (itemsPresenter != null)
                                 {
-                                    var itemsControl2 = ElementHelper.FindVisualTreeParent<ItemsControl>(itemsPresenter) as ItemsControl;
+                                    var itemsControl2 = ElementHelper.FindVisualTreeParent<ItemsControl>(itemsPresenter);
                                     if (itemsControl2 != null)
                                         if (itemsControl2.Items.Contains(child.Child)) itemsControl2.Items.Remove(child.Child);
                                 }

@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using CODE.Framework.Core.Utilities;
 using CODE.Framework.Core.Utilities.Extensions;
 using CODE.Framework.Wpf.Layout;
 using CODE.Framework.Wpf.Utilities;
+using System.Windows.Threading;
 
 namespace CODE.Framework.Wpf.Controls
 {
@@ -25,7 +30,7 @@ namespace CODE.Framework.Wpf.Controls
 
             Loaded += (s, a) =>
             {
-                var item = FindAncestor<ListBoxItem>(this);
+                var item = ElementHelper.FindVisualTreeParent<ListBoxItem>(this);
                 if (item == null)
                 {
                     if (!string.IsNullOrEmpty(_defaultColumnsToSet))
@@ -72,20 +77,9 @@ namespace CODE.Framework.Wpf.Controls
 
         private void RaiseEditModeChanged()
         {
-            if (EditModeChanged != null)
-                EditModeChanged(this, new EventArgs());
-        }
-
-        /// <summary>Walks the visual tree to find the parent of a certain type</summary>
-        /// <typeparam name="T">Type to search</typeparam>
-        /// <param name="d">Object for which to find the ancestor</param>
-        /// <returns>Object or null</returns>
-        private static T FindAncestor<T>(DependencyObject d) where T : class
-        {
-            var parent = VisualTreeHelper.GetParent(d);
-            if (parent == null) return null;
-            if (parent is T) return parent as T;
-            return FindAncestor<T>(parent);
+            var handler = EditModeChanged;
+            if (handler != null)
+                handler(this, new EventArgs());
         }
 
         /// <summary>Generic column definition</summary>
@@ -105,10 +99,45 @@ namespace CODE.Framework.Wpf.Controls
         {
             var item = o as ListBoxSmartDataTemplate;
             if (item == null) return;
-            item.RepopulateColumns();
+            item.TriggerConsolidatedColumnRepopulate();
             var columns = args.NewValue as ListColumnsCollection;
             if (columns == null) return;
-            columns.CollectionChanged += (o2, a) => item.RepopulateColumns();
+            columns.CollectionChangedDelayed -= item.HandleColumnCollectionChanged;
+            columns.CollectionChangedDelayed += item.HandleColumnCollectionChanged;
+            foreach (var column in columns)
+            {
+                column.VisibilityChanged -= item.HandleColumnVisibilityChanged;
+                column.VisibilityChanged += item.HandleColumnVisibilityChanged;
+            }
+        }
+
+        private void HandleColumnVisibilityChanged(object sender, EventArgs e)
+        {
+            TriggerConsolidatedColumnRepopulate();
+        }
+
+        private void HandleColumnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RepopulateColumns(); // This handler is already triggered delayed, so we can go right ahead.
+        }
+
+        private DispatcherTimer _delayTimer;
+
+        private void TriggerConsolidatedColumnRepopulate()
+        {
+            // This timer fires with a delay of 25ms. This means that if this method gets called often on a tight loop, 
+            // it will always reset the timer so it only fires once the last call happened and 25ms have gone by.
+            if (_delayTimer == null)
+                _delayTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(25), DispatcherPriority.Normal, (s, e) =>
+                {
+                    _delayTimer.IsEnabled = false;
+                    RepopulateColumns();
+                }, Application.Current.Dispatcher) {IsEnabled = false};
+            else
+                _delayTimer.IsEnabled = false; // Resets the timer
+
+            // Triggering the next timer run
+            _delayTimer.IsEnabled = true;
         }
 
         /// <summary>Definition of default columns, which can be used in case the listbox itself does not define columns</summary>
@@ -132,7 +161,7 @@ namespace CODE.Framework.Wpf.Controls
             if (listItem == null) return;
             listItem._defaultColumnsToSet = args.NewValue.ToString();
 
-            var item = FindAncestor<ListBoxItem>(listItem);
+            var item = ElementHelper.FindVisualTreeParent<ListBoxItem>(listItem);
             if (item == null) return;
 
             var listBox = ItemsControl.ItemsControlFromItemContainer(item);
@@ -176,6 +205,36 @@ namespace CODE.Framework.Wpf.Controls
             if (template == null) return;
             template.RaiseEditModeChanged();
         }
+
+        /// <summary>
+        /// Style applied to image controls in image columns
+        /// </summary>
+        /// <value>The image style.</value>
+        public Style ImageStyle
+        {
+            get { return (Style)GetValue(ImageStyleProperty); }
+            set { SetValue(ImageStyleProperty, value); }
+        }
+
+        /// <summary>
+        /// Style applied to image controls in image columns
+        /// </summary>
+        public static readonly DependencyProperty ImageStyleProperty = DependencyProperty.Register("ImageStyle", typeof(Style), typeof(ListBoxSmartDataTemplate), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Style applied to image controls in logo columns
+        /// </summary>
+        /// <value>The image style.</value>
+        public Style LogoStyle
+        {
+            get { return (Style)GetValue(LogoStyleProperty); }
+            set { SetValue(LogoStyleProperty, value); }
+        }
+
+        /// <summary>
+        /// Style applied to logo controls in image columns
+        /// </summary>
+        public static readonly DependencyProperty LogoStyleProperty = DependencyProperty.Register("LogoStyle", typeof(Style), typeof(ListBoxSmartDataTemplate), new PropertyMetadata(null));
 
         private static void PopulateColumnsFromDefaults(ListBoxSmartDataTemplate item, ItemsControl listBox)
         {
@@ -258,10 +317,7 @@ namespace CODE.Framework.Wpf.Controls
                     grid.Children.Add(rect);
                 }
                 else
-                {
                     grid.SetBinding(BackgroundProperty, backgroundBinding);
-                    grid.Background = column.CellBackground;
-                }
             }
 
             if (Columns.ShowGridLines != ListGridLineMode.Never)
@@ -291,6 +347,29 @@ namespace CODE.Framework.Wpf.Controls
             return grid;
         }
 
+        private static void SetDoubleClickCommands(DependencyObject element, ICommand command)
+        {
+            if (element == null || command == null) return;
+            var control = element as Control;
+            if (control == null)
+            {
+                var textBlock = element as TextBlock;
+                if (textBlock == null) return;
+                textBlock.MouseLeftButtonDown += (s2, e2) =>
+                {
+                    if (e2.ClickCount != 2) return;
+                    if (command.CanExecute(null))
+                        command.Execute(null);
+                };
+                return;
+            }
+            control.MouseDoubleClick += (s, e) =>
+            {
+                if (command.CanExecute(null))
+                    command.Execute(null);
+            };
+        }
+
         private static void SetEventCommands(DependencyObject element, EventCommandsCollection commands)
         {
             if (element == null) return;
@@ -305,7 +384,7 @@ namespace CODE.Framework.Wpf.Controls
 
             var columnCounter = -1;
             var starColumnFound = false;
-            foreach (var column in Columns)
+            foreach (var column in Columns.Where(c => c.Visibility == Visibility.Visible))
             {
                 columnCounter++;
 
@@ -337,48 +416,52 @@ namespace CODE.Framework.Wpf.Controls
                             {
                                 text = new TextBlock {VerticalAlignment = VerticalAlignment.Center};
                                 SetEventCommands(text, column.ReadOnlyControlEventCommands);
+                                if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(text, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
                                 SetHorizontalAlignment(text, column.CellContentAlignment);
-                                text.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
-                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                                    text.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                                else if (!string.IsNullOrEmpty(column.ToolTip))
-                                    text.ToolTip = column.ToolTip;
-                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
-                                    text.Visibility = Visibility.Collapsed;
-                                if (column.CellForeground != null)
-                                    text.Foreground = column.CellForeground;
-                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
-                                    text.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                                if (!string.IsNullOrEmpty(column.BindingPath)) text.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) text.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip)) text.ToolTip = column.ToolTip;
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                                {
+                                    if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(text, column.ToolTipInitialShowDelay);
+                                    if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(text, column.ToolTipShowDuration);
+                                    if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(text, column.ToolTipPlacement);
+                                }
+                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled) text.Visibility = Visibility.Collapsed;
+                                if (column.CellForeground != null) text.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath)) text.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                                 content.Children.Add(text);
+                                column.RaiseCellControlCreated(text);
                             }
                             if (column.EditMode != ListRowEditMode.ReadOnly)
                             {
                                 tb = new TextBox {VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Center};
                                 SetEventCommands(tb, column.WriteControlEventCommands);
+                                if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(tb, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
                                 SetHorizontalContentAlignment(tb, column.CellContentAlignment, HorizontalAlignment.Stretch);
-                                tb.SetBinding(TextBox.TextProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
-                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                                    tb.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                                else if (!string.IsNullOrEmpty(column.ToolTip))
-                                    tb.ToolTip = column.ToolTip;
-                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
-                                    tb.Visibility = Visibility.Visible;
-                                else if (column.EditMode == ListRowEditMode.ReadWriteAll)
-                                    tb.Visibility = Visibility.Visible;
-                                else
-                                    tb.Visibility = Visibility.Collapsed;
-                                if (column.EditTextBoxStyle != null)
-                                    tb.Style = column.EditTextBoxStyle;
+                                if (!string.IsNullOrEmpty(column.EditControlBindingPath) || !string.IsNullOrEmpty(column.BindingPath)) tb.SetBinding(TextBox.TextProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) tb.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip)) tb.ToolTip = column.ToolTip;
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                                {
+                                    if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(tb, column.ToolTipInitialShowDelay);
+                                    if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(tb, column.ToolTipShowDuration);
+                                    if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(tb, column.ToolTipPlacement);
+                                }
+                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled) tb.Visibility = Visibility.Visible;
+                                else if (column.EditMode == ListRowEditMode.ReadWriteAll) tb.Visibility = Visibility.Visible;
+                                else tb.Visibility = Visibility.Collapsed;
+                                if (column.EditTextBoxStyle != null) tb.Style = column.EditTextBoxStyle;
                                 else
                                 {
                                     tb.Padding = new Thickness(0);
                                     tb.BorderThickness = new Thickness(0);
                                 }
-                                if (column.CellForeground != null)
-                                    tb.Foreground = column.CellForeground;
-                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
-                                    tb.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                                if (column.CellForeground != null) tb.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath)) tb.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                                if (!string.IsNullOrEmpty(column.ColumnControlIsEnabledBindingPath)) tb.SetBinding(IsEnabledProperty, new Binding(column.ColumnControlIsEnabledBindingPath));
                                 content.Children.Add(tb);
+                                column.RaiseCellControlCreated(tb);
                             }
                             if (column.EditMode == ListRowEditMode.Manual)
                                 EditModeChanged += (s, e) =>
@@ -390,19 +473,23 @@ namespace CODE.Framework.Wpf.Controls
                         case ListColumnControls.Checkmark:
                             var check = new CheckBox {VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Content = string.Empty, IsEnabled = false};
                             SetEventCommands(check, column.ReadOnlyControlEventCommands);
-                            check.SetBinding(ToggleButton.IsCheckedProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) { UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat });
-                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                                check.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                            else if (!string.IsNullOrEmpty(column.ToolTip))
-                                check.ToolTip = column.ToolTip;
+                            if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(check, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
+                            if (!string.IsNullOrEmpty(column.EditControlBindingPath) || !string.IsNullOrEmpty(column.BindingPath)) check.SetBinding(ToggleButton.IsCheckedProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
+                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) check.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                            else if (!string.IsNullOrEmpty(column.ToolTip)) check.ToolTip = column.ToolTip;
+                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                            {
+                                if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(check, column.ToolTipInitialShowDelay);
+                                if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(check, column.ToolTipShowDuration);
+                                if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(check, column.ToolTipPlacement);
+                            }
                             SetHorizontalAlignment(check, column.CellContentAlignment, HorizontalAlignment.Center);
-                            if (column.EditCheckmarkStyle != null)
-                                check.Style = column.EditCheckmarkStyle;
-                            if (column.CellForeground != null)
-                                check.Foreground = column.CellForeground;
-                            else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
-                                check.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                            if (column.EditCheckmarkStyle != null) check.Style = column.EditCheckmarkStyle;
+                            if (column.CellForeground != null) check.Foreground = column.CellForeground;
+                            else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath)) check.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                            if (!string.IsNullOrEmpty(column.ColumnControlIsEnabledBindingPath)) check.SetBinding(IsEnabledProperty, new Binding(column.ColumnControlIsEnabledBindingPath));
                             content.Children.Add(check);
+                            column.RaiseCellControlCreated(check);
                             if (column.EditMode == ListRowEditMode.Manual)
                             {
                                 var col2 = column;
@@ -415,6 +502,7 @@ namespace CODE.Framework.Wpf.Controls
                                     }
                                 };
                             }
+                            else if (column.EditMode == ListRowEditMode.ReadWriteAll) check.IsEnabled = true;
                             break;
                         case ListColumnControls.TextList:
                             TextBlock text2 = null;
@@ -423,50 +511,56 @@ namespace CODE.Framework.Wpf.Controls
                             {
                                 text2 = new TextBlock {VerticalAlignment = VerticalAlignment.Center};
                                 SetEventCommands(text2, column.ReadOnlyControlEventCommands);
+                                if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(text2, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
                                 SetHorizontalAlignment(text2, column.CellContentAlignment);
-                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                                    text2.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                                else if (!string.IsNullOrEmpty(column.ToolTip))
-                                    text2.ToolTip = column.ToolTip;
-                                text2.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
-                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
-                                    text2.Visibility = Visibility.Collapsed;
-                                if (column.CellForeground != null)
-                                    text2.Foreground = column.CellForeground;
-                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
-                                    text2.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) text2.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip)) text2.ToolTip = column.ToolTip;
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                                {
+                                    if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(text2, column.ToolTipInitialShowDelay);
+                                    if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(text2, column.ToolTipShowDuration);
+                                    if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(text2, column.ToolTipPlacement);
+                                }
+                                if (!string.IsNullOrEmpty(column.BindingPath)) text2.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
+                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled) text2.Visibility = Visibility.Collapsed;
+                                if (column.CellForeground != null) text2.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath)) text2.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                                 content.Children.Add(text2);
+                                column.RaiseCellControlCreated(text2);
                             }
                             if (column.EditMode != ListRowEditMode.ReadOnly)
                             {
                                 combo = new ComboBox {VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Center};
                                 SetEventCommands(combo, column.WriteControlEventCommands);
+                                if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(combo, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
                                 SetHorizontalContentAlignment(combo, column.CellContentAlignment, HorizontalAlignment.Stretch);
-                                if (!string.IsNullOrEmpty(column.BindingPath) || !string.IsNullOrEmpty(column.EditControlBindingPath))
-                                    combo.SetBinding(Selector.SelectedValueProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
-                                combo.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(column.TextListItemsSourceBindingPath));
-                                combo.SelectedValuePath = column.TextListSelectedValuePath;
-                                combo.DisplayMemberPath = column.TextListDisplayMemberPath;
-                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                                    combo.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                                else if (!string.IsNullOrEmpty(column.ToolTip))
-                                    combo.ToolTip = column.ToolTip;
-                                if (EditMode == ListRowEditMode.Manual && IsManualEditEnabled)
-                                    combo.Visibility = Visibility.Visible;
-                                else
-                                    combo.Visibility = Visibility.Collapsed;
-                                if (column.EditTextListStyle != null)
-                                    combo.Style = column.EditTextListStyle;
+                                if (!string.IsNullOrEmpty(column.BindingPath) || !string.IsNullOrEmpty(column.EditControlBindingPath)) combo.SetBinding(Selector.SelectedValueProperty, new Binding(string.IsNullOrEmpty(column.EditControlBindingPath) ? column.BindingPath : column.EditControlBindingPath) {UpdateSourceTrigger = column.EditControlUpdateSourceTrigger, StringFormat = column.EditControlStringFormat});
+                                if (!string.IsNullOrEmpty(column.TextListItemsSourceBindingPath)) combo.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(column.TextListItemsSourceBindingPath));
+                                if (!string.IsNullOrEmpty(column.TextListSelectedValuePath)) combo.SelectedValuePath = column.TextListSelectedValuePath;
+                                if (!string.IsNullOrEmpty(column.TextListDisplayMemberPath)) combo.DisplayMemberPath = column.TextListDisplayMemberPath;
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) combo.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                                else if (!string.IsNullOrEmpty(column.ToolTip)) combo.ToolTip = column.ToolTip;
+                                if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                                {
+                                    if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(combo, column.ToolTipInitialShowDelay);
+                                    if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(combo, column.ToolTipShowDuration);
+                                    if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(combo, column.ToolTipPlacement);
+                                }
+                                if (column.EditMode == ListRowEditMode.Manual && IsManualEditEnabled) combo.Visibility = Visibility.Visible;
+                                else if (column.EditMode == ListRowEditMode.ReadWriteAll) combo.Visibility = Visibility.Visible;
+                                else combo.Visibility = Visibility.Collapsed;
+                                if (!string.IsNullOrEmpty(column.ColumnControlIsEnabledBindingPath)) combo.SetBinding(IsEnabledProperty, new Binding(column.ColumnControlIsEnabledBindingPath));
+                                if (column.EditTextListStyle != null) combo.Style = column.EditTextListStyle;
                                 else
                                 {
                                     combo.Padding = new Thickness(0);
                                     combo.BorderThickness = new Thickness(0);
                                 }
-                                if (column.CellForeground != null)
-                                    combo.Foreground = column.CellForeground;
-                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
-                                    combo.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                                if (column.CellForeground != null) combo.Foreground = column.CellForeground;
+                                else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath)) combo.SetBinding(Control.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                                if (column.TextListColumns != null) ListEx.SetColumns(combo, column.TextListColumns);
                                 content.Children.Add(combo);
+                                column.RaiseCellControlCreated(combo);
                             }
                             if (column.EditMode == ListRowEditMode.Manual)
                                 EditModeChanged += (s, e) =>
@@ -478,12 +572,19 @@ namespace CODE.Framework.Wpf.Controls
                         case ListColumnControls.Image:
                             var image = new Image {VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch, Stretch = Stretch.UniformToFill};
                             SetEventCommands(image, column.ReadOnlyControlEventCommands);
-                            image.SetBinding(Image.SourceProperty, new Binding(column.BindingPath) {Mode = BindingMode.OneWay});
-                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                                image.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                            else if (!string.IsNullOrEmpty(column.ToolTip))
-                                image.ToolTip = column.ToolTip;
+                            if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(image, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
+                            if (ImageStyle != null) image.Style = ImageStyle;
+                            if (!string.IsNullOrEmpty(column.BindingPath)) image.SetBinding(Image.SourceProperty, new Binding(column.BindingPath) {Mode = BindingMode.OneWay});
+                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) image.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                            else if (!string.IsNullOrEmpty(column.ToolTip)) image.ToolTip = column.ToolTip;
+                            if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                            {
+                                if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(image, column.ToolTipInitialShowDelay);
+                                if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(image, column.ToolTipShowDuration);
+                                if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(image, column.ToolTipPlacement);
+                            }
                             content.Children.Add(image);
+                            column.RaiseCellControlCreated(image);
                             break;
                     }
 
@@ -494,16 +595,18 @@ namespace CODE.Framework.Wpf.Controls
                 {
                     var content = GetContentGridForColumn(column);
                     var text = new TextBlock {VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, TextAlignment = TextAlignment.Right};
-                    SetEventCommands(text, column.ReadOnlyControlEventCommands);
-                    text.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
-                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                        text.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                    else if (!string.IsNullOrEmpty(column.ToolTip))
-                        text.ToolTip = column.ToolTip;
-                    if (column.CellForeground != null)
-                        text.Foreground = column.CellForeground;
-                    else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath))
-                        text.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
+                    SetEventCommands(text, column.ReadOnlyControlEventCommands); text.SetBinding(TextBlock.TextProperty, new Binding(column.BindingPath));
+                    if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(text, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
+                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) text.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                    else if (!string.IsNullOrEmpty(column.ToolTip)) text.ToolTip = column.ToolTip;
+                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                    {
+                        if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(text, column.ToolTipInitialShowDelay);
+                        if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(text, column.ToolTipShowDuration);
+                        if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(text, column.ToolTipPlacement);
+                    }
+                    if (column.CellForeground != null) text.Foreground = column.CellForeground;
+                    else if (!string.IsNullOrEmpty(column.CellForegroundBindingPath)) text.SetBinding(TextBlock.ForegroundProperty, new Binding(column.CellForegroundBindingPath));
                     content.Children.Add(text);
                     Children.Add(content);
                     SetColumn(content, columnCounter);
@@ -511,22 +614,42 @@ namespace CODE.Framework.Wpf.Controls
                 else if (column.BindingPath.StartsWith("Image") || column.BindingPath.StartsWith("Logo"))
                 {
                     var content = GetContentGridForColumn(column);
-                    var image = new Rectangle
+                    var logo = new Rectangle
                     {
                         VerticalAlignment = VerticalAlignment.Stretch,
                         HorizontalAlignment = HorizontalAlignment.Stretch,
                         Height = double.NaN,
                         Width = double.NaN
                     };
-                    SetEventCommands(image, column.ReadOnlyControlEventCommands);
-                    image.SetBinding(Shape.FillProperty, new Binding(column.BindingPath));
-                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath))
-                        image.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
-                    else if (!string.IsNullOrEmpty(column.ToolTip))
-                        image.ToolTip = column.ToolTip;
-                    content.Children.Add(image);
+                    SetEventCommands(logo, column.ReadOnlyControlEventCommands);
+                    if (!string.IsNullOrEmpty(column.DoubleClickCommandBindingPath)) SetDoubleClickCommands(logo, DataContext.GetPropertyValue<ICommand>(column.DoubleClickCommandBindingPath));
+                    if (LogoStyle != null) logo.Style = LogoStyle;
+                    logo.SetBinding(Shape.FillProperty, new Binding(column.BindingPath));
+                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath)) logo.SetBinding(ToolTipProperty, new Binding(column.ToolTipBindingPath));
+                    else if (!string.IsNullOrEmpty(column.ToolTip)) logo.ToolTip = column.ToolTip;
+                    if (!string.IsNullOrEmpty(column.ToolTipBindingPath) || !string.IsNullOrEmpty(column.ToolTip))
+                    {
+                        if (column.ToolTipInitialShowDelay > int.MinValue) ToolTipService.SetInitialShowDelay(logo, column.ToolTipInitialShowDelay);
+                        if (column.ToolTipShowDuration > int.MinValue) ToolTipService.SetShowDuration(logo, column.ToolTipShowDuration);
+                        if (column.ToolTipPlacement != PlacementMode.Mouse) ToolTipService.SetPlacement(logo, column.ToolTipPlacement);
+                    }
+                    content.Children.Add(logo);
                     Children.Add(content);
                     SetColumn(content, columnCounter);
+                }
+            }
+
+            if (Columns.DetailTemplate != null)
+            {
+                var content = Columns.DetailTemplate.LoadContent() as FrameworkElement;
+                if (content != null)
+                {
+                    DetailSpansFullWidth = Columns.DetailSpansFullWidth;
+                    Children.Add(content);
+                    SetIsDetail(content, true);
+                    if (content.DataContext == null) content.DataContext = DataContext;
+                    if (!string.IsNullOrEmpty(Columns.DetailExpandedPath))
+                        SetBinding(DetailIsExpandedProperty, new Binding(Columns.DetailExpandedPath) {Source = content.DataContext, Mode = BindingMode.TwoWay});
                 }
             }
 
@@ -614,6 +737,90 @@ namespace CODE.Framework.Wpf.Controls
         {
             var length = (GridLength)value;
             return length.Value;
+        }
+    }
+
+    /// <summary>
+    /// Template selector used to create a different display value for a drop-down item in a combobox, vs. the text that is displayed in the box itself.
+    /// </summary>
+    /// <seealso cref="System.Windows.Controls.DataTemplateSelector" />
+    public class ComboBoxSmartTemplateSelector : DataTemplateSelector
+    {
+        /// <summary>
+        /// Item template used for items in the drop-down part of the combobox.
+        /// </summary>
+        public DataTemplate DropDownItemTemplate { get; set; }
+        /// <summary>
+        /// Item template used inline in the combobox.
+        /// </summary>
+        public DataTemplate DisplayItemTemplate { get; set; }
+
+        /// <summary>
+        /// When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate" /> based on custom logic.
+        /// </summary>
+        /// <param name="item">The data object for which to select the template.</param>
+        /// <param name="container">The data-bound object.</param>
+        /// <returns>
+        /// Returns a <see cref="T:System.Windows.DataTemplate" /> or null. The default value is null.
+        /// </returns>
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            var parent = container;
+
+            // Search up the visual tree, stopping at either a ComboBox or a ComboBoxItem (or null).
+            while (parent != null && !(parent is ComboBoxItem) && !(parent is ComboBox))
+                parent = VisualTreeHelper.GetParent(parent);
+
+            // If we found a ComboBoxItem, then this template is being used inside the drop-down part
+            var inDropDown = (parent is ComboBoxItem);
+
+            return inDropDown ? DropDownItemTemplate : DisplayItemTemplate;
+        }
+    }
+
+    public class ComboBoxInlineTextBlock : TextBlock
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboBoxInlineTextBlock"/> class.
+        /// </summary>
+        public ComboBoxInlineTextBlock()
+        {
+            Loaded += (s, a) =>
+            {
+                var combo = ElementHelper.FindVisualTreeParent<ComboBox>(this);
+                if (combo == null) return;
+
+                //var itemsControl = ItemsControl.ItemsControlFromItemContainer(combo);
+                //if (itemsControl == null) return;
+
+                var columns = ListEx.GetColumns(combo);
+                if (columns != null)
+                    ContentBindingPath = columns.DefaultDisplayBindingPath;
+            };
+        }
+
+
+        /// <summary>
+        /// Binding path for the text.
+        /// </summary>
+        public string ContentBindingPath
+        {
+            get { return (string)GetValue(ContentBindingPathProperty); }
+            set { SetValue(ContentBindingPathProperty, value); }
+        }
+
+        /// <summary>
+        /// Binding path for the text.
+        /// </summary>
+        public static readonly DependencyProperty ContentBindingPathProperty = DependencyProperty.Register("ContentBindingPath", typeof(string), typeof(ComboBoxInlineTextBlock), new PropertyMetadata("", OnContentBindingPathChanged));
+
+        private static void OnContentBindingPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var text = d as ComboBoxInlineTextBlock;
+            if (text == null) return;
+
+            BindingOperations.ClearBinding(text, TextProperty);
+            text.SetBinding(TextProperty, new Binding(text.ContentBindingPath));
         }
     }
 }

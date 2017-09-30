@@ -60,6 +60,7 @@
     <Compile Include="Behavior\Behavior.cs" />
     <Compile Include="BindingConverters\BooleanToVisibleConverter.cs" />
     <Compile Include="BindingConverters\ColorToBrushWithFallbackConverter.cs" />
+    <Compile Include="BindingConverters\IsNullConverter.cs" />
     <Compile Include="BindingConverters\LitBrushConverter.cs" />
     <Compile Include="BindingConverters\LitColorConverter.cs" />
     <Compile Include="BindingConverters\NullToVisibleConverter.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Controls\AutoComplete.cs" />
     <Compile Include="Controls\BorderEx.cs" />
     <Compile Include="Controls\CapsLockWarning.cs" />
+    <Compile Include="Controls\ClearTextButton.cs" />
     <Compile Include="Controls\ContentTextDisplay.cs" />
     <Compile Include="Controls\DockHost.cs" />
     <Compile Include="Controls\Ex.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Controls\ListBoxEx.cs" />
     <Compile Include="Controls\ListBoxFastGridHeader.cs" />
     <Compile Include="Controls\ListBoxFastSmartDataTemplate.cs" />
+    <Compile Include="Controls\ListBoxGridFooter.cs" />
     <Compile Include="Controls\ListBoxGridHeader.cs" />
     <Compile Include="Controls\ListBoxItemEx.cs" />
     <Compile Include="Controls\ListBoxSmartDataTemplate.cs" />
@@ -114,6 +117,7 @@
     <Compile Include="Layout\PrimarySecondaryHorizontalPanel.cs" />
     <Compile Include="Layout\PropertySheet.cs" />
     <Compile Include="Layout\ScrollAwareItemsPresenter.cs" />
+    <Compile Include="Layout\TabItemsPanel.cs" />
     <Compile Include="Layout\View.cs" />
     <Compile Include="MarkupExtensions\AttributeBinding.cs" />
     <Compile Include="MarkupExtensions\Bind.cs" />
@@ -135,6 +139,7 @@
     <Compile Include="Utilities\AutoLayoutHeaderRenderer.cs" />
     <Compile Include="Utilities\ElementHelper.cs" />
     <Compile Include="Utilities\FocusHelper.cs" />
+    <Compile Include="Utilities\GeometryHelper.cs" />
     <Compile Include="Utilities\GlobalKeyboardHookHelper.cs" />
     <Compile Include="Utilities\ImageHelper.cs" />
     <Compile Include="Utilities\ObservableResourceDictionary.cs" />

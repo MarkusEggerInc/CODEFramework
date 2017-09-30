@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,63 +22,77 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
+
+using System;
 
 namespace CODE.Framework.Core.Newtonsoft.Utilities
 {
     internal struct StringReference
     {
-        private readonly char[] _chars;
-        private readonly int _startIndex;
-        private readonly int _length;
-
-        /// <summary>
-        /// Gets the chars.
-        /// </summary>
-        /// <value>The chars.</value>
-        public char[] Chars
+        public char this[int i]
         {
-            get { return _chars; }
+            get { return Chars[i]; }
         }
 
-        /// <summary>
-        /// Gets the start index.
-        /// </summary>
-        /// <value>The start index.</value>
-        public int StartIndex
-        {
-            get { return _startIndex; }
-        }
+        public char[] Chars { get; }
 
-        /// <summary>
-        /// Gets the length.
-        /// </summary>
-        /// <value>The length.</value>
-        public int Length
-        {
-            get { return _length; }
-        }
+        public int StartIndex { get; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StringReference"/> struct.
-        /// </summary>
-        /// <param name="chars">The chars.</param>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="length">The length.</param>
+        public int Length { get; }
+
         public StringReference(char[] chars, int startIndex, int length)
         {
-            _chars = chars;
-            _startIndex = startIndex;
-            _length = length;
+            Chars = chars;
+            StartIndex = startIndex;
+            Length = length;
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return new string(_chars, _startIndex, _length);
+            return new string(Chars, StartIndex, Length);
+        }
+    }
+
+    internal static class StringReferenceExtensions
+    {
+        public static int IndexOf(this StringReference s, char c, int startIndex, int length)
+        {
+            var index = Array.IndexOf(s.Chars, c, s.StartIndex + startIndex, length);
+            if (index == -1)
+                return -1;
+
+            return index - s.StartIndex;
+        }
+
+        public static bool StartsWith(this StringReference s, string text)
+        {
+            if (text.Length > s.Length)
+                return false;
+
+            var chars = s.Chars;
+
+            for (var i = 0; i < text.Length; i++)
+                if (text[i] != chars[i + s.StartIndex])
+                    return false;
+
+            return true;
+        }
+
+        public static bool EndsWith(this StringReference s, string text)
+        {
+            if (text.Length > s.Length)
+                return false;
+
+            var chars = s.Chars;
+
+            var start = s.StartIndex + s.Length - text.Length;
+            for (var i = 0; i < text.Length; i++)
+                if (text[i] != chars[i + start])
+                    return false;
+
+            return true;
         }
     }
 }

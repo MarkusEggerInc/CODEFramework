@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CODE.Framework.Services.Client</name>
+  </assembly>
+  <members>
+    <member name="N:CODE.Framework.Services.Client" />
+    <member name="T:CODE.Framework.Services.Client.ServiceClient"> <summary>
+ Helper class that provides methods that make it easier to talk to services
+ </summary></member>
+  </members>
+</doc>

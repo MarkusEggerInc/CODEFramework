@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -179,40 +181,42 @@ namespace CODE.Framework.Wpf.Mvvm
                 HasIcon = viewAction.HasBrush;
                 if (!HasIcon) Title = action.Caption;
                 else
+
                 {
                     switch (TitleDisplayFilter)
                     {
                         case ViewActionDisplayMode.All:
-                            Title = action.Caption;
+                            SetBinding(TitleProperty, new Binding("Caption") {Source = action});
                             break;
                         case ViewActionDisplayMode.AboveNormalSignificanceAndHigher:
                             if (action.Significance == ViewActionSignificance.AboveNormal || action.Significance == ViewActionSignificance.Highest)
-                                Title = action.Caption;
+                                SetBinding(TitleProperty, new Binding("Caption") {Source = action});
                             break;
                         case ViewActionDisplayMode.HighestSignificance:
                             if (action.Significance == ViewActionSignificance.Highest)
-                                Title = action.Caption;
+                                SetBinding(TitleProperty, new Binding("Caption") {Source = action});
                             break;
                         case ViewActionDisplayMode.NormalSignificanceAndHigher:
                             if (action.Significance == ViewActionSignificance.Normal || action.Significance == ViewActionSignificance.AboveNormal || action.Significance == ViewActionSignificance.Highest)
-                                Title = action.Caption;
+                                SetBinding(TitleProperty, new Binding("Caption") {Source = action});
                             break;
                         case ViewActionDisplayMode.BelowNormalSignificanceAndHigher:
                             if (action.Significance == ViewActionSignificance.BelowNormal || action.Significance == ViewActionSignificance.Normal || action.Significance == ViewActionSignificance.AboveNormal || action.Significance == ViewActionSignificance.Highest)
-                                Title = action.Caption;
+                                SetBinding(TitleProperty, new Binding("Caption") {Source = action});
                             break;
                     }
                 }
             }
             else
-                Title = action.Caption;
+                SetBinding(TitleProperty, new Binding("Caption") {Source = action});
 
-            HasTitle = !string.IsNullOrEmpty(Title);
+            SetBinding(HasTitleProperty, new Binding("Title") {Source = this, Converter = new EmptyStringToBooleanConverter()});
 
             Command = action;
 
-            SetBinding(VisibilityProperty, new Binding("Availability") { Source = Action, Converter = new AvailabilityToVisibleConverter() });
+            SetBinding(VisibilityProperty, new Binding("Availability") {Source = Action, Converter = new AvailabilityToVisibleConverter()});
             SetBinding(IsCheckedProperty, new Binding("IsChecked") {Source = Action});
+            SetBinding(SignificanceProperty, new Binding("Significance") {Source = Action});
         }
 
         /// <summary>
@@ -305,6 +309,52 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Indicates whether the associated action has its IsChecked property set
         /// </summary>
         public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(ViewActionToolbarButton), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Significance of the associated view-action
+        /// </summary>
+        public ViewActionSignificance Significance
+        {
+            get { return (ViewActionSignificance)GetValue(SignificanceProperty); }
+            set { SetValue(SignificanceProperty, value); }
+        }
+        /// <summary>
+        /// Significance of the associated view-action
+        /// </summary>
+        public static readonly DependencyProperty SignificanceProperty = DependencyProperty.Register("Significance", typeof(ViewActionSignificance), typeof(ViewActionToolbarButton), new PropertyMetadata(ViewActionSignificance.Normal));
+    }
+
+    /// <summary>
+    /// For internal use only
+    /// </summary>
+    /// <seealso cref="System.Windows.Data.IValueConverter" />
+    public class EmptyStringToBooleanConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converts a value.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !string.IsNullOrEmpty(value.ToString());
+        }
+
+        /// <summary>
+        /// Converts a value.
+        /// </summary>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
 
     /// <summary>

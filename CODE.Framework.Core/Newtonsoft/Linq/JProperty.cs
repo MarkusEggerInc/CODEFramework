@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,108 +22,71 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using CODE.Framework.Core.Newtonsoft.Utilities;
 using System.Diagnostics;
 using System.Globalization;
+using CODE.Framework.Core.Newtonsoft.Utilities;
 
 namespace CODE.Framework.Core.Newtonsoft.Linq
 {
     /// <summary>
-    /// Represents a JSON property.
+    ///     Represents a JSON property.
     /// </summary>
     public class JProperty : JContainer
     {
-        private class JPropertyList : IList<JToken>
-        {
-            internal JToken Token;
-
-            public IEnumerator<JToken> GetEnumerator()
-            {
-                if (Token != null)
-                    yield return Token;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
-            public void Add(JToken item)
-            {
-                Token = item;
-            }
-
-            public void Clear()
-            {
-                Token = null;
-            }
-
-            public bool Contains(JToken item)
-            {
-                return (Token == item);
-            }
-
-            public void CopyTo(JToken[] array, int arrayIndex)
-            {
-                if (Token != null)
-                    array[arrayIndex] = Token;
-            }
-
-            public bool Remove(JToken item)
-            {
-                if (Token != item) return false;
-                Token = null;
-                return true;
-            }
-
-            public int Count
-            {
-                get { return (Token != null) ? 1 : 0; }
-            }
-
-            public bool IsReadOnly
-            {
-                get { return false; }
-            }
-
-            public int IndexOf(JToken item)
-            {
-                return (Token == item) ? 0 : -1;
-            }
-
-            public void Insert(int index, JToken item)
-            {
-                if (index == 0)
-                    Token = item;
-            }
-
-            public void RemoveAt(int index)
-            {
-                if (index == 0)
-                    Token = null;
-            }
-
-            public JToken this[int index]
-            {
-                get { return (index == 0) ? Token : null; }
-                set
-                {
-                    if (index == 0)
-                        Token = value;
-                }
-            }
-        }
-
         private readonly JPropertyList _content = new JPropertyList();
-        private readonly string _name;
 
         /// <summary>
-        /// Gets the container's children tokens.
+        ///     Initializes a new instance of the <see cref="JProperty" /> class from another <see cref="JProperty" /> object.
+        /// </summary>
+        /// <param name="other">A <see cref="JProperty" /> object to copy from.</param>
+        public JProperty(JProperty other)
+            : base(other)
+        {
+            Name = other.Name;
+        }
+
+        internal JProperty(string name)
+        {
+            // called from JTokenWriter
+            ValidationUtils.ArgumentNotNull(name, nameof(name));
+
+            Name = name;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="JProperty" /> class.
+        /// </summary>
+        /// <param name="name">The property name.</param>
+        /// <param name="content">The property content.</param>
+        public JProperty(string name, params object[] content)
+            : this(name, (object) content)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="JProperty" /> class.
+        /// </summary>
+        /// <param name="name">The property name.</param>
+        /// <param name="content">The property content.</param>
+        public JProperty(string name, object content)
+        {
+            ValidationUtils.ArgumentNotNull(name, nameof(name));
+
+            Name = name;
+
+            Value = IsMultiContent(content)
+                ? new JArray(content)
+                : CreateFromContent(content);
+        }
+
+        /// <summary>
+        ///     Gets the container's children tokens.
         /// </summary>
         /// <value>The container's children tokens.</value>
         protected override IList<JToken> ChildrenTokens
@@ -131,28 +95,25 @@ namespace CODE.Framework.Core.Newtonsoft.Linq
         }
 
         /// <summary>
-        /// Gets the property name.
+        ///     Gets the property name.
         /// </summary>
         /// <value>The property name.</value>
-        public string Name
-        {
-            [DebuggerStepThrough]
-            get { return _name; }
-        }
+        public string Name { [DebuggerStepThrough] get; }
 
         /// <summary>
-        /// Gets or sets the property value.
+        ///     Gets or sets the property value.
         /// </summary>
         /// <value>The property value.</value>
         public JToken Value
         {
-            [DebuggerStepThrough]
-            get { return _content.Token; }
+            [DebuggerStepThrough] get { return _content._token; }
             set
             {
                 CheckReentrancy();
+
                 var newValue = value ?? JValue.CreateNull();
-                if (_content.Token == null)
+
+                if (_content._token == null)
                     InsertItem(0, newValue, false);
                 else
                     SetItem(0, newValue);
@@ -160,32 +121,35 @@ namespace CODE.Framework.Core.Newtonsoft.Linq
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JProperty"/> class from another <see cref="JProperty"/> object.
+        ///     Gets the node type for this <see cref="JToken" />.
         /// </summary>
-        /// <param name="other">A <see cref="JProperty"/> object to copy from.</param>
-        public JProperty(JProperty other)
-            : base(other)
+        /// <value>The type.</value>
+        public override JTokenType Type
         {
-            _name = other.Name;
+            [DebuggerStepThrough] get { return JTokenType.Property; }
         }
 
         internal override JToken GetItem(int index)
         {
-            if (index != 0) throw new ArgumentOutOfRangeException();
+            if (index != 0)
+                throw new ArgumentOutOfRangeException();
+
             return Value;
         }
 
         internal override void SetItem(int index, JToken item)
         {
-            if (index != 0) throw new ArgumentOutOfRangeException();
-            if (IsTokenUnchanged(Value, item)) return;
-            if (Parent != null)
-                ((JObject)Parent).InternalPropertyChanging(this);
+            if (index != 0)
+                throw new ArgumentOutOfRangeException();
+
+            if (IsTokenUnchanged(Value, item))
+                return;
+
+            ((JObject) Parent)?.InternalPropertyChanging(this);
 
             base.SetItem(0, item);
 
-            if (Parent != null)
-                ((JObject)Parent).InternalPropertyChanged(this);
+            ((JObject) Parent)?.InternalPropertyChanged(this);
         }
 
         internal override bool RemoveItem(JToken item)
@@ -198,25 +162,34 @@ namespace CODE.Framework.Core.Newtonsoft.Linq
             throw new JsonException("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
         }
 
+        internal override int IndexOfItem(JToken item)
+        {
+            return _content.IndexOf(item);
+        }
+
         internal override void InsertItem(int index, JToken item, bool skipParentCheck)
         {
             // don't add comments to JProperty
-            if (item != null && item.Type == JTokenType.Comment) return;
-            if (Value != null) throw new JsonException("{0} cannot have multiple values.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
+            if (item != null && item.Type == JTokenType.Comment)
+                return;
+
+            if (Value != null)
+                throw new JsonException("{0} cannot have multiple values.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
+
             base.InsertItem(0, item, false);
         }
 
         internal override bool ContainsItem(JToken item)
         {
-            return (Value == item);
+            return Value == item;
         }
 
         internal override void MergeItem(object content, JsonMergeSettings settings)
         {
-            var p = content as JProperty;
-            if (p == null) return;
-            if (p.Value != null && p.Value.Type != JTokenType.Null)
-                Value = p.Value;
+            var value = (content as JProperty)?.Value;
+
+            if (value != null && value.Type != JTokenType.Null)
+                Value = value;
         }
 
         internal override void ClearItems()
@@ -227,7 +200,7 @@ namespace CODE.Framework.Core.Newtonsoft.Linq
         internal override bool DeepEquals(JToken node)
         {
             var t = node as JProperty;
-            return (t != null && _name == t.Name && ContentsEqual(t));
+            return t != null && Name == t.Name && ContentsEqual(t);
         }
 
         internal override JToken CloneToken()
@@ -236,52 +209,13 @@ namespace CODE.Framework.Core.Newtonsoft.Linq
         }
 
         /// <summary>
-        /// Gets the node type for this <see cref="JToken"/>.
+        ///     Writes this token to a <see cref="JsonWriter" />.
         /// </summary>
-        /// <value>The type.</value>
-        public override JTokenType Type
-        {
-            [DebuggerStepThrough]
-            get { return JTokenType.Property; }
-        }
-
-        internal JProperty(string name)
-        {
-            // called from JTokenWriter
-            ValidationUtils.ArgumentNotNull(name, "name");
-            _name = name;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JProperty"/> class.
-        /// </summary>
-        /// <param name="name">The property name.</param>
-        /// <param name="content">The property content.</param>
-        public JProperty(string name, params object[] content)
-            : this(name, (object)content)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JProperty"/> class.
-        /// </summary>
-        /// <param name="name">The property name.</param>
-        /// <param name="content">The property content.</param>
-        public JProperty(string name, object content)
-        {
-            ValidationUtils.ArgumentNotNull(name, "name");
-            _name = name;
-            Value = IsMultiContent(content) ? new JArray(content) : CreateFromContent(content);
-        }
-
-        /// <summary>
-        /// Writes this token to a <see cref="JsonWriter"/>.
-        /// </summary>
-        /// <param name="writer">A <see cref="JsonWriter"/> into which this method will write.</param>
-        /// <param name="converters">A collection of <see cref="JsonConverter"/> which will be used when writing the token.</param>
+        /// <param name="writer">A <see cref="JsonWriter" /> into which this method will write.</param>
+        /// <param name="converters">A collection of <see cref="JsonConverter" /> which will be used when writing the token.</param>
         public override void WriteTo(JsonWriter writer, params JsonConverter[] converters)
         {
-            writer.WritePropertyName(_name);
+            writer.WritePropertyName(Name);
 
             var value = Value;
             if (value != null)
@@ -292,29 +226,133 @@ namespace CODE.Framework.Core.Newtonsoft.Linq
 
         internal override int GetDeepHashCode()
         {
-            return _name.GetHashCode() ^ ((Value != null) ? Value.GetDeepHashCode() : 0);
+            return Name.GetHashCode() ^ (Value != null ? Value.GetDeepHashCode() : 0);
         }
 
         /// <summary>
-        /// Loads an <see cref="JProperty"/> from a <see cref="JsonReader"/>. 
+        ///     Loads a <see cref="JProperty" /> from a <see cref="JsonReader" />.
         /// </summary>
-        /// <param name="reader">A <see cref="JsonReader"/> that will be read for the content of the <see cref="JProperty"/>.</param>
-        /// <returns>A <see cref="JProperty"/> that contains the JSON that was read from the specified <see cref="JsonReader"/>.</returns>
+        /// <param name="reader">A <see cref="JsonReader" /> that will be read for the content of the <see cref="JProperty" />.</param>
+        /// <returns>A <see cref="JProperty" /> that contains the JSON that was read from the specified <see cref="JsonReader" />.</returns>
         public new static JProperty Load(JsonReader reader)
         {
+            return Load(reader, null);
+        }
+
+        /// <summary>
+        ///     Loads a <see cref="JProperty" /> from a <see cref="JsonReader" />.
+        /// </summary>
+        /// <param name="reader">A <see cref="JsonReader" /> that will be read for the content of the <see cref="JProperty" />.</param>
+        /// <param name="settings">
+        ///     The <see cref="JsonLoadSettings" /> used to load the JSON.
+        ///     If this is <c>null</c>, default load settings will be used.
+        /// </param>
+        /// <returns>A <see cref="JProperty" /> that contains the JSON that was read from the specified <see cref="JsonReader" />.</returns>
+        public new static JProperty Load(JsonReader reader, JsonLoadSettings settings)
+        {
             if (reader.TokenType == JsonToken.None)
-                if (!reader.Read()) throw JsonReaderException.Create(reader, "Error reading JProperty from JsonReader.");
+                if (!reader.Read())
+                    throw JsonReaderException.Create(reader, "Error reading JProperty from JsonReader.");
 
-            while (reader.TokenType == JsonToken.Comment)
-                reader.Read();
+            reader.MoveToContent();
 
-            if (reader.TokenType != JsonToken.PropertyName) throw JsonReaderException.Create(reader, "Error reading JProperty from JsonReader. Current JsonReader item is not a property: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+            if (reader.TokenType != JsonToken.PropertyName)
+                throw JsonReaderException.Create(reader, "Error reading JProperty from JsonReader. Current JsonReader item is not a property: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
 
-            var p = new JProperty((string)reader.Value);
-            p.SetLineInfo(reader as IJsonLineInfo);
-            p.ReadTokenFrom(reader);
+            var p = new JProperty((string) reader.Value);
+            p.SetLineInfo(reader as IJsonLineInfo, settings);
+
+            p.ReadTokenFrom(reader, settings);
 
             return p;
         }
+
+        #region JPropertyList
+
+        private class JPropertyList : IList<JToken>
+        {
+            internal JToken _token;
+
+            public IEnumerator<JToken> GetEnumerator()
+            {
+                if (_token != null)
+                    yield return _token;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            public void Add(JToken item)
+            {
+                _token = item;
+            }
+
+            public void Clear()
+            {
+                _token = null;
+            }
+
+            public bool Contains(JToken item)
+            {
+                return _token == item;
+            }
+
+            public void CopyTo(JToken[] array, int arrayIndex)
+            {
+                if (_token != null)
+                    array[arrayIndex] = _token;
+            }
+
+            public bool Remove(JToken item)
+            {
+                if (_token == item)
+                {
+                    _token = null;
+                    return true;
+                }
+                return false;
+            }
+
+            public int Count
+            {
+                get { return _token != null ? 1 : 0; }
+            }
+
+            public bool IsReadOnly
+            {
+                get { return false; }
+            }
+
+            public int IndexOf(JToken item)
+            {
+                return _token == item ? 0 : -1;
+            }
+
+            public void Insert(int index, JToken item)
+            {
+                if (index == 0)
+                    _token = item;
+            }
+
+            public void RemoveAt(int index)
+            {
+                if (index == 0)
+                    _token = null;
+            }
+
+            public JToken this[int index]
+            {
+                get { return index == 0 ? _token : null; }
+                set
+                {
+                    if (index == 0)
+                        _token = value;
+                }
+            }
+        }
+
+        #endregion
     }
 }

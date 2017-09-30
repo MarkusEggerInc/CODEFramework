@@ -542,6 +542,17 @@ namespace CODE.Framework.Core.Utilities
         /// <returns>PropertyInfo.</returns>
         public static PropertyInfo GetPropertyByPath(object valueObject, string path, out object parentObject)
         {
+            if (valueObject == null)
+            {
+                parentObject = null;
+                return null;
+            }
+            if (string.IsNullOrEmpty(path))
+            {
+                parentObject = null;
+                return null;
+            }
+
             var parts = path.Split('.');
             parentObject = valueObject;
 
@@ -593,6 +604,8 @@ namespace CODE.Framework.Core.Utilities
                     valueObject = indexerPropertyInfo.GetValue(valueObject, new object[] {index});
                     parentObject = valueObject;
                 }
+
+                if (valueObject == null) break;
             }
 
             return null;
@@ -706,7 +719,6 @@ namespace CODE.Framework.Core.Utilities
                 GetMethodsForInheritedInterfaces(inheritedInterface, existingMethods);
             }
         }
-
     }
 
     /// <summary>

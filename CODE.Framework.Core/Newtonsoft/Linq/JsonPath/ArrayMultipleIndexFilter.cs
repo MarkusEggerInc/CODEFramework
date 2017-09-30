@@ -6,15 +6,16 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
     {
         public List<int> Indexes { get; set; }
 
-        public override IEnumerable<JToken> ExecuteFilter(IEnumerable<JToken> current, bool errorWhenNoMatch)
+        public override IEnumerable<JToken> ExecuteFilter(JToken root, IEnumerable<JToken> current, bool errorWhenNoMatch)
         {
             foreach (var t in current)
-                foreach (var i in Indexes)
-                {
-                    var v = GetTokenIndex(t, errorWhenNoMatch, i);
-                    if (v != null)
-                        yield return v;
-                }
+            foreach (var i in Indexes)
+            {
+                var v = GetTokenIndex(t, errorWhenNoMatch, i);
+
+                if (v != null)
+                    yield return v;
+            }
         }
     }
 }

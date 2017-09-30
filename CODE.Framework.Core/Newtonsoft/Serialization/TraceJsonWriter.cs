@@ -8,14 +8,17 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
     internal class TraceJsonWriter : JsonWriter
     {
         private readonly JsonWriter _innerWriter;
-        private readonly JsonTextWriter _textWriter;
         private readonly StringWriter _sw;
+        private readonly JsonTextWriter _textWriter;
 
         public TraceJsonWriter(JsonWriter innerWriter)
         {
             _innerWriter = innerWriter;
 
             _sw = new StringWriter(CultureInfo.InvariantCulture);
+            // prefix the message in the stringwriter to avoid concat with a potentially large JSON string
+            _sw.Write("Serialized JSON: " + Environment.NewLine);
+
             _textWriter = new JsonTextWriter(_sw);
             _textWriter.Formatting = Formatting.Indented;
             _textWriter.Culture = innerWriter.Culture;
@@ -25,7 +28,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             _textWriter.FloatFormatHandling = innerWriter.FloatFormatHandling;
         }
 
-        public string GetJson()
+        public string GetSerializedJsonMessage()
         {
             return _sw.ToString();
         }
@@ -37,11 +40,31 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(decimal? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(bool value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(bool? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteValue(byte value)
@@ -55,7 +78,10 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
-            base.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteValue(char value)
@@ -65,11 +91,24 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(char? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(byte[] value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
-            base.WriteValue(value);
+            if (value == null)
+                base.WriteUndefined();
+            else
+                base.WriteValue(value);
         }
 
         public override void WriteValue(DateTime value)
@@ -79,6 +118,16 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(DateTime? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(DateTimeOffset value)
         {
             _textWriter.WriteValue(value);
@@ -86,11 +135,31 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(DateTimeOffset? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(double value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(double? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteUndefined()
@@ -114,11 +183,31 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(float? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(Guid value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(Guid? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteValue(int value)
@@ -128,11 +217,31 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(int? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(long value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(long? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteValue(object value)
@@ -147,7 +256,10 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             {
                 _textWriter.WriteValue(value);
                 _innerWriter.WriteValue(value);
-                base.WriteValue(value);
+                if (value == null)
+                    base.WriteUndefined();
+                else
+                    base.WriteValue(value);
             }
         }
 
@@ -158,11 +270,31 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(sbyte? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(short value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(short? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteValue(string value)
@@ -179,11 +311,31 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(TimeSpan? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(uint value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(uint? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteValue(ulong value)
@@ -193,11 +345,24 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteValue(value);
         }
 
+        public override void WriteValue(ulong? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
+        }
+
         public override void WriteValue(Uri value)
         {
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
-            base.WriteValue(value);
+            if (value == null)
+                base.WriteUndefined();
+            else
+                base.WriteValue(value);
         }
 
         public override void WriteValue(ushort value)
@@ -205,6 +370,16 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             _textWriter.WriteValue(value);
             _innerWriter.WriteValue(value);
             base.WriteValue(value);
+        }
+
+        public override void WriteValue(ushort? value)
+        {
+            _textWriter.WriteValue(value);
+            _innerWriter.WriteValue(value);
+            if (value.HasValue)
+                base.WriteValue(value.GetValueOrDefault());
+            else
+                base.WriteUndefined();
         }
 
         public override void WriteWhitespace(string ws)
@@ -279,18 +454,20 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             base.WriteEndObject();
         }
 
+        public override void WriteRawValue(string json)
+        {
+            _textWriter.WriteRawValue(json);
+            _innerWriter.WriteRawValue(json);
+
+            // calling base method will write json twice
+            InternalWriteValue(JsonToken.Undefined);
+        }
+
         public override void WriteRaw(string json)
         {
             _textWriter.WriteRaw(json);
             _innerWriter.WriteRaw(json);
             base.WriteRaw(json);
-        }
-
-        public override void WriteRawValue(string json)
-        {
-            _textWriter.WriteRawValue(json);
-            _innerWriter.WriteRawValue(json);
-            base.WriteRawValue(json);
         }
 
         public override void Close()

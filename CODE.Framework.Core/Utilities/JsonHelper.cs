@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using CODE.Framework.Core.Newtonsoft;
+using CODE.Framework.Core.Newtonsoft.Serialization;
 using CODE.Framework.Core.Utilities.Extensions;
 
 namespace CODE.Framework.Core.Utilities
@@ -29,12 +30,22 @@ namespace CODE.Framework.Core.Utilities
         /// Serializes to REST JSON.
         /// </summary>
         /// <param name="objectToSerialize">The object to serialize.</param>
-        /// <returns>JSON string</returns>
-        public static string SerializeToRestJson(object objectToSerialize)
+        /// <param name="forceCamelCase">If set to true, the result will be forced to camelCase property names, regardless of the actual property names.</param>
+        /// <returns>
+        /// JSON string
+        /// </returns>
+        public static string SerializeToRestJson(object objectToSerialize, bool forceCamelCase = false)
         {
             try
             {
-                return JsonConvert.SerializeObject(objectToSerialize);
+                if (!forceCamelCase)
+                    return JsonConvert.SerializeObject(objectToSerialize);
+
+                return JsonConvert.SerializeObject(objectToSerialize,
+                    new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
             }
             catch (Exception ex)
             {

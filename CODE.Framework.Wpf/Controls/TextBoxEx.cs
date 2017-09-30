@@ -504,6 +504,65 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>
+        /// Defines the input mask for the characteristic part (the part to the left of the .) of decimal (d, %) formatting.
+        /// The default is '###,###,###,##0', which allows entering up to 12 digits
+        /// </summary>
+        public static readonly DependencyProperty InputMaskDecimalCharacteristicMaskProperty = DependencyProperty.RegisterAttached("InputMaskDecimalCharacteristicMask", typeof(string), typeof(TextBoxEx), new PropertyMetadata("###,###,###,##0"));
+
+        /// <summary>
+        /// Defines the input mask for the characteristic part (the part to the left of the .) of decimal (d, %) formatting.
+        /// The default is '###,###,###,##0', which allows entering up to 12 digits
+        /// </summary>
+        /// <param name="d">The element the value is set on</param>
+        /// <returns>Mask for the characteristic part of a decimal input mask (default is '###,###,###,##0')</returns>
+        public static string GetInputMaskDecimalCharacteristicMask(DependencyObject d)
+        {
+            return d.GetValue(InputMaskDecimalCharacteristicMaskProperty).ToString();
+        }
+
+        /// <summary>
+        /// Defines the input mask for the characteristic part (the part to the left of the .) of decimal (d, %) formatting.
+        /// The default is '###,###,###,##0', which allows entering up to 12 digits
+        /// </summary>
+        /// <param name="d">The element the value is retrieved from</param>
+        /// <param name="value">Mask for the characteristic, such as '###,###,###,##0'</param>
+        public static void SetInputMaskDecimalCharacteristicMask(DependencyObject d, string value)
+        {
+            d.SetValue(InputMaskDecimalCharacteristicMaskProperty, value);
+        }
+
+        /// <summary>
+        /// Defines the input mask for the fractional part (the 'mantissa') of decimal (d, %) formatting.
+        /// The default is '00', which means that there can be two digits in the fraction. If you wanted 
+        /// 4 digits, set this to '0000'
+        /// </summary>
+        public static readonly DependencyProperty InputMaskDecimalFractionalMaskProperty = DependencyProperty.RegisterAttached("InputMaskDecimalFractionalMask", typeof(string), typeof(TextBoxEx), new PropertyMetadata("00"));
+
+        /// <summary>
+        /// Defines the input mask for the fractional part (the 'mantissa') of decimal (d, %) formatting.
+        /// The default is '00', which means that there can be two digits in the fraction. If you wanted 
+        /// 4 digits, set this to '0000'
+        /// </summary>
+        /// <param name="d">The element the value is set on</param>
+        /// <returns>Mask for the mantissa part of a decimal input mask</returns>
+        public static string GetInputMaskDecimalFractionalMask(DependencyObject d)
+        {
+            return d.GetValue(InputMaskDecimalFractionalMaskProperty).ToString();
+        }
+
+        /// <summary>
+        /// Defines the input mask for the fractional part (the 'mantissa') of decimal (d, %) formatting.
+        /// The default is '00', which means that there can be two digits in the fraction. If you wanted 
+        /// 4 digits, set this to '0000'
+        /// </summary>
+        /// <param name="d">The element the value is retrieved from</param>
+        /// <param name="value">Mask for the mantissa, such as '00' or '0000'</param>
+        public static void SetInputMaskDecimalFractionalMask(DependencyObject d, string value)
+        {
+            d.SetValue(InputMaskDecimalFractionalMaskProperty, value);
+        }
+
+        /// <summary>
         /// Currency symbol (such as $, €, or £ - can be multiple characters)
         /// </summary>
         public static readonly DependencyProperty InputMaskCurrencySymbolProperty = DependencyProperty.Register("InputMaskCurrencySymbol", typeof(string), typeof(TextBoxEx), new PropertyMetadata(""));
@@ -529,6 +588,31 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>
+        /// If set to true, the decimal or currency input mask supports negative values as well as positive ones
+        /// </summary>
+        public static readonly DependencyProperty InputMaskSupportsNegativeProperty = DependencyProperty.RegisterAttached("InputMaskSupportsNegative", typeof(bool), typeof(TextBoxEx), new PropertyMetadata(true));
+
+        /// <summary>
+        /// If set to true, the decimal or currency input mask supports negative values as well as positive ones
+        /// </summary>
+        /// <param name="d">The element to get the value on</param>
+        /// <returns>True (default) if negative values are supported</returns>
+        public static bool GetInputMaskSupportsNegative(DependencyObject d)
+        {
+            return (bool) d.GetValue(InputMaskSupportsNegativeProperty);
+        }
+
+        /// <summary>
+        /// If set to true, the decimal or currency input mask supports negative values as well as positive ones
+        /// </summary>
+        /// <param name="d">The element to set the value on</param>
+        /// <param name="value">True (default) if negative values are supported</param>
+        public static void SetInputMaskSupportsNegative(DependencyObject d, bool value)
+        {
+            d.SetValue(InputMaskSupportsNegativeProperty, value);
+        }
+
+        /// <summary>
         /// Provides the ability to define input masks on textboxes
         /// </summary>
         public static readonly DependencyProperty InputMaskProperty = DependencyProperty.RegisterAttached("InputMask", typeof (string), typeof (TextBoxEx), new PropertyMetadata("", OnInputMaskChanged));
@@ -547,7 +631,7 @@ namespace CODE.Framework.Wpf.Controls
         /// Provides the ability to define input masks on textboxes
         /// </summary>
         /// <param name="d">The object the mask is to be set on</param>
-        /// <param name="value">The inpout mask.</param>
+        /// <param name="value">The input mask.</param>
         public static void SetInputMask(DependencyObject d, string value)
         {
             d.SetValue(InputMaskProperty, value);
@@ -589,7 +673,7 @@ namespace CODE.Framework.Wpf.Controls
 
             var mask = GetInputMask(textbox);
 
-            if (mask == "d" || mask == "$")
+            if (mask == "d" || mask == "$" || mask == "%")
             {
                 HandleInputMaskDecimalKeyDown(e.Key, textbox, mask);
                 e.Handled = true;
@@ -645,16 +729,26 @@ namespace CODE.Framework.Wpf.Controls
         {
             var startPosition = textbox.SelectionStart;
             var isCurrency = mask == "$";
+            var isDecimal = mask == "%";
             var numberFormat = CultureInfo.CurrentUICulture.NumberFormat;
             var decimalSeparator = isCurrency ? numberFormat.CurrencyDecimalSeparator : numberFormat.NumberDecimalSeparator;
             var lastInsertWasDecimalSeparator = false;
+            var valueIsNegative = false;
+            var valueWasNegativeOnEnter = false;
 
             // Need to memorize how many digits there were to the left before this keystroke
             var allChars = textbox.Text.ToCharArray().ToList();
             var numberOfDigitsToTheLeft = 0;
             for (var charCounter = 0; charCounter < startPosition; charCounter++)
-                if (char.IsDigit(allChars[charCounter]))
+                if (char.IsDigit(allChars[charCounter]) || allChars[charCounter] == '-')
                     numberOfDigitsToTheLeft++;
+
+            // We check if the value is negative
+            if (allChars.Count > 0 && allChars[0] == '-')
+            {
+                valueIsNegative = true;
+                valueWasNegativeOnEnter = true;
+            }
 
             // Special custom decimal handling
             var currencySymbol = GetInputMaskCurrencySymbol(textbox);
@@ -676,9 +770,14 @@ namespace CODE.Framework.Wpf.Controls
                 }
                 else
                 {
-                    sb.Remove(startPosition, 1);
-                    allChars.RemoveAt(startPosition);
+                    if (startPosition < sb.Length)
+                    {
+                        sb.Remove(startPosition, 1);
+                        allChars.RemoveAt(startPosition);
+                    }
                 }
+                if (allChars.Count == 0)
+                    sb.Append("0");
             }
             else if (key == Key.Back)
             {
@@ -690,25 +789,51 @@ namespace CODE.Framework.Wpf.Controls
                 }
                 else if (startPosition > 0)
                 {
-                    sb.Remove(startPosition - 1, 1);
-                    allChars.RemoveAt(startPosition - 1);
-                    numberOfDigitsToTheLeft--;
+                    if (startPosition - 1 < sb.Length)
+                    {
+                        sb.Remove(startPosition - 1, 1);
+                        allChars.RemoveAt(startPosition - 1);
+                        numberOfDigitsToTheLeft--;
+                    }
                 }
+                if (allChars.Count == 0)
+                    sb.Append("0");
             }
             else
             {
                 // Need to handle selected text properly by replacing it with the new input
-                if (textbox.SelectionLength > 0)
+                if (textbox.SelectionLength > 0 && !(newChar == '-' || newChar == '+'))
                 {
                     sb.Remove(startPosition, textbox.SelectionLength);
                     for (var counter = 0; counter < textbox.SelectionLength; counter++)
                         allChars.RemoveAt(startPosition);
+                    if (allChars.Count == 0 && valueWasNegativeOnEnter)
+                    {
+                        valueWasNegativeOnEnter = false;
+                        valueIsNegative = false;
+                    }
                 }
 
                 if (char.IsDigit(newChar))
                 {
                     sb.Insert(startPosition, newChar);
                     numberOfDigitsToTheLeft++;
+                }
+                else if (GetInputMaskSupportsNegative(textbox) && newChar == '-')
+                {
+                    // We need to make sure that the value is negative
+                    valueIsNegative = true;
+                    if (!valueWasNegativeOnEnter) numberOfDigitsToTheLeft++;
+                }
+                else if (GetInputMaskSupportsNegative(textbox) && newChar == '+')
+                {
+                    // We need to make sure that the value is positive
+                    valueIsNegative = false;
+                    if (valueWasNegativeOnEnter)
+                    {
+                        numberOfDigitsToTheLeft--;
+                        if (numberOfDigitsToTheLeft < 0) numberOfDigitsToTheLeft = 0;
+                    }
                 }
                 else if (newChar.ToString() == decimalSeparator)
                 {
@@ -738,13 +863,23 @@ namespace CODE.Framework.Wpf.Controls
             if (isCurrency && newText.StartsWith(currencySymbol))
                 newText = newText.Substring(currencySymbol.Length).Trim();
 
+            if (valueIsNegative && !newText.StartsWith("-"))
+                newText = "-" + newText;
+            else if (!valueIsNegative && newText.StartsWith("-"))
+                newText = newText.Substring(1);
+
+            if (isDecimal && newText.EndsWith("%"))
+                newText = newText.Substring(0, newText.Length - 1);
+
             decimal parsedValue;
             if (decimal.TryParse(newText, out parsedValue))
             {
-                var rightFormat = isCurrency ? StringHelper.Replicate("0", numberFormat.CurrencyDecimalDigits) : "00";
-                newText = parsedValue.ToString("###,###,###,##0." + rightFormat);
+                var rightFormat = isCurrency ? StringHelper.Replicate("0", numberFormat.CurrencyDecimalDigits) : GetInputMaskDecimalFractionalMask(textbox);
+                newText = parsedValue.ToString(GetInputMaskDecimalCharacteristicMask(textbox) + "." + rightFormat);
                 if (isCurrency)
                     newText = currencySymbol + " " + newText;
+                if (isDecimal)
+                    newText += "%";
 
                 textbox.SetValue(InputMaskIsValidatingProperty, true);
                 textbox.Text = newText;
@@ -761,7 +896,7 @@ namespace CODE.Framework.Wpf.Controls
                     {
                         if (newCaretIndex > currencySymbol.Length && char.IsDigit(newAllChar)) digitsFound++;
                     }
-                    else if (char.IsDigit(newAllChar)) digitsFound++;
+                    else if (char.IsDigit(newAllChar) || newAllChar == '-') digitsFound++;
                     newCaretIndex++;
                 }
                 if (lastInsertWasDecimalSeparator) newCaretIndex++;
@@ -775,7 +910,7 @@ namespace CODE.Framework.Wpf.Controls
         {
             if (string.IsNullOrEmpty(mask)) return;
 
-            if (mask.ToLowerInvariant() == "d" || mask == "$")
+            if (mask.ToLowerInvariant() == "d" || mask == "$" || mask == "%")
             {
                 decimal parsedValue;
                 if (decimal.TryParse(text, out parsedValue))
@@ -786,9 +921,10 @@ namespace CODE.Framework.Wpf.Controls
                         currencySymbol = CultureInfo.CurrentUICulture.NumberFormat.CurrencySymbol;
                         SetInputMaskCurrencySymbol(textbox, currencySymbol); // So we have it for later
                     }
-                    var rightFormat = mask == "$" ? StringHelper.Replicate("0", CultureInfo.CurrentUICulture.NumberFormat.CurrencyDecimalDigits) : "00";
+                    var rightFormat = mask == "$" ? StringHelper.Replicate("0", CultureInfo.CurrentUICulture.NumberFormat.CurrencyDecimalDigits) : GetInputMaskDecimalFractionalMask(textbox);
                     text = parsedValue.ToString("###,###,###,##0." + rightFormat);
                     if (mask == "$") text = currencySymbol + " " + text;
+                    if (mask == "%") text = text + "%";
                     textbox.SetValue(InputMaskIsValidatingProperty, true);
                     textbox.Text = text;
                     SetTextUnmasked(textbox, parsedValue.ToString("###########0." + rightFormat));

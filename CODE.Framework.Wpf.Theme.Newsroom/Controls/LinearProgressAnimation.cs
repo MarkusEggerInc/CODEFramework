@@ -55,14 +55,14 @@ namespace CODE.Framework.Wpf.Theme.Newsroom.Controls
         /// <summary>Brush used to draw each dot</summary>
         public static readonly DependencyProperty DotBrushProperty = DependencyProperty.Register("DotBrush", typeof (Brush), typeof (LinearProgressAnimation), new UIPropertyMetadata(Brushes.Black, TriggerVisualRefresh));
 
-        /// <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+        /// <summary>determines the spacing of the individual dots (1 = neutral)</summary>
         public double DotSpaceFactor
         {
             get { return (double) GetValue(DotSpaceFactorProperty); }
             set { SetValue(DotSpaceFactorProperty, value); }
         }
 
-        /// <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+        /// <summary>determines the spacing of the individual dots (1 = neutral)</summary>
         public static readonly DependencyProperty DotSpaceFactorProperty = DependencyProperty.Register("DotSpaceFactor", typeof (double), typeof (LinearProgressAnimation), new UIPropertyMetadata(1d, TriggerVisualRefresh));
 
         /// <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>

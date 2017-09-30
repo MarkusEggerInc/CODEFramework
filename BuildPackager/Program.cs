@@ -17,7 +17,10 @@ namespace BuildPackager
             var configuration = string.Empty;
             if (args.Length > 0)
                 configuration = args[0];
+
             if (!string.IsNullOrEmpty(configuration) && configuration.ToLower() != "release") return; // we only do automated builds packages in release mode
+
+            Console.WriteLine("Running build packager. (Configuration: " + configuration + ")");
 
             var version = Assembly.GetEntryAssembly().FullName;
             var at = version.IndexOf("Version=", StringComparison.Ordinal);

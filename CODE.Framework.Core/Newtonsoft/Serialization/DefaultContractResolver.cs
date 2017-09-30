@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,11 +22,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
@@ -61,12 +62,12 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             if (!(obj is ResolverContractKey))
                 return false;
 
-            return Equals((ResolverContractKey)obj);
+            return Equals((ResolverContractKey) obj);
         }
 
         public bool Equals(ResolverContractKey other)
         {
-            return (_resolverType == other._resolverType && _contractType == other._contractType);
+            return _resolverType == other._resolverType && _contractType == other._contractType;
         }
     }
 
@@ -77,19 +78,11 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
     }
 
     /// <summary>
-    /// Used by <see cref="JsonSerializer"/> to resolves a <see cref="JsonContract"/> for a given <see cref="Type"/>.
+    ///     Used by <see cref="JsonSerializer" /> to resolve a <see cref="JsonContract" /> for a given
+    ///     <see cref="System.Type" />.
     /// </summary>
     public class DefaultContractResolver : IContractResolver
     {
-#pragma warning disable 612,618
-        private static readonly IContractResolver _instance = new DefaultContractResolver(true);
-#pragma warning restore 612,618
-
-        internal static IContractResolver Instance
-        {
-            get { return _instance; }
-        }
-
         private static readonly JsonConverter[] BuiltInConverters =
         {
             new EntityKeyMemberConverter(),
@@ -100,22 +93,40 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             new DataTableConverter(),
             new DiscriminatedUnionConverter(),
             new KeyValuePairConverter(),
+#pragma warning disable 618
             new BsonObjectIdConverter(),
+#pragma warning restore 618
             new RegexConverter()
         };
 
-        private static readonly object TypeContractCacheLock = new object();
+        private readonly ThreadSafeStore<Type, JsonContract> _contractCache;
+        private readonly PropertyNameTable _nameTable = new PropertyNameTable();
 
-        private static readonly DefaultContractResolverState _sharedState = new DefaultContractResolverState();
-        private readonly DefaultContractResolverState _instanceState = new DefaultContractResolverState();
-        private readonly bool _sharedCache;
+        private readonly object _typeContractCacheLock = new object();
 
         /// <summary>
-        /// Gets a value indicating whether members are being get and set using dynamic code generation.
-        /// This value is determined by the runtime permissions available.
+        ///     Initializes a new instance of the <see cref="DefaultContractResolver" /> class.
+        /// </summary>
+        public DefaultContractResolver()
+        {
+            IgnoreSerializableAttribute = true;
+
+#pragma warning disable 618
+            DefaultMembersSearchFlags = BindingFlags.Instance | BindingFlags.Public;
+#pragma warning restore 618
+
+            _contractCache = new ThreadSafeStore<Type, JsonContract>(CreateContract);
+        }
+
+        // Json.NET Schema requires a property
+        internal static IContractResolver Instance { get; } = new DefaultContractResolver();
+
+        /// <summary>
+        ///     Gets a value indicating whether members are being get and set using dynamic code generation.
+        ///     This value is determined by the runtime permissions available.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if using dynamic code generation; otherwise, <c>false</c>.
+        ///     <c>true</c> if using dynamic code generation; otherwise, <c>false</c>.
         /// </value>
         public bool DynamicCodeGeneration
         {
@@ -123,118 +134,91 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Gets or sets the default members search flags.
+        ///     Gets or sets the default members search flags.
         /// </summary>
         /// <value>The default members search flags.</value>
         [Obsolete("DefaultMembersSearchFlags is obsolete. To modify the members serialized inherit from DefaultContractResolver and override the GetSerializableMembers method instead.")]
         public BindingFlags DefaultMembersSearchFlags { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether compiler generated members should be serialized.
+        ///     Gets or sets a value indicating whether compiler generated members should be serialized.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if serialized compiler generated members; otherwise, <c>false</c>.
+        ///     <c>true</c> if serialized compiler generated members; otherwise, <c>false</c>.
         /// </value>
         public bool SerializeCompilerGeneratedMembers { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to ignore the <see cref="ISerializable"/> interface when serializing and deserializing types.
+        ///     Gets or sets a value indicating whether to ignore the <see cref="ISerializable" /> interface when serializing and
+        ///     deserializing types.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if the <see cref="ISerializable"/> interface will be ignored when serializing and deserializing types; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <see cref="ISerializable" /> interface will be ignored when serializing and deserializing types;
+        ///     otherwise, <c>false</c>.
         /// </value>
         public bool IgnoreSerializableInterface { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to ignore the <see cref="SerializableAttribute"/> attribute when serializing and deserializing types.
+        ///     Gets or sets a value indicating whether to ignore the <see cref="SerializableAttribute" /> attribute when
+        ///     serializing and deserializing types.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if the <see cref="SerializableAttribute"/> attribute will be ignored when serializing and deserializing types; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <see cref="SerializableAttribute" /> attribute will be ignored when serializing and
+        ///     deserializing types; otherwise, <c>false</c>.
         /// </value>
         public bool IgnoreSerializableAttribute { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultContractResolver"/> class.
+        ///     Gets or sets a value indicating whether to ignore IsSpecified members when serializing and deserializing types.
         /// </summary>
-        public DefaultContractResolver()
-        {
-#pragma warning disable 618
-            DefaultMembersSearchFlags = BindingFlags.Public | BindingFlags.Instance;
-#pragma warning restore 618
-            IgnoreSerializableAttribute = true;
-        }
+        /// <value>
+        ///     <c>true</c> if the IsSpecified members will be ignored when serializing and deserializing types; otherwise,
+        ///     <c>false</c>.
+        /// </value>
+        public bool IgnoreIsSpecifiedMembers { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultContractResolver"/> class.
+        ///     Gets or sets a value indicating whether to ignore ShouldSerialize members when serializing and deserializing types.
         /// </summary>
-        /// <param name="shareCache">
-        /// If set to <c>true</c> the <see cref="DefaultContractResolver"/> will use a cached shared with other resolvers of the same type.
-        /// Sharing the cache will significantly improve performance with multiple resolver instances because expensive reflection will only
-        /// happen once. This setting can cause unexpected behavior if different instances of the resolver are suppose to produce different
-        /// results. When set to false it is highly recommended to reuse <see cref="DefaultContractResolver"/> instances with the <see cref="JsonSerializer"/>.
-        /// </param>
-        [Obsolete("DefaultContractResolver(bool) is obsolete. Use the parameterless constructor and cache instances of the contract resolver within your application for optimal performance.")]
-        public DefaultContractResolver(bool shareCache)
-            : this()
-        {
-            _sharedCache = shareCache;
-        }
-
-        internal DefaultContractResolverState GetState()
-        {
-            if (_sharedCache)
-                return _sharedState;
-            return _instanceState;
-        }
+        /// <value>
+        ///     <c>true</c> if the ShouldSerialize members will be ignored when serializing and deserializing types; otherwise,
+        ///     <c>false</c>.
+        /// </value>
+        public bool IgnoreShouldSerializeMembers { get; set; }
 
         /// <summary>
-        /// Resolves the contract for a given type.
+        ///     Gets or sets the naming strategy used to resolve how property names and dictionary keys are serialized.
+        /// </summary>
+        /// <value>The naming strategy used to resolve how property names and dictionary keys are serialized.</value>
+        public NamingStrategy NamingStrategy { get; set; }
+
+        /// <summary>
+        ///     Resolves the contract for a given type.
         /// </summary>
         /// <param name="type">The type to resolve a contract for.</param>
         /// <returns>The contract for a given type.</returns>
         public virtual JsonContract ResolveContract(Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
-            var state = GetState();
-
-            JsonContract contract;
-            var key = new ResolverContractKey(GetType(), type);
-            var cache = state.ContractCache;
-            if (cache == null || !cache.TryGetValue(key, out contract))
-            {
-                contract = CreateContract(type);
-
-                // avoid the possibility of modifying the cache dictionary while another thread is accessing it
-                lock (TypeContractCacheLock)
-                {
-                    cache = state.ContractCache;
-                    var updatedCache = (cache != null)
-                        ? new Dictionary<ResolverContractKey, JsonContract>(cache)
-                        : new Dictionary<ResolverContractKey, JsonContract>();
-                    updatedCache[key] = contract;
-
-                    state.ContractCache = updatedCache;
-                }
-            }
-
-            return contract;
+            return _contractCache.Get(type);
         }
 
         /// <summary>
-        /// Gets the serializable members for the type.
+        ///     Gets the serializable members for the type.
         /// </summary>
         /// <param name="objectType">The type to get serializable members for.</param>
         /// <returns>The serializable members for the type.</returns>
         protected virtual List<MemberInfo> GetSerializableMembers(Type objectType)
         {
-            var ignoreSerializableAttribute = IgnoreSerializableAttribute;
+            bool ignoreSerializableAttribute;
+            ignoreSerializableAttribute = IgnoreSerializableAttribute;
 
             var memberSerialization = JsonTypeReflector.GetObjectMemberSerialization(objectType, ignoreSerializableAttribute);
 
             var allMembers = ReflectionUtils.GetFieldsAndProperties(objectType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-                .Where(m => !ReflectionUtils.IsIndexedProperty(m)).ToList();
+                .Where(m => !ReflectionUtils.IsIndexedProperty(m));
 
             var serializableMembers = new List<MemberInfo>();
 
@@ -248,10 +232,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 #pragma warning restore 618
 
                 foreach (var member in allMembers)
-                {
-                    // exclude members that are compiler generated if set
                     if (SerializeCompilerGeneratedMembers || !member.IsDefined(typeof(CompilerGeneratedAttribute), true))
-                    {
                         if (defaultMembers.Contains(member))
                         {
                             // add all members that are found by default member search
@@ -263,17 +244,17 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                             // or are a field if serializing just fields
                             if (JsonTypeReflector.GetAttribute<JsonPropertyAttribute>(member) != null)
                                 serializableMembers.Add(member);
+                            else if (JsonTypeReflector.GetAttribute<JsonRequiredAttribute>(member) != null)
+                                serializableMembers.Add(member);
                             else if (dataContractAttribute != null && JsonTypeReflector.GetAttribute<DataMemberAttribute>(member) != null)
                                 serializableMembers.Add(member);
                             else if (memberSerialization == MemberSerialization.Fields && member.MemberType() == MemberTypes.Field)
                                 serializableMembers.Add(member);
                         }
-                    }
-                }
 
                 Type match;
                 // don't include EntityKey on entities objects... this is a bit hacky
-                if (objectType.AssignableToTypeName("System.Data.Objects.DataClasses.EntityObject", out match))
+                if (objectType.AssignableToTypeName("System.Data.Objects.DataClasses.EntityObject", false, out match))
                     serializableMembers = serializableMembers.Where(ShouldSerializeEntityMember).ToList();
             }
             else
@@ -294,19 +275,17 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         {
             var propertyInfo = memberInfo as PropertyInfo;
             if (propertyInfo != null)
-            {
                 if (propertyInfo.PropertyType.IsGenericType() && propertyInfo.PropertyType.GetGenericTypeDefinition().FullName == "System.Data.Objects.DataClasses.EntityReference`1")
                     return false;
-            }
 
             return true;
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonObjectContract"/> for the given type.
+        ///     Creates a <see cref="JsonObjectContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonObjectContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonObjectContract" /> for the given type.</returns>
         protected virtual JsonObjectContract CreateObjectContract(Type objectType)
         {
             var contract = new JsonObjectContract(objectType);
@@ -318,9 +297,23 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             contract.MemberSerialization = JsonTypeReflector.GetObjectMemberSerialization(contract.NonNullableUnderlyingType, ignoreSerializableAttribute);
             contract.Properties.AddRange(CreateProperties(contract.NonNullableUnderlyingType, contract.MemberSerialization));
 
+            Func<string, string> extensionDataNameResolver = null;
+
             var attribute = JsonTypeReflector.GetCachedAttribute<JsonObjectAttribute>(contract.NonNullableUnderlyingType);
             if (attribute != null)
+            {
                 contract.ItemRequired = attribute._itemRequired;
+                if (attribute.NamingStrategyType != null)
+                {
+                    var namingStrategy = JsonTypeReflector.GetContainerNamingStrategy(attribute);
+                    extensionDataNameResolver = s => namingStrategy.GetDictionaryKey(s);
+                }
+            }
+
+            if (extensionDataNameResolver == null)
+                extensionDataNameResolver = ResolveExtensionDataName;
+
+            contract.ExtensionDataNameResolver = extensionDataNameResolver;
 
             if (contract.IsInstantiable)
             {
@@ -329,9 +322,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 // check if a JsonConstructorAttribute has been defined and use that
                 if (overrideConstructor != null)
                 {
-#pragma warning disable 618
-                    contract.OverrideConstructor = overrideConstructor;
-#pragma warning restore 618
+                    contract.OverrideCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(overrideConstructor);
                     contract.CreatorParameters.AddRange(CreateConstructorParameters(overrideConstructor, contract.Properties));
                 }
                 else if (contract.MemberSerialization == MemberSerialization.Fields)
@@ -343,12 +334,21 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 }
                 else if (contract.DefaultCreator == null || contract.DefaultCreatorNonPublic)
                 {
-                    var constructor = GetParametrizedConstructor(contract.NonNullableUnderlyingType);
+                    var constructor = GetParameterizedConstructor(contract.NonNullableUnderlyingType);
                     if (constructor != null)
                     {
-#pragma warning disable 618
-                        contract.ParametrizedConstructor = constructor;
-#pragma warning restore 618
+                        contract.ParameterizedCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(constructor);
+                        contract.CreatorParameters.AddRange(CreateConstructorParameters(constructor, contract.Properties));
+                    }
+                }
+                else if (contract.NonNullableUnderlyingType.IsValueType())
+                {
+                    // value types always have default constructor
+                    // check whether there is a constructor that matches with non-writable properties on value type
+                    var constructor = GetImmutableConstructor(contract.NonNullableUnderlyingType, contract.Properties);
+                    if (constructor != null)
+                    {
+                        contract.OverrideCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(constructor);
                         contract.CreatorParameters.AddRange(CreateConstructorParameters(constructor, contract.Properties));
                     }
                 }
@@ -375,10 +375,12 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             var extensionDataMember = members.LastOrDefault(m =>
             {
                 var memberType = m.MemberType();
-                if (memberType != MemberTypes.Property && memberType != MemberTypes.Field) return false;
+                if (memberType != MemberTypes.Property && memberType != MemberTypes.Field)
+                    return false;
 
                 // last instance of attribute wins on type if there are multiple
-                if (!m.IsDefined(typeof(JsonExtensionDataAttribute), false)) return false;
+                if (!m.IsDefined(typeof(JsonExtensionDataAttribute), false))
+                    return false;
 
                 if (!ReflectionUtils.CanReadMemberValue(m, true))
                     throw new JsonException("Invalid extension data attribute on '{0}'. Member '{1}' must have a getter.".FormatWith(CultureInfo.InvariantCulture, GetClrTypeFullName(m.DeclaringType), m.Name));
@@ -414,7 +416,6 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 
             var keyType = dictionaryType.GetGenericArguments()[0];
             var valueType = dictionaryType.GetGenericArguments()[1];
-            var isJTokenValueType = typeof(JToken).IsAssignableFrom(valueType);
 
             Type createdType;
 
@@ -425,130 +426,116 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 createdType = t;
 
             var getExtensionDataDictionary = JsonTypeReflector.ReflectionDelegateFactory.CreateGet<object>(member);
-            var setExtensionDataDictionary = (ReflectionUtils.CanSetMemberValue(member, true, false))
-                ? JsonTypeReflector.ReflectionDelegateFactory.CreateSet<object>(member)
-                : null;
-            var createExtensionDataDictionary = JsonTypeReflector.ReflectionDelegateFactory.CreateDefaultConstructor<object>(createdType);
-            var addMethod = t.GetMethod("Add", new[] { keyType, valueType });
-            var setExtensionDataDictionaryValue = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(addMethod);
-
-            ExtensionDataSetter extensionDataSetter = (o, key, value) =>
-            {
-                var dictionary = getExtensionDataDictionary(o);
-                if (dictionary == null)
-                {
-                    if (setExtensionDataDictionary == null)
-                        throw new JsonSerializationException("Cannot set value onto extension data member '{0}'. The extension data collection is null and it cannot be set.".FormatWith(CultureInfo.InvariantCulture, member.Name));
-
-                    dictionary = createExtensionDataDictionary();
-                    setExtensionDataDictionary(o, dictionary);
-                }
-
-                // convert object value to JToken so it is compatible with dictionary
-                // could happen because of primitive types, type name handling and references
-                if (isJTokenValueType && !(value is JToken))
-                    value = (value != null) ? JToken.FromObject(value) : JValue.CreateNull();
-
-                setExtensionDataDictionaryValue(dictionary, key, value);
-            };
-
-            var enumerableWrapper = typeof(DictionaryEnumerator<,>).MakeGenericType(keyType, valueType);
-            var constructors = enumerableWrapper.GetConstructors().First();
-            var createEnumerableWrapper = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(constructors);
-
-            ExtensionDataGetter extensionDataGetter = o =>
-            {
-                var dictionary = getExtensionDataDictionary(o);
-                if (dictionary == null)
-                    return null;
-
-                return (IEnumerable<KeyValuePair<object, object>>)createEnumerableWrapper(dictionary);
-            };
 
             if (extensionDataAttribute.ReadData)
+            {
+                var setExtensionDataDictionary = ReflectionUtils.CanSetMemberValue(member, true, false)
+                    ? JsonTypeReflector.ReflectionDelegateFactory.CreateSet<object>(member)
+                    : null;
+                var createExtensionDataDictionary = JsonTypeReflector.ReflectionDelegateFactory.CreateDefaultConstructor<object>(createdType);
+                var addMethod = t.GetMethod("Add", new[] {keyType, valueType});
+                var setExtensionDataDictionaryValue = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(addMethod);
+
+                ExtensionDataSetter extensionDataSetter = (o, key, value) =>
+                {
+                    var dictionary = getExtensionDataDictionary(o);
+                    if (dictionary == null)
+                    {
+                        if (setExtensionDataDictionary == null)
+                            throw new JsonSerializationException("Cannot set value onto extension data member '{0}'. The extension data collection is null and it cannot be set.".FormatWith(CultureInfo.InvariantCulture, member.Name));
+
+                        dictionary = createExtensionDataDictionary();
+                        setExtensionDataDictionary(o, dictionary);
+                    }
+
+                    setExtensionDataDictionaryValue(dictionary, key, value);
+                };
+
                 contract.ExtensionDataSetter = extensionDataSetter;
+            }
 
             if (extensionDataAttribute.WriteData)
+            {
+                var enumerableWrapper = typeof(EnumerableDictionaryWrapper<,>).MakeGenericType(keyType, valueType);
+                var constructors = enumerableWrapper.GetConstructors().First();
+                var createEnumerableWrapper = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(constructors);
+
+                ExtensionDataGetter extensionDataGetter = o =>
+                {
+                    var dictionary = getExtensionDataDictionary(o);
+                    if (dictionary == null)
+                        return null;
+
+                    return (IEnumerable<KeyValuePair<object, object>>) createEnumerableWrapper(dictionary);
+                };
+
                 contract.ExtensionDataGetter = extensionDataGetter;
-        }
-
-        internal struct DictionaryEnumerator<TEnumeratorKey, TEnumeratorValue> : IEnumerable<KeyValuePair<object, object>>, IEnumerator<KeyValuePair<object, object>>
-        {
-            private readonly IEnumerator<KeyValuePair<TEnumeratorKey, TEnumeratorValue>> _e;
-
-            public DictionaryEnumerator(IEnumerable<KeyValuePair<TEnumeratorKey, TEnumeratorValue>> e)
-            {
-                ValidationUtils.ArgumentNotNull(e, "e");
-                _e = e.GetEnumerator();
             }
 
-            public bool MoveNext()
-            {
-                return _e.MoveNext();
-            }
-
-            public void Reset()
-            {
-                _e.Reset();
-            }
-
-            public KeyValuePair<object, object> Current
-            {
-                get { return new KeyValuePair<object, object>(_e.Current.Key, _e.Current.Value); }
-            }
-
-            public void Dispose()
-            {
-                _e.Dispose();
-            }
-
-            object IEnumerator.Current
-            {
-                get { return Current; }
-            }
-
-            public IEnumerator<KeyValuePair<object, object>> GetEnumerator()
-            {
-                return this;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this;
-            }
+            contract.ExtensionDataValueType = valueType;
         }
 
         private ConstructorInfo GetAttributeConstructor(Type objectType)
         {
-            IList<ConstructorInfo> markedConstructors = objectType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(c => c.IsDefined(typeof(JsonConstructorAttribute), true)).ToList();
+            var en = objectType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(c => c.IsDefined(typeof(JsonConstructorAttribute), true)).GetEnumerator();
 
-            if (markedConstructors.Count > 1)
-                throw new JsonException("Multiple constructors with the JsonConstructorAttribute.");
-            if (markedConstructors.Count == 1)
-                return markedConstructors[0];
+            if (en.MoveNext())
+            {
+                var conInfo = en.Current;
+                if (en.MoveNext())
+                    throw new JsonException("Multiple constructors with the JsonConstructorAttribute.");
+
+                return conInfo;
+            }
 
             // little hack to get Version objects to deserialize correctly
             if (objectType == typeof(Version))
-                return objectType.GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(int) });
+                return objectType.GetConstructor(new[] {typeof(int), typeof(int), typeof(int), typeof(int)});
 
             return null;
         }
 
-        private ConstructorInfo GetParametrizedConstructor(Type objectType)
+        private ConstructorInfo GetImmutableConstructor(Type objectType, JsonPropertyCollection memberProperties)
         {
-            IList<ConstructorInfo> constructors = objectType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).ToList();
+            IEnumerable<ConstructorInfo> constructors = objectType.GetConstructors();
+            var en = constructors.GetEnumerator();
+            if (en.MoveNext())
+            {
+                var constructor = en.Current;
+                if (!en.MoveNext())
+                {
+                    var parameters = constructor.GetParameters();
+                    if (parameters.Length > 0)
+                    {
+                        foreach (var parameterInfo in parameters)
+                        {
+                            var memberProperty = MatchProperty(memberProperties, parameterInfo.Name, parameterInfo.ParameterType);
+                            if (memberProperty == null || memberProperty.Writable)
+                                return null;
+                        }
 
-            if (constructors.Count == 1)
+                        return constructor;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private ConstructorInfo GetParameterizedConstructor(Type objectType)
+        {
+            var constructors = objectType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+            if (constructors.Length == 1)
                 return constructors[0];
             return null;
         }
 
         /// <summary>
-        /// Creates the constructor parameters.
+        ///     Creates the constructor parameters.
         /// </summary>
         /// <param name="constructor">The constructor to create properties for.</param>
         /// <param name="memberProperties">The type's member properties.</param>
-        /// <returns>Properties for the given <see cref="ConstructorInfo"/>.</returns>
+        /// <returns>Properties for the given <see cref="ConstructorInfo" />.</returns>
         protected virtual IList<JsonProperty> CreateConstructorParameters(ConstructorInfo constructor, JsonPropertyCollection memberProperties)
         {
             var constructorParameters = constructor.GetParameters();
@@ -557,13 +544,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 
             foreach (var parameterInfo in constructorParameters)
             {
-                // it is possible to generate a ParameterInfo with a null name using Reflection.Emit
-                // protect against an ArgumentNullException from GetClosestMatchProperty by testing for null here
-                var matchingMemberProperty = (parameterInfo.Name != null) ? memberProperties.GetClosestMatchProperty(parameterInfo.Name) : null;
-
-                // type must match as well as name
-                if (matchingMemberProperty != null && matchingMemberProperty.PropertyType != parameterInfo.ParameterType)
-                    matchingMemberProperty = null;
+                var matchingMemberProperty = MatchProperty(memberProperties, parameterInfo.Name, parameterInfo.ParameterType);
 
                 // ensure that property will have a name from matching property or from parameterinfo
                 // parameterinfo could have no name if generated by a proxy (I'm looking at you Castle)
@@ -572,21 +553,34 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                     var property = CreatePropertyFromConstructorParameter(matchingMemberProperty, parameterInfo);
 
                     if (property != null)
-                    {
                         parameterCollection.AddProperty(property);
-                    }
                 }
             }
 
             return parameterCollection;
         }
 
+        private JsonProperty MatchProperty(JsonPropertyCollection properties, string name, Type type)
+        {
+            // it is possible to generate a member with a null name using Reflection.Emit
+            // protect against an ArgumentNullException from GetClosestMatchProperty by testing for null here
+            if (name == null)
+                return null;
+
+            var property = properties.GetClosestMatchProperty(name);
+            // must match type as well as name
+            if (property == null || property.PropertyType != type)
+                return null;
+
+            return property;
+        }
+
         /// <summary>
-        /// Creates a <see cref="JsonProperty"/> for the given <see cref="ParameterInfo"/>.
+        ///     Creates a <see cref="JsonProperty" /> for the given <see cref="ParameterInfo" />.
         /// </summary>
         /// <param name="matchingMemberProperty">The matching member property.</param>
         /// <param name="parameterInfo">The constructor parameter.</param>
-        /// <returns>A created <see cref="JsonProperty"/> for the given <see cref="ParameterInfo"/>.</returns>
+        /// <returns>A created <see cref="JsonProperty" /> for the given <see cref="ParameterInfo" />.</returns>
         protected virtual JsonProperty CreatePropertyFromConstructorParameter(JsonProperty matchingMemberProperty, ParameterInfo parameterInfo)
         {
             var property = new JsonProperty();
@@ -602,9 +596,8 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             // "inherit" values from matching member property if unset on parameter
             if (matchingMemberProperty != null)
             {
-                property.PropertyName = (property.PropertyName != parameterInfo.Name) ? property.PropertyName : matchingMemberProperty.PropertyName;
+                property.PropertyName = property.PropertyName != parameterInfo.Name ? property.PropertyName : matchingMemberProperty.PropertyName;
                 property.Converter = property.Converter ?? matchingMemberProperty.Converter;
-                property.MemberConverter = property.MemberConverter ?? matchingMemberProperty.MemberConverter;
 
                 if (!property._hasExplicitDefaultValue && matchingMemberProperty._hasExplicitDefaultValue)
                     property.DefaultValue = matchingMemberProperty.DefaultValue;
@@ -622,7 +615,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Resolves the default <see cref="JsonConverter" /> for the contract.
+        ///     Resolves the default <see cref="JsonConverter" /> for the contract.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <returns>The contract's default <see cref="JsonConverter" />.</returns>
@@ -636,7 +629,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             return JsonTypeReflector.ReflectionDelegateFactory.CreateDefaultConstructor<object>(createdType);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Portability", "CA1903:UseOnlyApiFromTargetedFramework", MessageId = "System.Runtime.Serialization.DataContractAttribute.#get_IsReference()")]
+
         private void InitializeContract(JsonContract contract)
         {
             var containerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(contract.NonNullableUnderlyingType);
@@ -654,7 +647,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 
             contract.Converter = ResolveContractConverter(contract.NonNullableUnderlyingType);
 
-            // then see whether object is compadible with any of the built in converters
+            // then see whether object is compatible with any of the built in converters
             contract.InternalConverter = JsonSerializer.GetMatchingConverter(BuiltInConverters, contract.NonNullableUnderlyingType);
 
             if (contract.IsInstantiable
@@ -662,8 +655,8 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             {
                 contract.DefaultCreator = GetDefaultCreator(contract.CreatedType);
 
-                contract.DefaultCreatorNonPublic = (!contract.CreatedType.IsValueType() &&
-                                                    ReflectionUtils.GetDefaultConstructor(contract.CreatedType) == null);
+                contract.DefaultCreatorNonPublic = !contract.CreatedType.IsValueType() &&
+                                                   ReflectionUtils.GetDefaultConstructor(contract.CreatedType) == null;
             }
 
             ResolveCallbackMethods(contract, contract.NonNullableUnderlyingType);
@@ -680,30 +673,16 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             GetCallbackMethodsForType(t, out onSerializing, out onSerialized, out onDeserializing, out onDeserialized, out onError);
 
             if (onSerializing != null)
-            {
-                if (t.Name != FSharpUtils.FSharpSetTypeName && t.Name != FSharpUtils.FSharpMapTypeName)
-                {
-                    contract.OnSerializingCallbacks.AddRange(onSerializing);
-                }
-            }
+                contract.OnSerializingCallbacks.AddRange(onSerializing);
 
             if (onSerialized != null)
                 contract.OnSerializedCallbacks.AddRange(onSerialized);
 
             if (onDeserializing != null)
-            {
                 contract.OnDeserializingCallbacks.AddRange(onDeserializing);
-            }
 
             if (onDeserialized != null)
-            {
-                if (t.Name != FSharpUtils.FSharpSetTypeName && t.Name != FSharpUtils.FSharpMapTypeName)
-                {
-                    // ConcurrentDictionary throws an error here so don't use its OnDeserialized - http://json.codeplex.com/discussions/257093
-                    if (!t.IsGenericType() || (t.GetGenericTypeDefinition() != typeof(ConcurrentDictionary<,>)))
-                        contract.OnDeserializedCallbacks.AddRange(onDeserialized);
-                }
-            }
+                contract.OnDeserializedCallbacks.AddRange(onDeserialized);
 
             if (onError != null)
                 contract.OnErrorCallbacks.AddRange(onError);
@@ -726,6 +705,9 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 MethodInfo currentOnDeserialized = null;
                 MethodInfo currentOnError = null;
 
+                var skipSerializing = ShouldSkipSerializing(baseType);
+                var skipDeserialized = ShouldSkipDeserialized(baseType);
+
                 foreach (var method in baseType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
                 {
                     // compact framework errors when getting parameters for a generic method
@@ -736,7 +718,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                     Type prevAttributeType = null;
                     var parameters = method.GetParameters();
 
-                    if (IsValidCallback(method, parameters, typeof(OnSerializingAttribute), currentOnSerializing, ref prevAttributeType))
+                    if (!skipSerializing && IsValidCallback(method, parameters, typeof(OnSerializingAttribute), currentOnSerializing, ref prevAttributeType))
                     {
                         onSerializing = onSerializing ?? new List<SerializationCallback>();
                         onSerializing.Add(JsonContract.CreateSerializationCallback(method));
@@ -754,7 +736,7 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                         onDeserializing.Add(JsonContract.CreateSerializationCallback(method));
                         currentOnDeserializing = method;
                     }
-                    if (IsValidCallback(method, parameters, typeof(OnDeserializedAttribute), currentOnDeserialized, ref prevAttributeType))
+                    if (!skipDeserialized && IsValidCallback(method, parameters, typeof(OnDeserializedAttribute), currentOnDeserialized, ref prevAttributeType))
                     {
                         onDeserialized = onDeserialized ?? new List<SerializationCallback>();
                         onDeserialized.Add(JsonContract.CreateSerializationCallback(method));
@@ -768,6 +750,49 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                     }
                 }
             }
+        }
+
+        private static bool IsConcurrentOrObservableCollection(Type t)
+        {
+            if (t.IsGenericType())
+            {
+                var definition = t.GetGenericTypeDefinition();
+
+                switch (definition.FullName)
+                {
+                    case "System.Collections.Concurrent.ConcurrentQueue`1":
+                    case "System.Collections.Concurrent.ConcurrentStack`1":
+                    case "System.Collections.Concurrent.ConcurrentBag`1":
+                    case "System.Collections.Concurrent.ConcurrentDictionary`2":
+                    case "System.Collections.ObjectModel.ObservableCollection`1":
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool ShouldSkipDeserialized(Type t)
+        {
+            // ConcurrentDictionary throws an error in its OnDeserialized so ignore - http://json.codeplex.com/discussions/257093
+            if (IsConcurrentOrObservableCollection(t))
+                return true;
+
+            if (t.Name == FSharpUtils.FSharpSetTypeName || t.Name == FSharpUtils.FSharpMapTypeName)
+                return true;
+
+            return false;
+        }
+
+        private static bool ShouldSkipSerializing(Type t)
+        {
+            if (IsConcurrentOrObservableCollection(t))
+                return true;
+
+            if (t.Name == FSharpUtils.FSharpSetTypeName || t.Name == FSharpUtils.FSharpMapTypeName)
+                return true;
+
+            return false;
         }
 
         private List<Type> GetClassHierarchyForType(Type type)
@@ -787,38 +812,85 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonDictionaryContract"/> for the given type.
+        ///     Creates a <see cref="JsonDictionaryContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonDictionaryContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonDictionaryContract" /> for the given type.</returns>
         protected virtual JsonDictionaryContract CreateDictionaryContract(Type objectType)
         {
             var contract = new JsonDictionaryContract(objectType);
             InitializeContract(contract);
 
-            contract.PropertyNameResolver = ResolvePropertyName;
+            var containerAttribute = JsonTypeReflector.GetAttribute<JsonContainerAttribute>(objectType);
+            if (containerAttribute?.NamingStrategyType != null)
+            {
+                var namingStrategy = JsonTypeReflector.GetContainerNamingStrategy(containerAttribute);
+                contract.DictionaryKeyResolver = s => namingStrategy.GetDictionaryKey(s);
+            }
+            else
+            {
+                contract.DictionaryKeyResolver = ResolveDictionaryKey;
+            }
+
+            var overrideConstructor = GetAttributeConstructor(contract.NonNullableUnderlyingType);
+
+            if (overrideConstructor != null)
+            {
+                var parameters = overrideConstructor.GetParameters();
+                var expectedParameterType = contract.DictionaryKeyType != null && contract.DictionaryValueType != null
+                    ? typeof(IEnumerable<>).MakeGenericType(typeof(KeyValuePair<,>).MakeGenericType(contract.DictionaryKeyType, contract.DictionaryValueType))
+                    : typeof(IDictionary);
+
+                if (parameters.Length == 0)
+                    contract.HasParameterizedCreator = false;
+                else if (parameters.Length == 1 && expectedParameterType.IsAssignableFrom(parameters[0].ParameterType))
+                    contract.HasParameterizedCreator = true;
+                else
+                    throw new JsonException("Constructor for '{0}' must have no parameters or a single parameter that implements '{1}'.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType, expectedParameterType));
+
+                contract.OverrideCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(overrideConstructor);
+            }
 
             return contract;
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonArrayContract"/> for the given type.
+        ///     Creates a <see cref="JsonArrayContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonArrayContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonArrayContract" /> for the given type.</returns>
         protected virtual JsonArrayContract CreateArrayContract(Type objectType)
         {
             var contract = new JsonArrayContract(objectType);
             InitializeContract(contract);
 
+            var overrideConstructor = GetAttributeConstructor(contract.NonNullableUnderlyingType);
+
+            if (overrideConstructor != null)
+            {
+                var parameters = overrideConstructor.GetParameters();
+                var expectedParameterType = contract.CollectionItemType != null
+                    ? typeof(IEnumerable<>).MakeGenericType(contract.CollectionItemType)
+                    : typeof(IEnumerable);
+
+                if (parameters.Length == 0)
+                    contract.HasParameterizedCreator = false;
+                else if (parameters.Length == 1 && expectedParameterType.IsAssignableFrom(parameters[0].ParameterType))
+                    contract.HasParameterizedCreator = true;
+                else
+                    throw new JsonException("Constructor for '{0}' must have no parameters or a single parameter that implements '{1}'.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType, expectedParameterType));
+
+                contract.OverrideCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(overrideConstructor);
+            }
+
             return contract;
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonPrimitiveContract"/> for the given type.
+        ///     Creates a <see cref="JsonPrimitiveContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonPrimitiveContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonPrimitiveContract" /> for the given type.</returns>
         protected virtual JsonPrimitiveContract CreatePrimitiveContract(Type objectType)
         {
             var contract = new JsonPrimitiveContract(objectType);
@@ -828,10 +900,10 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonLinqContract"/> for the given type.
+        ///     Creates a <see cref="JsonLinqContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonLinqContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonLinqContract" /> for the given type.</returns>
         protected virtual JsonLinqContract CreateLinqContract(Type objectType)
         {
             var contract = new JsonLinqContract(objectType);
@@ -841,19 +913,19 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonISerializableContract"/> for the given type.
+        ///     Creates a <see cref="JsonISerializableContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonISerializableContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonISerializableContract" /> for the given type.</returns>
         protected virtual JsonISerializableContract CreateISerializableContract(Type objectType)
         {
             var contract = new JsonISerializableContract(objectType);
             InitializeContract(contract);
 
-            var constructorInfo = contract.NonNullableUnderlyingType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(SerializationInfo), typeof(StreamingContext) }, null);
+            var constructorInfo = contract.NonNullableUnderlyingType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new[] {typeof(SerializationInfo), typeof(StreamingContext)}, null);
             if (constructorInfo != null)
             {
-                var creator = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(constructorInfo);
+                var creator = JsonTypeReflector.ReflectionDelegateFactory.CreateParameterizedConstructor(constructorInfo);
 
                 contract.ISerializableCreator = creator;
             }
@@ -862,26 +934,36 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonDynamicContract"/> for the given type.
+        ///     Creates a <see cref="JsonDynamicContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonDynamicContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonDynamicContract" /> for the given type.</returns>
         protected virtual JsonDynamicContract CreateDynamicContract(Type objectType)
         {
             var contract = new JsonDynamicContract(objectType);
             InitializeContract(contract);
 
-            contract.PropertyNameResolver = ResolvePropertyName;
+            var containerAttribute = JsonTypeReflector.GetAttribute<JsonContainerAttribute>(objectType);
+            if (containerAttribute?.NamingStrategyType != null)
+            {
+                var namingStrategy = JsonTypeReflector.GetContainerNamingStrategy(containerAttribute);
+                contract.PropertyNameResolver = s => namingStrategy.GetDictionaryKey(s);
+            }
+            else
+            {
+                contract.PropertyNameResolver = ResolveDictionaryKey;
+            }
+
             contract.Properties.AddRange(CreateProperties(objectType, MemberSerialization.OptOut));
 
             return contract;
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonStringContract"/> for the given type.
+        ///     Creates a <see cref="JsonStringContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonStringContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonStringContract" /> for the given type.</returns>
         protected virtual JsonStringContract CreateStringContract(Type objectType)
         {
             var contract = new JsonStringContract(objectType);
@@ -891,10 +973,10 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Determines which contract type is created for the given type.
+        ///     Determines which contract type is created for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
-        /// <returns>A <see cref="JsonContract"/> for the given type.</returns>
+        /// <returns>A <see cref="JsonContract" /> for the given type.</returns>
         protected virtual JsonContract CreateContract(Type objectType)
         {
             if (IsJsonPrimitiveType(objectType))
@@ -926,8 +1008,10 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 
             if (!IgnoreSerializableInterface && typeof(ISerializable).IsAssignableFrom(t))
                 return CreateISerializableContract(objectType);
+
             if (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(t))
                 return CreateDynamicContract(objectType);
+
             // tested last because it is not possible to automatically deserialize custom IConvertible types
             if (IsIConvertible(t))
                 return CreatePrimitiveContract(t);
@@ -939,33 +1023,23 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         {
             var typeCode = ConvertUtils.GetTypeCode(t);
 
-            return (typeCode != PrimitiveTypeCode.Empty && typeCode != PrimitiveTypeCode.Object);
+            return typeCode != PrimitiveTypeCode.Empty && typeCode != PrimitiveTypeCode.Object;
         }
 
         internal static bool IsIConvertible(Type t)
         {
             if (typeof(IConvertible).IsAssignableFrom(t)
-                || (ReflectionUtils.IsNullableType(t) && typeof(IConvertible).IsAssignableFrom(Nullable.GetUnderlyingType(t))))
-            {
+                || ReflectionUtils.IsNullableType(t) && typeof(IConvertible).IsAssignableFrom(Nullable.GetUnderlyingType(t)))
                 return !typeof(JToken).IsAssignableFrom(t);
-            }
 
             return false;
         }
 
         internal static bool CanConvertToString(Type type)
         {
-            var converter = ConvertUtils.GetConverter(type);
-
-            // use the objectType's TypeConverter if it has one and can convert to a string
-            if (converter != null
-                && !(converter is ComponentConverter)
-                && !(converter is ReferenceConverter)
-                && converter.GetType() != typeof(TypeConverter))
-            {
-                if (converter.CanConvertTo(typeof(string)))
-                    return true;
-            }
+            TypeConverter converter;
+            if (JsonTypeReflector.CanTypeDescriptorConvertString(type, out converter))
+                return true;
 
             if (type == typeof(Type) || type.IsSubclassOf(typeof(Type)))
                 return true;
@@ -1011,20 +1085,23 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             if (type.IsGenericTypeDefinition() || !type.ContainsGenericParameters())
                 return type.FullName;
 
-            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", new object[] { type.Namespace, type.Name });
+            return "{0}.{1}".FormatWith(CultureInfo.InvariantCulture, type.Namespace, type.Name);
         }
 
         /// <summary>
-        /// Creates properties for the given <see cref="JsonContract"/>.
+        ///     Creates properties for the given <see cref="JsonContract" />.
         /// </summary>
         /// <param name="type">The type to create properties for.</param>
-        /// /// <param name="memberSerialization">The member serialization mode for the type.</param>
-        /// <returns>Properties for the given <see cref="JsonContract"/>.</returns>
+        /// ///
+        /// <param name="memberSerialization">The member serialization mode for the type.</param>
+        /// <returns>Properties for the given <see cref="JsonContract" />.</returns>
         protected virtual IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             var members = GetSerializableMembers(type);
             if (members == null)
-                throw new JsonSerializationException("Null collection of seralizable members returned.");
+                throw new JsonSerializationException("Null collection of serializable members returned.");
+
+            var nameTable = GetNameTable();
 
             var properties = new JsonPropertyCollection(type);
 
@@ -1034,12 +1111,10 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 
                 if (property != null)
                 {
-                    var state = GetState();
-
                     // nametable is not thread-safe for multiple writers
-                    lock (state.NameTable)
+                    lock (nameTable)
                     {
-                        property.PropertyName = state.NameTable.Add(property.PropertyName);
+                        property.PropertyName = nameTable.Add(property.PropertyName);
                     }
 
                     properties.AddProperty(property);
@@ -1050,11 +1125,16 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             return orderedProperties;
         }
 
+        internal virtual PropertyNameTable GetNameTable()
+        {
+            return _nameTable;
+        }
+
         /// <summary>
-        /// Creates the <see cref="IValueProvider"/> used by the serializer to get and set values from a member.
+        ///     Creates the <see cref="IValueProvider" /> used by the serializer to get and set values from a member.
         /// </summary>
         /// <param name="member">The member.</param>
-        /// <returns>The <see cref="IValueProvider"/> used by the serializer to get and set values from a member.</returns>
+        /// <returns>The <see cref="IValueProvider" /> used by the serializer to get and set values from a member.</returns>
         protected virtual IValueProvider CreateMemberValueProvider(MemberInfo member)
         {
             // warning - this method use to cause errors with Intellitrace. Retest in VS Ultimate after changes
@@ -1069,11 +1149,11 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         }
 
         /// <summary>
-        /// Creates a <see cref="JsonProperty"/> for the given <see cref="MemberInfo"/>.
+        ///     Creates a <see cref="JsonProperty" /> for the given <see cref="MemberInfo" />.
         /// </summary>
-        /// <param name="memberSerialization">The member's parent <see cref="MemberSerialization"/>.</param>
-        /// <param name="member">The member to create a <see cref="JsonProperty"/> for.</param>
-        /// <returns>A created <see cref="JsonProperty"/> for the given <see cref="MemberInfo"/>.</returns>
+        /// <param name="memberSerialization">The member's parent <see cref="MemberSerialization" />.</param>
+        /// <param name="member">The member to create a <see cref="JsonProperty" /> for.</param>
+        /// <returns>A created <see cref="JsonProperty" /> for the given <see cref="MemberInfo" />.</returns>
         protected virtual JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var property = new JsonProperty();
@@ -1096,9 +1176,12 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 property.Readable = true;
                 property.Writable = true;
             }
-            property.ShouldSerialize = CreateShouldSerializeTest(member);
 
-            SetIsSpecifiedActions(property, member, allowNonPublicAccess);
+            if (!IgnoreShouldSerializeMembers)
+                property.ShouldSerialize = CreateShouldSerializeTest(member);
+
+            if (!IgnoreIsSpecifiedMembers)
+                SetIsSpecifiedActions(property, member, allowNonPublicAccess);
 
             return property;
         }
@@ -1116,18 +1199,41 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 dataMemberAttribute = null;
 
             var propertyAttribute = JsonTypeReflector.GetAttribute<JsonPropertyAttribute>(attributeProvider);
-            if (propertyAttribute != null)
-                property.HasMemberAttribute = true;
+            var requiredAttribute = JsonTypeReflector.GetAttribute<JsonRequiredAttribute>(attributeProvider);
 
             string mappedName;
-            if (propertyAttribute != null && propertyAttribute.PropertyName != null)
+            bool hasSpecifiedName;
+            if (propertyAttribute?.PropertyName != null)
+            {
                 mappedName = propertyAttribute.PropertyName;
-            else if (dataMemberAttribute != null && dataMemberAttribute.Name != null)
+                hasSpecifiedName = true;
+            }
+            else if (dataMemberAttribute?.Name != null)
+            {
                 mappedName = dataMemberAttribute.Name;
+                hasSpecifiedName = true;
+            }
             else
+            {
                 mappedName = name;
+                hasSpecifiedName = false;
+            }
 
-            property.PropertyName = ResolvePropertyName(mappedName);
+            var containerAttribute = JsonTypeReflector.GetAttribute<JsonContainerAttribute>(declaringType);
+
+            NamingStrategy namingStrategy;
+            if (propertyAttribute?.NamingStrategyType != null)
+                namingStrategy = JsonTypeReflector.CreateNamingStrategyInstance(propertyAttribute.NamingStrategyType, propertyAttribute.NamingStrategyParameters);
+            else if (containerAttribute?.NamingStrategyType != null)
+                namingStrategy = JsonTypeReflector.GetContainerNamingStrategy(containerAttribute);
+            else
+                namingStrategy = NamingStrategy;
+
+            if (namingStrategy != null)
+                property.PropertyName = namingStrategy.GetPropertyName(mappedName, hasSpecifiedName);
+            else
+                property.PropertyName = ResolvePropertyName(mappedName);
+
             property.UnderlyingName = name;
 
             var hasMemberAttribute = false;
@@ -1137,74 +1243,84 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
                 property.Order = propertyAttribute._order;
                 property.DefaultValueHandling = propertyAttribute._defaultValueHandling;
                 hasMemberAttribute = true;
+                property.NullValueHandling = propertyAttribute._nullValueHandling;
+                property.ReferenceLoopHandling = propertyAttribute._referenceLoopHandling;
+                property.ObjectCreationHandling = propertyAttribute._objectCreationHandling;
+                property.TypeNameHandling = propertyAttribute._typeNameHandling;
+                property.IsReference = propertyAttribute._isReference;
+
+                property.ItemIsReference = propertyAttribute._itemIsReference;
+                property.ItemConverter = propertyAttribute.ItemConverterType != null ? JsonTypeReflector.CreateJsonConverterInstance(propertyAttribute.ItemConverterType, propertyAttribute.ItemConverterParameters) : null;
+                property.ItemReferenceLoopHandling = propertyAttribute._itemReferenceLoopHandling;
+                property.ItemTypeNameHandling = propertyAttribute._itemTypeNameHandling;
             }
-            else if (dataMemberAttribute != null)
+            else
             {
-                property._required = (dataMemberAttribute.IsRequired) ? Required.AllowNull : Required.Default;
-                property.Order = (dataMemberAttribute.Order != -1) ? (int?)dataMemberAttribute.Order : null;
-                property.DefaultValueHandling = (!dataMemberAttribute.EmitDefaultValue) ? (DefaultValueHandling?)DefaultValueHandling.Ignore : null;
+                property.NullValueHandling = null;
+                property.ReferenceLoopHandling = null;
+                property.ObjectCreationHandling = null;
+                property.TypeNameHandling = null;
+                property.IsReference = null;
+                property.ItemIsReference = null;
+                property.ItemConverter = null;
+                property.ItemReferenceLoopHandling = null;
+                property.ItemTypeNameHandling = null;
+                if (dataMemberAttribute != null)
+                {
+                    property._required = dataMemberAttribute.IsRequired ? Required.AllowNull : Required.Default;
+                    property.Order = dataMemberAttribute.Order != -1 ? (int?) dataMemberAttribute.Order : null;
+                    property.DefaultValueHandling = !dataMemberAttribute.EmitDefaultValue ? (DefaultValueHandling?) DefaultValueHandling.Ignore : null;
+                    hasMemberAttribute = true;
+                }
+            }
+
+            if (requiredAttribute != null)
+            {
+                property._required = Required.Always;
                 hasMemberAttribute = true;
             }
 
+            property.HasMemberAttribute = hasMemberAttribute;
+
             var hasJsonIgnoreAttribute =
-                JsonTypeReflector.GetAttribute<JsonIgnoreAttribute>(attributeProvider) != null
+                    JsonTypeReflector.GetAttribute<JsonIgnoreAttribute>(attributeProvider) != null
                     // automatically ignore extension data dictionary property if it is public
-                || JsonTypeReflector.GetAttribute<JsonExtensionDataAttribute>(attributeProvider) != null
-                || JsonTypeReflector.GetAttribute<NonSerializedAttribute>(attributeProvider) != null;
+                    || JsonTypeReflector.GetAttribute<JsonExtensionDataAttribute>(attributeProvider) != null
+                    || JsonTypeReflector.IsNonSerializable(attributeProvider)
+                ;
 
             if (memberSerialization != MemberSerialization.OptIn)
             {
                 var hasIgnoreDataMemberAttribute = false;
 
-                hasIgnoreDataMemberAttribute = (JsonTypeReflector.GetAttribute<IgnoreDataMemberAttribute>(attributeProvider) != null);
+                hasIgnoreDataMemberAttribute = JsonTypeReflector.GetAttribute<IgnoreDataMemberAttribute>(attributeProvider) != null;
 
                 // ignored if it has JsonIgnore or NonSerialized or IgnoreDataMember attributes
-                property.Ignored = (hasJsonIgnoreAttribute || hasIgnoreDataMemberAttribute);
+                property.Ignored = hasJsonIgnoreAttribute || hasIgnoreDataMemberAttribute;
             }
             else
             {
                 // ignored if it has JsonIgnore/NonSerialized or does not have DataMember or JsonProperty attributes
-                property.Ignored = (hasJsonIgnoreAttribute || !hasMemberAttribute);
+                property.Ignored = hasJsonIgnoreAttribute || !hasMemberAttribute;
             }
 
             // resolve converter for property
-            // the class type might have a converter but the property converter takes presidence
+            // the class type might have a converter but the property converter takes precedence
             property.Converter = JsonTypeReflector.GetJsonConverter(attributeProvider);
-            property.MemberConverter = JsonTypeReflector.GetJsonConverter(attributeProvider);
 
             var defaultValueAttribute = JsonTypeReflector.GetAttribute<DefaultValueAttribute>(attributeProvider);
             if (defaultValueAttribute != null)
                 property.DefaultValue = defaultValueAttribute.Value;
-
-            property.NullValueHandling = (propertyAttribute != null) ? propertyAttribute._nullValueHandling : null;
-            property.ReferenceLoopHandling = (propertyAttribute != null) ? propertyAttribute._referenceLoopHandling : null;
-            property.ObjectCreationHandling = (propertyAttribute != null) ? propertyAttribute._objectCreationHandling : null;
-            property.TypeNameHandling = (propertyAttribute != null) ? propertyAttribute._typeNameHandling : null;
-            property.IsReference = (propertyAttribute != null) ? propertyAttribute._isReference : null;
-
-            property.ItemIsReference = (propertyAttribute != null) ? propertyAttribute._itemIsReference : null;
-            property.ItemConverter =
-                (propertyAttribute != null && propertyAttribute.ItemConverterType != null)
-                    ? JsonTypeReflector.CreateJsonConverterInstance(propertyAttribute.ItemConverterType, propertyAttribute.ItemConverterParameters)
-                    : null;
-            property.ItemReferenceLoopHandling = (propertyAttribute != null) ? propertyAttribute._itemReferenceLoopHandling : null;
-            property.ItemTypeNameHandling = (propertyAttribute != null) ? propertyAttribute._itemTypeNameHandling : null;
 
             allowNonPublicAccess = false;
 #pragma warning disable 618
             if ((DefaultMembersSearchFlags & BindingFlags.NonPublic) == BindingFlags.NonPublic)
                 allowNonPublicAccess = true;
 #pragma warning restore 618
-            if (propertyAttribute != null)
+            if (hasMemberAttribute)
                 allowNonPublicAccess = true;
             if (memberSerialization == MemberSerialization.Fields)
                 allowNonPublicAccess = true;
-
-            if (dataMemberAttribute != null)
-            {
-                allowNonPublicAccess = true;
-                property.HasMemberAttribute = true;
-            }
         }
 
         private Predicate<object> CreateShouldSerializeTest(MemberInfo member)
@@ -1217,40 +1333,68 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             var shouldSerializeCall =
                 JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(shouldSerializeMethod);
 
-            return o => (bool)shouldSerializeCall(o);
+            return o => (bool) shouldSerializeCall(o);
         }
 
         private void SetIsSpecifiedActions(JsonProperty property, MemberInfo member, bool allowNonPublicAccess)
         {
-            MemberInfo specifiedMember = member.DeclaringType.GetProperty(member.Name + JsonTypeReflector.SpecifiedPostfix);
+            MemberInfo specifiedMember = member.DeclaringType.GetProperty(member.Name + JsonTypeReflector.SpecifiedPostfix, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (specifiedMember == null)
-                specifiedMember = member.DeclaringType.GetField(member.Name + JsonTypeReflector.SpecifiedPostfix);
+                specifiedMember = member.DeclaringType.GetField(member.Name + JsonTypeReflector.SpecifiedPostfix, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
             if (specifiedMember == null || ReflectionUtils.GetMemberUnderlyingType(specifiedMember) != typeof(bool))
-            {
                 return;
-            }
 
             var specifiedPropertyGet = JsonTypeReflector.ReflectionDelegateFactory.CreateGet<object>(specifiedMember);
 
-            property.GetIsSpecified = o => (bool)specifiedPropertyGet(o);
+            property.GetIsSpecified = o => (bool) specifiedPropertyGet(o);
 
             if (ReflectionUtils.CanSetMemberValue(specifiedMember, allowNonPublicAccess, false))
                 property.SetIsSpecified = JsonTypeReflector.ReflectionDelegateFactory.CreateSet<object>(specifiedMember);
         }
 
         /// <summary>
-        /// Resolves the name of the property.
+        ///     Resolves the name of the property.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
-        /// <returns>Name of the property.</returns>
-        protected internal virtual string ResolvePropertyName(string propertyName)
+        /// <returns>Resolved name of the property.</returns>
+        protected virtual string ResolvePropertyName(string propertyName)
         {
+            if (NamingStrategy != null)
+                return NamingStrategy.GetPropertyName(propertyName, false);
+
             return propertyName;
         }
 
         /// <summary>
-        /// Gets the resolved name of the property.
+        ///     Resolves the name of the extension data. By default no changes are made to extension data names.
+        /// </summary>
+        /// <param name="extensionDataName">Name of the extension data.</param>
+        /// <returns>Resolved name of the extension data.</returns>
+        protected virtual string ResolveExtensionDataName(string extensionDataName)
+        {
+            if (NamingStrategy != null)
+                return NamingStrategy.GetExtensionDataName(extensionDataName);
+
+            return extensionDataName;
+        }
+
+        /// <summary>
+        ///     Resolves the key of the dictionary. By default <see cref="ResolvePropertyName" /> is used to resolve dictionary
+        ///     keys.
+        /// </summary>
+        /// <param name="dictionaryKey">Key of the dictionary.</param>
+        /// <returns>Resolved key of the dictionary.</returns>
+        protected virtual string ResolveDictionaryKey(string dictionaryKey)
+        {
+            if (NamingStrategy != null)
+                return NamingStrategy.GetDictionaryKey(dictionaryKey);
+
+            return ResolvePropertyName(dictionaryKey);
+        }
+
+        /// <summary>
+        ///     Gets the resolved name of the property.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>Name of the property.</returns>
@@ -1260,5 +1404,38 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             // a breaking change for anyone who has overidden the method
             return ResolvePropertyName(propertyName);
         }
+
+        // leave as class instead of struct
+        // will be always return as an interface and boxed
+        internal class EnumerableDictionaryWrapper<TEnumeratorKey, TEnumeratorValue> : IEnumerable<KeyValuePair<object, object>>
+        {
+            private readonly IEnumerable<KeyValuePair<TEnumeratorKey, TEnumeratorValue>> _e;
+
+            public EnumerableDictionaryWrapper(IEnumerable<KeyValuePair<TEnumeratorKey, TEnumeratorValue>> e)
+            {
+                ValidationUtils.ArgumentNotNull(e, nameof(e));
+                _e = e;
+            }
+
+            public IEnumerator<KeyValuePair<object, object>> GetEnumerator()
+            {
+                foreach (var item in _e)
+                    yield return new KeyValuePair<object, object>(item.Key, item.Value);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Instructs the <see cref="JsonSerializer" /> to always serialize the member, and to require that the member has a
+    ///     value.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class JsonRequiredAttribute : Attribute
+    {
     }
 }

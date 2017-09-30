@@ -181,6 +181,40 @@ namespace CODE.Framework.Core.Utilities
         }
 
         /// <summary>
+        /// Checks if the specified MRU item exists, and if so, removes it from the list.
+        /// </summary>
+        /// <param name="area">The area (such as "Invoice").</param>
+        /// <param name="mruItem">The MRU item.</param>
+        /// <param name="scope">Scope of the setting (default is User)</param>
+        /// <returns>True if success</returns>
+        public static bool RemoveMostRecentlyUsed(string area, MostRecentlyUsed mruItem, SettingScope scope = SettingScope.User)
+        {
+            // If users did not register a special MRU serializer by the time we run this, we will register the default one
+            if (!RegisteredSerializers.OfType<MostRecentlyUsedListSerializer>().Any()) RegisterSerializer<MostRecentlyUsedListSerializer>();
+
+            var itemFound = false;
+            var existingList = LoadMostRecentlyUsed(area, scope);
+            while (true)
+            {
+                var duplicateItem = existingList.FirstOrDefault(i => i.Id == mruItem.Id);
+                if (duplicateItem == null) break;
+                existingList.Remove(duplicateItem);
+                itemFound = true;
+            }
+            if (!itemFound)
+                // We didn't find the item, so we consider this a success
+                return true;
+
+            var response = SaveSettings(existingList, area, scope, typeof(MostRecentlyUsedListSerializer), true);
+
+            var handler = MostRecentlyUsedChanged;
+            if (handler != null)
+                handler(null, new MostRecentlyUsedEventArgs {Area = area, Scope = scope, LastItemAdded = mruItem, CompleteList = existingList});
+
+            return response;
+        }
+
+        /// <summary>
         /// Saves an MRU item for the specified area to the list
         /// </summary>
         /// <param name="area">The area (such as "Invoice").</param>
@@ -237,6 +271,28 @@ namespace CODE.Framework.Core.Utilities
                 Data = data
             };
             return SaveMostRecentlyUsed(area, item, scope);
+        }
+
+        /// <summary>
+        /// Saves an MRU item for the specified area to the list
+        /// </summary>
+        /// <param name="area">The area (such as "Invoice").</param>
+        /// <param name="id">String that uniquely identifies the item in question (often a string representation of a GUID)</param>
+        /// <param name="title">Title to be displayed in MRU lists.</param>
+        /// <param name="data">Name/value pairs of other data.</param>
+        /// <param name="scope">Scope of the setting (default is User)</param>
+        /// <returns>True if success</returns>
+        public static bool RemoveMostRecentlyUsed(string area, string id, string title, Dictionary<string, string> data = null, SettingScope scope = SettingScope.User)
+        {
+            if (data == null) data = new Dictionary<string, string>();
+
+            var item = new MostRecentlyUsed
+            {
+                Id = id,
+                Title = title,
+                Data = data
+            };
+            return RemoveMostRecentlyUsed(area, item, scope);
         }
 
         /// <summary>
@@ -675,8 +731,8 @@ namespace CODE.Framework.Core.Utilities
                 }
                 else if (property.PropertyType == typeof(DateTime))
                 {
-                    object value;
-                    if (DateTimeUtils.TryParseDateIso(v, DateParseHandling.DateTime, DateTimeZoneHandling.Unspecified, out value))
+                    DateTime value;
+                    if (DateTimeUtils.TryParseDateTimeIso(new StringReference(v.ToCharArray(), 0, v.Length), DateTimeZoneHandling.Unspecified, out value))
                         property.SetValue(stateObject, value, null);
                 }
                 else

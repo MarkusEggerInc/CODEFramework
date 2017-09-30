@@ -4,17 +4,21 @@
         xmlns:l="clr-namespace:CODE.Framework.Wpf.Layout;assembly=CODE.Framework.Wpf"
         xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
         Title="BladeTest" Height="300" Width="1000">
-    <l:BladePanel LastTopItemFillsSpace="False">
+    <l:BladePanel LastTopItemFillsSpace="True">
         <l:BladePanel.HeaderRenderer>
             <l:BladePanelHeaderRenderer Background="Navy" Foreground="White" Orientation="Vertical" FontSize="18" FontWeight="Light"/>
         </l:BladePanel.HeaderRenderer>
-        <StackPanel mvvm:View.Title="Blade #1" Width="200" Margin="50">
+        <StackPanel mvvm:View.Title="Blade #1" Width="200" Background="Yellow">
             <Label>This is a test label</Label>
             <TextBox />
             <Button>Hello World!</Button>
         </StackPanel>
         <Rectangle MinWidth="400" Fill="Green" mvvm:View.Title="Blade #2"/>
-        <Rectangle MinWidth="400" Fill="Blue" mvvm:View.Title="Blade #3"/>
-        <Rectangle MinWidth="200" Fill="Red" HorizontalAlignment="Right" mvvm:View.Title="Blade #4"/>
+        <Button Content="Test" MinWidth="400" mvvm:View.Title="Blade #3"/>
+        <StackPanel mvvm:View.Title="Blade #4" Width="200" Background="Red" HorizontalAlignment="Right">
+            <Label>This is a test label</Label>
+            <TextBox />
+            <Button>Hello World!</Button>
+        </StackPanel>
     </l:BladePanel>
 </Window>

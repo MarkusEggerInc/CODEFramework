@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -29,12 +31,33 @@ using CODE.Framework.Core.Newtonsoft.Utilities;
 namespace CODE.Framework.Core.Newtonsoft.Serialization
 {
     /// <summary>
-    /// Contract details for a <see cref="Type"/> used by the <see cref="JsonSerializer"/>.
+    ///     Contract details for a <see cref="System.Type" /> used by the <see cref="JsonSerializer" />.
     /// </summary>
     public class JsonContainerContract : JsonContract
     {
         private JsonContract _itemContract;
-        private JsonContract _finalItemContract;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="JsonContainerContract" /> class.
+        /// </summary>
+        /// <param name="underlyingType">The underlying type for the contract.</param>
+        internal JsonContainerContract(Type underlyingType)
+            : base(underlyingType)
+        {
+            var jsonContainerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(underlyingType);
+
+            if (jsonContainerAttribute != null)
+            {
+                if (jsonContainerAttribute.ItemConverterType != null)
+                    ItemConverter = JsonTypeReflector.CreateJsonConverterInstance(
+                        jsonContainerAttribute.ItemConverterType,
+                        jsonContainerAttribute.ItemConverterParameters);
+
+                ItemIsReference = jsonContainerAttribute._itemIsReference;
+                ItemReferenceLoopHandling = jsonContainerAttribute._itemReferenceLoopHandling;
+                ItemTypeNameHandling = jsonContainerAttribute._itemTypeNameHandling;
+            }
+        }
 
         // will be null for containers that don't have an item type (e.g. IList) or for complex objects
         internal JsonContract ItemContract
@@ -44,57 +67,37 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
             {
                 _itemContract = value;
                 if (_itemContract != null)
-                    _finalItemContract = (_itemContract.UnderlyingType.IsSealed()) ? _itemContract : null;
+                    FinalItemContract = _itemContract.UnderlyingType.IsSealed() ? _itemContract : null;
                 else
-                    _finalItemContract = null;
+                    FinalItemContract = null;
             }
         }
 
         // the final (i.e. can't be inherited from like a sealed class or valuetype) item contract
-        internal JsonContract FinalItemContract
-        {
-            get { return _finalItemContract; }
-        }
+        internal JsonContract FinalItemContract { get; private set; }
 
         /// <summary>
-        /// Gets or sets the default collection items <see cref="JsonConverter" />.
+        ///     Gets or sets the default collection items <see cref="JsonConverter" />.
         /// </summary>
         /// <value>The converter.</value>
         public JsonConverter ItemConverter { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the collection items preserve object references.
+        ///     Gets or sets a value indicating whether the collection items preserve object references.
         /// </summary>
         /// <value><c>true</c> if collection items preserve object references; otherwise, <c>false</c>.</value>
         public bool? ItemIsReference { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection item reference loop handling.
+        ///     Gets or sets the collection item reference loop handling.
         /// </summary>
         /// <value>The reference loop handling.</value>
         public ReferenceLoopHandling? ItemReferenceLoopHandling { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection item type name handling.
+        ///     Gets or sets the collection item type name handling.
         /// </summary>
         /// <value>The type name handling.</value>
         public TypeNameHandling? ItemTypeNameHandling { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JsonContainerContract"/> class.
-        /// </summary>
-        /// <param name="underlyingType">The underlying type for the contract.</param>
-        internal JsonContainerContract(Type underlyingType)
-            : base(underlyingType)
-        {
-            var jsonContainerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(underlyingType);
-
-            if (jsonContainerAttribute == null) return;
-            if (jsonContainerAttribute.ItemConverterType != null)
-                ItemConverter = JsonTypeReflector.CreateJsonConverterInstance(jsonContainerAttribute.ItemConverterType, jsonContainerAttribute.ItemConverterParameters);
-            ItemIsReference = jsonContainerAttribute._itemIsReference;
-            ItemReferenceLoopHandling = jsonContainerAttribute._itemReferenceLoopHandling;
-            ItemTypeNameHandling = jsonContainerAttribute._itemTypeNameHandling;
-        }
     }
 }

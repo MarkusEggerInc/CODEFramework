@@ -21,13 +21,16 @@ namespace CODE.Framework.Core.Utilities
         /// </summary>
         /// <typeparam name="TProxy">Type to be proxied</typeparam>
         /// <param name="handler">The actual handler object that handles all the calls to the proxy.</param>
-        /// <returns>Proxy object</returns>
+        /// <param name="useProxyCache">If true, cached proxies can be reused</param>
+        /// <returns>
+        /// Proxy object
+        /// </returns>
         /// <exception cref="System.ArgumentException">T needs to be an interface</exception>
-        public static TProxy GetProxy<TProxy>(IProxyHandler handler)
+        public static TProxy GetProxy<TProxy>(IProxyHandler handler, bool useProxyCache = true)
         {
             var t = typeof(TProxy);
             if (!t.IsInterface) throw new ArgumentException("T needs to be an interface");
-            if (ProxyCache.ContainsKey(t)) return (TProxy)ProxyCache[t];
+            if (useProxyCache && ProxyCache.ContainsKey(t)) return (TProxy)ProxyCache[t];
 
             lock (LockDummy)
             {
@@ -37,7 +40,7 @@ namespace CODE.Framework.Core.Utilities
                     var assemblyName = _assemblyBuilder.GetName().Name;
                     _moduleBuilder = _assemblyBuilder.DefineDynamicModule(assemblyName);
                 }
-                var typeBuilder = _moduleBuilder.DefineType(t.Name + "_CODE_Framework_Proxy", TypeAttributes.Class | TypeAttributes.Public, typeof(Object), new[] { t });
+                var typeBuilder = _moduleBuilder.DefineType(t.Name + "_CODE_Framework_Proxy_" + Guid.NewGuid().ToString().Replace("-", "_"), TypeAttributes.Class | TypeAttributes.Public, typeof(Object), new[] { t });
                 var proxyFieldBuilder = typeBuilder.DefineField("handler", typeof(IProxyHandler), FieldAttributes.Private);
                 var callRetMethod = typeof(IProxyHandler).GetMethod("OnMethod", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new[] { typeof(MethodInfo), typeof(object[]) }, null);
 
@@ -100,7 +103,7 @@ namespace CODE.Framework.Core.Utilities
                 }
                 var proxyType = typeBuilder.CreateType();
                 var proxy = Activator.CreateInstance(proxyType, new object[] { handler }, null);
-                ProxyCache.Add(t, proxy);
+                if (useProxyCache) ProxyCache.Add(t, proxy);
                 return (TProxy)proxy;
             }
         }

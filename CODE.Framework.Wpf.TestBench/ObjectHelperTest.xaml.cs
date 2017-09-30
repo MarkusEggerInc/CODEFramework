@@ -37,6 +37,22 @@ namespace CODE.Framework.Wpf.TestBench
             description2 = invoice.GetPropertyValue<string>("LineItems[1].Description");
             Console.WriteLine(description2);
         }
+
+        private void GetJson(object sender, RoutedEventArgs e)
+        {
+            var invoice = new Invoice();
+            invoice.FirstName = "©®™";
+            var json = JsonHelper.SerializeToRestJson(invoice, true);
+            MessageBox.Show(json);
+
+            var invoice2 = JsonHelper.DeserializeFromRestJson<Invoice>(json);
+        }
+
+        private void GetDateJson(object sender, RoutedEventArgs e)
+        {
+            var json = JsonHelper.SerializeToRestJson(DateTimeOffset.Now);
+            MessageBox.Show(json);
+        }
     }
 
     public class Invoice

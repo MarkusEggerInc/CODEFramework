@@ -28,7 +28,7 @@ namespace CODE.Framework.Services.Client
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
         /// <returns>True if successful</returns>
-        /// <remarks>The interface used by the service is automatically detirmined.</remarks>
+        /// <remarks>The interface used by the service is automatically determined.</remarks>
         /// <example>
         /// ServiceGardenLocal.AddServiceHost(typeof(MyNamespace.CustomerService));
         /// </example>
@@ -39,7 +39,7 @@ namespace CODE.Framework.Services.Client
             if (interfaces.Length == 1)
                 contractType = interfaces[0];
             else
-                throw new IndexOutOfBoundsException("Service contract cannot be automatically detirmined for the specified service type.");
+                throw new IndexOutOfBoundsException("Service contract cannot be automatically determined for the specified service type.");
             return AddServiceHost(serviceType, contractType);
         }
 

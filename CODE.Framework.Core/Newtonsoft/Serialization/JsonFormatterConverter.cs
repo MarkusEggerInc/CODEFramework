@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -33,40 +35,38 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
 {
     internal class JsonFormatterConverter : IFormatterConverter
     {
-        private readonly JsonSerializerInternalReader _reader;
         private readonly JsonISerializableContract _contract;
         private readonly JsonProperty _member;
+        private readonly JsonSerializerInternalReader _reader;
 
         public JsonFormatterConverter(JsonSerializerInternalReader reader, JsonISerializableContract contract, JsonProperty member)
         {
-            ValidationUtils.ArgumentNotNull(reader, "serializer");
-            ValidationUtils.ArgumentNotNull(contract, "contract");
+            ValidationUtils.ArgumentNotNull(reader, nameof(reader));
+            ValidationUtils.ArgumentNotNull(contract, nameof(contract));
 
             _reader = reader;
             _contract = contract;
             _member = member;
         }
 
-        private static T GetTokenValue<T>(object value)
-        {
-            ValidationUtils.ArgumentNotNull(value, "value");
-            var v = (JValue)value;
-            return (T)System.Convert.ChangeType(v.Value, typeof(T), CultureInfo.InvariantCulture);
-        }
-
         public object Convert(object value, Type type)
         {
-            ValidationUtils.ArgumentNotNull(value, "value");
+            ValidationUtils.ArgumentNotNull(value, nameof(value));
+
             var token = value as JToken;
-            if (token == null) throw new ArgumentException("Value is not a JToken.", "value");
+            if (token == null)
+                throw new ArgumentException("Value is not a JToken.", nameof(value));
+
             return _reader.CreateISerializableItem(token, type, _contract, _member);
         }
 
         public object Convert(object value, TypeCode typeCode)
         {
-            ValidationUtils.ArgumentNotNull(value, "value");
+            ValidationUtils.ArgumentNotNull(value, nameof(value));
+
             if (value is JValue)
-                value = ((JValue)value).Value;
+                value = ((JValue) value).Value;
+
             return System.Convert.ChangeType(value, typeCode, CultureInfo.InvariantCulture);
         }
 
@@ -143,6 +143,14 @@ namespace CODE.Framework.Core.Newtonsoft.Serialization
         public ulong ToUInt64(object value)
         {
             return GetTokenValue<ulong>(value);
+        }
+
+        private T GetTokenValue<T>(object value)
+        {
+            ValidationUtils.ArgumentNotNull(value, nameof(value));
+
+            var v = (JValue) value;
+            return (T) System.Convert.ChangeType(v.Value, typeof(T), CultureInfo.InvariantCulture);
         }
     }
 }

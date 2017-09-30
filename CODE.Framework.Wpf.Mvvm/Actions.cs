@@ -238,8 +238,14 @@ namespace CODE.Framework.Wpf.Mvvm
     /// <summary>
     /// Document action category
     /// </summary>
-    public class ViewActionCategory : IComparable
+    public class ViewActionCategory : IComparable, INotifyPropertyChanged
     {
+        private string _caption;
+        private bool _isLocalCategory;
+        private int _order;
+        private char _accessKey;
+        private string _brushResourceKey;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -261,27 +267,67 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Caption
         /// </summary>
-        public string Caption { get; set; }
+        public string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                _caption = value;
+                NotifyChanged("Caption");
+            }
+        }
 
         /// <summary>
         /// Indicates whether the category belongs to local views
         /// </summary>
-        public bool IsLocalCategory { get; set; }
+        public bool IsLocalCategory
+        {
+            get { return _isLocalCategory; }
+            set
+            {
+                _isLocalCategory = value;
+                NotifyChanged("IsLocalCategory");
+            }
+        }
 
         /// <summary>
         /// Category order
         /// </summary>
-        public int Order { get; set; }
+        public int Order
+        {
+            get { return _order; }
+            set
+            {
+                _order = value; 
+                NotifyChanged("Order");
+            }
+        }
 
         /// <summary>
         /// Access key for this category
         /// </summary>
-        public char AccessKey { get; set; }
+        public char AccessKey
+        {
+            get { return _accessKey; }
+            set
+            {
+                _accessKey = value;
+                NotifyChanged("AccessKey");
+            }
+        }
 
         /// <summary>
         /// Icon resource key to be used for the category.
         /// </summary>
-        public string BrushResourceKey { get; set; }
+        public string BrushResourceKey
+        {
+            get { return _brushResourceKey; }
+            set
+            {
+                _brushResourceKey = value;
+                NotifyChanged("BrushResourceKey");
+            }
+        }
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
@@ -298,6 +344,22 @@ namespace CODE.Framework.Wpf.Mvvm
             if (otherCategory == null) return 0; // Nothing else we can do, really.
             if (otherCategory.IsLocalCategory != IsLocalCategory) return -1;
             return string.CompareOrdinal(Id, otherCategory.Id);
+        }
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Can be used to indicate a property changed
+        /// </summary>
+        /// <param name="propertyName">Name of the changed property (or empty string to indicate a refresh of all properties)</param>
+        protected virtual void NotifyChanged(string propertyName = "")
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -797,8 +859,18 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
         public void InvalidateCanExecute()
         {
-            if (CanExecuteChanged != null)
-                CanExecuteChanged(this, new EventArgs());
+            var handler = CanExecuteChanged;
+            if (handler != null)
+                handler(this, new EventArgs());
+            NotifyChanged("CanExecuteVisibility");
+        }
+
+        /// <summary>
+        /// Returns Visible if the action can execute, otherwise Collapsed.
+        /// </summary>
+        public Visibility CanExecuteVisibility
+        {
+            get { return CanExecute(null) ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         private Action<IViewAction, object> _executeDelegate;
@@ -2230,17 +2302,78 @@ namespace CODE.Framework.Wpf.Mvvm
     /// <summary>Interface that can be implemented by objects that support explicit close events</summary>
     public interface IClosable
     {
+        /// <summary>Occurs when the system is getting ready to close (has not started closing yet)</summary>
+        event EventHandler<CancelEventArgs> BeforeClosing;
+
         /// <summary>Occurs when the object is closing (has not closed yet)</summary>
         event EventHandler Closing;
 
         /// <summary>Occurs when the object has closed (has finished closing)</summary>
         event EventHandler Closed;
 
+        /// <summary>This method can be used to raise the before closing event</summary>
+        /// <returns>True, if closing has been canceled</returns>
+        bool RaiseBeforeClosingEvent();
+
         /// <summary>This method can be used to raise the closing event</summary>
         void RaiseClosingEvent();
 
         /// <summary>This method can be used to raise the closed event</summary>
         void RaiseClosedEvent();
+    }
+
+    /// <summary>
+    /// This class provides attached property related to the IClosable interface
+    /// </summary>
+    /// <seealso cref="System.Windows.DependencyObject" />
+    public class Closable : DependencyObject
+    {
+        /// <summary>
+        /// If set to true on a window object, and the data context implements IClosable, then closing events will automatically be forwarded to the data context object
+        /// </summary>
+        public static bool GetRaiseClosingEvents(DependencyObject d)
+        {
+            return (bool) d.GetValue(RaiseClosingEventsProperty);
+        }
+        /// <summary>
+        /// If set to true on a window object, and the data context implements IClosable, then closing events will automatically be forwarded to the data context object
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="value">if set to <c>true</c> [value].</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public static void SetRaiseClosingEvents(DependencyObject d, bool value)
+        {
+            d.SetValue(RaiseClosingEventsProperty, value);
+        }
+
+        /// <summary>
+        /// If set to true on a window object, and the data context implements IClosable, then closing events will automatically be forwarded to the data context object
+        /// </summary>
+        public static readonly DependencyProperty RaiseClosingEventsProperty = DependencyProperty.RegisterAttached("RaiseClosingEvents", typeof(bool), typeof(Closable), new PropertyMetadata(false, OnRaiseClosingEventsChanged));
+
+        /// <summary>
+        /// Fires when the property changes
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnRaiseClosingEventsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool) e.NewValue) return;
+            var window = d as Window;
+            if (window == null) return;
+
+            var closable = window.DataContext as IClosable;
+            if (closable == null) return;
+
+            window.Closing += (s, e2) =>
+            {
+                var window2 = s as Window;
+                if (window2 == null) return;
+                var closable2 = window2.DataContext as IClosable;
+                if (closable2 == null) return;
+                Controller.CloseViewForModel(closable2);
+            };
+        }
     }
 
     /// <summary>Interface that can be implemented by objects that support explicit open events</summary>
@@ -2275,6 +2408,18 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="isCancel">Indicates if this is the action triggered if the user hits ESC</param>
         /// <param name="significance">General significance of the action.</param>
         /// <param name="userRoles">User roles with access to this action</param>
+        /// <param name="brushResourceKey">Resource key for a visual derived from a brush.</param>
+        /// <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derived from a brush.</param>
+        /// <param name="groupTitle">The group title.</param>
+        /// <param name="order">The order of the view action (within a group)</param>
+        /// <param name="accessKey">The access key for this action (such as the underlined character in a menu if the action is linked to a menu).</param>
+        /// <param name="shortcutKey">The shortcut key for the action (usually a hot key that can be pressed without a menu being opened or anything along those lines).</param>
+        /// <param name="shortcutKeyModifiers">Modifier for the shortcut key (typically CTRL).</param>
+        /// <param name="categoryAccessKey">Access key for the category (only used if a category is assigned).</param>
+        /// <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
+        /// <param name="isPinned">Indicates whether this action is considered to be pinned</param>
+        /// <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
         public MessageBoxViewAction(string caption = "",
             bool beginGroup = false,
             Action<IViewAction, object> execute = null,
@@ -2283,8 +2428,21 @@ namespace CODE.Framework.Wpf.Mvvm
             string category = "", string categoryCaption = "", int categoryOrder = 0,
             bool isDefault = false, bool isCancel = false,
             ViewActionSignificance significance = ViewActionSignificance.Normal,
-            string[] userRoles = null) :
-                base(caption, beginGroup, execute, canExecute, visualResourceKey, category, categoryCaption, categoryOrder, isDefault, isCancel, significance, userRoles)
+            string[] userRoles = null,
+            string brushResourceKey = "",
+            string logoBrushResourceKey = "",
+            string groupTitle = "",
+            int order = 10000,
+            char accessKey = ' ',
+            Key shortcutKey = Key.None,
+            ModifierKeys shortcutKeyModifiers = ModifierKeys.None,
+            char categoryAccessKey = ' ',
+            bool isDefaultSelection = false,
+            bool isPinned = false,
+            string id = "",
+            StandardIcons standardIcon = StandardIcons.None) :
+                base(caption, beginGroup, execute, canExecute, visualResourceKey, category, categoryCaption, categoryOrder, isDefault, isCancel, significance, userRoles,
+                    brushResourceKey, logoBrushResourceKey, groupTitle, order, accessKey, shortcutKey, shortcutKeyModifiers, categoryAccessKey, isDefaultSelection, isPinned, id, standardIcon)
         {
         }
 

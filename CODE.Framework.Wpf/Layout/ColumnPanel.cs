@@ -6,6 +6,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -95,6 +98,155 @@ namespace CODE.Framework.Wpf.Layout
         /// <summary>Column assignment</summary>
         public static readonly DependencyProperty ColumnProperty = DependencyProperty.RegisterAttached("Column", typeof (int), typeof (ColumnPanel), new PropertyMetadata(0));
 
+        /// <summary>Indicates elements for the detail area</summary>
+        public static bool GetIsDetail(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsDetailProperty);
+        }
+
+        /// <summary>Indicates elements for the detail area</summary>
+        public static void SetIsDetail(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsDetailProperty, value);
+        }
+
+        /// <summary>Indicates elements for the detail area</summary>
+        public static readonly DependencyProperty IsDetailProperty = DependencyProperty.RegisterAttached("IsDetail", typeof(bool), typeof(ColumnPanel), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Indentation of the detail area
+        /// </summary>
+        /// <value>The detail area indent.</value>
+        public double DetailAreaIndent
+        {
+            get { return (double)GetValue(DetailAreaIndentProperty); }
+            set { SetValue(DetailAreaIndentProperty, value); }
+        }
+        /// <summary>
+        /// Indentation of the detail area
+        /// </summary>
+        /// <value>The detail area indent.</value>
+        public static readonly DependencyProperty DetailAreaIndentProperty = DependencyProperty.Register("DetailAreaIndent", typeof(double), typeof(ColumnPanel), new PropertyMetadata(0d));
+
+        /// <summary>
+        /// Width of the expand/collapse icon
+        /// </summary>
+        /// <value>The width of the expand icon.</value>
+        public double ExpandIconWidth
+        {
+            get { return (double)GetValue(ExpandIconWidthProperty); }
+            set { SetValue(ExpandIconWidthProperty, value); }
+        }
+        /// <summary>
+        /// Width of the expand/collapse icon
+        /// </summary>
+        /// <value>The width of the expand icon.</value>
+        public static readonly DependencyProperty ExpandIconWidthProperty = DependencyProperty.Register("ExpandIconWidth", typeof(double), typeof(ColumnPanel), new PropertyMetadata(20d));
+
+        /// <summary>
+        /// Indicates whether the detail area is expanded
+        /// </summary>
+        public bool DetailIsExpanded
+        {
+            get { return (bool)GetValue(DetailIsExpandedProperty); }
+            set { SetValue(DetailIsExpandedProperty, value); }
+        }
+        /// <summary>
+        /// Indicates whether the detail area is expanded
+        /// </summary>
+        public static readonly DependencyProperty DetailIsExpandedProperty = DependencyProperty.Register("DetailIsExpanded", typeof(bool), typeof(ColumnPanel), new PropertyMetadata(false, OnDetailIsExpandedChanged));
+
+        /// <summary>
+        /// Brush resource key used for the expand-icon (shown in collapsed state)
+        /// </summary>
+        /// <value>The expand icon brush resource key.</value>
+        public string ExpandIconBrushResourceKey
+        {
+            get { return (string)GetValue(ExpandIconBrushResourceKeyProperty); }
+            set { SetValue(ExpandIconBrushResourceKeyProperty, value); }
+        }
+        /// <summary>
+        /// Brush resource key used for the expand-icon (shown in collapsed state)
+        /// </summary>
+        /// <value>The expand icon brush resource key.</value>
+        public static readonly DependencyProperty ExpandIconBrushResourceKeyProperty = DependencyProperty.Register("ExpandIconBrushResourceKey", typeof(string), typeof(ColumnPanel), new PropertyMetadata("CODE.Framework-Icon-Collapsed"));
+
+        /// <summary>
+        /// Brush resource key used for the collapse-icon (shown in expanded state)
+        /// </summary>
+        /// <value>The collapse icon brush resource key.</value>
+        public string CollapseIconBrushResourceKey
+        {
+            get { return (string)GetValue(CollapseIconBrushResourceKeyProperty); }
+            set { SetValue(CollapseIconBrushResourceKeyProperty, value); }
+        }
+        /// <summary>
+        /// Brush resource key used for the collapse-icon (shown in expanded state)
+        /// </summary>
+        /// <value>The collapse icon brush resource key.</value>
+        public static readonly DependencyProperty CollapseIconBrushResourceKeyProperty = DependencyProperty.Register("CollapseIconBrushResourceKey", typeof(string), typeof(ColumnPanel), new PropertyMetadata("CODE.Framework-Icon-Expanded"));
+
+        /// <summary>
+        /// Brush used for the expand-icon (shown in collapsed state)
+        /// </summary>
+        /// <value>The expand icon.</value>
+        public Brush ExpandIcon
+        {
+            get { return (Brush)GetValue(ExpandIconProperty); }
+            set { SetValue(ExpandIconProperty, value); }
+        }
+        /// <summary>
+        /// Brush used for the expand-icon (shown in collapsed state)
+        /// </summary>
+        /// <value>The expand icon.</value>
+        public static readonly DependencyProperty ExpandIconProperty = DependencyProperty.Register("ExpandIcon", typeof(Brush), typeof(ColumnPanel), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Brush used for the collapse-icon (shown in collapsed state)
+        /// </summary>
+        /// <value>The collapse icon.</value>
+        public Brush CollapseIcon
+        {
+            get { return (Brush)GetValue(CollapseIconProperty); }
+            set { SetValue(CollapseIconProperty, value); }
+        }
+        /// <summary>
+        /// Brush used for the collapse-icon (shown in collapsed state)
+        /// </summary>
+        /// <value>The collapse icon.</value>
+        public static readonly DependencyProperty CollapseIconProperty = DependencyProperty.Register("CollapseIcon", typeof(Brush), typeof(ColumnPanel), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Fires when DetailIsExpanded changes
+        /// </summary>
+        /// <param name="d">The object the event is raised on</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnDetailIsExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var panel = d as ColumnPanel;
+            if (panel == null) return;
+            panel.InvalidateVisual();
+        }
+
+        /// <summary>
+        /// Defines whether the detail area is auto-assigned the full width available in the list (true),
+        /// or whether the controls in the detail template define their own width (false).
+        /// </summary>
+        public bool DetailSpansFullWidth
+        {
+            get { return (bool)GetValue(DetailSpansFullWidthProperty); }
+            set { SetValue(DetailSpansFullWidthProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines whether the detail area is auto-assigned the full width available in the list (true),
+        /// or whether the controls in the detail template define their own width (false).
+        /// </summary>
+        public static readonly DependencyProperty DetailSpansFullWidthProperty = DependencyProperty.Register("DetailSpansFullWidth", typeof(bool), typeof(ColumnPanel), new PropertyMetadata(true));
+
+        private double _mainRowHeight;
+        private bool _detailAreaFound;
+
         /// <summary>
         /// When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
         /// </summary>
@@ -102,24 +254,53 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            var infinity = new Size(double.PositiveInfinity, double.PositiveInfinity);
             var totalColumns = ColumnDefinitions == null ? 1 : ColumnDefinitions.Count;
             var columnWidths = GetActualColumnWidths(availableSize.Width);
-            var maxHeight = 0d;
+            var maxHeight = MinHeight;
+            if (double.IsNaN(maxHeight)) maxHeight = 0d;
+            var detailHeight = 0d;
+            var detailWidth = 0d;
+            var maxWidth = 0d;
+            _detailAreaFound = false;
             if (ColumnDefinitions != null)
-                foreach (UIElement child in Children)
+            {
+                foreach (var child in Children.OfType<UIElement>().Where(c => !GetIsDetail(c)))
                 {
                     var columnIndex = Math.Min(GetColumn(child), totalColumns);
                     if (ColumnDefinitions.Count > 0 && ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
                     {
-                        child.Measure(infinity);
+                        var currentColumnWidth = columnWidths[columnIndex];
+                        child.Measure(new Size(currentColumnWidth, double.PositiveInfinity));
                         maxHeight = Math.Max(maxHeight, child.DesiredSize.Height);
                         if (!ColumnDefinitions[columnIndex].Width.IsAbsolute)
-                            columnWidths[columnIndex] = Math.Max(columnWidths[columnIndex], child.DesiredSize.Width);
+                            columnWidths[columnIndex] = Math.Max(currentColumnWidth, child.DesiredSize.Width);
                     }
                 }
+                maxWidth = columnWidths.Sum();
+                foreach (var child in Children.OfType<UIElement>().Where(GetIsDetail))
+                {
+                    _detailAreaFound = true;
+                    if (DetailIsExpanded)
+                    {
+                        if (DetailSpansFullWidth)
+                            child.Measure(new Size(Math.Max(maxWidth - DetailAreaIndent - ExpandIconWidth, 0d), double.PositiveInfinity));
+                        else
+                        {
+                            child.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                            detailWidth = child.DesiredSize.Width + DetailAreaIndent + ExpandIconWidth;
+                        }
+                        detailHeight = child.DesiredSize.Height;
+                    }
+                }
+            }
 
-            return new Size(columnWidths.Sum(), maxHeight);
+            _mainRowHeight = maxHeight;
+            if (_detailAreaFound && DetailIsExpanded)
+            {
+                if (!DetailSpansFullWidth) maxWidth = Math.Max(maxWidth, detailWidth);
+                maxHeight += detailHeight;
+            }
+            return GeometryHelper.NewSize(maxWidth, maxHeight);
         }
 
         /// <summary>
@@ -140,20 +321,40 @@ namespace CODE.Framework.Wpf.Layout
                 currentLeft += actualColumnWidths[columnCounter];
             }
 
-            foreach (UIElement child in Children)
-            {
-                if (child == null) continue;
-                var columnIndex = Math.Min(GetColumn(child), totalColumns);
-                if (ColumnDefinitions != null && ColumnDefinitions.Count > 0 && ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
+            var columnCounter2 = 0;
+            foreach (var child in Children.OfType<UIElement>()) // We want the invisible ones too
+                if (GetIsDetail(child))
                 {
-                    if (ColumnDefinitions[columnIndex].AutoShowChildElement)
+                    if (DetailIsExpanded)
+                    {
                         child.Visibility = Visibility.Visible;
-                    var renderRect = new Rect(columnLefts[columnIndex], 0d, actualColumnWidths[columnIndex], finalSize.Height);
-                    child.Arrange(renderRect);
+                        Rect renderRect;
+                        if (!DetailSpansFullWidth)
+                            renderRect = GeometryHelper.NewRect(DetailAreaIndent + ExpandIconWidth, _mainRowHeight + 1, child.DesiredSize.Width, finalSize.Height - _mainRowHeight - 1);
+                        else
+                            renderRect = GeometryHelper.NewRect(DetailAreaIndent + ExpandIconWidth, _mainRowHeight + 1, finalSize.Width - DetailAreaIndent - ExpandIconWidth, finalSize.Height - _mainRowHeight - 1);
+                        child.Arrange(renderRect);
+                    }
+                    else
+                        child.Visibility = Visibility.Collapsed;
                 }
                 else
-                    child.Visibility = Visibility.Collapsed;
-            }
+                {
+                    var columnIndex = Math.Min(GetColumn(child), totalColumns);
+                    if (ColumnDefinitions != null && ColumnDefinitions.Count > 0 && ColumnDefinitions[columnIndex].Visible == Visibility.Visible)
+                    {
+                        columnCounter2++;
+                        if (ColumnDefinitions[columnIndex].AutoShowChildElement) child.Visibility = Visibility.Visible;
+                        Rect renderRect;
+                        if (columnCounter2 == 1 && _detailAreaFound)
+                            renderRect = GeometryHelper.NewRect(columnLefts[columnIndex] + ExpandIconWidth, 0d, actualColumnWidths[columnIndex] - ExpandIconWidth, _mainRowHeight);
+                        else
+                            renderRect = GeometryHelper.NewRect(columnLefts[columnIndex], 0d, actualColumnWidths[columnIndex], _mainRowHeight);
+                        child.Arrange(renderRect);
+                    }
+                    else
+                        child.Visibility = Visibility.Collapsed;
+                }
 
             return finalSize;
         }
@@ -194,6 +395,55 @@ namespace CODE.Framework.Wpf.Layout
 
             return widths;
         }
+
+        /// <summary>
+        /// Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+        /// </summary>
+        /// <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+
+            if (_detailAreaFound)
+            {
+                var iconWidth = ExpandIconWidth - 10;
+                if (iconWidth > _mainRowHeight - 10) iconWidth = _mainRowHeight - 10;
+                Brush iconBrush = null;
+                if (DetailIsExpanded)
+                {
+                    if (CollapseIcon == null)
+                        if (!string.IsNullOrEmpty(CollapseIconBrushResourceKey))
+                            CollapseIcon = FindResource(CollapseIconBrushResourceKey) as Brush;
+                    iconBrush = CollapseIcon;
+                }
+                else
+                {
+                    if (ExpandIcon == null)
+                        if (!string.IsNullOrEmpty(ExpandIconBrushResourceKey))
+                            ExpandIcon = FindResource(ExpandIconBrushResourceKey) as Brush;
+                    iconBrush = ExpandIcon;
+
+                }
+                if (iconBrush != null)
+                    dc.DrawRectangle(iconBrush, null, GeometryHelper.NewRect(5, (int) ((_mainRowHeight - iconWidth) / 2), iconWidth, iconWidth));
+            }
+        }
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.UIElement.MouseLeftButtonDown" /> routed event is raised on this element. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was pressed.</param>
+        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            if (!_detailAreaFound) return;
+
+            var position = e.GetPosition(this);
+            if (position.X <= ExpandIconWidth && position.Y <= _mainRowHeight)
+            {
+                DetailIsExpanded = !DetailIsExpanded;
+                e.Handled = true;
+            }
+        }
     }
 
     /// <summary>
@@ -215,18 +465,19 @@ namespace CODE.Framework.Wpf.Layout
         /// <param name="column">The column.</param>
         public ColumnPanelColumnDefinition(ColumnDefinition column)
         {
+            var descriptor = DependencyPropertyDescriptor.FromProperty(WidthProperty, typeof(ColumnDefinition));
+            descriptor.AddValueChanged(this, (o, e) =>
+            {
+                var handler = WidthChanged;
+                if (handler != null)
+                    handler(this, new EventArgs());
+            });
+
             var binding = BindingOperations.GetBinding(column, WidthProperty);
             if (binding == null)
                 Width = column.Width;
             else
                 SetBinding(WidthProperty, binding);
-
-            var descriptor = DependencyPropertyDescriptor.FromProperty(WidthProperty, typeof(ColumnDefinition));
-            descriptor.AddValueChanged(this, (o, e) =>
-            {
-                if (WidthChanged != null)
-                    WidthChanged(this, new EventArgs());
-            });
         }
 
         /// <summary>
@@ -277,8 +528,9 @@ namespace CODE.Framework.Wpf.Layout
         {
             var column = d as ColumnPanelColumnDefinition;
             if (column == null) return;
-            if (column.ReadOnlyTextChanged != null)
-                column.ReadOnlyTextChanged(column, new EventArgs());
+            var handler = column.ReadOnlyTextChanged;
+            if (handler != null)
+                handler(column, new EventArgs());
         }
 
         /// <summary>
@@ -287,7 +539,7 @@ namespace CODE.Framework.Wpf.Layout
         public event EventHandler ReadOnlyTextChanged;
 
         /// <summary>
-        /// Desired text alignment for read-only column content (note: this is only supported by some rederers)
+        /// Desired text alignment for read-only column content (note: this is only supported by some renderers)
         /// </summary>
         public TextAlignment ReadOnlyTextAlignment
         {
@@ -295,7 +547,7 @@ namespace CODE.Framework.Wpf.Layout
             set { SetValue(ReadOnlyTextAlignmentProperty, value); }
         }
         /// <summary>
-        /// Desired text alignment for read-only column content (note: this is only supported by some rederers)
+        /// Desired text alignment for read-only column content (note: this is only supported by some renderers)
         /// </summary>
         public static readonly DependencyProperty ReadOnlyTextAlignmentProperty = DependencyProperty.Register("ReadOnlyTextAlignment", typeof(TextAlignment), typeof(ColumnPanelColumnDefinition), new PropertyMetadata(TextAlignment.Left, OnReadOnlyTextAlignmentChanged));
 
@@ -309,8 +561,9 @@ namespace CODE.Framework.Wpf.Layout
         {
             var column = d as ColumnPanelColumnDefinition;
             if (column == null) return;
-            if (column.ReadOnlyTextAlignmentChanged != null)
-                column.ReadOnlyTextAlignmentChanged(column, new EventArgs());
+            var handler = column.ReadOnlyTextAlignmentChanged;
+            if (handler != null)
+                handler(column, new EventArgs());
         }
 
         /// <summary>

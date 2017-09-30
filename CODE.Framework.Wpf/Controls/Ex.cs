@@ -15,7 +15,7 @@ namespace CODE.Framework.Wpf.Controls
     {
         /// <summary>Attached property to set a single command event</summary>
         /// <remarks>This attached property can be attached to any UI Element to define a command used to handle an event</remarks>
-        public static readonly DependencyProperty EventCommandProperty = DependencyProperty.RegisterAttached("EventCommand", typeof (EventCommand), typeof (Ex), new PropertyMetadata(null, EventCommandPropertyChanged));
+        public static readonly DependencyProperty EventCommandProperty = DependencyProperty.RegisterAttached("EventCommand", typeof(EventCommand), typeof(Ex), new PropertyMetadata(null, EventCommandPropertyChanged));
 
         /// <summary>Handler for event command changes</summary>
         /// <param name="d">Source object</param>
@@ -32,7 +32,7 @@ namespace CODE.Framework.Wpf.Controls
         /// <remarks>This attached property can be attached to any UI Element to define an event command</remarks>
         public static EventCommand GetEventCommand(DependencyObject obj)
         {
-            return (EventCommand)obj.GetValue(EventCommandProperty);
+            return (EventCommand) obj.GetValue(EventCommandProperty);
         }
 
         /// <summary>Event command</summary>
@@ -53,17 +53,17 @@ namespace CODE.Framework.Wpf.Controls
         private static void EventCommandsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             If.Real<FrameworkElement, EventCommandsCollection>(d, e.NewValue, (e2, commands) =>
-                                                                                  {
-                                                                                      commands.SetUIElement(e2);
-                                                                                      foreach (var eventCommand in commands)
-                                                                                          commands.ConfigureEventCommand(eventCommand);
-                                                                                  });
+            {
+                commands.SetUIElement(e2);
+                foreach (var eventCommand in commands)
+                    commands.ConfigureEventCommand(eventCommand);
+            });
             If.Real<FrameworkContentElement, EventCommandsCollection>(d, e.NewValue, (e2, commands) =>
-                                                                                         {
-                                                                                             commands.SetUIElement(e2);
-                                                                                             foreach (var eventCommand in commands)
-                                                                                                 commands.ConfigureEventCommand(eventCommand);
-                                                                                         });
+            {
+                commands.SetUIElement(e2);
+                foreach (var eventCommand in commands)
+                    commands.ConfigureEventCommand(eventCommand);
+            });
         }
 
         /// <summary>Event commands</summary>
@@ -72,7 +72,7 @@ namespace CODE.Framework.Wpf.Controls
         /// <remarks>This attached property can be attached to any UI Element to define an event command</remarks>
         public static EventCommandsCollection GetEventCommands(DependencyObject obj)
         {
-            return (EventCommandsCollection)obj.GetValue(EventCommandsProperty);
+            return (EventCommandsCollection) obj.GetValue(EventCommandsProperty);
         }
 
         /// <summary>Event commands</summary>
@@ -84,12 +84,14 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>Defines whether an object (such as a textbox) automatically is selected when focus moves into it</summary>
-        public static readonly DependencyProperty SelectOnEntryProperty = DependencyProperty.RegisterAttached("SelectOnEntry", typeof (bool), typeof (Ex), new UIPropertyMetadata(false, SelectOnEntryChanged));
+        public static readonly DependencyProperty SelectOnEntryProperty = DependencyProperty.RegisterAttached("SelectOnEntry", typeof(bool), typeof(Ex), new UIPropertyMetadata(false, SelectOnEntryChanged));
+
         private static void SelectOnEntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue)
+            if ((bool) e.NewValue)
                 If.Real<TextBoxBase>(d, t => { t.GotFocus += (s, e2) => t.SelectAll(); });
         }
+
         /// <summary>Defines whether an object (such as a textbox) automatically is selected when focus moves into it</summary>
         /// <param name="obj">The object to set the value on</param>
         /// <param name="value">True for auto-select</param>
@@ -97,12 +99,13 @@ namespace CODE.Framework.Wpf.Controls
         {
             obj.SetValue(SelectOnEntryProperty, value);
         }
+
         /// <summary>Defines whether an object (such as a textbox) automatically is selected when focus moves into it</summary>
         /// <param name="obj">The object to retrieve the value for</param>
         /// <returns>True if auto-select</returns>
         public static bool GetSelectOnEntry(DependencyObject obj)
         {
-            return (bool)obj.GetValue(SelectOnEntryProperty);
+            return (bool) obj.GetValue(SelectOnEntryProperty);
         }
     }
 
@@ -121,12 +124,12 @@ namespace CODE.Framework.Wpf.Controls
                 if (attachedTo.DataContext != null)
                     DataContext = attachedTo.DataContext;
                 attachedTo.DataContextChanged += (s, o) =>
-                                                     {
-                                                         var at2 = s as FrameworkElement; // Using the source object rather than the local attachedTo property to avoid the overhead of an enclosure
-                                                         if (at2 == null) return;
-                                                         if (at2.DataContext != null)
-                                                             DataContext = at2.DataContext;
-                                                     };
+                {
+                    var at2 = s as FrameworkElement; // Using the source object rather than the local attachedTo property to avoid the overhead of an enclosure
+                    if (at2 == null) return;
+                    if (at2.DataContext != null)
+                        DataContext = at2.DataContext;
+                };
             }
             HookEvent();
         }
@@ -141,12 +144,12 @@ namespace CODE.Framework.Wpf.Controls
                 if (attachedTo.DataContext != null)
                     DataContext = attachedTo.DataContext;
                 attachedTo.DataContextChanged += (s, o) =>
-                                                     {
-                                                         var at2 = s as FrameworkContentElement; // Using the source object rather than the local attachedTo property to avoid the overhead of an enclosure
-                                                         if (at2 == null) return;
-                                                         if (at2.DataContext != null)
-                                                             DataContext = at2.DataContext;
-                                                     };
+                {
+                    var at2 = s as FrameworkContentElement; // Using the source object rather than the local attachedTo property to avoid the overhead of an enclosure
+                    if (at2 == null) return;
+                    if (at2.DataContext != null)
+                        DataContext = at2.DataContext;
+                };
             }
             HookEvent();
         }
@@ -157,19 +160,20 @@ namespace CODE.Framework.Wpf.Controls
         /// <summary>Event that is to fire the command</summary>
         public string Event
         {
-            get { return (string)GetValue(EventProperty); }
+            get { return (string) GetValue(EventProperty); }
             set { SetValue(EventProperty, value); }
         }
 
         /// <summary>Event that is to fire the command</summary>
-        public static readonly DependencyProperty EventProperty = DependencyProperty.Register("Event", typeof (string), typeof (EventCommand), new UIPropertyMetadata("", (d, e) => If.Real<EventCommand>(d, d2 => d2.HookEvent())));
+        public static readonly DependencyProperty EventProperty = DependencyProperty.Register("Event", typeof(string), typeof(EventCommand), new UIPropertyMetadata("", (d, e) => If.Real<EventCommand>(d, d2 => d2.HookEvent())));
 
         /// <summary>Command that is to be executed when the desired event fires.</summary>
         public ICommand Command
         {
-            get { return (ICommand)GetValue(CommandProperty); }
+            get { return (ICommand) GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
         }
+
         /// <summary>Command that is to be executed when the desired event fires.</summary>
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(EventCommand), new UIPropertyMetadata(null, (d, e) => If.Real<EventCommand>(d, d2 => d2.HookEvent())));
 
@@ -179,6 +183,7 @@ namespace CODE.Framework.Wpf.Controls
             get { return GetValue(CommandParameterProperty); }
             set { SetValue(CommandParameterProperty, value); }
         }
+
         /// <summary>Command parameter associated with the command.</summary>
         public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(EventCommand), new UIPropertyMetadata(null, (d, e) => If.Real<EventCommand>(d, d2 => d2.HookEvent())));
 
@@ -208,11 +213,11 @@ namespace CODE.Framework.Wpf.Controls
         private void Execute(object sender, object e)
         {
             var parameter = new EventCommandParameters
-                                {
-                                    CommandParameter = CommandParameter,
-                                    Sender = sender,
-                                    EventArgs = e
-                                };
+            {
+                CommandParameter = CommandParameter,
+                Sender = sender,
+                EventArgs = e
+            };
             if (Command.CanExecute(parameter)) Command.Execute(parameter);
         }
     }
@@ -224,8 +229,10 @@ namespace CODE.Framework.Wpf.Controls
     {
         /// <summary>Original source of the event</summary>
         public object Sender { get; set; }
+
         /// <summary>Original event arguments</summary>
         public object EventArgs { get; set; }
+
         /// <summary>Command parameter</summary>
         public object CommandParameter { get; set; }
     }
@@ -239,10 +246,10 @@ namespace CODE.Framework.Wpf.Controls
         public EventCommandsCollection()
         {
             CollectionChanged += (s, e) =>
-                                     {
-                                         foreach (var newItem in e.NewItems)
-                                             If.Real<EventCommand>(newItem, ConfigureEventCommand);
-                                     };
+            {
+                foreach (var newItem in e.NewItems)
+                    If.Real<EventCommand>(newItem, ConfigureEventCommand);
+            };
         }
 
         /// <summary>Called ot set the UI element this event command belongs to.</summary>

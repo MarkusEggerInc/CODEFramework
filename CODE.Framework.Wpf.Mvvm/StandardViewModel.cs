@@ -353,6 +353,15 @@ namespace CODE.Framework.Wpf.Mvvm
             }
         }
 
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignImage1Icon(StandardIcons icon)
+        {
+            Image1 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
+        }
+
         /// <summary>Image Element 2</summary>
         public virtual Brush Image2
         {
@@ -363,6 +372,15 @@ namespace CODE.Framework.Wpf.Mvvm
                 _image2BrushChecked = false;
                 NotifyChanged("Image2");
             }
+        }
+
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignImage2Icon(StandardIcons icon)
+        {
+            Image2 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
         }
 
         /// <summary>Image Element 3</summary>
@@ -377,6 +395,15 @@ namespace CODE.Framework.Wpf.Mvvm
             }
         }
 
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignImage3Icon(StandardIcons icon)
+        {
+            Image3 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
+        }
+
         /// <summary>Image Element 4</summary>
         public virtual Brush Image4
         {
@@ -387,6 +414,15 @@ namespace CODE.Framework.Wpf.Mvvm
                 _image4BrushChecked = false;
                 NotifyChanged("Image4");
             }
+        }
+
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignImage4Icon(StandardIcons icon)
+        {
+            Image4 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
         }
 
         /// <summary>Image Element 5</summary>
@@ -401,6 +437,15 @@ namespace CODE.Framework.Wpf.Mvvm
             }
         }
 
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignImage5Icon(StandardIcons icon)
+        {
+            Image5 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
+        }
+
         /// <summary>Logo Element 1</summary>
         public virtual Brush Logo1
         {
@@ -413,6 +458,15 @@ namespace CODE.Framework.Wpf.Mvvm
             }
         }
 
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignLogo1Icon(StandardIcons icon)
+        {
+            Logo1 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
+        }
+
         /// <summary>Logo Element 2</summary>
         public virtual Brush Logo2
         {
@@ -423,6 +477,15 @@ namespace CODE.Framework.Wpf.Mvvm
                 _logo2BrushChecked = false;
                 NotifyChanged("Logo2");
             }
+        }
+
+        /// <summary>
+        /// Assigns a standard icon as a brush
+        /// </summary>
+        /// <param name="icon">The icon.</param>
+        public virtual void AssignLogo2Icon(StandardIcons icon)
+        {
+            Logo2 = GetBrushFromResource(StandardIconHelper.GetStandardIconKeyFromEnum(icon));
         }
 
         /// <summary>
@@ -580,6 +643,14 @@ namespace CODE.Framework.Wpf.Mvvm
             Image1 = sharingContextCollection[resourceName];
         }
 
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image1</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedImage1FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedImage1FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
+
         private string _image1LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image2</summary>
@@ -600,6 +671,14 @@ namespace CODE.Framework.Wpf.Mvvm
         }
         private string _image2LoadedFromBrushResource;
 
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image2</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedImage2FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedImage2FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
+
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image3</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
         /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
@@ -617,6 +696,14 @@ namespace CODE.Framework.Wpf.Mvvm
             Image3 = sharingContextCollection[resourceName];
         }
         private string _image3LoadedFromBrushResource;
+
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image3</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedImage3FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedImage3FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image4</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -636,6 +723,14 @@ namespace CODE.Framework.Wpf.Mvvm
         }
         private string _image4LoadedFromBrushResource;
 
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image4</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedImage4FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedImage4FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
+
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image5</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
         /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
@@ -653,6 +748,14 @@ namespace CODE.Framework.Wpf.Mvvm
             Image5 = sharingContextCollection[resourceName];
         }
         private string _image5LoadedFromBrushResource;
+
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image5</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedImage5FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedImage5FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
@@ -673,6 +776,14 @@ namespace CODE.Framework.Wpf.Mvvm
         private string _logo1LoadedFromBrushResource;
 
         /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedLogo1FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedLogo1FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
+
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
         /// <param name="resourceName">Name of the resource (brush).</param>
         /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         public void LoadSharedLogo2FromBrushResource(string resourceName, Dictionary<string, Brush> sharingContextCollection = null)
@@ -689,6 +800,15 @@ namespace CODE.Framework.Wpf.Mvvm
             Logo2 = sharingContextCollection[resourceName];
         }
         private string _logo2LoadedFromBrushResource;
+
+        /// <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo2</summary>
+        /// <param name="standardIcon">Standard icon to be used as the brush.</param>
+        /// <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        public void LoadSharedLogo2FromBrushResource(StandardIcons standardIcon, Dictionary<string, Brush> sharingContextCollection = null)
+        {
+            LoadSharedLogo2FromBrushResource(StandardIconHelper.GetStandardIconKeyFromEnum(standardIcon), sharingContextCollection);
+        }
+
         private bool _isChecked;
         private Brush _color1;
         private Brush _color2;

@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -31,7 +33,7 @@ using CODE.Framework.Core.Newtonsoft.Utilities;
 namespace CODE.Framework.Core.Newtonsoft.Converters
 {
     /// <summary>
-    /// Converts an Entity Framework EntityKey to and from JSON.
+    ///     Converts an Entity Framework <see cref="T:System.Data.EntityKeyMember" /> to and from JSON.
     /// </summary>
     public class EntityKeyMemberConverter : JsonConverter
     {
@@ -44,9 +46,9 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
         private static ReflectionObject _reflectionObject;
 
         /// <summary>
-        /// Writes the JSON representation of the object.
+        ///     Writes the JSON representation of the object.
         /// </summary>
-        /// <param name="writer">The <see cref="JsonWriter"/> to write to.</param>
+        /// <param name="writer">The <see cref="JsonWriter" /> to write to.</param>
         /// <param name="value">The value.</param>
         /// <param name="serializer">The calling serializer.</param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -55,18 +57,18 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
 
             var resolver = serializer.ContractResolver as DefaultContractResolver;
 
-            var keyName = (string)_reflectionObject.GetValue(value, KeyPropertyName);
+            var keyName = (string) _reflectionObject.GetValue(value, KeyPropertyName);
             var keyValue = _reflectionObject.GetValue(value, ValuePropertyName);
 
-            var keyValueType = (keyValue != null) ? keyValue.GetType() : null;
+            var keyValueType = keyValue?.GetType();
 
             writer.WriteStartObject();
-            writer.WritePropertyName((resolver != null) ? resolver.GetResolvedPropertyName(KeyPropertyName) : KeyPropertyName);
+            writer.WritePropertyName(resolver != null ? resolver.GetResolvedPropertyName(KeyPropertyName) : KeyPropertyName);
             writer.WriteValue(keyName);
-            writer.WritePropertyName((resolver != null) ? resolver.GetResolvedPropertyName(TypePropertyName) : TypePropertyName);
-            writer.WriteValue((keyValueType != null) ? keyValueType.FullName : null);
+            writer.WritePropertyName(resolver != null ? resolver.GetResolvedPropertyName(TypePropertyName) : TypePropertyName);
+            writer.WriteValue(keyValueType?.FullName);
 
-            writer.WritePropertyName((resolver != null) ? resolver.GetResolvedPropertyName(ValuePropertyName) : ValuePropertyName);
+            writer.WritePropertyName(resolver != null ? resolver.GetResolvedPropertyName(ValuePropertyName) : ValuePropertyName);
 
             if (keyValueType != null)
             {
@@ -84,22 +86,16 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
 
         private static void ReadAndAssertProperty(JsonReader reader, string propertyName)
         {
-            ReadAndAssert(reader);
+            reader.ReadAndAssert();
 
             if (reader.TokenType != JsonToken.PropertyName || !string.Equals(reader.Value.ToString(), propertyName, StringComparison.OrdinalIgnoreCase))
                 throw new JsonSerializationException("Expected JSON property '{0}'.".FormatWith(CultureInfo.InvariantCulture, propertyName));
         }
 
-        private static void ReadAndAssert(JsonReader reader)
-        {
-            if (!reader.Read())
-                throw new JsonSerializationException("Unexpected end.");
-        }
-
         /// <summary>
-        /// Reads the JSON representation of the object.
+        ///     Reads the JSON representation of the object.
         /// </summary>
-        /// <param name="reader">The <see cref="JsonReader"/> to read from.</param>
+        /// <param name="reader">The <see cref="JsonReader" /> to read from.</param>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
@@ -111,20 +107,20 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
             var entityKeyMember = _reflectionObject.Creator();
 
             ReadAndAssertProperty(reader, KeyPropertyName);
-            ReadAndAssert(reader);
+            reader.ReadAndAssert();
             _reflectionObject.SetValue(entityKeyMember, KeyPropertyName, reader.Value.ToString());
 
             ReadAndAssertProperty(reader, TypePropertyName);
-            ReadAndAssert(reader);
+            reader.ReadAndAssert();
             var type = reader.Value.ToString();
 
             var t = Type.GetType(type);
 
             ReadAndAssertProperty(reader, ValuePropertyName);
-            ReadAndAssert(reader);
+            reader.ReadAndAssert();
             _reflectionObject.SetValue(entityKeyMember, ValuePropertyName, serializer.Deserialize(reader, t));
 
-            ReadAndAssert(reader);
+            reader.ReadAndAssert();
 
             return entityKeyMember;
         }
@@ -136,15 +132,15 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
         }
 
         /// <summary>
-        /// Determines whether this instance can convert the specified object type.
+        ///     Determines whether this instance can convert the specified object type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <returns>
-        /// 	<c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+        ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
         /// </returns>
         public override bool CanConvert(Type objectType)
         {
-            return objectType.AssignableToTypeName(EntityKeyMemberFullTypeName);
+            return objectType.AssignableToTypeName(EntityKeyMemberFullTypeName, false);
         }
     }
 }

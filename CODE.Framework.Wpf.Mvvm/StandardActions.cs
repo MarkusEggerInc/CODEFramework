@@ -18,8 +18,17 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Initializes a new instance of the <see cref="ApplicationShutdownViewAction"/> class.</summary>
         /// <param name="caption">The caption.</param>
         /// <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
-        public ApplicationShutdownViewAction(string caption = "Shutdown", bool beginGroup = false) : base(caption, beginGroup, ExecuteCommand)
+        /// <param name="category">The category.</param>
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+        /// <param name="significance">General significance of the action.</param>
+        public ApplicationShutdownViewAction(string caption = "Shutdown",
+            bool beginGroup = false,
+            string category = "",
+            StandardIcons standardIcon = StandardIcons.None,
+            ViewActionSignificance significance = ViewActionSignificance.Normal) :
+                base(caption, beginGroup, ExecuteCommand, category: category, standardIcon: standardIcon, significance: significance)
         {
+            BrushResourceKey = "CODE.Framework-Icon-ClosePane";
         }
 
         private static void ExecuteCommand(IViewAction a, object s)
@@ -38,7 +47,15 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="caption">The caption.</param>
         /// <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
         /// <param name="category">The category.</param>
-        public CloseCurrentViewAction(object model, string caption = "Close", bool beginGroup = false, string category = "") : base(caption, beginGroup, category: category)
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+        /// <param name="significance">General significance of the action.</param>
+        public CloseCurrentViewAction(object model,
+            string caption = "Close",
+            bool beginGroup = false,
+            string category = "",
+            StandardIcons standardIcon = StandardIcons.ClosePane,
+            ViewActionSignificance significance = ViewActionSignificance.Normal) :
+                base(caption, beginGroup, category: category, standardIcon: standardIcon, significance: significance)
         {
             _model = model;
             SetExecutionDelegate(ExecuteCommand);
@@ -65,10 +82,20 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="caption">The caption.</param>
         /// <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
         /// <param name="category">The category.</param>
-        public MoveFocusViewAction(IHaveViewInformation model, string moveToElementName, string caption = "", bool beginGroup = false, string category = "") : base(caption, beginGroup, category: category)
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+        /// <param name="significance">General significance of the action.</param>
+        public MoveFocusViewAction(IHaveViewInformation model,
+            string moveToElementName,
+            string caption = "",
+            bool beginGroup = false,
+            string category = "",
+            StandardIcons standardIcon = StandardIcons.None,
+            ViewActionSignificance significance = ViewActionSignificance.Normal)
+            : base(caption, beginGroup, category: category, standardIcon: standardIcon, significance: significance)
         {
             _model = model;
             _targetElementName = moveToElementName;
+            BrushResourceKey = "CODE.Framework-Icon-ClosePane";
             SetExecutionDelegate(ExecuteCommand);
         }
 
@@ -108,11 +135,21 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="category">The category.</param>
         /// <param name="categoryAccessKey">The category access key.</param>
         /// <param name="accessKey">The access key.</param>
-        public SwitchThemeViewAction(string theme, string caption = "", bool beginGroup = false, string category = "", char categoryAccessKey = ' ', char accessKey = ' ') : base(!string.IsNullOrEmpty(caption) ? caption : theme, beginGroup, category: category, categoryAccessKey: categoryAccessKey, accessKey: accessKey)
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+        /// <param name="significance">General significance of the action.</param>
+        public SwitchThemeViewAction(string theme,
+            string caption = "",
+            bool beginGroup = false,
+            string category = "",
+            char categoryAccessKey = ' ',
+            char accessKey = ' ',
+            StandardIcons standardIcon = StandardIcons.None,
+            ViewActionSignificance significance = ViewActionSignificance.Normal) :
+                base(!string.IsNullOrEmpty(caption) ? caption : theme, beginGroup, category: category, standardIcon: standardIcon, significance: significance, categoryAccessKey: categoryAccessKey, accessKey: accessKey)
         {
             _theme = theme;
-            SetExecutionDelegate(ExecuteCommand);
             BrushResourceKey = "CODE.Framework-Icon-Switch";
+            SetExecutionDelegate(ExecuteCommand);
         }
 
         private readonly string _theme;
@@ -133,6 +170,30 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Initializes a new instance of the <see cref="ToggleViewAction"/> class.
         /// </summary>
+        /// <param name="caption">Caption</param>
+        /// <param name="beginGroup">Group indicator</param>
+        /// <param name="execute">Execution method (delegate)</param>
+        /// <param name="canExecute">Can-Execute delegate</param>
+        /// <param name="visualResourceKey">Key for XAML resource used for visual representation</param>
+        /// <param name="category">Top level category (ID) assigned to this item</param>
+        /// <param name="categoryCaption">Display text assigned to the top level category</param>
+        /// <param name="categoryOrder">The display order of the category (used for sorting)</param>
+        /// <param name="isDefault">Indicates if this is the default action</param>
+        /// <param name="isCancel">Indicates if this is the action triggered if the user hits ESC</param>
+        /// <param name="significance">General significance of the action.</param>
+        /// <param name="userRoles">User roles with access to this action</param>
+        /// <param name="brushResourceKey">Resource key for a visual derived from a brush.</param>
+        /// <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derived from a brush.</param>
+        /// <param name="groupTitle">The group title.</param>
+        /// <param name="order">The order of the view action (within a group)</param>
+        /// <param name="accessKey">The access key for this action (such as the underlined character in a menu if the action is linked to a menu).</param>
+        /// <param name="shortcutKey">The shortcut key for the action (usually a hot key that can be pressed without a menu being opened or anything along those lines).</param>
+        /// <param name="shortcutKeyModifiers">Modifier for the shortcut key (typically CTRL).</param>
+        /// <param name="categoryAccessKey">Access key for the category (only used if a category is assigned).</param>
+        /// <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
+        /// <param name="isPinned">Indicates whether this action is considered to be pinned</param>
+        /// <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
         public ToggleViewAction(string caption = "",
             bool beginGroup = false,
             Action<IViewAction, object> execute = null,
@@ -142,7 +203,7 @@ namespace CODE.Framework.Wpf.Mvvm
             bool isDefault = false, bool isCancel = false,
             ViewActionSignificance significance = ViewActionSignificance.Normal,
             string[] userRoles = null,
-            string brushResourceKey = "CODE.Framework-Icon-View",
+            string brushResourceKey = "",
             string logoBrushResourceKey = "",
             string groupTitle = "",
             int order = 10000,
@@ -152,9 +213,10 @@ namespace CODE.Framework.Wpf.Mvvm
             char categoryAccessKey = ' ',
             bool isDefaultSelection = false,
             bool isPinned = false,
-            string id = "") :
+            string id = "",
+            StandardIcons standardIcon = StandardIcons.None) :
                 base(caption, beginGroup, null, canExecute, visualResourceKey, category, categoryCaption, categoryOrder, isDefault, isCancel, significance, userRoles,
-                    brushResourceKey, logoBrushResourceKey, groupTitle, order, accessKey, shortcutKey, shortcutKeyModifiers, categoryAccessKey, isDefaultSelection, isPinned, id)
+                    brushResourceKey, logoBrushResourceKey, groupTitle, order, accessKey, shortcutKey, shortcutKeyModifiers, categoryAccessKey, isDefaultSelection, isPinned, id, standardIcon)
         {
             ViewActionType = ViewActionTypes.Toggle;
             SetExecutionDelegate((a, o) =>
@@ -178,9 +240,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="controller">Controller name</param>
         /// <param name="action">Action name (method on the controller)</param>
         /// <param name="routeValues">Optional route values (parameters) to be passed to the controller</param>
-        public OnDemandLoadCustomViewViewAction(string caption, string controller, string action, dynamic routeValues = null)
+        /// <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+        /// <param name="category">Top level category (ID) assigned to this item</param>
+        /// <param name="significance">General significance of the action.</param>
+        public OnDemandLoadCustomViewViewAction(string caption, string controller, string action, dynamic routeValues = null, string category = "", StandardIcons standardIcon = StandardIcons.Switch,
+            ViewActionSignificance significance = ViewActionSignificance.Normal) : base(caption, standardIcon: standardIcon, significance: significance, category: category)
         {
-            Caption = caption;
             Controller = controller;
             Action = action;
             RouteValues = routeValues;
@@ -210,10 +275,12 @@ namespace CODE.Framework.Wpf.Mvvm
         /// Controller name
         /// </summary>
         public string Controller { get; set; }
+
         /// <summary>
         /// Action name
         /// </summary>
         public string Action { get; set; }
+
         /// <summary>
         /// Route values (parameters) to be passed to the controller
         /// </summary>

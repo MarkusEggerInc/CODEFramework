@@ -137,7 +137,7 @@ namespace CODE.Framework.Services.Client
         public static bool HandleChannelExceptions { get; set; }
 
         /// <summary>
-        /// Indicates whether configuration settings shoudl be cached (default = yes)
+        /// Indicates whether configuration settings should be cached (default = yes)
         /// </summary>
         /// <value><c>true</c> if [cache settings]; otherwise, <c>false</c>.</value>
         /// <remarks>
@@ -158,13 +158,13 @@ namespace CODE.Framework.Services.Client
         /// <summary>Defines the list of exception types for which to auto-retry calls</summary>
         public static List<Type> AutoRetryFailedCallsForExceptions { get; set; }
 
-        /// <summary>Exception callback for exceptions occuring on the channel</summary>
+        /// <summary>Exception callback for exceptions occurring on the channel</summary>
         public static event EventHandler<ChannelExceptionEventArgs> ChannelException;
 
         /// <summary>Internal message size cache</summary>
         private static readonly Dictionary<string, MessageSize> CachedMessageSizes = new Dictionary<string, MessageSize>();
 
-        /// <summary>Detirmines whether a call needs to be auto-retried</summary>
+        /// <summary>Determines whether a call needs to be auto-retried</summary>
         /// <param name="exception">The exception that caused the original failure.</param>
         /// <returns>True if the call should be retried</returns>
         private static bool MustRetryCall(Exception exception)
@@ -701,7 +701,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -713,11 +713,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -847,7 +847,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -859,11 +859,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -910,7 +910,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -922,11 +922,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1026,6 +1026,7 @@ namespace CODE.Framework.Services.Client
                         InputDataContracts = new object[] {request}
                     });
 
+                var startTimeStamp = Environment.TickCount;
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                 var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
 
@@ -1035,7 +1036,8 @@ namespace CODE.Framework.Services.Client
                         MethodName = methodName,
                         ServiceContract = typeof(TServiceType),
                         InputDataContracts = new object[] { request },
-                        Response = deserializedData
+                        Response = deserializedData,
+                        ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                     });
 
                 return deserializedData;
@@ -1111,6 +1113,7 @@ namespace CODE.Framework.Services.Client
                         InputDataContracts = new object[] { request }
                     });
 
+                var startTimeStamp = Environment.TickCount;
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                 var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
 
@@ -1119,7 +1122,8 @@ namespace CODE.Framework.Services.Client
                     {
                         MethodName = methodName,
                         InputDataContracts = new object[] { request },
-                        Response = deserializedData
+                        Response = deserializedData,
+                        ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                     });
 
                 return deserializedData;
@@ -1137,6 +1141,7 @@ namespace CODE.Framework.Services.Client
                                 InputDataContracts = new object[] { request }
                             });
 
+                        var startTimeStamp = Environment.TickCount;
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                         var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
 
@@ -1145,7 +1150,8 @@ namespace CODE.Framework.Services.Client
                             {
                                 MethodName = methodName,
                                 InputDataContracts = new object[] { request },
-                                Response = deserializedData
+                                Response = deserializedData,
+                                ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                             });
 
                         return deserializedData;
@@ -1190,6 +1196,7 @@ namespace CODE.Framework.Services.Client
                         InputDataContracts = new object[] { request }
                     });
 
+                var startTimeStamp = Environment.TickCount;
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                 var deserializedData = Encoding.UTF8.GetString(data);
 
@@ -1198,7 +1205,8 @@ namespace CODE.Framework.Services.Client
                     {
                         MethodName = methodName,
                         InputDataContracts = new object[] { request },
-                        Response = deserializedData
+                        Response = deserializedData,
+                        ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                     });
 
                 return deserializedData;
@@ -1216,6 +1224,7 @@ namespace CODE.Framework.Services.Client
                                 InputDataContracts = new object[] { request }
                             });
 
+                        var startTimeStamp = Environment.TickCount;
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                         var deserializedData = Encoding.UTF8.GetString(data);
 
@@ -1224,7 +1233,8 @@ namespace CODE.Framework.Services.Client
                             {
                                 MethodName = methodName,
                                 InputDataContracts = new object[] { request },
-                                Response = deserializedData
+                                Response = deserializedData,
+                                ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                             });
 
                         return deserializedData;
@@ -1267,6 +1277,7 @@ namespace CODE.Framework.Services.Client
                         InputDataContracts = new object[] { request }
                     });
 
+                var startTimeStamp = Environment.TickCount;
                 var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
                 var deserializedData = Encoding.UTF8.GetString(data);
 
@@ -1275,7 +1286,8 @@ namespace CODE.Framework.Services.Client
                     {
                         MethodName = methodName,
                         InputDataContracts = new object[] { request },
-                        Response = deserializedData
+                        Response = deserializedData,
+                        ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                     });
 
                 return deserializedData;
@@ -1293,6 +1305,7 @@ namespace CODE.Framework.Services.Client
                                 InputDataContracts = new object[] { request }
                             });
 
+                        var startTimeStamp = Environment.TickCount;
                         var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
                         var deserializedData = Encoding.UTF8.GetString(data);
 
@@ -1301,7 +1314,8 @@ namespace CODE.Framework.Services.Client
                             {
                                 MethodName = methodName,
                                 InputDataContracts = new object[] { request },
-                                Response = deserializedData
+                                Response = deserializedData,
+                                ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                             });
 
                         return deserializedData;
@@ -1342,6 +1356,7 @@ namespace CODE.Framework.Services.Client
                         InputDataContracts = new object[] { request },
                     });
 
+                var startTimeStamp = Environment.TickCount;
                 var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                 var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
 
@@ -1350,7 +1365,8 @@ namespace CODE.Framework.Services.Client
                     {
                         MethodName = serviceUrl,
                         InputDataContracts = new object[] { request },
-                        Response = deserializedData
+                        Response = deserializedData,
+                        ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                     });
 
                 return deserializedData;
@@ -1368,6 +1384,7 @@ namespace CODE.Framework.Services.Client
                                 InputDataContracts = new object[] { request },
                             });
 
+                        var startTimeStamp = Environment.TickCount;
                         var data = CallRESTInternal(serviceUrl, request, verb, dataFormat);
                         var deserializedData = GetDeserializedData<TResult>(data, dataFormat);
 
@@ -1376,7 +1393,8 @@ namespace CODE.Framework.Services.Client
                             {
                                 MethodName = serviceUrl,
                                 InputDataContracts = new object[] { request },
-                                Response = deserializedData
+                                Response = deserializedData,
+                                ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                             });
 
                         return deserializedData;
@@ -1415,6 +1433,7 @@ namespace CODE.Framework.Services.Client
                         InputDataContracts = new object[] { request }
                     });
 
+                var startTimeStamp = Environment.TickCount;
                 var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
                 var deserializedData = Encoding.UTF8.GetString(data);
 
@@ -1423,7 +1442,8 @@ namespace CODE.Framework.Services.Client
                     {
                         MethodName = serviceUrl,
                         InputDataContracts = new object[] { request },
-                        Response = deserializedData
+                        Response = deserializedData,
+                        ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                     });
 
                 return deserializedData;
@@ -1441,6 +1461,7 @@ namespace CODE.Framework.Services.Client
                                 InputDataContracts = new object[] { request }
                             });
 
+                        var startTimeStamp = Environment.TickCount;
                         var data = CallRESTInternal(serviceUrl, Encoding.UTF8.GetBytes(request), verb, dataFormat);
                         var deserializedData = Encoding.UTF8.GetString(data);
 
@@ -1449,7 +1470,8 @@ namespace CODE.Framework.Services.Client
                             {
                                 MethodName = serviceUrl,
                                 InputDataContracts = new object[] { request },
-                                Response = deserializedData
+                                Response = deserializedData,
+                                ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
                             });
 
                         return deserializedData;
@@ -1570,7 +1592,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1582,11 +1604,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1632,7 +1654,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1644,11 +1666,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1723,7 +1745,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1735,11 +1757,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1788,7 +1810,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1800,11 +1822,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -1854,7 +1876,7 @@ namespace CODE.Framework.Services.Client
             try
             {
                 action(channel);
-                if (channel is IClientChannel) CloseChannel(channel, false);
+                CloseChannel(channel, false);
             }
             catch (Exception ex)
             {
@@ -1866,11 +1888,11 @@ namespace CODE.Framework.Services.Client
                     try
                     {
                         action(channel);
-                        if (channel is IClientChannel) CloseChannel(channel, false);
+                        CloseChannel(channel, false);
                     }
                     catch (Exception ex2)
                     {
-                        if (channel is IClientChannel) AbortChannel(channel, ex2);
+                        AbortChannel(channel, ex2);
                     }
                 }
             }
@@ -2051,7 +2073,7 @@ namespace CODE.Framework.Services.Client
             {
                 proxy = CreateChannel<TServiceType>(binding, endpoint);
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     var beforeChannelOpens = BeforeChannelOpens;
@@ -2067,7 +2089,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -2079,12 +2101,18 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
                 return null;
             }
+        }
+
+        private static void OpenChannel(IClientChannel channel)
+        {
+            if (channel.State != CommunicationState.Opened && channel.State != CommunicationState.Opening)
+                channel.Open();
         }
 
         /// <summary>
@@ -2107,38 +2135,46 @@ namespace CODE.Framework.Services.Client
         /// <exception cref="Core">Error creating service client.</exception>
         private static TServiceType CreateChannel<TServiceType>(Binding binding, EndpointAddress endpoint) where TServiceType : class
         {
-            lock (CachedChannelFactories)
-            {
+            //lock (CachedChannelFactories)
+            //{
                 var bindingName = binding.GetType().ToString();
-                if (CachedChannelFactories.ContainsKey(bindingName) && CachedChannelFactories[bindingName].ContainsKey(endpoint) && CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
-                {
-                    // It looks like we have the channel factory cached, so we try to use it
-                    var cachedFactory = CachedChannelFactories[bindingName][endpoint][typeof(TServiceType)];
-                    if (cachedFactory == null) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
-                    else if (cachedFactory.State == CommunicationState.Faulted) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
-                    {
-                        try
-                        {
-                            var typedFactory = cachedFactory as ChannelFactory<TServiceType>;
-                            if (typedFactory == null) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
-                            else
-                            {
-                                var proxy2 = typedFactory.CreateChannel();
-                                if (proxy2 != null)
-                                {
-                                    if (BeforeServiceOperationCall != null || AfterServiceOperationCall != null)
-                                        proxy2 = TransparentProxyGenerator.GetProxy<TServiceType>(new ServiceProxyEventWrapper(proxy2, typeof(TServiceType)));
-                                    return proxy2;
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            // Not much we can do other than consider the cached proxy invalid and continue on creating a new one.
-                            RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
-                        }
-                    }
-                }
+                //if (CachedChannelFactories.ContainsKey(bindingName) && CachedChannelFactories[bindingName].ContainsKey(endpoint) && CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
+                //{
+                //    // It looks like we have the channel factory cached, so we try to use it
+                //    var cachedFactory = CachedChannelFactories[bindingName][endpoint][typeof(TServiceType)];
+                //    if (cachedFactory == null) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
+                //    else if (cachedFactory.State == CommunicationState.Faulted) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
+                //    {
+                //        try
+                //        {
+                //            var typedFactory = cachedFactory as ChannelFactory<TServiceType>;
+                //            if (typedFactory == null) RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
+                //            else
+                //            {
+                //                var proxy2 = typedFactory.CreateChannel();
+                //                if (proxy2 != null)
+                //                {
+                //                    var channelCreatedByCachedFactory = GetChannelFromProxy(proxy2);
+                //                    if (channelCreatedByCachedFactory != null && channelCreatedByCachedFactory.State == CommunicationState.Faulted)
+                //                        proxy2 = null; // We can't use this proxy, since it somehow ended up faulted.
+                //                }
+
+                //                if (proxy2 != null)
+                //                {
+                //                    // Looks like we have a valid proxy, so we return that out
+                //                    if (BeforeServiceOperationCall != null || AfterServiceOperationCall != null)
+                //                        proxy2 = TransparentProxyGenerator.GetProxy<TServiceType>(new ServiceProxyEventWrapper(proxy2, typeof(TServiceType)), false);
+                //                    return proxy2;
+                //                }
+                //            }
+                //        }
+                //        catch
+                //        {
+                //            // Not much we can do other than consider the cached proxy invalid and continue on creating a new one.
+                //            RemoveCachedChannelFactory<TServiceType>(binding, endpoint);
+                //        }
+                //    }
+                //}
 
                 // Don't have a cached factory, so we have to create a new one
                 var factory = new ChannelFactory<TServiceType>(binding, endpoint);
@@ -2158,18 +2194,18 @@ namespace CODE.Framework.Services.Client
 
                 // If we need to raise events when calls happen, we need to create another wrapper proxy
                 if (BeforeServiceOperationCall != null || AfterServiceOperationCall != null)
-                    proxy = TransparentProxyGenerator.GetProxy<TServiceType>(new ServiceProxyEventWrapper(proxy, typeof (TServiceType)));
+                    proxy = TransparentProxyGenerator.GetProxy<TServiceType>(new ServiceProxyEventWrapper(proxy, typeof (TServiceType)), false);
 
-                // Since everything seems to work, we are adding the factory to the cached items
-                if (!CachedChannelFactories.ContainsKey(bindingName))
-                    CachedChannelFactories.Add(bindingName, new Dictionary<EndpointAddress, Dictionary<Type, ChannelFactory>>());
-                if (!CachedChannelFactories[bindingName].ContainsKey(endpoint))
-                    CachedChannelFactories[bindingName].Add(endpoint, new Dictionary<Type, ChannelFactory>());
-                if (!CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
-                    CachedChannelFactories[bindingName][endpoint].Add(typeof(TServiceType), factory);
+                //// Since everything seems to work, we are adding the factory to the cached items
+                //if (!CachedChannelFactories.ContainsKey(bindingName))
+                //    CachedChannelFactories.Add(bindingName, new Dictionary<EndpointAddress, Dictionary<Type, ChannelFactory>>());
+                //if (!CachedChannelFactories[bindingName].ContainsKey(endpoint))
+                //    CachedChannelFactories[bindingName].Add(endpoint, new Dictionary<Type, ChannelFactory>());
+                //if (!CachedChannelFactories[bindingName][endpoint].ContainsKey(typeof(TServiceType)))
+                //    CachedChannelFactories[bindingName][endpoint].Add(typeof(TServiceType), factory);
 
                 return proxy;
-            }
+            //}
         }
 
         /// <summary>
@@ -2279,7 +2315,7 @@ namespace CODE.Framework.Services.Client
             {
                 proxy = CreateChannel<TServiceType>(binding, endpoint);
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -2294,7 +2330,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -2306,7 +2342,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -2382,7 +2418,7 @@ namespace CODE.Framework.Services.Client
                 proxy = CreateChannel(factory);
                 if (proxy == null) throw new Core.Exceptions.NullReferenceException("Requested service unavailable.");
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -2397,7 +2433,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -2409,7 +2445,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -2532,7 +2568,7 @@ namespace CODE.Framework.Services.Client
             {
                 proxy = CreateChannel<TServiceType>(binding, endpoint);
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -2547,7 +2583,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -2559,7 +2595,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -2598,7 +2634,7 @@ namespace CODE.Framework.Services.Client
             {
                 proxy = CreateChannel<TServiceType>(binding, endpoint);
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -2613,7 +2649,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -2625,7 +2661,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -2667,7 +2703,7 @@ namespace CODE.Framework.Services.Client
                 proxy = CreateChannel(factory);
                 if (proxy == null) throw new Core.Exceptions.NullReferenceException("Requested service unavailable.");
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -2682,7 +2718,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -2693,8 +2729,9 @@ namespace CODE.Framework.Services.Client
             }
             catch (Exception ex)
             {
-                if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                var channelExceptionHandler = ChannelException;
+                if (channelExceptionHandler != null)
+                    channelExceptionHandler(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -2709,7 +2746,7 @@ namespace CODE.Framework.Services.Client
         /// <returns>Current channel state</returns>
         public static ChannelState GetChannelState(object channel)
         {
-            var channel2 = channel as IClientChannel;
+            var channel2 = GetChannelFromProxy(channel);
             if (channel2 != null) return (ChannelState)(int)channel2.State;
             return ChannelState.Unknown;
         }
@@ -2718,14 +2755,15 @@ namespace CODE.Framework.Services.Client
         /// Aborts the channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="ex">The ex.</param>
-        private static void AbortChannel(object channel, Exception ex = null)
+        /// <param name="exceptionCausingAbort">The exception that lead to causing this abort operation.</param>
+        private static void AbortChannel(object channel, Exception exceptionCausingAbort = null)
         {
-            var client = channel as IClientChannel;
+            var client = GetChannelFromProxy(channel);
             if (client != null)
             {
-                if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(client, ex));
+                var channelExceptionHandler = ChannelException;
+                if (channelExceptionHandler != null)
+                    channelExceptionHandler(null, new ChannelExceptionEventArgs(client, exceptionCausingAbort));
 
                 for (var channelIndex = 0; channelIndex < OpenChannels.Count; channelIndex++)
                 {
@@ -2739,15 +2777,33 @@ namespace CODE.Framework.Services.Client
                 }
 
                 client.Abort();
-                client.Dispose();
+                client.Dispose();   
             }
             else
             {
-                if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(null, ex));
+                var channelExceptionHandler = ChannelException;
+                if (channelExceptionHandler != null)
+                    channelExceptionHandler(null, new ChannelExceptionEventArgs(null, exceptionCausingAbort));
             }
 
-            if (!HandleChannelExceptions && ex != null) throw ex;
+            // Not doing this anymore, since if kills further handling on the caller
+            // if (!HandleChannelExceptions && ex != null) throw ex;
+        }
+
+        private static IClientChannel GetChannelFromProxy(object channel)
+        {
+            var client = channel as IClientChannel;
+            if (client != null) return client;
+
+            var handlerField = channel.GetType().GetField("handler", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (handlerField != null)
+            {
+                var handler = handlerField.GetValue(channel) as ServiceProxyEventWrapper;
+                if (handler != null)
+                    return GetChannelFromProxy(handler.OriginalProxy);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -2758,7 +2814,7 @@ namespace CODE.Framework.Services.Client
         /// <returns>True if channel closed successfully</returns>
         public static bool CloseChannel(object channel, bool channelMayBeShared = true)
         {
-            var channel2 = channel as IClientChannel;
+            var channel2 = GetChannelFromProxy(channel);
             if (channel2 == null) return false;
             try
             {
@@ -2803,7 +2859,7 @@ namespace CODE.Framework.Services.Client
         {
             if (channel != null)
             {
-                var channel2 = channel as IClientChannel;
+                var channel2 = GetChannelFromProxy(channel);
                 if (channel2 != null)
                 {
                     if (channel2.State != CommunicationState.Opened)
@@ -3131,7 +3187,7 @@ namespace CODE.Framework.Services.Client
             {
                 proxy = CreateChannel<TServiceType>(binding, endpoint);
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -3146,7 +3202,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -3158,7 +3214,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -3197,7 +3253,7 @@ namespace CODE.Framework.Services.Client
             {
                 proxy = CreateChannel<TServiceType>(binding, endpoint);
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -3212,7 +3268,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -3224,7 +3280,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -3266,7 +3322,7 @@ namespace CODE.Framework.Services.Client
                 proxy = CreateChannel(factory);
                 if (proxy == null) throw new Core.Exceptions.NullReferenceException("Requested service unavailable.");
 
-                var channel = proxy as IClientChannel;
+                var channel = GetChannelFromProxy(proxy);
                 if (channel != null)
                 {
                     if (BeforeChannelOpens != null)
@@ -3281,7 +3337,7 @@ namespace CODE.Framework.Services.Client
                             ServiceId = serviceId
                         });
 
-                    channel.Open();
+                    OpenChannel(channel);
                 }
 
                 if (useCachedChannel)
@@ -3293,7 +3349,7 @@ namespace CODE.Framework.Services.Client
             catch (Exception ex)
             {
                 if (ChannelException != null)
-                    ChannelException(null, new ChannelExceptionEventArgs(proxy as IClientChannel, ex));
+                    ChannelException(null, new ChannelExceptionEventArgs(GetChannelFromProxy(proxy), ex));
 
                 if (!HandleChannelExceptions) throw;
 
@@ -3602,6 +3658,14 @@ namespace CODE.Framework.Services.Client
         /// </summary>
         /// <value>The response.</value>
         public object Response { get; set; }
+
+        /// <summary>
+        /// Provides information about the duration of the call
+        /// </summary>
+        /// <value>
+        /// The duration of the service call.
+        /// </value>
+        public TimeSpan ServiceCallDuration { get; set; }
     }
 
     /// <summary>
@@ -3614,9 +3678,21 @@ namespace CODE.Framework.Services.Client
         private readonly Type _contractType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceProxyEventWrapper"/> class.
+        /// Gets the original proxy.
+        /// </summary>
+        /// <value>
+        /// The original proxy.
+        /// </value>
+        public object OriginalProxy
+        {
+            get { return _originalProxy; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceProxyEventWrapper" /> class.
         /// </summary>
         /// <param name="originalProxy">The original proxy.</param>
+        /// <param name="contractType">Type of the contract.</param>
         public ServiceProxyEventWrapper(object originalProxy, Type contractType)
         {
             _originalProxy = originalProxy;
@@ -3639,6 +3715,7 @@ namespace CODE.Framework.Services.Client
                 InputDataContracts = args
             });
 
+            var startTimeStamp = Environment.TickCount;
             var result = method.Invoke(_originalProxy, args);
 
             ServiceClient.RaiseAfterServiceOperationCall(new AfterServiceOperationCallEventArgs
@@ -3647,7 +3724,8 @@ namespace CODE.Framework.Services.Client
                 ServiceContract = _contractType,
                 ServiceInstance = _originalProxy,
                 InputDataContracts = args,
-                Response = result
+                Response = result,
+                ServiceCallDuration = new TimeSpan(Environment.TickCount - startTimeStamp)
             });
 
             return result;

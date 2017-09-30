@@ -12,6 +12,7 @@
         <!-- Control settings (automatic and explicit) -->
         <ResourceDictionary Source="Battleship-Control-Button.xaml"/>
         <ResourceDictionary Source="Battleship-Control-CapsLockWarning.xaml"/>
+        <ResourceDictionary Source="Battleship-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Battleship-Control-FlowDocumentReader.xaml"/>
         <ResourceDictionary Source="Battleship-Control-Label.xaml"/>
         <ResourceDictionary Source="Battleship-Control-ListBox.xaml"/>
@@ -23,6 +24,7 @@
         <ResourceDictionary Source="Battleship-Control-TextBlock.xaml"/>
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Battleship-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-MultiPanel.xaml"/>
@@ -30,6 +32,7 @@
         <ResourceDictionary Source="Battleship-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Battleship-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Battleship-Layout-Tabs.xaml"/>
 
         <!-- Icons for message boxes-->
         <ResourceDictionary Source="Battleship-MessageBox-Icon-Asterisk.xaml"/>

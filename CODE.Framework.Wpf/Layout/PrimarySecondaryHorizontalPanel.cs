@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -176,7 +178,7 @@ namespace CODE.Framework.Wpf.Layout
             if (HeaderRenderer == null)
                 HeaderRenderer = new StandardPrimarySecondaryHorizontalPanelHeaderRenderer();
 
-            foreach (UIElement element in Children)
+            foreach (var element in Children.OfType<UIElement>().Where(e => e.Visibility != Visibility.Collapsed))
                 if (SimpleView.GetUIElementType(element) == UIElementTypes.Primary)
                 {
                     if (CanCollapseSecondary && IsSecondaryElementCollapsed)
@@ -188,7 +190,7 @@ namespace CODE.Framework.Wpf.Layout
                             minimumCollapsedWidth = HeaderRenderer.GetMinimumCollapsedAreaWidth(this);
                             if (SecondaryAreaLocation == SecondaryAreaLocation.Left) mainAreaLeft = minimumCollapsedWidth + (minimumCollapsedWidth > 0d ? ElementSpacing : 0d);
                         }
-                        var primaryArea = new Rect(mainAreaLeft, 0d, availableSize.Width - minimumCollapsedWidth - (minimumCollapsedWidth > 0d ? ElementSpacing : 0d), availableSize.Height);
+                        var primaryArea = GeometryHelper.NewRect(mainAreaLeft, 0d, availableSize.Width - minimumCollapsedWidth - (minimumCollapsedWidth > 0d ? ElementSpacing : 0d), availableSize.Height);
                         if (HeaderRenderer != null) primaryArea = HeaderRenderer.GetPrimaryClientArea(primaryArea, this);
                         element.Measure(primaryArea.Size);
                     }
@@ -196,7 +198,7 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         var currentX = 0d;
                         if (SecondaryAreaLocation == SecondaryAreaLocation.Left) currentX = SecondaryElementWidth + ElementSpacing;
-                        var primaryArea = new Rect(currentX, 0d, Math.Max(availableSize.Width - SecondaryElementWidth - ElementSpacing, 0), availableSize.Height);
+                        var primaryArea = GeometryHelper.NewRect(currentX, 0d, Math.Max(availableSize.Width - SecondaryElementWidth - ElementSpacing, 0), availableSize.Height);
                         if (HeaderRenderer != null) primaryArea = HeaderRenderer.GetPrimaryClientArea(primaryArea, this);
                         element.Measure(primaryArea.Size);
                     }
@@ -204,10 +206,10 @@ namespace CODE.Framework.Wpf.Layout
                 else
                 {
                     if (CanCollapseSecondary && IsSecondaryElementCollapsed)
-                        element.Measure(new Size(0, availableSize.Height));
+                        element.Measure(GeometryHelper.NewSize(0, availableSize.Height));
                     else
                     {
-                        var secondaryArea = SecondaryAreaLocation == SecondaryAreaLocation.Left ? new Rect(0d, 0d, SecondaryElementWidth, availableSize.Height) : new Rect(availableSize.Width - SecondaryElementWidth, 0d, SecondaryElementWidth, availableSize.Height);
+                        var secondaryArea = SecondaryAreaLocation == SecondaryAreaLocation.Left ? GeometryHelper.NewRect(0d, 0d, SecondaryElementWidth, availableSize.Height) : GeometryHelper.NewRect(availableSize.Width - SecondaryElementWidth, 0d, SecondaryElementWidth, availableSize.Height);
                         if (HeaderRenderer != null) secondaryArea = HeaderRenderer.GetSecondaryClientArea(secondaryArea, this);
                         element.Measure(secondaryArea.Size);
                     }
@@ -222,7 +224,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            foreach (UIElement element in Children)
+            foreach (var element in Children.OfType<UIElement>().Where(e => e.Visibility != Visibility.Collapsed))
                 if (SimpleView.GetUIElementType(element) == UIElementTypes.Primary)
                 {
                     if (CanCollapseSecondary && IsSecondaryElementCollapsed)
@@ -234,7 +236,7 @@ namespace CODE.Framework.Wpf.Layout
                             minimumCollapsedWidth = HeaderRenderer.GetMinimumCollapsedAreaWidth(this);
                             if (SecondaryAreaLocation == SecondaryAreaLocation.Left) mainAreaLeft = minimumCollapsedWidth + (minimumCollapsedWidth > 0d ? ElementSpacing : 0d);
                         }
-                        var primaryArea = new Rect(mainAreaLeft, 0d, finalSize.Width - minimumCollapsedWidth - (minimumCollapsedWidth > 0d ? ElementSpacing : 0d), finalSize.Height);
+                        var primaryArea = GeometryHelper.NewRect(mainAreaLeft, 0d, finalSize.Width - minimumCollapsedWidth - (minimumCollapsedWidth > 0d ? ElementSpacing : 0d), finalSize.Height);
                         if (HeaderRenderer != null) primaryArea = HeaderRenderer.GetPrimaryClientArea(primaryArea, this);
                         _currentPrimaryArea = primaryArea;
                         element.Arrange(primaryArea);
@@ -243,7 +245,7 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         var currentX = 0d;
                         if (SecondaryAreaLocation == SecondaryAreaLocation.Left) currentX = SecondaryElementWidth + ElementSpacing;
-                        var primaryArea = new Rect(currentX, 0d, Math.Max(finalSize.Width - SecondaryElementWidth - ElementSpacing, 0), finalSize.Height);
+                        var primaryArea = GeometryHelper.NewRect(currentX, 0d, Math.Max(finalSize.Width - SecondaryElementWidth - ElementSpacing, 0), finalSize.Height);
                         if (HeaderRenderer != null) primaryArea = HeaderRenderer.GetPrimaryClientArea(primaryArea, this);
                         _currentPrimaryArea = primaryArea;
                         element.Arrange(primaryArea);
@@ -253,12 +255,12 @@ namespace CODE.Framework.Wpf.Layout
                 {
                     if (CanCollapseSecondary && IsSecondaryElementCollapsed)
                     {
-                        _currentSecondaryArea = new Rect(-100000d, -100000d, 0d, finalSize.Height);
+                        _currentSecondaryArea = GeometryHelper.NewRect(-100000d, -100000d, 0d, finalSize.Height);
                         element.Arrange(_currentSecondaryArea);
                     }
                     else
                     {
-                        var secondaryArea = SecondaryAreaLocation == SecondaryAreaLocation.Left ? new Rect(0d, 0d, SecondaryElementWidth, finalSize.Height) : new Rect(finalSize.Width - SecondaryElementWidth, 0d, SecondaryElementWidth, finalSize.Height);
+                        var secondaryArea = SecondaryAreaLocation == SecondaryAreaLocation.Left ? GeometryHelper.NewRect(0d, 0d, SecondaryElementWidth, finalSize.Height) : GeometryHelper.NewRect(finalSize.Width - SecondaryElementWidth, 0d, SecondaryElementWidth, finalSize.Height);
                         if (HeaderRenderer != null) secondaryArea = HeaderRenderer.GetSecondaryClientArea(secondaryArea, this);
                         _currentSecondaryArea = secondaryArea;
                         element.Arrange(secondaryArea);
@@ -275,8 +277,8 @@ namespace CODE.Framework.Wpf.Layout
         {
             base.OnRender(dc);
 
-            if (PrimaryAreaBackground != null) dc.DrawRectangle(PrimaryAreaBackground, null, new Rect(_currentPrimaryArea.X, 0, _currentPrimaryArea.Width, ActualHeight));
-            if (SecondaryAreaBackground != null) dc.DrawRectangle(SecondaryAreaBackground, null, new Rect(_currentSecondaryArea.X, 0, _currentSecondaryArea.Width, ActualHeight));
+            if (PrimaryAreaBackground != null) dc.DrawRectangle(PrimaryAreaBackground, null, GeometryHelper.NewRect(_currentPrimaryArea.X, 0, _currentPrimaryArea.Width, ActualHeight));
+            if (SecondaryAreaBackground != null) dc.DrawRectangle(SecondaryAreaBackground, null, GeometryHelper.NewRect(_currentSecondaryArea.X, 0, _currentSecondaryArea.Width, ActualHeight));
 
             if (HeaderRenderer != null)
                 HeaderRenderer.Render(dc, _currentPrimaryArea,_currentSecondaryArea, this);
@@ -307,7 +309,7 @@ namespace CODE.Framework.Wpf.Layout
     public interface IPrimarySecondaryHorizontalPanelHeaderRenderer
     {
         /// <summary>
-        /// Detirmines the size of the client area for the primary element, based on the overall area allocated to it
+        /// determines the size of the client area for the primary element, based on the overall area allocated to it
         /// </summary>
         /// <param name="totalPrimaryArea">The total primary area.</param>
         /// <param name="parentPanel">The parent panel.</param>
@@ -315,7 +317,7 @@ namespace CODE.Framework.Wpf.Layout
         Rect GetPrimaryClientArea(Rect totalPrimaryArea, PrimarySecondaryHorizontalPanel parentPanel);
 
         /// <summary>
-        /// Detirmines the size of the client area for the secondary element, based on the overall area allocated to it
+        /// determines the size of the client area for the secondary element, based on the overall area allocated to it
         /// </summary>
         /// <param name="totalSecondaryArea">The total secondary area.</param>
         /// <param name="parentPanel">The parent panel.</param>
@@ -427,7 +429,7 @@ namespace CODE.Framework.Wpf.Layout
         public static readonly DependencyProperty IgnoreIconSizeForLayoutProperty = DependencyProperty.Register("IgnoreIconSizeForLayout", typeof(bool), typeof(StandardPrimarySecondaryHorizontalPanelHeaderRenderer), new PropertyMetadata(false));
 
         /// <summary>
-        /// Detirmines the size of the client area for the primary element, based on the overall area allocated to it
+        /// determines the size of the client area for the primary element, based on the overall area allocated to it
         /// </summary>
         /// <param name="totalPrimaryArea">The total primary area.</param>
         /// <param name="parentPanel">The parent panel.</param>
@@ -438,7 +440,7 @@ namespace CODE.Framework.Wpf.Layout
         }
 
         /// <summary>
-        /// Detirmines the size of the client area for the secondary element, based on the overall area allocated to it
+        /// determines the size of the client area for the secondary element, based on the overall area allocated to it
         /// </summary>
         /// <param name="totalSecondaryArea">The total secondary area.</param>
         /// <param name="parentPanel">The parent panel.</param>
@@ -446,8 +448,8 @@ namespace CODE.Framework.Wpf.Layout
         public Rect GetSecondaryClientArea(Rect totalSecondaryArea, PrimarySecondaryHorizontalPanel parentPanel)
         {
             if (IgnoreIconSizeForLayout)
-                return new Rect(totalSecondaryArea.X, totalSecondaryArea.Y, totalSecondaryArea.Width, totalSecondaryArea.Height);
-            return new Rect(totalSecondaryArea.X, totalSecondaryArea.Y + ExpandCollapseIconSize.Height + 4, totalSecondaryArea.Width, totalSecondaryArea.Height - ExpandCollapseIconSize.Height - 4);
+                return GeometryHelper.NewRect(totalSecondaryArea.X, totalSecondaryArea.Y, totalSecondaryArea.Width, totalSecondaryArea.Height);
+            return GeometryHelper.NewRect(totalSecondaryArea.X, totalSecondaryArea.Y + ExpandCollapseIconSize.Height + 4, totalSecondaryArea.Width, totalSecondaryArea.Height - ExpandCollapseIconSize.Height - 4);
         }
 
         /// <summary>
@@ -464,12 +466,12 @@ namespace CODE.Framework.Wpf.Layout
                 if (parentPanel.IsSecondaryElementCollapsed)
                 {
                     if (CollapsedSecondaryAreaIconProperty != null)
-                        dc.DrawRectangle(CollapsedSecondaryAreaIcon, null, new Rect(new Point(parentPanel.ActualWidth - ExpandCollapseIconSize.Width + IconMargin.Left, IconMargin.Top), new Size(ExpandCollapseIconSize.Width - IconMargin.Left - IconMargin.Right, ExpandCollapseIconSize.Height - IconMargin.Top - IconMargin.Bottom)));
+                        dc.DrawRectangle(CollapsedSecondaryAreaIcon, null, GeometryHelper.NewRect(new Point(parentPanel.ActualWidth - ExpandCollapseIconSize.Width + IconMargin.Left, IconMargin.Top), GeometryHelper.NewSize(ExpandCollapseIconSize.Width - IconMargin.Left - IconMargin.Right, ExpandCollapseIconSize.Height - IconMargin.Top - IconMargin.Bottom)));
                 }
                 else
                 {
                     if (ExpandedSecondaryAreaIcon != null)
-                        dc.DrawRectangle(ExpandedSecondaryAreaIcon, null, new Rect(new Point(currentSecondaryArea.X + IconMargin.Left, IconMargin.Top), new Size(ExpandCollapseIconSize.Width - IconMargin.Left - IconMargin.Right, ExpandCollapseIconSize.Height - IconMargin.Top - IconMargin.Bottom)));
+                        dc.DrawRectangle(ExpandedSecondaryAreaIcon, null, GeometryHelper.NewRect(new Point(currentSecondaryArea.X + IconMargin.Left, IconMargin.Top), GeometryHelper.NewSize(ExpandCollapseIconSize.Width - IconMargin.Left - IconMargin.Right, ExpandCollapseIconSize.Height - IconMargin.Top - IconMargin.Bottom)));
                 }
             }
         }

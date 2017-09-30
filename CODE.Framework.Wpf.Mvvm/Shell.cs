@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -247,6 +248,46 @@ namespace CODE.Framework.Wpf.Mvvm
             if (activatingView != null) activatingView.RaiseActivated();
         }
 
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <value>
+        /// The view index to activate.
+        /// </value>
+        public int ViewIndexToActivate
+        {
+            get { return (int)GetValue(ViewIndexToActivateProperty); }
+            set { SetValue(ViewIndexToActivateProperty, value); }
+        }
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <value>
+        /// The view index to activate.
+        /// </value>
+        public static readonly DependencyProperty ViewIndexToActivateProperty = DependencyProperty.Register("ViewIndexToActivate", typeof(int), typeof(Shell), new PropertyMetadata(-1));
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <value>
+        /// The view index to activate.
+        /// </value>
+        public int TopViewIndexToActivate
+        {
+            get { return (int)GetValue(TopViewIndexToActivateProperty); }
+            set { SetValue(TopViewIndexToActivateProperty, value); }
+        }
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <value>
+        /// The view index to activate.
+        /// </value>
+        public static readonly DependencyProperty TopViewIndexToActivateProperty = DependencyProperty.Register("TopViewIndexToActivate", typeof(int), typeof(Shell), new PropertyMetadata(-1));
+
         /// <summary>Complete view result for the currently selected top-level view (null if no view is selected)</summary>
         /// <remarks>Can be used to bind the current view into a content control using {Binding SelectedTopLevelViewResult.Document}</remarks>
         public ViewResult SelectedTopLevelViewResult
@@ -488,6 +529,11 @@ namespace CODE.Framework.Wpf.Mvvm
                 return HandleNotificationMessage(context, result.Model.OverrideTimeout);
             }
 
+            // This is a special model that activates views that are already open
+            var existingViewResult = context.Result as ExistingViewResult;
+            if (existingViewResult != null)
+                return ActivateViewForModel(existingViewResult.Model);
+
             var viewResult = context.Result as ViewResult;
             if (viewResult != null && viewResult.ForceNewShell)
                 if ((viewResult.ViewLevel == ViewLevel.Normal && NormalViewCount > 0) || (viewResult.ViewLevel == ViewLevel.TopLevel && TopLevelViewCount > 0))
@@ -619,19 +665,6 @@ namespace CODE.Framework.Wpf.Mvvm
             if (messageBoxResult != null && string.IsNullOrEmpty(viewResult.ViewIconResourceKey))
                 viewResult.ViewIconResourceKey = messageBoxResult.ModelMessageBox.IconResourceKey;
 
-            //Brush iconBrush = Brushes.Transparent;
-            //if (!string.IsNullOrEmpty(viewResult.ViewIconResourceKey))
-            //    try
-            //    {
-            //        var resource = Application.Current.FindResource(viewResult.ViewIconResourceKey);
-            //        if (resource != null)
-            //            iconBrush = (Brush) resource;
-            //    }
-            //    catch
-            //    {
-            //        iconBrush = Brushes.Transparent;
-            //    }
-
             // If we respect local views and the view is in fact a local view, and we have a normal view already open, then we open it in a local way only.
             if (viewResult.ViewScope == ViewScope.Local && HandleLocalViewsSpecial && SelectedNormalView > -1)
             {
@@ -671,12 +704,13 @@ namespace CODE.Framework.Wpf.Mvvm
                 var window = new Window
                     {
                         Title = viewResult.ViewTitle,
-                        Content = viewResult.View,
-                        DataContext = viewResult.Model,
-                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                        Owner = this
+                        //Content = viewResult.View,
+                        DataContext = viewResult.Model
                     };
 
+                if (viewResult.IsModal) window.Owner = this;
+
+                window.SetBinding(ContentProperty, new Binding("View") { Source = viewResult });
                 window.SetBinding(TitleProperty, new Binding("ViewTitle") { Source = viewResult });
 
                 // Setting the size strategy
@@ -707,7 +741,7 @@ namespace CODE.Framework.Wpf.Mvvm
                     var handler = GetTopLevelWindowStyleName;
                     if (handler != null)
                     {
-                        var getTopLevelWindowStyleNameEventArgs = new GetTopLevelWindowStyleNameEventArgs {ViewResult = viewResult, RequestContext = context, StyleKey = styleKey, Window = window};
+                        var getTopLevelWindowStyleNameEventArgs = new GetTopLevelWindowStyleNameEventArgs { ViewResult = viewResult, RequestContext = context, StyleKey = styleKey, Window = window };
                         handler(this, getTopLevelWindowStyleNameEventArgs);
                         styleKey = getTopLevelWindowStyleNameEventArgs.StyleKey;
                     }
@@ -722,7 +756,7 @@ namespace CODE.Framework.Wpf.Mvvm
 
                 if (!FocusHelper.FocusFirstControlDelayed(window))
                     FocusHelper.FocusDelayed(window);
-                
+
                 if (viewResult.IsModal) window.ShowDialog();
                 else window.Show();
             }
@@ -752,10 +786,28 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// This method is invoked when a view that is associated with a certain model should be closed
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="model">The model associated with the view that is to be closed</param>
+        /// <returns>True, if the view was found and successfully closed</returns>
         public bool CloseViewForModel(object model)
         {
+            // We check whether any of the models want to cancel the closing operation
+            foreach (var view in TopLevelViews)
+                if (view.Model != null && view.Model == model)
+                    if (view.RaiseBeforeViewClosed()) // returns true if closing is canceled
+                        return false;
+
+            foreach (var view in NormalViews)
+            {
+                if (view.Model != null && view.Model == model)
+                    if (view.RaiseBeforeViewClosed()) // returns true if closing is canceled
+                        return false;
+                foreach (var localView in view.LocalViews)
+                    if (localView.Model != null && localView.Model == model)
+                        if (view.RaiseBeforeViewClosed()) // returns true if closing is canceled
+                            return false;
+            }
+
+            // Arrived at the regular close operation (and events)
             foreach (var view in TopLevelViews)
                 if (view.Model != null && view.Model == model)
                 {
@@ -763,7 +815,8 @@ namespace CODE.Framework.Wpf.Mvvm
                     SelectedTopLevelView = TopLevelViews.Count - 1;
                     SelectedTopLevelViewResult = SelectedTopLevelView > -1 ? TopLevelViews[SelectedTopLevelView] : null;
                     TopLevelViewCount = TopLevelViews.Count;
-                    if (view.TopLevelWindow != null) view.TopLevelWindow.Close();
+                    if (view.TopLevelWindow != null && !IsWindowClosing(view.TopLevelWindow))
+                        view.TopLevelWindow.Close();
                     view.RaiseViewClosed();
                     return true;
                 }
@@ -776,7 +829,8 @@ namespace CODE.Framework.Wpf.Mvvm
                     SelectedNormalView = NormalViews.Count - 1;
                     SelectedNormalViewResult = SelectedNormalView > -1 ? NormalViews[SelectedNormalView] : null;
                     NormalViewCount = NormalViews.Count;
-                    if (view.TopLevelWindow != null) view.TopLevelWindow.Close();
+                    if (view.TopLevelWindow != null && !IsWindowClosing(view.TopLevelWindow))
+                        view.TopLevelWindow.Close();
                     view.RaiseViewClosed();
                     return true;
                 }
@@ -792,6 +846,109 @@ namespace CODE.Framework.Wpf.Mvvm
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// This method is invoked when a view that is associated with a certain model should be activated/shown
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <returns>
+        /// True if successful
+        /// </returns>
+        public bool ActivateViewForModel(object model)
+        {
+            // We check all top level views
+            var topLevelViewCounter = -1;
+            foreach (var view in TopLevelViews)
+            {
+                topLevelViewCounter++;
+                if (view.Model != null && view.Model == model)
+                {
+                    TopViewIndexToActivate = -1;
+                    TopViewIndexToActivate = topLevelViewCounter;
+                    SelectedTopLevelView = topLevelViewCounter;
+                    return true;
+                }
+            }
+
+            // We check all normal views
+            var normalViewCounter = -1;
+            foreach (var view in NormalViews)
+            {
+                normalViewCounter++;
+                if (view.Model != null && view.Model == model)
+                {
+                    ViewIndexToActivate = -1; // Making sure the event triggers
+                    ViewIndexToActivate = normalViewCounter;
+                    SelectedNormalView = normalViewCounter;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Returns true, if a model instance of the specified type and selector criteria is already open
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="selector">Selector used to pick an appropriate model instance</param>
+        /// <returns>
+        /// A reference to the open model instance
+        /// </returns>
+        public TModel GetOpenModel<TModel>(Func<TModel, bool> selector) where TModel : class
+        {
+            // We check all top level views
+            foreach (var view in TopLevelViews)
+                if (view.Model != null && view.Model.GetType() == typeof(TModel))
+                {
+                    var typedModel = view.Model as TModel;
+                    if (typedModel == null) continue;
+                    if (selector(typedModel)) return typedModel;
+                }
+
+            // We check all normal views
+            foreach (var view in NormalViews)
+                if (view.Model != null && view.Model.GetType() == typeof(TModel))
+                {
+                    var typedModel = view.Model as TModel;
+                    if (typedModel == null) continue;
+                    if (selector(typedModel)) return typedModel;
+                }
+
+            return default(TModel);
+        }
+
+        /// <summary>
+        /// Returns true, if a model instance of the specified type is already open
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>
+        /// A reference to the open model instance
+        /// </returns>
+        public TModel GetOpenModel<TModel>() where TModel : class
+        {
+            // We check all top level views
+            foreach (var view in TopLevelViews)
+                if (view.Model != null && view.Model.GetType() == typeof(TModel))
+                    return view.Model as TModel;
+
+            // We check all normal views
+            foreach (var view in NormalViews)
+                if (view.Model != null && view.Model.GetType() == typeof(TModel))
+                    return view.Model as TModel;
+
+            return default(TModel);
+        }
+
+        private static bool IsWindowClosing(Window window)
+        {
+            if (window == null) return false;
+            var field = typeof (Window).GetField("_isClosing", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (field == null) return false;
+            var isClosing = (bool) field.GetValue(window);
+            return isClosing;
         }
 
         /// <summary>

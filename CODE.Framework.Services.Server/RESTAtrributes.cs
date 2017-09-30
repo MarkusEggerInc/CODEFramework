@@ -107,27 +107,37 @@ namespace CODE.Framework.Services.Server
             else if (!string.IsNullOrEmpty(urlFragment)) firstParameter = urlFragment;
 
             var methods = ObjectHelper.GetAllMethodsForInterface(contractType);
-            MethodInfo defaultMethod = null;
-            MethodInfo matchingMethod = null;
-            foreach (var method in methods)
+            var methodInfos = methods as MethodInfo[] ?? methods.ToArray(); // Preventing multiple enumeration problems
+
+            // We first check for named methods
+            foreach (var method in methodInfos)
             {
-                var methodName = method.Name;
                 var restAttribute = GetRestAttribute(method);
+                var methodName = method.Name;
+                if (restAttribute != null && restAttribute.Name != null) methodName = restAttribute.Name;
+                var httpMethodForMethod = restAttribute?.Method.ToString().ToUpper() ?? "GET";
+                if (httpMethodForMethod == httpMethod && string.Equals(methodName, firstParameter, StringComparison.CurrentCultureIgnoreCase)) 
+                    return method;
+                if (httpMethodForMethod == "POSTORPUT" && (string.Equals("POST", httpMethod, StringComparison.OrdinalIgnoreCase) || string.Equals("PUT", httpMethod, StringComparison.OrdinalIgnoreCase)) && string.Equals(methodName, firstParameter, StringComparison.CurrentCultureIgnoreCase))
+                    return method;
+            }
+
+            // If we haven't found anything yet, we check for default methods
+            foreach (var method in methodInfos)
+            {
+                var restAttribute = GetRestAttribute(method);
+                if (!string.IsNullOrEmpty(restAttribute.Name)) continue; // We are now only intersted in the empty ones
                 var httpMethodForMethod = restAttribute.Method.ToString().ToUpper();
                 if (restAttribute.Name != null)
                 {
-                    if (restAttribute.Name == "" && string.Equals(httpMethodForMethod, httpMethod, StringComparison.OrdinalIgnoreCase)) defaultMethod = method;
-                    methodName = restAttribute.Name;
-                }
-                if (httpMethodForMethod == httpMethod && string.Equals(methodName, firstParameter, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    matchingMethod = method;
-                    break;
+                    if (string.IsNullOrEmpty(restAttribute.Name) && string.Equals(httpMethodForMethod, httpMethod, StringComparison.OrdinalIgnoreCase))
+                        return method;
+                    if (string.IsNullOrEmpty(restAttribute.Name) && httpMethodForMethod == "POSTORPUT" && (string.Equals("POST", httpMethod, StringComparison.OrdinalIgnoreCase) || string.Equals("PUT", httpMethod, StringComparison.OrdinalIgnoreCase)))
+                        return method;
                 }
             }
-            if (matchingMethod == null && defaultMethod != null) matchingMethod = defaultMethod;
 
-            return matchingMethod ?? null;
+            return null;
         }
 
         /// <summary>

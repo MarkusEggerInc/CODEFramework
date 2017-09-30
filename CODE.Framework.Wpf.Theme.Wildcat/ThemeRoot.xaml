@@ -14,6 +14,7 @@
         <ResourceDictionary Source="Wildcat-Control-Button.xaml"/>
         <!--<ResourceDictionary Source="Wildcat-Control-Calendar.xaml"/>-->
         <ResourceDictionary Source="Wildcat-Control-CapsLockWarning.xaml"/>
+        <ResourceDictionary Source="Wildcat-Control-ComboBox.xaml"/>
         <!--<ResourceDictionary Source="Wildcat-Control-DockHost.xaml"/>-->
         <ResourceDictionary Source="Wildcat-Control-Label.xaml"/>
         <ResourceDictionary Source="Wildcat-Control-ListBox.xaml"/>
@@ -27,6 +28,7 @@
         <!--<ResourceDictionary Source="Wildcat-Control-Window.xaml" />-->
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Wildcat-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Wildcat-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Wildcat-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Wildcat-Layout-MultiPanel.xaml"/>
@@ -34,6 +36,7 @@
         <ResourceDictionary Source="Wildcat-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Wildcat-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Wildcat-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Wildcat-Layout-Tabs.xaml"/>
 
         <!-- Icons for message boxes-->
         <ResourceDictionary Source="Wildcat-MessageBox-Icon-Asterisk.xaml"/>

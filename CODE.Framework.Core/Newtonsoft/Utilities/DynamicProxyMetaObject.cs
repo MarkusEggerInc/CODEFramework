@@ -34,18 +34,11 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
     internal sealed class DynamicProxyMetaObject<T> : DynamicMetaObject
     {
         private readonly DynamicProxy<T> _proxy;
-        private readonly bool _dontFallbackFirst;
 
-        internal DynamicProxyMetaObject(Expression expression, T value, DynamicProxy<T> proxy, bool dontFallbackFirst)
+        internal DynamicProxyMetaObject(Expression expression, T value, DynamicProxy<T> proxy)
             : base(expression, BindingRestrictions.Empty, value)
         {
             _proxy = proxy;
-            _dontFallbackFirst = dontFallbackFirst;
-        }
-
-        private new T Value
-        {
-            get { return (T)base.Value; }
         }
 
         private bool IsOverridden(string method)
@@ -55,28 +48,38 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
-            return IsOverridden("TryGetMember") ? CallMethodWithResult("TryGetMember", binder, NoArgs, e => binder.FallbackGetMember(this, e)) : base.BindGetMember(binder);
+            return IsOverridden(nameof(DynamicProxy<T>.TryGetMember))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryGetMember), binder, NoArgs, e => binder.FallbackGetMember(this, e))
+                : base.BindGetMember(binder);
         }
 
         public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
         {
-            return IsOverridden("TrySetMember") ? CallMethodReturnLast("TrySetMember", binder, GetArgs(value), e => binder.FallbackSetMember(this, value, e)) : base.BindSetMember(binder, value);
+            return IsOverridden(nameof(DynamicProxy<T>.TrySetMember))
+                ? CallMethodReturnLast(nameof(DynamicProxy<T>.TrySetMember), binder, GetArgs(value), e => binder.FallbackSetMember(this, value, e))
+                : base.BindSetMember(binder, value);
         }
 
         public override DynamicMetaObject BindDeleteMember(DeleteMemberBinder binder)
         {
-            return IsOverridden("TryDeleteMember") ? CallMethodNoResult("TryDeleteMember", binder, NoArgs, e => binder.FallbackDeleteMember(this, e)) : base.BindDeleteMember(binder);
+            return IsOverridden(nameof(DynamicProxy<T>.TryDeleteMember))
+                ? CallMethodNoResult(nameof(DynamicProxy<T>.TryDeleteMember), binder, NoArgs, e => binder.FallbackDeleteMember(this, e))
+                : base.BindDeleteMember(binder);
         }
-
 
         public override DynamicMetaObject BindConvert(ConvertBinder binder)
         {
-            return IsOverridden("TryConvert") ? CallMethodWithResult("TryConvert", binder, NoArgs, e => binder.FallbackConvert(this, e)) : base.BindConvert(binder);
+            return IsOverridden(nameof(DynamicProxy<T>.TryConvert))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryConvert), binder, NoArgs, e => binder.FallbackConvert(this, e))
+                : base.BindConvert(binder);
         }
 
         public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
         {
-            if (!IsOverridden("TryInvokeMember")) return base.BindInvokeMember(binder, args);
+            if (!IsOverridden(nameof(DynamicProxy<T>.TryInvokeMember)))
+            {
+                return base.BindInvokeMember(binder, args);
+            }
 
             //
             // Generate a tree like:
@@ -95,74 +98,106 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             // tree or doing .NET binding.
             //
             Fallback fallback = e => binder.FallbackInvokeMember(this, args, e);
-            var call = BuildCallMethodWithResult("TryInvokeMember", binder, GetArgArray(args), BuildCallMethodWithResult("TryGetMember", new GetBinderAdapter(binder), NoArgs, fallback(null), e => binder.FallbackInvoke(e, args, null)), null);
-            return _dontFallbackFirst ? call : fallback(call);
-        }
 
+            return BuildCallMethodWithResult(
+                nameof(DynamicProxy<T>.TryInvokeMember),
+                binder,
+                GetArgArray(args),
+                BuildCallMethodWithResult(
+                    nameof(DynamicProxy<T>.TryGetMember),
+                    new GetBinderAdapter(binder),
+                    NoArgs,
+                    fallback(null),
+                    e => binder.FallbackInvoke(e, args, null)
+                ),
+                null
+            );
+        }
 
         public override DynamicMetaObject BindCreateInstance(CreateInstanceBinder binder, DynamicMetaObject[] args)
         {
-            return IsOverridden("TryCreateInstance") ? CallMethodWithResult("TryCreateInstance", binder, GetArgArray(args), e => binder.FallbackCreateInstance(this, args, e)) : base.BindCreateInstance(binder, args);
+            return IsOverridden(nameof(DynamicProxy<T>.TryCreateInstance))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryCreateInstance), binder, GetArgArray(args), e => binder.FallbackCreateInstance(this, args, e))
+                : base.BindCreateInstance(binder, args);
         }
 
         public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
         {
-            return IsOverridden("TryInvoke") ? CallMethodWithResult("TryInvoke", binder, GetArgArray(args), e => binder.FallbackInvoke(this, args, e)) : base.BindInvoke(binder, args);
+            return IsOverridden(nameof(DynamicProxy<T>.TryInvoke))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryInvoke), binder, GetArgArray(args), e => binder.FallbackInvoke(this, args, e))
+                : base.BindInvoke(binder, args);
         }
 
         public override DynamicMetaObject BindBinaryOperation(BinaryOperationBinder binder, DynamicMetaObject arg)
         {
-            return IsOverridden("TryBinaryOperation") ? CallMethodWithResult("TryBinaryOperation", binder, GetArgs(arg), e => binder.FallbackBinaryOperation(this, arg, e)) : base.BindBinaryOperation(binder, arg);
+            return IsOverridden(nameof(DynamicProxy<T>.TryBinaryOperation))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryBinaryOperation), binder, GetArgs(arg), e => binder.FallbackBinaryOperation(this, arg, e))
+                : base.BindBinaryOperation(binder, arg);
         }
 
         public override DynamicMetaObject BindUnaryOperation(UnaryOperationBinder binder)
         {
-            return IsOverridden("TryUnaryOperation") ? CallMethodWithResult("TryUnaryOperation", binder, NoArgs, e => binder.FallbackUnaryOperation(this, e)) : base.BindUnaryOperation(binder);
+            return IsOverridden(nameof(DynamicProxy<T>.TryUnaryOperation))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryUnaryOperation), binder, NoArgs, e => binder.FallbackUnaryOperation(this, e))
+                : base.BindUnaryOperation(binder);
         }
 
         public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
         {
-            return IsOverridden("TryGetIndex") ? CallMethodWithResult("TryGetIndex", binder, GetArgArray(indexes), e => binder.FallbackGetIndex(this, indexes, e)) : base.BindGetIndex(binder, indexes);
+            return IsOverridden(nameof(DynamicProxy<T>.TryGetIndex))
+                ? CallMethodWithResult(nameof(DynamicProxy<T>.TryGetIndex), binder, GetArgArray(indexes), e => binder.FallbackGetIndex(this, indexes, e))
+                : base.BindGetIndex(binder, indexes);
         }
 
         public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
         {
-            return IsOverridden("TrySetIndex") ? CallMethodReturnLast("TrySetIndex", binder, GetArgArray(indexes, value), e => binder.FallbackSetIndex(this, indexes, value, e)) : base.BindSetIndex(binder, indexes, value);
+            return IsOverridden(nameof(DynamicProxy<T>.TrySetIndex))
+                ? CallMethodReturnLast(nameof(DynamicProxy<T>.TrySetIndex), binder, GetArgArray(indexes, value), e => binder.FallbackSetIndex(this, indexes, value, e))
+                : base.BindSetIndex(binder, indexes, value);
         }
 
         public override DynamicMetaObject BindDeleteIndex(DeleteIndexBinder binder, DynamicMetaObject[] indexes)
         {
-            return IsOverridden("TryDeleteIndex") ? CallMethodNoResult("TryDeleteIndex", binder, GetArgArray(indexes), e => binder.FallbackDeleteIndex(this, indexes, e)) : base.BindDeleteIndex(binder, indexes);
+            return IsOverridden(nameof(DynamicProxy<T>.TryDeleteIndex))
+                ? CallMethodNoResult(nameof(DynamicProxy<T>.TryDeleteIndex), binder, GetArgArray(indexes), e => binder.FallbackDeleteIndex(this, indexes, e))
+                : base.BindDeleteIndex(binder, indexes);
         }
 
         private delegate DynamicMetaObject Fallback(DynamicMetaObject errorSuggestion);
 
-        private static readonly Expression[] NoArgs = new Expression[0];
+        private static Expression[] NoArgs => CollectionUtils.ArrayEmpty<Expression>();
 
-        private static Expression[] GetArgs(params DynamicMetaObject[] args)
+        private static IEnumerable<Expression> GetArgs(params DynamicMetaObject[] args)
         {
-            return args.Select(arg => Expression.Convert(arg.Expression, typeof(object))).ToArray();
+            return args.Select(arg =>
+            {
+                Expression exp = arg.Expression;
+                return exp.Type.IsValueType() ? Expression.Convert(exp, typeof(object)) : exp;
+            });
         }
 
         private static Expression[] GetArgArray(DynamicMetaObject[] args)
         {
-            return new[] { Expression.NewArrayInit(typeof(object), GetArgs(args)) };
+            return new[] {Expression.NewArrayInit(typeof(object), GetArgs(args))};
         }
 
         private static Expression[] GetArgArray(DynamicMetaObject[] args, DynamicMetaObject value)
         {
-            return new Expression[]
+            var exp = value.Expression;
+            return new[]
             {
                 Expression.NewArrayInit(typeof(object), GetArgs(args)),
-                Expression.Convert(value.Expression, typeof(object))
+                exp.Type.IsValueType() ? Expression.Convert(exp, typeof(object)) : exp
             };
         }
 
         private static ConstantExpression Constant(DynamicMetaObjectBinder binder)
         {
-            var t = binder.GetType();
+            Type t = binder.GetType();
             while (!t.IsVisible())
+            {
                 t = t.BaseType();
+            }
             return Expression.Constant(binder, t);
         }
 
@@ -176,19 +211,9 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             // First, call fallback to do default binding
             // This produces either an error or a call to a .NET member
             //
-            var fallbackResult = fallback(null);
-            var callDynamic = BuildCallMethodWithResult(methodName, binder, args, fallbackResult, fallbackInvoke);
+            DynamicMetaObject fallbackResult = fallback(null);
 
-            //
-            // Now, call fallback again using our new MO as the error
-            // When we do this, one of two things can happen:
-            //   1. Binding will succeed, and it will ignore our call to
-            //      the dynamic method, OR
-            //   2. Binding will fail, and it will use the MO we created
-            //      above.
-            //
-
-            return _dontFallbackFirst ? callDynamic : fallback(callDynamic);
+            return BuildCallMethodWithResult(methodName, binder, args, fallbackResult, fallbackInvoke);
         }
 
         private DynamicMetaObject BuildCallMethodWithResult(string methodName, DynamicMetaObjectBinder binder, IEnumerable<Expression> args, DynamicMetaObject fallbackResult, Fallback fallbackInvoke)
@@ -200,7 +225,7 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             //   TryGetMember(payload, out result) ? fallbackInvoke(result) : fallbackResult
             // }
             //
-            var result = Expression.Parameter(typeof(object), null);
+            ParameterExpression result = Expression.Parameter(typeof(object), null);
 
             IList<Expression> callArgs = new List<Expression>();
             callArgs.Add(Expression.Convert(Expression, typeof(T)));
@@ -208,21 +233,39 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             callArgs.AddRange(args);
             callArgs.Add(result);
 
-            var resultMetaObject = new DynamicMetaObject(result, BindingRestrictions.Empty);
+            DynamicMetaObject resultMetaObject = new DynamicMetaObject(result, BindingRestrictions.Empty);
 
             // Need to add a conversion if calling TryConvert
             if (binder.ReturnType != typeof(object))
             {
-                var convert = Expression.Convert(resultMetaObject.Expression, binder.ReturnType);
+                UnaryExpression convert = Expression.Convert(resultMetaObject.Expression, binder.ReturnType);
                 // will always be a cast or unbox
 
                 resultMetaObject = new DynamicMetaObject(convert, resultMetaObject.Restrictions);
             }
 
             if (fallbackInvoke != null)
+            {
                 resultMetaObject = fallbackInvoke(resultMetaObject);
+            }
 
-            var callDynamic = new DynamicMetaObject(Expression.Block(new[] {result}, Expression.Condition(Expression.Call(Expression.Constant(_proxy), typeof (DynamicProxy<T>).GetMethod(methodName), callArgs), resultMetaObject.Expression, fallbackResult.Expression, binder.ReturnType)), GetRestrictions().Merge(resultMetaObject.Restrictions).Merge(fallbackResult.Restrictions));
+            DynamicMetaObject callDynamic = new DynamicMetaObject(
+                Expression.Block(
+                    new[] {result},
+                    Expression.Condition(
+                        Expression.Call(
+                            Expression.Constant(_proxy),
+                            typeof(DynamicProxy<T>).GetMethod(methodName),
+                            callArgs
+                        ),
+                        resultMetaObject.Expression,
+                        fallbackResult.Expression,
+                        binder.ReturnType
+                    )
+                ),
+                GetRestrictions().Merge(resultMetaObject.Restrictions).Merge(fallbackResult.Restrictions)
+            );
+
             return callDynamic;
         }
 
@@ -231,13 +274,13 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         /// specific method on Dynamic, but uses one of the arguments for
         /// the result.
         /// </summary>
-        private DynamicMetaObject CallMethodReturnLast(string methodName, DynamicMetaObjectBinder binder, Expression[] args, Fallback fallback)
+        private DynamicMetaObject CallMethodReturnLast(string methodName, DynamicMetaObjectBinder binder, IEnumerable<Expression> args, Fallback fallback)
         {
             //
             // First, call fallback to do default binding
             // This produces either an error or a call to a .NET member
             //
-            var fallbackResult = fallback(null);
+            DynamicMetaObject fallbackResult = fallback(null);
 
             //
             // Build a new expression like:
@@ -246,25 +289,30 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             //   TrySetMember(payload, result = value) ? result : fallbackResult
             // }
             //
-            var result = Expression.Parameter(typeof(object), null);
+            ParameterExpression result = Expression.Parameter(typeof(object), null);
 
             IList<Expression> callArgs = new List<Expression>();
             callArgs.Add(Expression.Convert(Expression, typeof(T)));
             callArgs.Add(Constant(binder));
             callArgs.AddRange(args);
-            callArgs[args.Length + 1] = Expression.Assign(result, callArgs[args.Length + 1]);
+            callArgs[callArgs.Count - 1] = Expression.Assign(result, callArgs[callArgs.Count - 1]);
 
-            var callDynamic = new DynamicMetaObject(Expression.Block(new[] {result}, Expression.Condition(Expression.Call(Expression.Constant(_proxy), typeof (DynamicProxy<T>).GetMethod(methodName), callArgs), result, fallbackResult.Expression, typeof (object))), GetRestrictions().Merge(fallbackResult.Restrictions));
-
-            //
-            // Now, call fallback again using our new MO as the error
-            // When we do this, one of two things can happen:
-            //   1. Binding will succeed, and it will ignore our call to
-            //      the dynamic method, OR
-            //   2. Binding will fail, and it will use the MO we created
-            //      above.
-            //
-            return _dontFallbackFirst ? callDynamic : fallback(callDynamic);
+            return new DynamicMetaObject(
+                Expression.Block(
+                    new[] {result},
+                    Expression.Condition(
+                        Expression.Call(
+                            Expression.Constant(_proxy),
+                            typeof(DynamicProxy<T>).GetMethod(methodName),
+                            callArgs
+                        ),
+                        result,
+                        fallbackResult.Expression,
+                        typeof(object)
+                    )
+                ),
+                GetRestrictions().Merge(fallbackResult.Restrictions)
+            );
         }
 
         /// <summary>
@@ -272,13 +320,13 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         /// specific method on Dynamic, but uses one of the arguments for
         /// the result.
         /// </summary>
-        private DynamicMetaObject CallMethodNoResult(string methodName, DynamicMetaObjectBinder binder, IEnumerable<Expression> args, Fallback fallback)
+        private DynamicMetaObject CallMethodNoResult(string methodName, DynamicMetaObjectBinder binder, Expression[] args, Fallback fallback)
         {
             //
             // First, call fallback to do default binding
             // This produces either an error or a call to a .NET member
             //
-            var fallbackResult = fallback(null);
+            DynamicMetaObject fallbackResult = fallback(null);
 
             IList<Expression> callArgs = new List<Expression>();
             callArgs.Add(Expression.Convert(Expression, typeof(T)));
@@ -289,17 +337,19 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             // Build a new expression like:
             //   if (TryDeleteMember(payload)) { } else { fallbackResult }
             //
-            var callDynamic = new DynamicMetaObject(Expression.Condition(Expression.Call(Expression.Constant(_proxy), typeof (DynamicProxy<T>).GetMethod(methodName), callArgs), Expression.Empty(), fallbackResult.Expression, typeof (void)), GetRestrictions().Merge(fallbackResult.Restrictions));
-
-            //
-            // Now, call fallback again using our new MO as the error
-            // When we do this, one of two things can happen:
-            //   1. Binding will succeed, and it will ignore our call to
-            //      the dynamic method, OR
-            //   2. Binding will fail, and it will use the MO we created
-            //      above.
-            //
-            return _dontFallbackFirst ? callDynamic : fallback(callDynamic);
+            return new DynamicMetaObject(
+                Expression.Condition(
+                    Expression.Call(
+                        Expression.Constant(_proxy),
+                        typeof(DynamicProxy<T>).GetMethod(methodName),
+                        callArgs
+                    ),
+                    Expression.Empty(),
+                    fallbackResult.Expression,
+                    typeof(void)
+                ),
+                GetRestrictions().Merge(fallbackResult.Restrictions)
+            );
         }
 
         /// <summary>
@@ -308,12 +358,14 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         /// </summary>
         private BindingRestrictions GetRestrictions()
         {
-            return (Value == null && HasValue) ? BindingRestrictions.GetInstanceRestriction(Expression, null) : BindingRestrictions.GetTypeRestriction(Expression, LimitType);
+            return (Value == null && HasValue)
+                ? BindingRestrictions.GetInstanceRestriction(Expression, null)
+                : BindingRestrictions.GetTypeRestriction(Expression, LimitType);
         }
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return _proxy.GetDynamicMemberNames(Value);
+            return _proxy.GetDynamicMemberNames((T) Value);
         }
 
         // It is okay to throw NotSupported from this binder. This object

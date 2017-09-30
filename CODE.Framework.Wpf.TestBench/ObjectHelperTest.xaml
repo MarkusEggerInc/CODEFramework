@@ -4,5 +4,7 @@
         Title="ObjectHelper" Height="300" Width="300">
     <StackPanel>
         <Button Margin="5" Click="GetSimpleValue">Get Property Value</Button>
+        <Button Margin="5" Click="GetJson">Serialize to JSON</Button>
+        <Button Margin="5" Click="GetDateJson">Serialize Date to JSON</Button>
     </StackPanel>
 </Window>

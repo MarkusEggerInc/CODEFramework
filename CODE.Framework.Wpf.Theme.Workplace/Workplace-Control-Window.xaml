@@ -9,11 +9,11 @@
             <Border Grid.RowSpan="3" BorderThickness="1,3,1,1" BorderBrush="{DynamicResource CODE.Framework-Application-ThemeBrush1}" />
             <Grid controls:GridEx.ColumnWidths="Auto,*,Auto">
                 <Label FontFamily="{DynamicResource DefaultFont}"
-                                   FontWeight="Light"
-                                   FontSize="{DynamicResource FontSize-Largest}"
-                                   Foreground="{DynamicResource CODE.Framework-Application-ThemeBrush1}"
-                                   Content="{TemplateBinding Title}"
-                                   Margin="5" Grid.Column="1"/>
+                       FontWeight="Light"
+                       FontSize="{DynamicResource FontSize-Largest}"
+                       Foreground="{DynamicResource CODE.Framework-Application-ThemeBrush1}"
+                       Content="{TemplateBinding Title}"
+                       Margin="5" Grid.Column="1"/>
             </Grid>
             <AdornerDecorator Grid.Row="1">
                 <ContentPresenter Margin="20,10" />
@@ -23,7 +23,7 @@
                     <mvvm:ModelStatusToVisibleConverter x:Key="ModelStatusToVisibleConverter" />
                 </mvvm:ModelStatusGrid.Resources>
                 <controls1:LinearProgressAnimation IsActive="True" DotDiameter="5" DotBrush="{DynamicResource CODE.Framework-Workplace-ThemeBrush1}" DotAnimationSpeedFactor=".9" DotSpaceFactor=".8"
-                                                               Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}"/>
+                                                   Visibility="{Binding Path=ModelStatus, ElementName=modelStatus, Converter={StaticResource ModelStatusToVisibleConverter}}"/>
             </mvvm:ModelStatusGrid>
             <Rectangle Grid.Row="2" Margin="1,0,1,1" Fill="{DynamicResource CODE.Framework-Application-BackgroundBrush2}"/>
             <mvvm:ActionGrid Grid.Row="2" Model="{Binding}" Margin="20,15,20,15">
@@ -31,9 +31,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button FontSize="{DynamicResource FontSize-Normal}" 
-                                                Content="{Binding Caption}" Command="{Binding}" 
-                                                IsDefault="{Binding IsDefault, Mode=OneWay}" IsCancel="{Binding IsCancel, Mode=OneWay}"
-                                                Margin="5,0,0,0" Padding="7,3" />
+                                    Content="{Binding Caption}" Command="{Binding}" 
+                                    IsDefault="{Binding IsDefault, Mode=OneWay}" IsCancel="{Binding IsCancel, Mode=OneWay}"
+                                    Margin="5,0,0,0" Padding="7,3" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>

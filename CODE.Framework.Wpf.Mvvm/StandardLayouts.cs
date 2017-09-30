@@ -102,7 +102,11 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>
         /// Standard form layouts use WPF standards (typically a Grid) and leave layout details up to the developer.
         /// </summary>
-        StandardForm
+        StandardForm,
+        /// <summary>
+        /// Creates a tab-control type of layout
+        /// </summary>
+        Tabs
     }
 
     /// <summary>
@@ -147,6 +151,7 @@ namespace CODE.Framework.Wpf.Mvvm
             StandardLayoutMaps.Add(StandardLayouts.SimpleForm, "CODE.Framework-Layout-SimpleFormLayout");
             StandardLayoutMaps.Add(StandardLayouts.SimpleFormToFill, "CODE.Framework-Layout-SimpleFormToFillLayout");
             StandardLayoutMaps.Add(StandardLayouts.StandardForm, "CODE.Framework-Layout-StandardFormLayout");
+            StandardLayoutMaps.Add(StandardLayouts.Tabs, "CODE.Framework-Layout-Tabs");
 
             StandardLayoutMapsBackward.Add("CODE.Framework-Layout-BladePanelLayout", StandardLayouts.Blades);
             StandardLayoutMapsBackward.Add("CODE.Framework-Layout-BladePanelToFillLayout", StandardLayouts.BladesToFill);
@@ -163,6 +168,7 @@ namespace CODE.Framework.Wpf.Mvvm
             StandardLayoutMapsBackward.Add("CODE.Framework-Layout-SimpleFormLayout", StandardLayouts.SimpleForm);
             StandardLayoutMapsBackward.Add("CODE.Framework-Layout-SimpleFormToFillLayout", StandardLayouts.SimpleFormToFill);
             StandardLayoutMapsBackward.Add("CODE.Framework-Layout-StandardFormLayout", StandardLayouts.StandardForm);
+            StandardLayoutMapsBackward.Add("CODE.Framework-Layout-Tabs", StandardLayouts.Tabs);
 
             StandardLayoutTitles.Add(StandardLayouts.None, "(none)");
             StandardLayoutTitles.Add(StandardLayouts.Blades, "Blades Layout");
@@ -180,6 +186,7 @@ namespace CODE.Framework.Wpf.Mvvm
             StandardLayoutTitles.Add(StandardLayouts.SimpleForm, "Simple Form Layout");
             StandardLayoutTitles.Add(StandardLayouts.SimpleFormToFill, "Simple Form Layout (last item fills space)");
             StandardLayoutTitles.Add(StandardLayouts.StandardForm, "Standard Form Layout (no automatic layout)");
+            StandardLayoutTitles.Add(StandardLayouts.Tabs, "Tab-control layout)");
 
             StandardLayoutDescriptions.Add(StandardLayouts.Blades, "Blade panels typically create a layout of blades that are arranged vertical left-to-right.\r\nIf needed, the layout adds a scrollbar.");
             StandardLayoutDescriptions.Add(StandardLayouts.BladesToFill, "Blade panels typically create a layout of blades that are arranged vertical left-to-right. \r\nIf needed, the layout adds a scrollbar.\r\nThis variation fills the remaining horizontal space (of any) with the last element.");
@@ -196,6 +203,7 @@ namespace CODE.Framework.Wpf.Mvvm
             StandardLayoutDescriptions.Add(StandardLayouts.SimpleForm, "Simple form layouts are basic arrangements of controls, typically in a vertical or horizontal stack.\r\nThe layout is smart enough to create visually pleasing results by assigning meaningful spacing.");
             StandardLayoutDescriptions.Add(StandardLayouts.SimpleFormToFill, "Simple form layouts are basic arrangements of controls, typically in a vertical or horizontal stack.\r\nThe layout is smart enough to create visually pleasing results by assigning meaningful spacing.\r\nThis version fills the remaining screen real-estate (if any) with the last element.");
             StandardLayoutDescriptions.Add(StandardLayouts.StandardForm, "Standard form layouts use WPF standards (typically a Grid) and leave layout details up to the developer.");
+            StandardLayoutDescriptions.Add(StandardLayouts.Tabs, "Uses a tab-control type of approach to layout. View.Title is used for the tab header title.");
         }
 
         /// <summary>

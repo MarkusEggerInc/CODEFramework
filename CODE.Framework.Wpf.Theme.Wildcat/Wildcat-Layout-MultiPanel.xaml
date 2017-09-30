@@ -5,11 +5,21 @@
     <Style TargetType="l:MultiPanelHeaderRenderer">
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Largest}"/>
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
-        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ThemeBrush1}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
         <Setter Property="CloseIcon" Value="{DynamicResource CODE.Framework-Icon-No}"/>
     </Style>
 
     <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelLayout">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <l:MultiPanel/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ItemsControl" x:Key="CODE.Framework-Layout-MultiPanelWithHeaderLayout">
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -22,5 +32,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
 </ResourceDictionary>

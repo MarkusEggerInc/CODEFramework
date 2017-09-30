@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>CODE.Framework.Wpf.Mvvm</name>
+  </assembly>
+  <members>
+    <member name="" />
+    <member name="N:CODE.Framework.Wpf.Mvvm" />
+    <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionRibbon.PopulateSubCategories(Panel,ViewActionCategory,IEnumerable{IViewAction},System.Int32,RibbonPage,MultiBinding)"> <summary>
+ Adds sub-items for the specified tab item and category
+ </summary>
+ <param name="parentPanel">Parent item container</param>
+ <param name="category">Category we are interested in</param>
+ <param name="actions">Actions to consider</param>
+ <param name="indentLevel">Current hierarchical indentation level</param>
+ <param name="ribbonPage">The ribbon page.</param>
+ <param name="visibilityBinding">The visibility binding.</param></member>
+  </members>
+</doc>

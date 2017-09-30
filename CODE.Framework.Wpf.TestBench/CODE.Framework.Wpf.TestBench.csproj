@@ -83,6 +83,9 @@
     <Compile Include="CapsLockTest.xaml.cs">
       <DependentUpon>CapsLockTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ColumnComboBox.xaml.cs">
+      <DependentUpon>ColumnComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ColumnListBox.xaml.cs">
       <DependentUpon>ColumnListBox.xaml</DependentUpon>
     </Compile>
@@ -130,6 +133,9 @@
     </Compile>
     <Compile Include="ObjectHelperTest.xaml.cs">
       <DependentUpon>ObjectHelperTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PanelSizeAndVisibilityTest.xaml.cs">
+      <DependentUpon>PanelSizeAndVisibilityTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="PanoramaTest.xaml.cs">
       <DependentUpon>PanoramaTest.xaml</DependentUpon>
@@ -182,6 +188,9 @@
     <Compile Include="SystemMetricsTests.xaml.cs">
       <DependentUpon>SystemMetricsTests.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TabItemsPanelTest.xaml.cs">
+      <DependentUpon>TabItemsPanelTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TextBlockExTest.xaml.cs">
       <DependentUpon>TextBlockExTest.xaml</DependentUpon>
     </Compile>
@@ -230,6 +239,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CapsLockTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ColumnComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -331,6 +344,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="PanelSizeAndVisibilityTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PanoramaTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -396,6 +413,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SystemMetricsTests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TabItemsPanelTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,12 +6,12 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
     {
         public QueryExpression Expression { get; set; }
 
-        public override IEnumerable<JToken> ExecuteFilter(IEnumerable<JToken> current, bool errorWhenNoMatch)
+        public override IEnumerable<JToken> ExecuteFilter(JToken root, IEnumerable<JToken> current, bool errorWhenNoMatch)
         {
             foreach (var t in current)
-                foreach (var v in t)
-                    if (Expression.IsMatch(v))
-                        yield return v;
+            foreach (var v in t)
+                if (Expression.IsMatch(root, v))
+                    yield return v;
         }
     }
 }

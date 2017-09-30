@@ -57,6 +57,18 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
+        /// This method is invoked when a view that is associated with a certain model should be activated/shown
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <returns>
+        /// True if successful
+        /// </returns>
+        public bool ActivateViewForModel(object model)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// This method closes all currently open views
         /// </summary>
         /// <returns>True if the handler successfully closed all views. False if it didn't close all views or generally does not handle view closing</returns>
@@ -76,6 +88,31 @@ namespace CODE.Framework.Wpf.Mvvm
         public object GetViewForModel(object model)
         {
             return null;
+        }
+
+        /// <summary>
+        /// Returns true, if a model instance of the specified type and selector criteria is already open
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="selector">Selector used to pick an appropriate model instance</param>
+        /// <returns>
+        /// A reference to the open model instance
+        /// </returns>
+        public TModel GetOpenModel<TModel>(Func<TModel, bool> selector) where TModel : class
+        {
+            return default(TModel);
+        }
+
+        /// <summary>
+        /// Returns true, if a model instance of the specified type is already open
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>
+        /// A reference to the open model instance
+        /// </returns>
+        public TModel GetOpenModel<TModel>() where TModel : class
+        {
+            return default(TModel);
         }
 
         /// <summary>

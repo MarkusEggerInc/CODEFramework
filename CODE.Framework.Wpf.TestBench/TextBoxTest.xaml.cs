@@ -19,10 +19,16 @@ namespace CODE.Framework.Wpf.TestBench
     public class TextBoxTestModel : INotifyPropertyChanged
     {
         private decimal _testValue;
+        private decimal _testPercentage;
+        private int _testNumeric;
+        private decimal _testDecimal;
 
         public TextBoxTestModel()
         {
             TestValue = 19.95m;
+            TestDecimal = -49.95m;
+            TestPercentage = 25.97m;
+            TestNumeric = 25;
         }
 
         public string TestPhone { get; set; }
@@ -34,6 +40,36 @@ namespace CODE.Framework.Wpf.TestBench
             {
                 _testValue = value;
                 OnPropertyChanged("TestValue");
+            }
+        }
+
+        public int TestNumeric
+        {
+            get { return _testNumeric; }
+            set
+            {
+                _testNumeric = value; 
+                OnPropertyChanged("TestNumeric");
+            }
+        }
+
+        public decimal TestPercentage
+        {
+            get { return _testPercentage; }
+            set
+            {
+                _testPercentage = value; 
+                OnPropertyChanged("TestPercentage");
+            }
+        }
+
+        public decimal TestDecimal
+        {
+            get { return _testDecimal; }
+            set
+            {
+                _testDecimal = value; 
+                OnPropertyChanged("TestDecimal");
             }
         }
 

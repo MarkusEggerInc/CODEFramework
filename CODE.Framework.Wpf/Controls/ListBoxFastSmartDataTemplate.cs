@@ -145,7 +145,7 @@ namespace CODE.Framework.Wpf.Controls
         }
 
         /// <summary>
-        /// Triggers invaliation of everything
+        /// Triggers invalidation of everything
         /// </summary>
         public void InvalidateAll()
         {

@@ -6,27 +6,21 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
     {
         public string Name { get; set; }
 
-        public override IEnumerable<JToken> ExecuteFilter(IEnumerable<JToken> current, bool errorWhenNoMatch)
+        public override IEnumerable<JToken> ExecuteFilter(JToken root, IEnumerable<JToken> current, bool errorWhenNoMatch)
         {
-            foreach (var root in current)
+            foreach (var c in current)
             {
                 if (Name == null)
-                    yield return root;
+                    yield return c;
 
-                var value = root;
-                var container = root;
+                var value = c;
+                var container = c as JContainer;
 
                 while (true)
                 {
-                    if (container != null && container.HasValues)
-                        value = container.First;
-                    else
-                    {
-                        while (value != null && value != root && value == value.Parent.Last)
-                            value = value.Parent;
-                        if (value == null || value == root) break;
-                        value = value.Next;
-                    }
+                    value = GetNextScanValue(c, container, value);
+                    if (value == null)
+                        break;
 
                     var e = value as JProperty;
                     if (e != null)

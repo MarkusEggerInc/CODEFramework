@@ -539,7 +539,7 @@
         </member>
         <member name="M:CODE.Framework.Services.Server.ServiceGarden.GetServiceNamespace(System.Type,System.Type)">
             <summary>
-            Detirmines the namespace for a given type
+            determines the namespace for a given type
             </summary>
             <param name="serviceType">Type of the service.</param>
             <param name="contractType">Type of the contract.</param>

@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -32,18 +34,18 @@ using CODE.Framework.Core.Newtonsoft.Utilities;
 namespace CODE.Framework.Core.Newtonsoft.Converters
 {
     /// <summary>
-    /// Converts a binary value to and from a base 64 string value.
+    ///     Converts a binary value to and from a base 64 string value.
     /// </summary>
     public class BinaryConverter : JsonConverter
     {
         private const string BinaryTypeName = "System.Data.Linq.Binary";
         private const string BinaryToArrayName = "ToArray";
-        private ReflectionObject _reflectionObject;
+        private static ReflectionObject _reflectionObject;
 
         /// <summary>
-        /// Writes the JSON representation of the object.
+        ///     Writes the JSON representation of the object.
         /// </summary>
-        /// <param name="writer">The <see cref="JsonWriter"/> to write to.</param>
+        /// <param name="writer">The <see cref="JsonWriter" /> to write to.</param>
         /// <param name="value">The value.</param>
         /// <param name="serializer">The calling serializer.</param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -61,37 +63,33 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
 
         private byte[] GetByteArray(object value)
         {
-            if (value.GetType().AssignableToTypeName(BinaryTypeName))
+            if (value.GetType().FullName == BinaryTypeName)
             {
                 EnsureReflectionObject(value.GetType());
-                return (byte[])_reflectionObject.GetValue(value, BinaryToArrayName);
+                return (byte[]) _reflectionObject.GetValue(value, BinaryToArrayName);
             }
             if (value is SqlBinary)
-                return ((SqlBinary)value).Value;
+                return ((SqlBinary) value).Value;
 
             throw new JsonSerializationException("Unexpected value type when writing binary: {0}".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
         }
 
-        private void EnsureReflectionObject(Type t)
+        private static void EnsureReflectionObject(Type t)
         {
             if (_reflectionObject == null)
-                _reflectionObject = ReflectionObject.Create(t, t.GetConstructor(new[] { typeof(byte[]) }), BinaryToArrayName);
+                _reflectionObject = ReflectionObject.Create(t, t.GetConstructor(new[] {typeof(byte[])}), BinaryToArrayName);
         }
 
         /// <summary>
-        /// Reads the JSON representation of the object.
+        ///     Reads the JSON representation of the object.
         /// </summary>
-        /// <param name="reader">The <see cref="JsonReader"/> to read from.</param>
+        /// <param name="reader">The <see cref="JsonReader" /> to read from.</param>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
         /// <returns>The object value.</returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var t = (ReflectionUtils.IsNullableType(objectType))
-                ? Nullable.GetUnderlyingType(objectType)
-                : objectType;
-
             if (reader.TokenType == JsonToken.Null)
             {
                 if (!ReflectionUtils.IsNullable(objectType))
@@ -118,7 +116,11 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
                 throw JsonSerializationException.Create(reader, "Unexpected token parsing binary. Expected String or StartArray, got {0}.".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
             }
 
-            if (t.AssignableToTypeName(BinaryTypeName))
+            var t = ReflectionUtils.IsNullableType(objectType)
+                ? Nullable.GetUnderlyingType(objectType)
+                : objectType;
+
+            if (t.FullName == BinaryTypeName)
             {
                 EnsureReflectionObject(t);
 
@@ -136,7 +138,6 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
             var byteList = new List<byte>();
 
             while (reader.Read())
-            {
                 switch (reader.TokenType)
                 {
                     case JsonToken.Integer:
@@ -150,22 +151,25 @@ namespace CODE.Framework.Core.Newtonsoft.Converters
                     default:
                         throw JsonSerializationException.Create(reader, "Unexpected token when reading bytes: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
                 }
-            }
 
             throw JsonSerializationException.Create(reader, "Unexpected end when reading bytes.");
         }
 
         /// <summary>
-        /// Determines whether this instance can convert the specified object type.
+        ///     Determines whether this instance can convert the specified object type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <returns>
-        /// 	<c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+        ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
         /// </returns>
         public override bool CanConvert(Type objectType)
         {
-            if (objectType.AssignableToTypeName(BinaryTypeName)) return true;
-            return objectType == typeof(SqlBinary) || objectType == typeof(SqlBinary?);
+            if (objectType.FullName == BinaryTypeName)
+                return true;
+            if (objectType == typeof(SqlBinary) || objectType == typeof(SqlBinary?))
+                return true;
+
+            return false;
         }
     }
 }

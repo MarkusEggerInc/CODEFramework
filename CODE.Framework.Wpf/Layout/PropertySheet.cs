@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -124,7 +125,7 @@ namespace CODE.Framework.Wpf.Layout
                 if (availableHeight < 0d) availableHeight = 0d;
                 var availableWidth = availableSize.Width - Padding.Left - Padding.Right;
                 if (availableWidth < 0d) availableWidth = 0d;
-                availableSizeInternal = new Size(availableWidth, availableHeight);
+                availableSizeInternal = GeometryHelper.NewSize(availableWidth, availableHeight);
             }
 
             _lastControls = GetControls();
@@ -139,7 +140,7 @@ namespace CODE.Framework.Wpf.Layout
             if (foundGroupHeader)
             {
                 groupPadding = GroupHeaderRenderer.GetHeaderPaddingUsedForRendering("X");
-                availableSizeInternal = new Size(Math.Max(availableSizeInternal.Width - groupPadding.Left, 0), Math.Max(availableSizeInternal.Height, 0));
+                availableSizeInternal = GeometryHelper.NewSize(Math.Max(availableSizeInternal.Width - groupPadding.Left, 0), Math.Max(availableSizeInternal.Height, 0));
             }
 
             foreach (var control in _lastControls.Where(c => c.Label != null))
@@ -154,11 +155,11 @@ namespace CODE.Framework.Wpf.Layout
                 for (var flowControlCounter = control.AdditionalEditControls.Count - 1; flowControlCounter >= 0; flowControlCounter--)
                 {
                     var flowControl = control.AdditionalEditControls[flowControlCounter];
-                    var availableEditSize = new Size(currentMaxWidth, availableSize.Height);
+                    var availableEditSize = GeometryHelper.NewSize(currentMaxWidth, availableSize.Height);
                     flowControl.Measure(availableEditSize);
                     currentMaxWidth = Math.Max(SnapToPixel(currentMaxWidth - flowControl.DesiredSize.Width), 0);
                 }
-                control.Edit.Measure(new Size(currentMaxWidth, availableSize.Height));
+                control.Edit.Measure(GeometryHelper.NewSize(currentMaxWidth, availableSize.Height));
             }
 
             var currentGroupIsExpanded = true;
@@ -202,15 +203,15 @@ namespace CODE.Framework.Wpf.Layout
                     for (var flowControlCounter = control.AdditionalEditControls.Count - 1; flowControlCounter >= 0; flowControlCounter--)
                     {
                         var flowControl = control.AdditionalEditControls[flowControlCounter];
-                        var availableEditSize = new Size(currentMaxWidth, availableSize.Height);
+                        var availableEditSize = GeometryHelper.NewSize(currentMaxWidth, availableSize.Height);
                         flowControl.Measure(availableEditSize);
                         currentMaxWidth = Math.Max(SnapToPixel(currentMaxWidth - flowControl.DesiredSize.Width), 0);
                     }
-                    control.Edit.Measure(new Size(currentMaxWidth, availableSize.Height));
+                    control.Edit.Measure(GeometryHelper.NewSize(currentMaxWidth, availableSize.Height));
                 }
             }
 
-            return new Size(availableSize.Width, Math.Min(totalHeight, availableSize.Height));
+            return GeometryHelper.NewSize(availableSize.Width, Math.Min(totalHeight, availableSize.Height));
         }
 
         private readonly Dictionary<string, PropertySheetGroupHeaderInfo> _renderedGroups = new Dictionary<string, PropertySheetGroupHeaderInfo>();
@@ -225,7 +226,7 @@ namespace CODE.Framework.Wpf.Layout
         private void HandleScrollBarVisibility(double totalHeight, Size availableSize = new Size())
         {
             if (availableSize.Height < .1d && availableSize.Width < .1d)
-                availableSize = new Size(ActualWidth, ActualHeight);
+                availableSize = GeometryHelper.NewSize(ActualWidth, ActualHeight);
 
             if (!IsVisible)
             {
@@ -285,7 +286,7 @@ namespace CODE.Framework.Wpf.Layout
                 if (availableHeight < 0d) availableHeight = 0d;
                 var availableWidth = finalSize.Width - Padding.Left - Padding.Right;
                 if (availableWidth < 0d) availableWidth = 0d;
-                finalSizeInternal = new Size(availableWidth, availableHeight);
+                finalSizeInternal = GeometryHelper.NewSize(availableWidth, availableHeight);
             }
 
             if (_lastControls == null) return base.ArrangeOverride(finalSize);
@@ -308,9 +309,9 @@ namespace CODE.Framework.Wpf.Layout
                     if (control.Label != null)
                     {
                         if (!control.LabelSpansFullWidth)
-                            control.Label.Arrange(new Rect(Padding.Left, currentTop, Math.Max(_labelWidth, 0), Math.Max(lineHeight, 0)));
+                            control.Label.Arrange(GeometryHelper.NewRect(Padding.Left, currentTop, _labelWidth, lineHeight));
                         else
-                            control.Label.Arrange(new Rect(Padding.Left, currentTop, Math.Max(SnapToPixel(finalWidth), 0), Math.Max(lineHeight, 0)));
+                            control.Label.Arrange(GeometryHelper.NewRect(Padding.Left, currentTop, SnapToPixel(finalWidth), lineHeight));
                     }
                     if (control.Edit != null && !control.LabelSpansFullWidth)
                     {
@@ -321,12 +322,12 @@ namespace CODE.Framework.Wpf.Layout
                         {
                             var flowControl = control.AdditionalEditControls[flowControlCounter];
                             var flowWidth = Math.Min(flowControl.DesiredSize.Width, editWidth);
-                            flowControl.Arrange(new Rect(editLeft + editWidth - flowWidth, currentTop, flowWidth, lineHeight));
+                            flowControl.Arrange(GeometryHelper.NewRect(editLeft + editWidth - flowWidth, currentTop, flowWidth, lineHeight));
                             editWidth -= (flowWidth + AdditionalFlowElementSpacing);
                             if (editWidth < 0.1) editWidth = 0d;
                         }
 
-                        control.Edit.Arrange(new Rect(editLeft, currentTop, editWidth, lineHeight));
+                        control.Edit.Arrange(GeometryHelper.NewRect(editLeft, currentTop, editWidth, lineHeight));
                     }
                     currentTop += lineHeight + VerticalElementSpacing;
                 }
@@ -357,9 +358,9 @@ namespace CODE.Framework.Wpf.Layout
                         {
                             control.Label.Visibility = Visibility.Visible;
                             if (!control.LabelSpansFullWidth)
-                                control.Label.Arrange(new Rect(Padding.Left + itemIndent, currentTop, Math.Max(_labelWidth, 0), Math.Max(lineHeight, 0)));
+                                control.Label.Arrange(GeometryHelper.NewRect(Padding.Left + itemIndent, currentTop, _labelWidth, lineHeight));
                             else
-                                control.Label.Arrange(new Rect(Padding.Left + itemIndent, currentTop, Math.Max(SnapToPixel(finalWidth - itemIndent), 0), Math.Max(lineHeight, 0)));
+                                control.Label.Arrange(GeometryHelper.NewRect(Padding.Left + itemIndent, currentTop, SnapToPixel(finalWidth - itemIndent), lineHeight));
                         }
                         if (control.Edit != null)
                         {
@@ -372,12 +373,12 @@ namespace CODE.Framework.Wpf.Layout
                                 var flowControl = control.AdditionalEditControls[flowControlCounter];
                                 var flowWidth = Math.Min(flowControl.DesiredSize.Width, editWidth);
                                 flowControl.Visibility = Visibility.Visible;
-                                flowControl.Arrange(new Rect(editLeft + editWidth - flowWidth, currentTop, flowWidth, lineHeight));
+                                flowControl.Arrange(GeometryHelper.NewRect(editLeft + editWidth - flowWidth, currentTop, flowWidth, lineHeight));
                                 editWidth -= (flowWidth + AdditionalFlowElementSpacing);
                                 if (editWidth < 0.1) editWidth = 0d;
                             }
 
-                            control.Edit.Arrange(new Rect(editLeft, currentTop, editWidth, lineHeight));
+                            control.Edit.Arrange(GeometryHelper.NewRect(editLeft, currentTop, editWidth, lineHeight));
                         }
                         currentTop += lineHeight + VerticalElementSpacing;
                     }
@@ -411,6 +412,8 @@ namespace CODE.Framework.Wpf.Layout
             for (var controlCounter = 0; controlCounter < Children.Count; controlCounter++)
             {
                 var child = Children[controlCounter];
+                if (child.Visibility == Visibility.Collapsed) continue;
+
                 var controlPair = new ControlPair(0d);
 
                 if (SimpleView.GetIsStandAloneEditControl(child))
@@ -553,7 +556,7 @@ namespace CODE.Framework.Wpf.Layout
             var surfaceSize = AdornedElement.RenderSize;
 
             if (_vertical.Visibility == Visibility.Visible)
-                _vertical.Arrange(new Rect(surfaceSize.Width - SystemParameters.VerticalScrollBarWidth, 0, SystemParameters.VerticalScrollBarWidth, surfaceSize.Height));
+                _vertical.Arrange(GeometryHelper.NewRect(surfaceSize.Width - SystemParameters.VerticalScrollBarWidth, 0, SystemParameters.VerticalScrollBarWidth, surfaceSize.Height));
 
             return finalSize;
         }
@@ -722,12 +725,12 @@ namespace CODE.Framework.Wpf.Layout
             if (string.IsNullOrEmpty(internalText)) internalText = "X";
             var areaHeight = GetHeaderPaddingUsedForRendering(internalText).Top;
             if (areaHeight < 1 || actualWidth < 1) return;
-            if (Background != null) dc.DrawRectangle(Background, null, new Rect(0, 2, actualWidth, Math.Max(areaHeight - 5, 0)));
+            if (Background != null) dc.DrawRectangle(Background, null, GeometryHelper.NewRect(0, 2, actualWidth, areaHeight - 5));
             var ft = new FormattedText(headerText, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(FontFamily, FontStyle, FontWeight, FontStretches.Normal), FontSize, Foreground) {MaxLineCount = 1, MaxTextWidth = Math.Max(actualWidth - ItemIndentation - 5, 0), Trimming = TextTrimming.CharacterEllipsis};
 
             var heightWidth = ItemIndentation - 10;
             if (heightWidth > areaHeight - 2) heightWidth = areaHeight - 2;
-            var iconRect = new Rect(2, (int)((areaHeight - heightWidth) / 2), heightWidth, heightWidth);
+            var iconRect = GeometryHelper.NewRect(2, (int)((areaHeight - heightWidth) / 2), heightWidth, heightWidth);
 
             var interactionBrush = isExpanded ? GetExpandedIconBrush() : GetCollapsedIconBrush();
             dc.DrawRectangle(interactionBrush, null, iconRect);

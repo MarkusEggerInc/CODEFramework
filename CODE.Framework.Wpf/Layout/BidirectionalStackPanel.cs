@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -55,6 +58,15 @@ namespace CODE.Framework.Wpf.Layout
             panel._scrollVertical.Style = style;
         }
 
+        /// <summary>Vertical additional spacing before new groups</summary>
+        public double GroupSpacing
+        {
+            get { return (double)GetValue(GroupSpacingProperty); }
+            set { SetValue(GroupSpacingProperty, value); }
+        }
+        /// <summary>Vertical additional spacing before new groups</summary>
+        public static readonly DependencyProperty GroupSpacingProperty = DependencyProperty.Register("GroupSpacing", typeof(double), typeof(BidirectionalStackPanel), new UIPropertyMetadata(15d, (s, e) => InvalidateAllVisuals(s)));
+
         private readonly ScrollBar _scrollHorizontal = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Horizontal, SmallChange = 10};
         private readonly ScrollBar _scrollVertical = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Vertical, SmallChange = 10};
         private AdornerLayer _adorner;
@@ -66,8 +78,25 @@ namespace CODE.Framework.Wpf.Layout
             VerticalAlignment = VerticalAlignment.Stretch;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             ClipToBounds = true;
+            IsHitTestVisible = true;
+            Background = Brushes.Transparent;
 
             Loaded += (s, e) => CreateScrollbars();
+        }
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.PreviewMouseWheel" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseWheelEventArgs" /> that contains the event data.</param>
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            if (_scrollVertical.Visibility == Visibility.Visible)
+                if (e.Delta < 0)
+                    _scrollVertical.Value += _scrollVertical.SmallChange;
+                else
+                    _scrollVertical.Value -= _scrollVertical.SmallChange;
+
+            base.OnPreviewMouseWheel(e);
         }
 
         private void CreateScrollbars()
@@ -221,15 +250,13 @@ namespace CODE.Framework.Wpf.Layout
             else if (Orientation == Orientation.Horizontal && _scrollHorizontal.Visibility == Visibility.Visible)
                 constraint.Height = Math.Max(constraint.Height - _scrollHorizontal.ActualHeight, 0d);
 
-            foreach (var child in Children)
+            foreach (var element2 in Children.OfType<FrameworkElement>().Where(e => e.Visibility != Visibility.Collapsed))
             {
-                var element2 = child as FrameworkElement;
-                if (element2 != null)
-                    if (Orientation == Orientation.Vertical)
-                        if (element2.VerticalAlignment != VerticalAlignment.Bottom) topElements.Add(element2);
-                        else bottomElements.Add(element2);
-                    else if (element2.HorizontalAlignment != HorizontalAlignment.Right) topElements.Add(element2);
+                if (Orientation == Orientation.Vertical)
+                    if (element2.VerticalAlignment != VerticalAlignment.Bottom) topElements.Add(element2);
                     else bottomElements.Add(element2);
+                else if (element2.HorizontalAlignment != HorizontalAlignment.Right) topElements.Add(element2);
+                else bottomElements.Add(element2);
             }
 
             // starting with the bottom elements
@@ -242,7 +269,7 @@ namespace CODE.Framework.Wpf.Layout
                 var extraBottom = extraMargin.Bottom;
                 if (element2 is TextBlock || element2 is Label)
                     if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
-                var desiredSize = new Size(element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right, element2.DesiredSize.Height + extraMargin.Top + extraBottom);
+                var desiredSize = GeometryHelper.NewSize(element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right, element2.DesiredSize.Height + extraMargin.Top + extraBottom);
                 if (Orientation == Orientation.Vertical)
                 {
                     bottomUsed += desiredSize.Height;
@@ -266,12 +293,12 @@ namespace CODE.Framework.Wpf.Layout
                 {
                     if (Orientation == Orientation.Vertical && !double.IsInfinity(constraint.Height) && constraint.Height > 0)
                     {
-                        constraint2 = new Size(constraint.Width, Math.Max(element2.MinHeight, constraint.Height - topUsed - bottomUsed - LastTopItemFillMargin));
+                        constraint2 = GeometryHelper.NewSize(constraint.Width, Math.Max(element2.MinHeight, constraint.Height - topUsed - bottomUsed - LastTopItemFillMargin));
                         extraBottom = LastTopItemFillMargin;
                     }
                     else if (Orientation == Orientation.Horizontal && !double.IsInfinity(constraint.Width) && constraint.Width > 0)
                     {
-                        constraint2 = new Size(Math.Max(element2.MinWidth, constraint.Width - leftUsed - rightUsed - LastTopItemFillMargin), constraint.Height);
+                        constraint2 = GeometryHelper.NewSize(Math.Max(element2.MinWidth, constraint.Width - leftUsed - rightUsed - LastTopItemFillMargin), constraint.Height);
                         extraBottom = LastTopItemFillMargin;
                     }
                 }
@@ -285,16 +312,18 @@ namespace CODE.Framework.Wpf.Layout
                 element2.Measure(constraint2);
                 if (element2 is TextBlock || element2 is Label)
                     if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
-                var desiredSize = new Size(Math.Max(0, element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right), Math.Max(0, element2.DesiredSize.Height + extraMargin.Top + extraBottom));
+                var desiredSize = GeometryHelper.NewSize(Math.Max(0, element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right), Math.Max(0, element2.DesiredSize.Height + extraMargin.Top + extraBottom));
                 if (Orientation == Orientation.Vertical)
                 {
                     topUsed += desiredSize.Height;
                     leftUsed = Math.Max(leftUsed, desiredSize.Width);
+                    if (SimpleView.GetGroupBreak(element2)) leftUsed += GroupSpacing;
                 }
                 else
                 {
                     leftUsed += desiredSize.Width;
                     topUsed = Math.Max(topUsed, desiredSize.Height);
+                    if (SimpleView.GetGroupBreak(element2)) topUsed += GroupSpacing;
                 }
             }
 
@@ -322,7 +351,7 @@ namespace CODE.Framework.Wpf.Layout
                 _calculatedContentWidth = double.IsInfinity(constraint.Width) ? widthUsed : Math.Max(constraint.Width, widthUsed);
             }
 
-            var finalSize = new Size(widthUsed, heightUsed);
+            var finalSize = GeometryHelper.NewSize(widthUsed, heightUsed);
 
             // Checking if this forces us to change scroll bar visibility and thus invalidate everything
             if (Orientation == Orientation.Vertical)
@@ -409,27 +438,36 @@ namespace CODE.Framework.Wpf.Layout
                 usableHeight -= _scrollHorizontal.ActualHeight + 2;
             }
 
-            var contentSize = new Size(Math.Max(usableWidth, 0d), Math.Max(usableHeight, 0d));
+            var contentSize = GeometryHelper.NewSize(usableWidth, usableHeight);
 
             var topOrigin = top;
             var leftOrigin = left;
 
-            foreach (var child in Children)
+            foreach (var element2 in Children.OfType<FrameworkElement>().Where(e => e.Visibility != Visibility.Collapsed))
             {
-                var element2 = child as FrameworkElement;
-                if (element2 != null)
-                    if (Orientation == Orientation.Vertical)
-                        if (element2.VerticalAlignment != VerticalAlignment.Bottom) topElements.Add(element2);
-                        else bottomElements.Add(element2);
-                    else if (element2.HorizontalAlignment != HorizontalAlignment.Right) topElements.Add(element2);
+                if (Orientation == Orientation.Vertical)
+                    if (element2.VerticalAlignment != VerticalAlignment.Bottom) topElements.Add(element2);
                     else bottomElements.Add(element2);
+                else if (element2.HorizontalAlignment != HorizontalAlignment.Right) topElements.Add(element2);
+                else bottomElements.Add(element2);
             }
 
             // Calculating the height of the bottom items
             foreach (var element in bottomElements)
             {
-                if (Orientation == Orientation.Vertical) bottom += element.DesiredSize.Height;
-                else right = element.DesiredSize.Width;
+                if (Orientation == Orientation.Vertical)
+                {
+                    var extraBottom = extraMargin.Bottom;
+                    if (element is TextBlock || element is Label)
+                        if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
+                    bottom += element.DesiredSize.Height + extraMargin.Top + extraBottom;
+                    if (SimpleView.GetGroupBreak(element)) bottom += GroupSpacing;
+                }
+                else
+                {
+                    right += element.DesiredSize.Width;
+                    if (SimpleView.GetGroupBreak(element)) right += GroupSpacing;
+                }
             }
 
             var topCounter = 0;
@@ -439,18 +477,19 @@ namespace CODE.Framework.Wpf.Layout
                 var extraBottom = extraMargin.Bottom;
                 if (element2 is TextBlock || element2 is Label)
                     if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
-                var desiredSize = new Size(element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right, element2.DesiredSize.Height + extraMargin.Top + extraBottom);
+                var desiredSize = GeometryHelper.NewSize(element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right, element2.DesiredSize.Height + extraMargin.Top + extraBottom);
                 if (Orientation == Orientation.Vertical)
                     // Top Alignment
                     if (topCounter < topElements.Count || !LastTopItemFillsSpace)
                     {
-                        element2.Arrange(new Rect(extraMargin.Left, top + extraMargin.Top, contentSize.Width - extraMargin.Right, element2.DesiredSize.Height));
+                        if (SimpleView.GetGroupBreak(element2)) top += GroupSpacing;
+                        element2.Arrange(GeometryHelper.NewRect(extraMargin.Left, top + extraMargin.Top, contentSize.Width - extraMargin.Left - extraMargin.Right, element2.DesiredSize.Height));
                         top += desiredSize.Height;
                     }
                     else
                     {
                         var elementAutoSizeHeight = Math.Max(0, usableHeight + topOrigin - top - bottom - extraMargin.Top - extraMargin.Bottom - LastTopItemFillMargin);
-                        element2.Arrange(new Rect(extraMargin.Left, top + extraMargin.Top, contentSize.Width - extraMargin.Right - extraMargin.Left, elementAutoSizeHeight));
+                        element2.Arrange(GeometryHelper.NewRect(extraMargin.Left, top + extraMargin.Top, contentSize.Width - extraMargin.Left - extraMargin.Right - extraMargin.Left, elementAutoSizeHeight));
                         top += elementAutoSizeHeight;
                     }
                 else
@@ -458,13 +497,14 @@ namespace CODE.Framework.Wpf.Layout
                     // Left Alignment
                     if (topCounter < topElements.Count || !LastTopItemFillsSpace)
                     {
-                        element2.Arrange(new Rect(left + extraMargin.Left, extraMargin.Top, element2.DesiredSize.Width, contentSize.Height - extraBottom));
+                        if (SimpleView.GetGroupBreak(element2)) left += GroupSpacing;
+                        element2.Arrange(GeometryHelper.NewRect(left + extraMargin.Left, extraMargin.Top, element2.DesiredSize.Width, contentSize.Height - extraBottom));
                         left += desiredSize.Width;
                     }
                     else
                     {
                         var elementAutoSizeWidth = Math.Max(0, usableWidth + leftOrigin - left - right - extraMargin.Left - extraMargin.Right - LastTopItemFillMargin);
-                        element2.Arrange(new Rect(left + extraMargin.Left, extraMargin.Top, elementAutoSizeWidth, contentSize.Height - extraBottom - extraMargin.Top));
+                        element2.Arrange(GeometryHelper.NewRect(left + extraMargin.Left, extraMargin.Top, elementAutoSizeWidth, contentSize.Height - extraBottom - extraMargin.Top));
                         left += elementAutoSizeWidth;
                     }
                 }
@@ -473,21 +513,26 @@ namespace CODE.Framework.Wpf.Layout
             // Second pass to arrange the elements on the "other side"
             var availableHeight = contentSize.Height;
             var availableWidth = contentSize.Width;
-            var top2 = topOrigin + availableHeight - bottom;
+            var top2 = topOrigin + availableHeight - bottom - extraMargin.Top;
             if (top2 < top) top2 = top; // Can't overlap the items that are already there
             var left2 = leftOrigin + availableWidth - right;
             if (left2 < left) left2 = left; // Can't overlap the items that are already there
             foreach (var element2 in bottomElements)
             {
-                var desiredSize = new Size(element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right, element2.DesiredSize.Height + extraMargin.Top + extraMargin.Left);
+                var extraBottom = extraMargin.Bottom;
+                if (element2 is TextBlock || element2 is Label)
+                    if (IgnoreChildItemBottomMarginForTextElements) extraBottom = 0;
+                var desiredSize = GeometryHelper.NewSize(element2.DesiredSize.Width + extraMargin.Left + extraMargin.Right, element2.DesiredSize.Height + extraMargin.Top + extraBottom);
                 if (Orientation == Orientation.Vertical)
                 {
-                    element2.Arrange(new Rect(extraMargin.Left, top2 + extraMargin.Top, contentSize.Width - extraMargin.Right, element2.DesiredSize.Height));
+                    if (SimpleView.GetGroupBreak(element2)) top2 += GroupSpacing;
+                    element2.Arrange(GeometryHelper.NewRect(extraMargin.Left, top2 + extraMargin.Top, contentSize.Width - extraMargin.Left - extraMargin.Right, element2.DesiredSize.Height));
                     top2 += desiredSize.Height;
                 }
                 else
                 {
-                    element2.Arrange(new Rect(left2 + extraMargin.Left, extraMargin.Top, element2.DesiredSize.Width, contentSize.Height - extraMargin.Bottom));
+                    if (SimpleView.GetGroupBreak(element2)) left2 += GroupSpacing;
+                    element2.Arrange(GeometryHelper.NewRect(left2 + extraMargin.Left, extraMargin.Top, element2.DesiredSize.Width, contentSize.Height - extraMargin.Top - extraBottom));
                     left2 += desiredSize.Width;
                 }
             }
@@ -560,7 +605,7 @@ namespace CODE.Framework.Wpf.Layout
                 if (scrollTop < 0d) scrollTop = 0d;
                 var scrollHeight = SystemParameters.HorizontalScrollBarHeight;
                 if (scrollHeight > finalSize.Height) scrollHeight = finalSize.Height;
-                _horizontal.Arrange(new Rect(0, scrollTop, scrollWidth, scrollHeight));
+                _horizontal.Arrange(GeometryHelper.NewRect(0, scrollTop, scrollWidth, scrollHeight, true));
             }
             if (_vertical.Visibility == Visibility.Visible)
             {
@@ -570,7 +615,7 @@ namespace CODE.Framework.Wpf.Layout
                 var scrollHeight = _horizontal.Visibility == Visibility.Visible
                     ? surfaceSize.Height - SystemParameters.HorizontalScrollBarHeight
                     : surfaceSize.Height;
-                _vertical.Arrange(new Rect(scrollLeft, 0, scrollWidth, scrollHeight));
+                _vertical.Arrange(GeometryHelper.NewRect(scrollLeft, 0, scrollWidth, scrollHeight, true));
             }
 
             return finalSize;

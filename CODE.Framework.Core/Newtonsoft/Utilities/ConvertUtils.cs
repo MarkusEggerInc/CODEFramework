@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -29,6 +31,7 @@ using System.ComponentModel;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using CODE.Framework.Core.Newtonsoft.Serialization;
 
 namespace CODE.Framework.Core.Newtonsoft.Utilities
@@ -98,70 +101,74 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         private static readonly Dictionary<Type, PrimitiveTypeCode> TypeCodeMap =
             new Dictionary<Type, PrimitiveTypeCode>
             {
-                { typeof(char), PrimitiveTypeCode.Char },
-                { typeof(char?), PrimitiveTypeCode.CharNullable },
-                { typeof(bool), PrimitiveTypeCode.Boolean },
-                { typeof(bool?), PrimitiveTypeCode.BooleanNullable },
-                { typeof(sbyte), PrimitiveTypeCode.SByte },
-                { typeof(sbyte?), PrimitiveTypeCode.SByteNullable },
-                { typeof(short), PrimitiveTypeCode.Int16 },
-                { typeof(short?), PrimitiveTypeCode.Int16Nullable },
-                { typeof(ushort), PrimitiveTypeCode.UInt16 },
-                { typeof(ushort?), PrimitiveTypeCode.UInt16Nullable },
-                { typeof(int), PrimitiveTypeCode.Int32 },
-                { typeof(int?), PrimitiveTypeCode.Int32Nullable },
-                { typeof(byte), PrimitiveTypeCode.Byte },
-                { typeof(byte?), PrimitiveTypeCode.ByteNullable },
-                { typeof(uint), PrimitiveTypeCode.UInt32 },
-                { typeof(uint?), PrimitiveTypeCode.UInt32Nullable },
-                { typeof(long), PrimitiveTypeCode.Int64 },
-                { typeof(long?), PrimitiveTypeCode.Int64Nullable },
-                { typeof(ulong), PrimitiveTypeCode.UInt64 },
-                { typeof(ulong?), PrimitiveTypeCode.UInt64Nullable },
-                { typeof(float), PrimitiveTypeCode.Single },
-                { typeof(float?), PrimitiveTypeCode.SingleNullable },
-                { typeof(double), PrimitiveTypeCode.Double },
-                { typeof(double?), PrimitiveTypeCode.DoubleNullable },
-                { typeof(DateTime), PrimitiveTypeCode.DateTime },
-                { typeof(DateTime?), PrimitiveTypeCode.DateTimeNullable },
-                { typeof(DateTimeOffset), PrimitiveTypeCode.DateTimeOffset },
-                { typeof(DateTimeOffset?), PrimitiveTypeCode.DateTimeOffsetNullable },
-                { typeof(decimal), PrimitiveTypeCode.Decimal },
-                { typeof(decimal?), PrimitiveTypeCode.DecimalNullable },
-                { typeof(Guid), PrimitiveTypeCode.Guid },
-                { typeof(Guid?), PrimitiveTypeCode.GuidNullable },
-                { typeof(TimeSpan), PrimitiveTypeCode.TimeSpan },
-                { typeof(TimeSpan?), PrimitiveTypeCode.TimeSpanNullable },
-                { typeof(BigInteger), PrimitiveTypeCode.BigInteger },
-                { typeof(BigInteger?), PrimitiveTypeCode.BigIntegerNullable },
-                { typeof(Uri), PrimitiveTypeCode.Uri },
-                { typeof(string), PrimitiveTypeCode.String },
-                { typeof(byte[]), PrimitiveTypeCode.Bytes },
-                { typeof(DBNull), PrimitiveTypeCode.DBNull }
+                {typeof(char), PrimitiveTypeCode.Char},
+                {typeof(char?), PrimitiveTypeCode.CharNullable},
+                {typeof(bool), PrimitiveTypeCode.Boolean},
+                {typeof(bool?), PrimitiveTypeCode.BooleanNullable},
+                {typeof(sbyte), PrimitiveTypeCode.SByte},
+                {typeof(sbyte?), PrimitiveTypeCode.SByteNullable},
+                {typeof(short), PrimitiveTypeCode.Int16},
+                {typeof(short?), PrimitiveTypeCode.Int16Nullable},
+                {typeof(ushort), PrimitiveTypeCode.UInt16},
+                {typeof(ushort?), PrimitiveTypeCode.UInt16Nullable},
+                {typeof(int), PrimitiveTypeCode.Int32},
+                {typeof(int?), PrimitiveTypeCode.Int32Nullable},
+                {typeof(byte), PrimitiveTypeCode.Byte},
+                {typeof(byte?), PrimitiveTypeCode.ByteNullable},
+                {typeof(uint), PrimitiveTypeCode.UInt32},
+                {typeof(uint?), PrimitiveTypeCode.UInt32Nullable},
+                {typeof(long), PrimitiveTypeCode.Int64},
+                {typeof(long?), PrimitiveTypeCode.Int64Nullable},
+                {typeof(ulong), PrimitiveTypeCode.UInt64},
+                {typeof(ulong?), PrimitiveTypeCode.UInt64Nullable},
+                {typeof(float), PrimitiveTypeCode.Single},
+                {typeof(float?), PrimitiveTypeCode.SingleNullable},
+                {typeof(double), PrimitiveTypeCode.Double},
+                {typeof(double?), PrimitiveTypeCode.DoubleNullable},
+                {typeof(DateTime), PrimitiveTypeCode.DateTime},
+                {typeof(DateTime?), PrimitiveTypeCode.DateTimeNullable},
+                {typeof(DateTimeOffset), PrimitiveTypeCode.DateTimeOffset},
+                {typeof(DateTimeOffset?), PrimitiveTypeCode.DateTimeOffsetNullable},
+                {typeof(decimal), PrimitiveTypeCode.Decimal},
+                {typeof(decimal?), PrimitiveTypeCode.DecimalNullable},
+                {typeof(Guid), PrimitiveTypeCode.Guid},
+                {typeof(Guid?), PrimitiveTypeCode.GuidNullable},
+                {typeof(TimeSpan), PrimitiveTypeCode.TimeSpan},
+                {typeof(TimeSpan?), PrimitiveTypeCode.TimeSpanNullable},
+                {typeof(BigInteger), PrimitiveTypeCode.BigInteger},
+                {typeof(BigInteger?), PrimitiveTypeCode.BigIntegerNullable},
+                {typeof(Uri), PrimitiveTypeCode.Uri},
+                {typeof(string), PrimitiveTypeCode.String},
+                {typeof(byte[]), PrimitiveTypeCode.Bytes},
+                {typeof(DBNull), PrimitiveTypeCode.DBNull}
             };
 
         private static readonly TypeInformation[] PrimitiveTypeCodes =
         {
-            new TypeInformation { Type = typeof(object), TypeCode = PrimitiveTypeCode.Empty },
-            new TypeInformation { Type = typeof(object), TypeCode = PrimitiveTypeCode.Object },
-            new TypeInformation { Type = typeof(object), TypeCode = PrimitiveTypeCode.DBNull },
-            new TypeInformation { Type = typeof(bool), TypeCode = PrimitiveTypeCode.Boolean },
-            new TypeInformation { Type = typeof(char), TypeCode = PrimitiveTypeCode.Char },
-            new TypeInformation { Type = typeof(sbyte), TypeCode = PrimitiveTypeCode.SByte },
-            new TypeInformation { Type = typeof(byte), TypeCode = PrimitiveTypeCode.Byte },
-            new TypeInformation { Type = typeof(short), TypeCode = PrimitiveTypeCode.Int16 },
-            new TypeInformation { Type = typeof(ushort), TypeCode = PrimitiveTypeCode.UInt16 },
-            new TypeInformation { Type = typeof(int), TypeCode = PrimitiveTypeCode.Int32 },
-            new TypeInformation { Type = typeof(uint), TypeCode = PrimitiveTypeCode.UInt32 },
-            new TypeInformation { Type = typeof(long), TypeCode = PrimitiveTypeCode.Int64 },
-            new TypeInformation { Type = typeof(ulong), TypeCode = PrimitiveTypeCode.UInt64 },
-            new TypeInformation { Type = typeof(float), TypeCode = PrimitiveTypeCode.Single },
-            new TypeInformation { Type = typeof(double), TypeCode = PrimitiveTypeCode.Double },
-            new TypeInformation { Type = typeof(decimal), TypeCode = PrimitiveTypeCode.Decimal },
-            new TypeInformation { Type = typeof(DateTime), TypeCode = PrimitiveTypeCode.DateTime },
-            new TypeInformation { Type = typeof(object), TypeCode = PrimitiveTypeCode.Empty }, // no 17 in TypeCode for some reason
-            new TypeInformation { Type = typeof(string), TypeCode = PrimitiveTypeCode.String }
+            // need all of these. lookup against the index with TypeCode value
+            new TypeInformation {Type = typeof(object), TypeCode = PrimitiveTypeCode.Empty},
+            new TypeInformation {Type = typeof(object), TypeCode = PrimitiveTypeCode.Object},
+            new TypeInformation {Type = typeof(object), TypeCode = PrimitiveTypeCode.DBNull},
+            new TypeInformation {Type = typeof(bool), TypeCode = PrimitiveTypeCode.Boolean},
+            new TypeInformation {Type = typeof(char), TypeCode = PrimitiveTypeCode.Char},
+            new TypeInformation {Type = typeof(sbyte), TypeCode = PrimitiveTypeCode.SByte},
+            new TypeInformation {Type = typeof(byte), TypeCode = PrimitiveTypeCode.Byte},
+            new TypeInformation {Type = typeof(short), TypeCode = PrimitiveTypeCode.Int16},
+            new TypeInformation {Type = typeof(ushort), TypeCode = PrimitiveTypeCode.UInt16},
+            new TypeInformation {Type = typeof(int), TypeCode = PrimitiveTypeCode.Int32},
+            new TypeInformation {Type = typeof(uint), TypeCode = PrimitiveTypeCode.UInt32},
+            new TypeInformation {Type = typeof(long), TypeCode = PrimitiveTypeCode.Int64},
+            new TypeInformation {Type = typeof(ulong), TypeCode = PrimitiveTypeCode.UInt64},
+            new TypeInformation {Type = typeof(float), TypeCode = PrimitiveTypeCode.Single},
+            new TypeInformation {Type = typeof(double), TypeCode = PrimitiveTypeCode.Double},
+            new TypeInformation {Type = typeof(decimal), TypeCode = PrimitiveTypeCode.Decimal},
+            new TypeInformation {Type = typeof(DateTime), TypeCode = PrimitiveTypeCode.DateTime},
+            new TypeInformation {Type = typeof(object), TypeCode = PrimitiveTypeCode.Empty}, // no 17 in TypeCode for some reason
+            new TypeInformation {Type = typeof(string), TypeCode = PrimitiveTypeCode.String}
         };
+
+        private static readonly ThreadSafeStore<TypeConvertKey, Func<object, object>> CastConverters =
+            new ThreadSafeStore<TypeConvertKey, Func<object, object>>(CreateCastConverter);
 
         public static PrimitiveTypeCode GetTypeCode(Type t)
         {
@@ -187,10 +194,10 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             // performance?
             if (ReflectionUtils.IsNullableType(t))
             {
-                Type nonNullable = Nullable.GetUnderlyingType(t);
+                var nonNullable = Nullable.GetUnderlyingType(t);
                 if (nonNullable.IsEnum())
                 {
-                    Type nullableUnderlyingType = typeof(Nullable<>).MakeGenericType(Enum.GetUnderlyingType(nonNullable));
+                    var nullableUnderlyingType = typeof(Nullable<>).MakeGenericType(Enum.GetUnderlyingType(nonNullable));
                     isEnum = true;
                     return GetTypeCode(nullableUnderlyingType);
                 }
@@ -200,58 +207,719 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             return PrimitiveTypeCode.Object;
         }
 
-#if !(NETFX_CORE || PORTABLE)
         public static TypeInformation GetTypeInformation(IConvertible convertable)
         {
-            TypeInformation typeInformation = PrimitiveTypeCodes[(int)convertable.GetTypeCode()];
+            var typeInformation = PrimitiveTypeCodes[(int) convertable.GetTypeCode()];
             return typeInformation;
         }
-#endif
 
         public static bool IsConvertible(Type t)
         {
-#if !(NETFX_CORE || PORTABLE)
             return typeof(IConvertible).IsAssignableFrom(t);
-#else
-      return (
-        t == typeof(bool) || t == typeof(byte) || t == typeof(char) || t == typeof(DateTime) || t == typeof(decimal) || t == typeof(double) || t == typeof(short) || t == typeof(int) ||
-        t == typeof(long) || t == typeof(sbyte) || t == typeof(float) || t == typeof(string) || t == typeof(ushort) || t == typeof(uint) || t == typeof(ulong) || t.IsEnum());
-#endif
         }
 
         public static TimeSpan ParseTimeSpan(string input)
         {
-#if !(NET35 || NET20)
             return TimeSpan.Parse(input, CultureInfo.InvariantCulture);
-#else
-            return TimeSpan.Parse(input);
-#endif
+        }
+
+        private static Func<object, object> CreateCastConverter(TypeConvertKey t)
+        {
+            var castMethodInfo = t.TargetType.GetMethod("op_Implicit", new[] {t.InitialType});
+            if (castMethodInfo == null)
+                castMethodInfo = t.TargetType.GetMethod("op_Explicit", new[] {t.InitialType});
+
+            if (castMethodInfo == null)
+                return null;
+
+            var call = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(castMethodInfo);
+
+            return o => call(null, o);
+        }
+
+        internal static BigInteger ToBigInteger(object value)
+        {
+            if (value is BigInteger)
+                return (BigInteger) value;
+
+            var s = value as string;
+            if (s != null)
+                return BigInteger.Parse(s, CultureInfo.InvariantCulture);
+
+            if (value is float)
+                return new BigInteger((float) value);
+            if (value is double)
+                return new BigInteger((double) value);
+            if (value is decimal)
+                return new BigInteger((decimal) value);
+            if (value is int)
+                return new BigInteger((int) value);
+            if (value is long)
+                return new BigInteger((long) value);
+            if (value is uint)
+                return new BigInteger((uint) value);
+            if (value is ulong)
+                return new BigInteger((ulong) value);
+
+            var bytes = value as byte[];
+            if (bytes != null)
+                return new BigInteger(bytes);
+
+            throw new InvalidCastException("Cannot convert {0} to BigInteger.".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
+        }
+
+        public static object FromBigInteger(BigInteger i, Type targetType)
+        {
+            if (targetType == typeof(decimal))
+                return (decimal) i;
+            if (targetType == typeof(double))
+                return (double) i;
+            if (targetType == typeof(float))
+                return (float) i;
+            if (targetType == typeof(ulong))
+                return (ulong) i;
+            if (targetType == typeof(bool))
+                return i != 0;
+
+            try
+            {
+                return System.Convert.ChangeType((long) i, targetType, CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Can not convert from BigInteger to {0}.".FormatWith(CultureInfo.InvariantCulture, targetType), ex);
+            }
+        }
+
+        #region ConvertOrCast
+
+        /// <summary>
+        ///     Converts the value to the specified type. If the value is unable to be converted, the
+        ///     value is checked whether it assignable to the specified type.
+        /// </summary>
+        /// <param name="initialValue">The value to convert.</param>
+        /// <param name="culture">The culture to use when converting.</param>
+        /// <param name="targetType">The type to convert or cast the value to.</param>
+        /// <returns>
+        ///     The converted type. If conversion was unsuccessful, the initial value
+        ///     is returned if assignable to the target type.
+        /// </returns>
+        public static object ConvertOrCast(object initialValue, CultureInfo culture, Type targetType)
+        {
+            object convertedValue;
+
+            if (targetType == typeof(object))
+                return initialValue;
+
+            if (initialValue == null && ReflectionUtils.IsNullable(targetType))
+                return null;
+
+            if (TryConvert(initialValue, culture, targetType, out convertedValue))
+                return convertedValue;
+
+            return EnsureTypeAssignable(initialValue, ReflectionUtils.GetObjectType(initialValue), targetType);
+        }
+
+        #endregion
+
+        private static object EnsureTypeAssignable(object value, Type initialType, Type targetType)
+        {
+            var valueType = value?.GetType();
+
+            if (value != null)
+            {
+                if (targetType.IsAssignableFrom(valueType))
+                    return value;
+
+                var castConverter = CastConverters.Get(new TypeConvertKey(valueType, targetType));
+                if (castConverter != null)
+                    return castConverter(value);
+            }
+            else
+            {
+                if (ReflectionUtils.IsNullable(targetType))
+                    return null;
+            }
+
+            throw new ArgumentException("Could not cast or convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, initialType?.ToString() ?? "{null}", targetType));
+        }
+
+        public static object ToValue(INullable nullableValue)
+        {
+            if (nullableValue == null)
+                return null;
+            if (nullableValue is SqlInt32)
+                return ToValue((SqlInt32) nullableValue);
+            if (nullableValue is SqlInt64)
+                return ToValue((SqlInt64) nullableValue);
+            if (nullableValue is SqlBoolean)
+                return ToValue((SqlBoolean) nullableValue);
+            if (nullableValue is SqlString)
+                return ToValue((SqlString) nullableValue);
+            if (nullableValue is SqlDateTime)
+                return ToValue((SqlDateTime) nullableValue);
+
+            throw new ArgumentException("Unsupported INullable type: {0}".FormatWith(CultureInfo.InvariantCulture, nullableValue.GetType()));
+        }
+
+        public static bool VersionTryParse(string input, out Version result)
+        {
+            return Version.TryParse(input, out result);
+        }
+
+        public static bool IsInteger(object value)
+        {
+            switch (GetTypeCode(value.GetType()))
+            {
+                case PrimitiveTypeCode.SByte:
+                case PrimitiveTypeCode.Byte:
+                case PrimitiveTypeCode.Int16:
+                case PrimitiveTypeCode.UInt16:
+                case PrimitiveTypeCode.Int32:
+                case PrimitiveTypeCode.UInt32:
+                case PrimitiveTypeCode.Int64:
+                case PrimitiveTypeCode.UInt64:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static ParseResult Int32TryParse(char[] chars, int start, int length, out int value)
+        {
+            value = 0;
+
+            if (length == 0)
+                return ParseResult.Invalid;
+
+            var isNegative = chars[start] == '-';
+
+            if (isNegative)
+            {
+                // text just a negative sign
+                if (length == 1)
+                    return ParseResult.Invalid;
+
+                start++;
+                length--;
+            }
+
+            var end = start + length;
+
+            // Int32.MaxValue and MinValue are 10 chars
+            // Or is 10 chars and start is greater than two
+            // Need to improve this!
+            if (length > 10 || length == 10 && chars[start] - '0' > 2)
+            {
+                // invalid result takes precedence over overflow
+                for (var i = start; i < end; i++)
+                {
+                    var c = chars[i] - '0';
+
+                    if (c < 0 || c > 9)
+                        return ParseResult.Invalid;
+                }
+
+                return ParseResult.Overflow;
+            }
+
+            for (var i = start; i < end; i++)
+            {
+                var c = chars[i] - '0';
+
+                if (c < 0 || c > 9)
+                    return ParseResult.Invalid;
+
+                var newValue = 10 * value - c;
+
+                // overflow has caused the number to loop around
+                if (newValue > value)
+                {
+                    i++;
+
+                    // double check the rest of the string that there wasn't anything invalid
+                    // invalid result takes precedence over overflow result
+                    for (; i < end; i++)
+                    {
+                        c = chars[i] - '0';
+
+                        if (c < 0 || c > 9)
+                            return ParseResult.Invalid;
+                    }
+
+                    return ParseResult.Overflow;
+                }
+
+                value = newValue;
+            }
+
+            // go from negative to positive to avoids overflow
+            // negative can be slightly bigger than positive
+            if (!isNegative)
+            {
+                // negative integer can be one bigger than positive
+                if (value == int.MinValue)
+                    return ParseResult.Overflow;
+
+                value = -value;
+            }
+
+            return ParseResult.Success;
+        }
+
+        public static ParseResult Int64TryParse(char[] chars, int start, int length, out long value)
+        {
+            value = 0;
+
+            if (length == 0)
+                return ParseResult.Invalid;
+
+            var isNegative = chars[start] == '-';
+
+            if (isNegative)
+            {
+                // text just a negative sign
+                if (length == 1)
+                    return ParseResult.Invalid;
+
+                start++;
+                length--;
+            }
+
+            var end = start + length;
+
+            // Int64.MaxValue and MinValue are 19 chars
+            if (length > 19)
+            {
+                // invalid result takes precedence over overflow
+                for (var i = start; i < end; i++)
+                {
+                    var c = chars[i] - '0';
+
+                    if (c < 0 || c > 9)
+                        return ParseResult.Invalid;
+                }
+
+                return ParseResult.Overflow;
+            }
+
+            for (var i = start; i < end; i++)
+            {
+                var c = chars[i] - '0';
+
+                if (c < 0 || c > 9)
+                    return ParseResult.Invalid;
+
+                var newValue = 10 * value - c;
+
+                // overflow has caused the number to loop around
+                if (newValue > value)
+                {
+                    i++;
+
+                    // double check the rest of the string that there wasn't anything invalid
+                    // invalid result takes precedence over overflow result
+                    for (; i < end; i++)
+                    {
+                        c = chars[i] - '0';
+
+                        if (c < 0 || c > 9)
+                            return ParseResult.Invalid;
+                    }
+
+                    return ParseResult.Overflow;
+                }
+
+                value = newValue;
+            }
+
+            // go from negative to positive to avoids overflow
+            // negative can be slightly bigger than positive
+            if (!isNegative)
+            {
+                // negative integer can be one bigger than positive
+                if (value == long.MinValue)
+                    return ParseResult.Overflow;
+
+                value = -value;
+            }
+
+            return ParseResult.Success;
+        }
+
+        public static ParseResult DoubleTryParse(char[] chars, int start, int length, out double value)
+        {
+            value = 0;
+
+            if (length == 0)
+                return ParseResult.Invalid;
+
+            var isNegative = chars[start] == '-';
+            if (isNegative)
+            {
+                // text just a negative sign
+                if (length == 1)
+                    return ParseResult.Invalid;
+
+                start++;
+                length--;
+            }
+
+            var i = start;
+            var end = start + length;
+            var numDecimalStart = end;
+            var numDecimalEnd = end;
+            var exponent = 0;
+            var mantissa = 0UL;
+            var mantissaDigits = 0;
+            var exponentFromMantissa = 0;
+            for (; i < end; i++)
+            {
+                var c = chars[i];
+                switch (c)
+                {
+                    case '.':
+                        if (i == start)
+                            return ParseResult.Invalid;
+                        if (i + 1 == end)
+                            return ParseResult.Invalid;
+
+                        if (numDecimalStart != end)
+                            return ParseResult.Invalid;
+
+                        numDecimalStart = i + 1;
+                        break;
+                    case 'e':
+                    case 'E':
+                        if (i == start)
+                            return ParseResult.Invalid;
+                        if (i == numDecimalStart)
+                            return ParseResult.Invalid;
+                        i++;
+                        if (i == end)
+                            return ParseResult.Invalid;
+
+                        if (numDecimalStart < end)
+                            numDecimalEnd = i - 1;
+
+                        c = chars[i];
+                        var exponentNegative = false;
+                        switch (c)
+                        {
+                            case '-':
+                                exponentNegative = true;
+                                i++;
+                                break;
+                            case '+':
+                                i++;
+                                break;
+                        }
+
+                        // parse 3 digit
+                        for (; i < end; i++)
+                        {
+                            c = chars[i];
+                            if (c < '0' || c > '9')
+                                return ParseResult.Invalid;
+
+                            var newExponent = 10 * exponent + (c - '0');
+                            // stops updating exponent when overflowing
+                            if (exponent < newExponent)
+                                exponent = newExponent;
+                        }
+
+                        if (exponentNegative)
+                            exponent = -exponent;
+                        break;
+                    default:
+                        if (c < '0' || c > '9')
+                            return ParseResult.Invalid;
+
+                        if (i == start && c == '0')
+                        {
+                            i++;
+                            if (i != end)
+                            {
+                                c = chars[i];
+                                if (c == '.')
+                                    goto case '.';
+                                if (c == 'e' || c == 'E')
+                                    goto case 'E';
+
+                                return ParseResult.Invalid;
+                            }
+                        }
+
+                        if (mantissaDigits < 19)
+                        {
+                            mantissa = 10 * mantissa + (ulong) (c - '0');
+                            if (mantissa > 0)
+                                ++mantissaDigits;
+                        }
+                        else
+                        {
+                            ++exponentFromMantissa;
+                        }
+                        break;
+                }
+            }
+
+            exponent += exponentFromMantissa;
+
+            // correct the decimal point
+            exponent -= numDecimalEnd - numDecimalStart;
+
+            value = IEEE754.PackDouble(isNegative, mantissa, exponent);
+            return double.IsInfinity(value) ? ParseResult.Overflow : ParseResult.Success;
+        }
+
+        public static ParseResult DecimalTryParse(char[] chars, int start, int length, out decimal value)
+        {
+            value = 0M;
+            const decimal decimalMaxValueHi28 = 7922816251426433759354395033M;
+            const ulong decimalMaxValueHi19 = 7922816251426433759UL;
+            const ulong decimalMaxValueLo9 = 354395033UL;
+            const char decimalMaxValueLo1 = '5';
+
+            if (length == 0)
+                return ParseResult.Invalid;
+
+            var isNegative = chars[start] == '-';
+            if (isNegative)
+            {
+                // text just a negative sign
+                if (length == 1)
+                    return ParseResult.Invalid;
+
+                start++;
+                length--;
+            }
+
+            var i = start;
+            var end = start + length;
+            var numDecimalStart = end;
+            var numDecimalEnd = end;
+            var exponent = 0;
+            var hi19 = 0UL;
+            var lo10 = 0UL;
+            var mantissaDigits = 0;
+            var exponentFromMantissa = 0;
+            bool? roundUp = null;
+            bool? storeOnly28Digits = null;
+            for (; i < end; i++)
+            {
+                var c = chars[i];
+                switch (c)
+                {
+                    case '.':
+                        if (i == start)
+                            return ParseResult.Invalid;
+                        if (i + 1 == end)
+                            return ParseResult.Invalid;
+
+                        if (numDecimalStart != end)
+                            return ParseResult.Invalid;
+
+                        numDecimalStart = i + 1;
+                        break;
+                    case 'e':
+                    case 'E':
+                        if (i == start)
+                            return ParseResult.Invalid;
+                        if (i == numDecimalStart)
+                            return ParseResult.Invalid;
+                        i++;
+                        if (i == end)
+                            return ParseResult.Invalid;
+
+                        if (numDecimalStart < end)
+                            numDecimalEnd = i - 1;
+
+                        c = chars[i];
+                        var exponentNegative = false;
+                        switch (c)
+                        {
+                            case '-':
+                                exponentNegative = true;
+                                i++;
+                                break;
+                            case '+':
+                                i++;
+                                break;
+                        }
+
+                        // parse 3 digit 
+                        for (; i < end; i++)
+                        {
+                            c = chars[i];
+                            if (c < '0' || c > '9')
+                                return ParseResult.Invalid;
+
+                            var newExponent = 10 * exponent + (c - '0');
+                            // stops updating exponent when overflowing
+                            if (exponent < newExponent)
+                                exponent = newExponent;
+                        }
+
+                        if (exponentNegative)
+                            exponent = -exponent;
+                        break;
+                    default:
+                        if (c < '0' || c > '9')
+                            return ParseResult.Invalid;
+
+                        if (i == start && c == '0')
+                        {
+                            i++;
+                            if (i != end)
+                            {
+                                c = chars[i];
+                                if (c == '.')
+                                    goto case '.';
+                                if (c == 'e' || c == 'E')
+                                    goto case 'E';
+
+                                return ParseResult.Invalid;
+                            }
+                        }
+
+                        if (mantissaDigits < 29 && (mantissaDigits != 28 || !(storeOnly28Digits ?? (storeOnly28Digits = hi19 > decimalMaxValueHi19 || hi19 == decimalMaxValueHi19 && (lo10 > decimalMaxValueLo9 || lo10 == decimalMaxValueLo9 && c > decimalMaxValueLo1)).GetValueOrDefault())))
+                        {
+                            if (mantissaDigits < 19)
+                                hi19 = hi19 * 10UL + (ulong) (c - '0');
+                            else
+                                lo10 = lo10 * 10UL + (ulong) (c - '0');
+                            ++mantissaDigits;
+                        }
+                        else
+                        {
+                            if (!roundUp.HasValue)
+                                roundUp = c >= '5';
+                            ++exponentFromMantissa;
+                        }
+                        break;
+                }
+            }
+
+            exponent += exponentFromMantissa;
+
+            // correct the decimal point
+            exponent -= numDecimalEnd - numDecimalStart;
+
+            if (mantissaDigits <= 19)
+                value = hi19;
+            else
+                value = hi19 / new decimal(1, 0, 0, false, (byte) (mantissaDigits - 19)) + lo10;
+
+            if (exponent > 0)
+            {
+                mantissaDigits += exponent;
+                if (mantissaDigits > 29)
+                    return ParseResult.Overflow;
+                if (mantissaDigits == 29)
+                {
+                    if (exponent > 1)
+                    {
+                        value /= new decimal(1, 0, 0, false, (byte) (exponent - 1));
+                        if (value > decimalMaxValueHi28)
+                            return ParseResult.Overflow;
+                    }
+                    value *= 10M;
+                }
+                else
+                {
+                    value /= new decimal(1, 0, 0, false, (byte) exponent);
+                }
+            }
+            else
+            {
+                if (roundUp == true && exponent >= -28)
+                    ++value;
+                if (exponent < 0)
+                {
+                    if (mantissaDigits + exponent + 28 <= 0)
+                    {
+                        value = isNegative ? -0M : 0M;
+                        return ParseResult.Success;
+                    }
+                    if (exponent >= -28)
+                    {
+                        value *= new decimal(1, 0, 0, false, (byte) -exponent);
+                    }
+                    else
+                    {
+                        value /= 1e28M;
+                        value *= new decimal(1, 0, 0, false, (byte) (-exponent - 28));
+                    }
+                }
+            }
+
+            if (isNegative)
+                value = -value;
+
+            return ParseResult.Success;
+        }
+
+        public static bool TryConvertGuid(string s, out Guid g)
+        {
+            // GUID has to have format 00000000-0000-0000-0000-000000000000
+            if (s == null)
+                throw new ArgumentNullException("s");
+
+            var format = new Regex("^[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}$");
+            var match = format.Match(s);
+            if (match.Success)
+            {
+                g = new Guid(s);
+                return true;
+            }
+
+            g = Guid.Empty;
+            return false;
+        }
+
+        public static bool TryHexTextToInt(char[] text, int start, int end, out int value)
+        {
+            value = 0;
+
+            for (var i = start; i < end; i++)
+            {
+                var ch = text[i];
+                int chValue;
+
+                if (ch <= 57 && ch >= 48)
+                    chValue = ch - 48;
+                else if (ch <= 70 && ch >= 65)
+                    chValue = ch - 55;
+                else if (ch <= 102 && ch >= 97)
+                    chValue = ch - 87;
+                else
+                {
+                    value = 0;
+                    return false;
+                }
+
+                value += chValue << ((end - 1 - i) * 4);
+            }
+
+            return true;
         }
 
         internal struct TypeConvertKey : IEquatable<TypeConvertKey>
         {
-            private readonly Type _initialType;
-            private readonly Type _targetType;
+            public Type InitialType { get; }
 
-            public Type InitialType
-            {
-                get { return _initialType; }
-            }
-
-            public Type TargetType
-            {
-                get { return _targetType; }
-            }
+            public Type TargetType { get; }
 
             public TypeConvertKey(Type initialType, Type targetType)
             {
-                _initialType = initialType;
-                _targetType = targetType;
+                InitialType = initialType;
+                TargetType = targetType;
             }
 
             public override int GetHashCode()
             {
-                return _initialType.GetHashCode() ^ _targetType.GetHashCode();
+                return InitialType.GetHashCode() ^ TargetType.GetHashCode();
             }
 
             public override bool Equals(object obj)
@@ -259,58 +927,253 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 if (!(obj is TypeConvertKey))
                     return false;
 
-                return Equals((TypeConvertKey)obj);
+                return Equals((TypeConvertKey) obj);
             }
 
             public bool Equals(TypeConvertKey other)
             {
-                return (_initialType == other._initialType && _targetType == other._targetType);
+                return InitialType == other.InitialType && TargetType == other.TargetType;
             }
         }
 
-        private static readonly ThreadSafeStore<TypeConvertKey, Func<object, object>> CastConverters = new ThreadSafeStore<TypeConvertKey, Func<object, object>>(CreateCastConverter);
-
-        private static Func<object, object> CreateCastConverter(TypeConvertKey t)
+        private static class IEEE754
         {
-            var castMethodInfo = t.TargetType.GetMethod("op_Implicit", new[] { t.InitialType }) ?? t.TargetType.GetMethod("op_Explicit", new[] { t.InitialType });
-            if (castMethodInfo == null) return null;
-            var call = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(castMethodInfo);
-            return o => call(null, o);
-        }
-
-        internal static BigInteger ToBigInteger(object value)
-        {
-            if (value is BigInteger) return (BigInteger)value;
-            var stringValue = value as string;
-            if (stringValue != null) return BigInteger.Parse(stringValue, CultureInfo.InvariantCulture);
-            if (value is float) return new BigInteger((float)value);
-            if (value is double) return new BigInteger((double)value);
-            if (value is decimal) return new BigInteger((decimal)value);
-            if (value is int) return new BigInteger((int)value);
-            if (value is long) return new BigInteger((long)value);
-            if (value is uint) return new BigInteger((uint)value);
-            if (value is ulong) return new BigInteger((ulong)value);
-            var bytes = value as byte[];
-            if (bytes != null) return new BigInteger(bytes);
-            throw new InvalidCastException("Cannot convert {0} to BigInteger.".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
-        }
-
-        public static object FromBigInteger(BigInteger i, Type targetType)
-        {
-            if (targetType == typeof(decimal)) return (decimal)i;
-            if (targetType == typeof(double)) return (double)i;
-            if (targetType == typeof(float)) return (float)i;
-            if (targetType == typeof(ulong)) return (ulong)i;
-
-            try
+            /// <summary>
+            ///     Exponents for both powers of 10 and 0.1
+            /// </summary>
+            private static readonly int[] MultExp64Power10 =
             {
-                return System.Convert.ChangeType((long)i, targetType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception ex)
+                4, 7, 10, 14, 17, 20, 24, 27, 30, 34, 37, 40, 44, 47, 50
+            };
+
+            /// <summary>
+            ///     Normalized powers of 10
+            /// </summary>
+            private static readonly ulong[] MultVal64Power10 =
             {
-                throw new InvalidOperationException("Can not convert from BigInteger to {0}.".FormatWith(CultureInfo.InvariantCulture, targetType), ex);
+                0xa000000000000000, 0xc800000000000000, 0xfa00000000000000,
+                0x9c40000000000000, 0xc350000000000000, 0xf424000000000000,
+                0x9896800000000000, 0xbebc200000000000, 0xee6b280000000000,
+                0x9502f90000000000, 0xba43b74000000000, 0xe8d4a51000000000,
+                0x9184e72a00000000, 0xb5e620f480000000, 0xe35fa931a0000000
+            };
+
+            /// <summary>
+            ///     Normalized powers of 0.1
+            /// </summary>
+            private static readonly ulong[] MultVal64Power10Inv =
+            {
+                0xcccccccccccccccd, 0xa3d70a3d70a3d70b, 0x83126e978d4fdf3c,
+                0xd1b71758e219652e, 0xa7c5ac471b478425, 0x8637bd05af6c69b7,
+                0xd6bf94d5e57a42be, 0xabcc77118461ceff, 0x89705f4136b4a599,
+                0xdbe6fecebdedd5c2, 0xafebff0bcb24ab02, 0x8cbccc096f5088cf,
+                0xe12e13424bb40e18, 0xb424dc35095cd813, 0x901d7cf73ab0acdc
+            };
+
+            /// <summary>
+            ///     Exponents for both powers of 10^16 and 0.1^16
+            /// </summary>
+            private static readonly int[] MultExp64Power10By16 =
+            {
+                54, 107, 160, 213, 266, 319, 373, 426, 479, 532, 585, 638,
+                691, 745, 798, 851, 904, 957, 1010, 1064, 1117
+            };
+
+            /// <summary>
+            ///     Normalized powers of 10^16
+            /// </summary>
+            private static readonly ulong[] MultVal64Power10By16 =
+            {
+                0x8e1bc9bf04000000, 0x9dc5ada82b70b59e, 0xaf298d050e4395d6,
+                0xc2781f49ffcfa6d4, 0xd7e77a8f87daf7fa, 0xefb3ab16c59b14a0,
+                0x850fadc09923329c, 0x93ba47c980e98cde, 0xa402b9c5a8d3a6e6,
+                0xb616a12b7fe617a8, 0xca28a291859bbf90, 0xe070f78d39275566,
+                0xf92e0c3537826140, 0x8a5296ffe33cc92c, 0x9991a6f3d6bf1762,
+                0xaa7eebfb9df9de8a, 0xbd49d14aa79dbc7e, 0xd226fc195c6a2f88,
+                0xe950df20247c83f8, 0x81842f29f2cce373, 0x8fcac257558ee4e2
+            };
+
+            /// <summary>
+            ///     Normalized powers of 0.1^16
+            /// </summary>
+            private static readonly ulong[] MultVal64Power10By16Inv =
+            {
+                0xe69594bec44de160, 0xcfb11ead453994c3, 0xbb127c53b17ec165,
+                0xa87fea27a539e9b3, 0x97c560ba6b0919b5, 0x88b402f7fd7553ab,
+                0xf64335bcf065d3a0, 0xddd0467c64bce4c4, 0xc7caba6e7c5382ed,
+                0xb3f4e093db73a0b7, 0xa21727db38cb0053, 0x91ff83775423cc29,
+                0x8380dea93da4bc82, 0xece53cec4a314f00, 0xd5605fcdcf32e217,
+                0xc0314325637a1978, 0xad1c8eab5ee43ba2, 0x9becce62836ac5b0,
+                0x8c71dcd9ba0b495c, 0xfd00b89747823938, 0xe3e27a444d8d991a
+            };
+
+            /// <summary>
+            ///     Packs <paramref name="val" />*10^<paramref name="scale" /> as 64-bit floating point value according to IEEE 754
+            ///     standard
+            /// </summary>
+            /// <param name="negative">Sign</param>
+            /// <param name="val">Mantissa</param>
+            /// <param name="scale">Exponent</param>
+            /// <remarks>
+            ///     Adoption of native function NumberToDouble() from coreclr sources,
+            ///     see https://github.com/dotnet/coreclr/blob/master/src/classlibnative/bcltype/number.cpp#L451
+            /// </remarks>
+            public static double PackDouble(bool negative, ulong val, int scale)
+            {
+                // handle zero value
+                if (val == 0)
+                    return negative ? -0.0 : 0.0;
+
+                // normalize the mantissa
+                var exp = 64;
+
+                if ((val & 0xFFFFFFFF00000000) == 0)
+                {
+                    val <<= 32;
+                    exp -= 32;
+                }
+                if ((val & 0xFFFF000000000000) == 0)
+                {
+                    val <<= 16;
+                    exp -= 16;
+                }
+                if ((val & 0xFF00000000000000) == 0)
+                {
+                    val <<= 8;
+                    exp -= 8;
+                }
+                if ((val & 0xF000000000000000) == 0)
+                {
+                    val <<= 4;
+                    exp -= 4;
+                }
+                if ((val & 0xC000000000000000) == 0)
+                {
+                    val <<= 2;
+                    exp -= 2;
+                }
+                if ((val & 0x8000000000000000) == 0)
+                {
+                    val <<= 1;
+                    exp -= 1;
+                }
+
+                if (scale < 0)
+                {
+                    scale = -scale;
+
+                    // check scale bounds
+                    if (scale >= 22 * 16)
+                        return negative ? -0.0 : 0.0;
+
+                    // perform scaling
+                    var index = scale & 15;
+                    if (index != 0)
+                    {
+                        exp -= MultExp64Power10[index - 1] - 1;
+                        val = Mul64Lossy(val, MultVal64Power10Inv[index - 1], ref exp);
+                    }
+
+                    index = scale >> 4;
+                    if (index != 0)
+                    {
+                        exp -= MultExp64Power10By16[index - 1] - 1;
+                        val = Mul64Lossy(val, MultVal64Power10By16Inv[index - 1], ref exp);
+                    }
+                }
+                else
+                {
+                    // check scale bounds
+                    if (scale >= 22 * 16)
+                        return negative ? double.NegativeInfinity : double.PositiveInfinity;
+
+                    // perform scaling
+                    var index = scale & 15;
+                    if (index != 0)
+                    {
+                        exp += MultExp64Power10[index - 1];
+                        val = Mul64Lossy(val, MultVal64Power10[index - 1], ref exp);
+                    }
+
+                    index = scale >> 4;
+                    if (index != 0)
+                    {
+                        exp += MultExp64Power10By16[index - 1];
+                        val = Mul64Lossy(val, MultVal64Power10By16[index - 1], ref exp);
+                    }
+                }
+
+                // round & scale down
+
+                if ((val & (1 << 10)) != 0)
+                {
+                    // IEEE round to even
+                    var tmp = val + ((1UL << 10) - 1) + ((val >> 11) & 1);
+                    if (tmp < val)
+                    {
+                        // overflow
+                        tmp = (tmp >> 1) | 0x8000000000000000;
+                        exp++;
+                    }
+                    val = tmp;
+                }
+
+                // return the exponent to a biased state
+
+                exp += 0x3FE;
+
+                // handle overflow, underflow, "Epsilon - 1/2 Epsilon", denormalized, and the normal case
+
+                if (exp <= 0)
+                    if (exp == -52 && val >= 0x8000000000000058)
+                        val = 0x0000000000000001;
+                    else if (exp <= -52)
+                        val = 0;
+                    else
+                        val >>= -exp + 12;
+                else if (exp >= 0x7FF)
+                    val = 0x7FF0000000000000;
+                else
+                    val = ((ulong) exp << 52) | ((val >> 11) & 0x000FFFFFFFFFFFFF);
+
+                // apply sign
+
+                if (negative)
+                    val |= 0x8000000000000000;
+
+                return BitConverter.Int64BitsToDouble((long) val);
+            }
+
+            private static ulong Mul64Lossy(ulong a, ulong b, ref int exp)
+            {
+                var a_hi = a >> 32;
+                var a_lo = (uint) a;
+                var b_hi = b >> 32;
+                var b_lo = (uint) b;
+
+                var result = a_hi * b_hi;
+
+                // save some multiplications if lo-parts aren't big enough to produce carry
+                // (hi-parts will be always big enough, since a and b are normalized)
+
+                if ((b_lo & 0xFFFF0000) != 0)
+                    result += (a_hi * b_lo) >> 32;
+
+                if ((a_lo & 0xFFFF0000) != 0)
+                    result += (a_lo * b_hi) >> 32;
+
+                // normalize
+                if ((result & 0x8000000000000000) == 0)
+                {
+                    result <<= 1;
+                    exp--;
+                }
+
+                return result;
             }
         }
+
+        #region TryConvert
 
         internal enum ConvertResult
         {
@@ -330,7 +1193,7 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 case ConvertResult.CannotConvertNull:
                     throw new Exception("Can not convert null {0} into non-nullable {1}.".FormatWith(CultureInfo.InvariantCulture, initialValue.GetType(), targetType));
                 case ConvertResult.NotInstantiableType:
-                    throw new ArgumentException("Target type {0} is not a value type or a non-abstract class.".FormatWith(CultureInfo.InvariantCulture, targetType), "targetType");
+                    throw new ArgumentException("Target type {0} is not a value type or a non-abstract class.".FormatWith(CultureInfo.InvariantCulture, targetType), nameof(targetType));
                 case ConvertResult.NoValidConversion:
                     throw new InvalidOperationException("Can not convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, initialValue.GetType(), targetType));
                 default:
@@ -342,7 +1205,9 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         {
             try
             {
-                if (TryConvertInternal(initialValue, culture, targetType, out value) == ConvertResult.Success) return true;
+                if (TryConvertInternal(initialValue, culture, targetType, out value) == ConvertResult.Success)
+                    return true;
+
                 value = null;
                 return false;
             }
@@ -355,7 +1220,8 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         private static ConvertResult TryConvertInternal(object initialValue, CultureInfo culture, Type targetType, out object value)
         {
-            if (initialValue == null) throw new ArgumentNullException("initialValue");
+            if (initialValue == null)
+                throw new ArgumentNullException(nameof(initialValue));
 
             if (ReflectionUtils.IsNullableType(targetType))
                 targetType = Nullable.GetUnderlyingType(targetType);
@@ -389,48 +1255,60 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
             if (initialValue is DateTime && targetType == typeof(DateTimeOffset))
             {
-                value = new DateTimeOffset((DateTime)initialValue);
+                value = new DateTimeOffset((DateTime) initialValue);
                 return ConvertResult.Success;
             }
 
-            if (initialValue is byte[] && targetType == typeof(Guid))
+            var bytes = initialValue as byte[];
+            if (bytes != null && targetType == typeof(Guid))
             {
-                value = new Guid((byte[])initialValue);
+                value = new Guid(bytes);
                 return ConvertResult.Success;
             }
 
             if (initialValue is Guid && targetType == typeof(byte[]))
             {
-                value = ((Guid)initialValue).ToByteArray();
+                value = ((Guid) initialValue).ToByteArray();
                 return ConvertResult.Success;
             }
 
-            var initialStringValue = initialValue as string;
-            if (initialStringValue != null)
+            var s = initialValue as string;
+            if (s != null)
             {
                 if (targetType == typeof(Guid))
                 {
-                    value = new Guid(initialStringValue);
+                    value = new Guid(s);
                     return ConvertResult.Success;
                 }
                 if (targetType == typeof(Uri))
                 {
-                    value = new Uri(initialStringValue, UriKind.RelativeOrAbsolute);
+                    value = new Uri(s, UriKind.RelativeOrAbsolute);
                     return ConvertResult.Success;
                 }
                 if (targetType == typeof(TimeSpan))
                 {
-                    value = ParseTimeSpan(initialStringValue);
+                    value = ParseTimeSpan(s);
                     return ConvertResult.Success;
                 }
                 if (targetType == typeof(byte[]))
                 {
-                    value = System.Convert.FromBase64String(initialStringValue);
+                    value = System.Convert.FromBase64String(s);
                     return ConvertResult.Success;
+                }
+                if (targetType == typeof(Version))
+                {
+                    Version result;
+                    if (VersionTryParse(s, out result))
+                    {
+                        value = result;
+                        return ConvertResult.Success;
+                    }
+                    value = null;
+                    return ConvertResult.NoValidConversion;
                 }
                 if (typeof(Type).IsAssignableFrom(targetType))
                 {
-                    value = Type.GetType(initialStringValue, true);
+                    value = Type.GetType(s, true);
                     return ConvertResult.Success;
                 }
             }
@@ -442,12 +1320,12 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             }
             if (initialValue is BigInteger)
             {
-                value = FromBigInteger((BigInteger)initialValue, targetType);
+                value = FromBigInteger((BigInteger) initialValue, targetType);
                 return ConvertResult.Success;
             }
 
             // see if source or target types have a TypeConverter that converts between the two
-            var toConverter = GetConverter(initialType);
+            var toConverter = TypeDescriptor.GetConverter(initialType);
 
             if (toConverter != null && toConverter.CanConvertTo(targetType))
             {
@@ -455,7 +1333,8 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 return ConvertResult.Success;
             }
 
-            var fromConverter = GetConverter(targetType);
+            var fromConverter = TypeDescriptor.GetConverter(targetType);
+
             if (fromConverter != null && fromConverter.CanConvertFrom(initialType))
             {
                 value = fromConverter.ConvertFrom(null, culture, initialValue);
@@ -493,182 +1372,6 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             return ConvertResult.NoValidConversion;
         }
 
-        /// <summary>
-        /// Converts the value to the specified type. If the value is unable to be converted, the
-        /// value is checked whether it assignable to the specified type.
-        /// </summary>
-        /// <param name="initialValue">The value to convert.</param>
-        /// <param name="culture">The culture to use when converting.</param>
-        /// <param name="targetType">The type to convert or cast the value to.</param>
-        /// <returns>
-        /// The converted type. If conversion was unsuccessful, the initial value
-        /// is returned if assignable to the target type.
-        /// </returns>
-        public static object ConvertOrCast(object initialValue, CultureInfo culture, Type targetType)
-        {
-            object convertedValue;
-            if (targetType == typeof(object)) return initialValue;
-            if (initialValue == null && ReflectionUtils.IsNullable(targetType)) return null;
-            if (TryConvert(initialValue, culture, targetType, out convertedValue)) return convertedValue;
-            return EnsureTypeAssignable(initialValue, ReflectionUtils.GetObjectType(initialValue), targetType);
-        }
-
-        private static object EnsureTypeAssignable(object value, Type initialType, Type targetType)
-        {
-            var valueType = (value != null) ? value.GetType() : null;
-
-            if (value != null)
-            {
-                if (targetType.IsAssignableFrom(valueType)) return value;
-                var castConverter = CastConverters.Get(new TypeConvertKey(valueType, targetType));
-                if (castConverter != null) return castConverter(value);
-            }
-            else if (ReflectionUtils.IsNullable(targetType)) return null;
-            throw new ArgumentException("Could not cast or convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, (initialType != null) ? initialType.ToString() : "{null}", targetType));
-        }
-
-        public static object ToValue(INullable nullableValue)
-        {
-            if (nullableValue == null) return null;
-            if (nullableValue is SqlInt32) return ToValue((SqlInt32)nullableValue);
-            if (nullableValue is SqlInt64) return ToValue((SqlInt64)nullableValue);
-            if (nullableValue is SqlBoolean) return ToValue((SqlBoolean)nullableValue);
-            if (nullableValue is SqlString) return ToValue((SqlString)nullableValue);
-            if (nullableValue is SqlDateTime) return ToValue((SqlDateTime)nullableValue);
-            throw new ArgumentException("Unsupported INullable type: {0}".FormatWith(CultureInfo.InvariantCulture, nullableValue.GetType()));
-        }
-
-        internal static TypeConverter GetConverter(Type t)
-        {
-            return JsonTypeReflector.GetTypeConverter(t);
-        }
-
-        public static bool IsInteger(object value)
-        {
-            switch (GetTypeCode(value.GetType()))
-            {
-                case PrimitiveTypeCode.SByte:
-                case PrimitiveTypeCode.Byte:
-                case PrimitiveTypeCode.Int16:
-                case PrimitiveTypeCode.UInt16:
-                case PrimitiveTypeCode.Int32:
-                case PrimitiveTypeCode.UInt32:
-                case PrimitiveTypeCode.Int64:
-                case PrimitiveTypeCode.UInt64:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        public static ParseResult Int32TryParse(char[] chars, int start, int length, out int value)
-        {
-            value = 0;
-
-            if (length == 0) return ParseResult.Invalid;
-
-            var isNegative = (chars[start] == '-');
-
-            if (isNegative)
-            {
-                // text just a negative sign
-                if (length == 1) return ParseResult.Invalid;
-                start++;
-                length--;
-            }
-
-            var end = start + length;
-
-            for (var i = start; i < end; i++)
-            {
-                var c = chars[i] - '0';
-                if (c < 0 || c > 9) return ParseResult.Invalid;
-                var newValue = (10 * value) - c;
-
-                // overflow has caused the number to loop around
-                if (newValue > value)
-                {
-                    i++;
-
-                    // double check the rest of the string that there wasn't anything invalid
-                    // invalid result takes precedence over overflow result
-                    for (; i < end; i++)
-                    {
-                        c = chars[i] - '0';
-                        if (c < 0 || c > 9) return ParseResult.Invalid;
-                    }
-
-                    return ParseResult.Overflow;
-                }
-
-                value = newValue;
-            }
-
-            // go from negative to positive to avoids overflow
-            // negative can be slightly bigger than positive
-            if (!isNegative)
-            {
-                // negative integer can be one bigger than positive
-                if (value == int.MinValue) return ParseResult.Overflow;
-                value = -value;
-            }
-
-            return ParseResult.Success;
-        }
-
-        public static ParseResult Int64TryParse(char[] chars, int start, int length, out long value)
-        {
-            value = 0;
-            if (length == 0) return ParseResult.Invalid;
-            var isNegative = (chars[start] == '-');
-
-            if (isNegative)
-            {
-                // text just a negative sign
-                if (length == 1) return ParseResult.Invalid;
-                start++;
-                length--;
-            }
-
-            var end = start + length;
-
-            for (var i = start; i < end; i++)
-            {
-                var c = chars[i] - '0';
-                if (c < 0 || c > 9) return ParseResult.Invalid;
-                var newValue = (10 * value) - c;
-
-                // overflow has caused the number to loop around
-                if (newValue > value)
-                {
-                    i++;
-
-                    // double check the rest of the string that there wasn't anything invalid
-                    // invalid result takes precedence over overflow result
-                    for (; i < end; i++)
-                    {
-                        c = chars[i] - '0';
-                        if (c < 0 || c > 9) return ParseResult.Invalid;
-                    }
-
-                    return ParseResult.Overflow;
-                }
-
-                value = newValue;
-            }
-
-            // go from negative to positive to avoids overflow
-            // negative can be slightly bigger than positive
-            if (isNegative) return ParseResult.Success;
-            // negative integer can be one bigger than positive
-            if (value == long.MinValue) return ParseResult.Overflow;
-            value = -value;
-            return ParseResult.Success;
-        }
-
-        public static bool TryConvertGuid(string s, out Guid g)
-        {
-            return Guid.TryParse(s, out g);
-        }
+        #endregion
     }
 }

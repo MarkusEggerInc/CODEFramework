@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CODE.Framework.Wpf.Utilities;
@@ -18,7 +19,7 @@ namespace CODE.Framework.Wpf.Layout
         private readonly ScaleTransform _scale = new ScaleTransform(1d, 1d);
 
         private readonly ScrollBar _scrollVertical = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Vertical};
-        private readonly ScrollBar _scrollHorizontal = new ScrollBar { Visibility = Visibility.Collapsed, Orientation = Orientation.Horizontal };
+        private readonly ScrollBar _scrollHorizontal = new ScrollBar {Visibility = Visibility.Collapsed, Orientation = Orientation.Horizontal};
         private AdornerLayer _adorner;
 
         /// <summary>Constructor</summary>
@@ -27,6 +28,7 @@ namespace CODE.Framework.Wpf.Layout
             VerticalAlignment = VerticalAlignment.Stretch;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             ClipToBounds = true;
+            Background = Brushes.Transparent;
             
             Loaded += (s, e) => CreateScrollbars();
         }
@@ -38,6 +40,21 @@ namespace CODE.Framework.Wpf.Layout
             _adorner.Add(new EditFormScrollAdorner(this, _scrollHorizontal, _scrollVertical) {Visibility = Visibility.Visible});
             _scrollHorizontal.ValueChanged += (s, e) => Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(DispatchInvalidateScroll));
             _scrollVertical.ValueChanged += (s, e) => Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(DispatchInvalidateScroll));
+        }
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.PreviewMouseWheel" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseWheelEventArgs" /> that contains the event data.</param>
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            if (_scrollVertical.Visibility == Visibility.Visible)
+                if (e.Delta < 0)
+                    _scrollVertical.Value += _scrollVertical.SmallChange;
+                else
+                    _scrollVertical.Value -= _scrollVertical.SmallChange;
+
+            base.OnPreviewMouseWheel(e);
         }
 
         private void DispatchInvalidateScroll()
@@ -430,8 +447,8 @@ namespace CODE.Framework.Wpf.Layout
                 if (LayoutElasticity == LayoutElasticity.LayoutAndScale)
                 {
                     // We can scale the overall UI
-                    var factorX = availableSize.Width / requiredSize.Width;
-                    var factorY = availableSize.Height / requiredSize.Height;
+                    var factorX = availableSize.Width/requiredSize.Width;
+                    var factorY = availableSize.Height/requiredSize.Height;
                     var factor = Math.Max(Math.Min(factorX, factorY), MinElasticScaleFactor);
                     newScaleX = factor;
                     newScaleY = factor;
@@ -459,19 +476,24 @@ namespace CODE.Framework.Wpf.Layout
                 }
             }
 
-            var measuredSize = requiredSize;
-            if (_mustScale) measuredSize = new Size(requiredSize.Width * _scale.ScaleX, requiredSize.Height * _scale.ScaleY);
-
-            // We also handle optional scrollbars
-            HandleScrollBars(measuredSize, availableSize);
+            _measuredSize = requiredSize;
+            if (_mustScale) _measuredSize = GeometryHelper.NewSize(requiredSize.Width*_scale.ScaleX, requiredSize.Height*_scale.ScaleY);
 
             // If the new scale is within a very narrow margin of the scale already set, we leave it as is, otherwise we constantly re-trigger layout
             if (!(newScaleX < _scale.ScaleX + 0.01 && newScaleX > _scale.ScaleX - 0.01)) _scale.ScaleX = newScaleX;
             if (!(newScaleY < _scale.ScaleY + 0.01 && newScaleY > _scale.ScaleY - 0.01)) _scale.ScaleY = newScaleY;
 
-            if (availableSize.Height > 0 && availableSize.Width > 0 && !double.IsInfinity(availableSize.Height) && !double.IsInfinity(availableSize.Width))
-                return availableSize;
-            return measuredSize;
+            var finalMeasuredHeight = _measuredSize.Height;
+            var finalMeasuredWidth = _measuredSize.Width;
+
+            if (!double.IsInfinity(availableSize.Width) && availableSize.Width < 90000) finalMeasuredWidth = availableSize.Width; // 90000 is smaller than 100000, which is often uses instead of infiniti by parent elements
+            if (!double.IsInfinity(availableSize.Height) && availableSize.Height < 90000) finalMeasuredHeight = availableSize.Height; // 90000 is smaller than 100000, which is often uses instead of infiniti by parent elements
+
+            //// If we were given an actual size to fit into (rather than something like infinity), then we return that size
+            //if (availableSize.Height > 0 && availableSize.Height < 50000 && availableSize.Width > 0 && availableSize.Width < 50000 && !double.IsInfinity(availableSize.Height) && !double.IsInfinity(availableSize.Width))
+            //    return availableSize;
+
+            return GeometryHelper.NewSize(finalMeasuredWidth, finalMeasuredHeight);
         }
 
         private void MergeColumnIntoOtherColumn(List<List<ControlPair>> columns, int sourceColumn, int destinationColumn)
@@ -486,7 +508,7 @@ namespace CODE.Framework.Wpf.Layout
             columns.RemoveAt(sourceColumn);
         }
 
-        private void HandleScrollBars(Size requiredSize, Size availableSize)
+        private void HandleScrollBars(Size requiredSize, Size clientSize)
         {
             if (ScrollBarMode == EditFormScrollBarModes.None)
             {
@@ -498,12 +520,14 @@ namespace CODE.Framework.Wpf.Layout
             if (ScrollBarMode == EditFormScrollBarModes.Vertical || ScrollBarMode == EditFormScrollBarModes.Both)
             {
                 if (ScrollBarMode == EditFormScrollBarModes.Vertical) _scrollHorizontal.Visibility = Visibility.Collapsed;
-                if (!double.IsInfinity(availableSize.Height) && !double.IsNaN(availableSize.Height))
-                    if (availableSize.Height < requiredSize.Height - 1)
+                if (!double.IsInfinity(clientSize.Height) && !double.IsNaN(clientSize.Height))
+                    if (clientSize.Height < requiredSize.Height - 1)
                     {
                         _scrollVertical.Visibility = Visibility.Visible;
-                        _scrollVertical.Maximum = requiredSize.Height - availableSize.Height + SystemParameters.HorizontalScrollBarHeight;
-                        _scrollVertical.ViewportSize = availableSize.Height;
+                        _scrollVertical.Maximum = requiredSize.Height - clientSize.Height + SystemParameters.HorizontalScrollBarHeight;
+                        _scrollVertical.ViewportSize = clientSize.Height;
+                        _scrollVertical.LargeChange = _scrollVertical.ViewportSize;
+                        _scrollVertical.SmallChange = (int) (_scrollVertical.LargeChange / 10);
                     }
                     else
                         _scrollVertical.Visibility = Visibility.Collapsed;
@@ -514,12 +538,14 @@ namespace CODE.Framework.Wpf.Layout
             if (ScrollBarMode == EditFormScrollBarModes.Horizontal || ScrollBarMode == EditFormScrollBarModes.Both)
             {
                 if (ScrollBarMode == EditFormScrollBarModes.Horizontal) _scrollVertical.Visibility = Visibility.Collapsed;
-                if (!double.IsInfinity(availableSize.Width) && !double.IsNaN(availableSize.Width))
-                    if (availableSize.Width < requiredSize.Width - 1)
+                if (!double.IsInfinity(clientSize.Width) && !double.IsNaN(clientSize.Width))
+                    if (clientSize.Width < requiredSize.Width - 1)
                     {
                         _scrollHorizontal.Visibility = Visibility.Visible;
-                        _scrollHorizontal.Maximum = requiredSize.Width - availableSize.Width + SystemParameters.VerticalScrollBarWidth;
-                        _scrollHorizontal.ViewportSize = availableSize.Width;
+                        _scrollHorizontal.Maximum = requiredSize.Width - clientSize.Width + SystemParameters.VerticalScrollBarWidth;
+                        _scrollHorizontal.ViewportSize = clientSize.Width;
+                        _scrollHorizontal.LargeChange = _scrollHorizontal.ViewportSize;
+                        _scrollHorizontal.SmallChange = (int)(_scrollHorizontal.LargeChange / 10);
                     }
                     else
                         _scrollHorizontal.Visibility = Visibility.Collapsed;
@@ -531,13 +557,13 @@ namespace CODE.Framework.Wpf.Layout
         private ColumnRenderInformation GetStandardColumnRenderInfo()
         {
             return new ColumnRenderInformation
-                       {
-                           EditControlTopSpacingUsed = EditControlTopSpacing,
-                           GroupHeaderBottomSpacingUsed = GroupHeaderBottomSpacing,
-                           GroupHeaderTopSpacingUsed = GroupHeaderTopSpacing,
-                           GroupSpacingUsed = GroupSpacing,
-                           VerticalSpacingUsed = VerticalSpacing
-                       };
+            {
+                EditControlTopSpacingUsed = EditControlTopSpacing,
+                GroupHeaderBottomSpacingUsed = GroupHeaderBottomSpacing,
+                GroupHeaderTopSpacingUsed = GroupHeaderTopSpacing,
+                GroupSpacingUsed = GroupSpacing,
+                VerticalSpacingUsed = VerticalSpacing
+            };
         }
 
         /// <summary>Shrinks the layout vertically if possible and desired</summary>
@@ -750,7 +776,7 @@ namespace CODE.Framework.Wpf.Layout
             if (controlPair.Label != null)
             {
                 controlPair.Label.Measure(new Size(100000, 100000));
-                return new Size(controlPair.Label.DesiredSize.Width, controlPair.Label.DesiredSize.Height);
+                return GeometryHelper.NewSize(controlPair.Label.DesiredSize.Width, controlPair.Label.DesiredSize.Height);
             }
             return Size.Empty;
         }
@@ -769,9 +795,41 @@ namespace CODE.Framework.Wpf.Layout
             var columnItemCount = 0;
             var spanColumnWidthRequired = 0d;
             var large = new Size(100000, 100000);
+            var hasOpenBorder = false;
+
             foreach (var pair in column)
             {
                 columnItemCount++;
+
+                if (pair.GroupBreak && columnItemCount != 1)
+                {
+                    if (RenderGroupBackground) columnSize.Height += GroupBorderMargin.Bottom;
+                    columnSize.Height += columnRenderInfo.GroupSpacingUsed;
+                }
+
+                if (pair.GroupBreak || columnItemCount == 1)
+                {
+                    if (RenderGroupBackground)
+                    {
+                        hasOpenBorder = true;
+                        columnSize.Height += GroupBorderMargin.Top;
+                    }
+
+                    var headerText = pair.GroupHeader;
+                    if (!string.IsNullOrEmpty(headerText))
+                    {
+                        if (columnItemCount > 1)
+                            // We are not using the group spacing after all, but are instead using the header spacing
+                            columnSize.Height -= columnRenderInfo.GroupSpacingUsed;
+
+                        var text = new FormattedText(headerText, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(GroupHeaderFontFamily, GroupHeaderFontStyle, GroupHeaderFontWeight, FontStretches.Normal), GroupHeaderFontSize, GroupHeaderForegroundBrush);
+                        if (columnItemCount > 1)
+                            columnSize.Height += columnRenderInfo.GroupHeaderTopSpacingUsed;
+
+                        var heightAdded2 = text.Height + columnRenderInfo.GroupHeaderBottomSpacingUsed;
+                        columnSize.Height += heightAdded2;
+                    }
+                }
 
                 if (pair.Span != null)
                 {
@@ -804,28 +862,22 @@ namespace CODE.Framework.Wpf.Layout
                     else
                         columnSize.Height += labelHeight + columnRenderInfo.EditControlTopSpacingUsed + editHeight + columnRenderInfo.VerticalSpacingUsed;
                 }
-
-                if (pair.GroupBreak) columnSize.Height += columnRenderInfo.GroupSpacingUsed;
-
-                if (pair.GroupBreak || columnItemCount == 1)
-                {
-                    if (RenderGroupBackground) columnSize.Height += GroupBorderMargin.Top + GroupBorderMargin.Bottom;
-                    columnSize.Height += columnRenderInfo.GroupSpacingUsed;
-
-                    var headerText = pair.GroupHeader;
-                    if (!string.IsNullOrEmpty(headerText))
-                    {
-                        if (columnItemCount > 1) columnSize.Height -= columnRenderInfo.GroupSpacingUsed + columnRenderInfo.GroupHeaderTopSpacingUsed; // We are not using the group spacing after all, but are instead using the header spacing
-                        var text = new FormattedText(headerText, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(GroupHeaderFontFamily, GroupHeaderFontStyle, GroupHeaderFontWeight, FontStretches.Normal), GroupHeaderFontSize, GroupHeaderForegroundBrush);
-                        columnSize.Height += text.Height + columnRenderInfo.GroupHeaderBottomSpacingUsed;
-                    }
-                }
             }
 
             if (LabelPosition == EditFormLabelPositions.Left)
-                columnSize.Width += widestLabel + _editControlLeftSpacingUsed + widestControl;
+            {
+                if (widestLabel > 0 && widestControl > 0)
+                    columnSize.Width += widestLabel + _editControlLeftSpacingUsed + widestControl;
+                else if (widestControl > 0)
+                    columnSize.Width += widestControl;
+                else if (widestLabel > 0)
+                    columnSize.Width += widestLabel;
+            }
             else
                 columnSize.Width += Math.Max(widestLabel, widestControl);
+
+            if (hasOpenBorder && RenderGroupBackground)
+                columnSize.Height += GroupBorderMargin.Bottom;
 
             if (RenderGroupBackground)
                 columnSize.Width += GroupBorderMargin.Left + GroupBorderMargin.Right;
@@ -877,8 +929,8 @@ namespace CODE.Framework.Wpf.Layout
 
                     if (pair.GroupBreak && columnItemCount != 1)
                     {
-                        currentY += columnRenderInfo.GroupSpacingUsed;
                         if (RenderGroupBackground) currentY += GroupBorderMargin.Bottom;
+                        currentY += columnRenderInfo.GroupSpacingUsed;
                     }
 
                     if (pair.GroupBreak || columnItemCount == 1)
@@ -890,14 +942,8 @@ namespace CODE.Framework.Wpf.Layout
                         {
                             lastBorderY = currentY;
                             lastBorderX = currentX;
-                            lastBorderHeight = 0d;
+                            lastBorderHeight = 0d; //GroupBorderMargin.Top + GroupBorderMargin.Bottom;
                             hasOpenBorder = true;
-                            currentY += GroupBorderMargin.Top;
-                        }
-
-                        if (RenderGroupBackground)
-                        {
-                            lastBorderHeight += GroupBorderMargin.Top + GroupBorderMargin.Bottom;
                             currentY += GroupBorderMargin.Top;
                         }
 
@@ -917,9 +963,9 @@ namespace CODE.Framework.Wpf.Layout
                                 currentY += columnRenderInfo.GroupHeaderTopSpacingUsed;
                                 lastBorderHeight += columnRenderInfo.GroupHeaderTopSpacingUsed;
                             }
-                            var headerRect = new Rect(currentX, currentY, controlWidths.Item1 + controlWidths.Item2 + _editControlLeftSpacingUsed + _columnSpacingUsed - 5, text.Height);
+                            var headerRect = GeometryHelper.NewRect(currentX, currentY, controlWidths.Item1 + controlWidths.Item2 + _editControlLeftSpacingUsed + _columnSpacingUsed - 5, text.Height);
                             if (LabelPosition == EditFormLabelPositions.Top)
-                                headerRect = new Rect(currentX, currentY, Math.Max(controlWidths.Item1, controlWidths.Item2) + _columnSpacingUsed - 5, text.Height);
+                                headerRect = GeometryHelper.NewRect(currentX, currentY, Math.Max(controlWidths.Item1, controlWidths.Item2) + _columnSpacingUsed - 5, text.Height);
                             _headers.Add(new AutoHeaderTextRenderInfo { RenderRect = headerRect, Text = headerText, FormattedText = text });
 
                             var heightAdded2 = text.Height + columnRenderInfo.GroupHeaderBottomSpacingUsed;
@@ -928,40 +974,50 @@ namespace CODE.Framework.Wpf.Layout
                         }
                     }
 
-                    Rect labelRect = new Rect(), editRect = new Rect();
-                    if (LabelPosition == EditFormLabelPositions.Left)
-                    {
-                        if (pair.Label != null)
-                            labelRect = new Rect(currentX, currentY, controlWidths.Item1, pair.DesiredLabelHeight);
-                        else
-                            CustomLabelHandlingOverride(pair, currentX, currentY, controlWidths.Item1, new Size());
-                        if (pair.Edit != null) 
-                            editRect = new Rect(currentX + _editControlLeftSpacingUsed + controlWidths.Item1, currentY, pair.DesiredEditWidth, pair.DesiredEditHeight);
-                    }
+                    Rect labelRect = Rect.Empty, editRect = Rect.Empty, spanRect = Rect.Empty;
+                    if (pair.Span != null)
+                        spanRect = GeometryHelper.NewRect(currentX, currentY, pair.DesiredSpanWidth, pair.DesiredSpanHeight);
                     else
                     {
-                        var customLabelOffset = new Size();
-                        if (!CustomLabelHandlingOverride(pair, currentX, currentY, controlWidths.Item1, customLabelOffset) || pair.Label != null)
+                        if (LabelPosition == EditFormLabelPositions.Left)
                         {
-                            labelRect = new Rect(currentX, currentY, controlWidths.Item1, pair.DesiredLabelHeight);
-                            currentY += pair.DesiredLabelHeight + columnRenderInfo.EditControlTopSpacingUsed;
-                            lastBorderHeight += pair.DesiredLabelHeight + columnRenderInfo.EditControlTopSpacingUsed;
+                            if (pair.Label != null)
+                                labelRect = GeometryHelper.NewRect(currentX, currentY, controlWidths.Item1, pair.DesiredLabelHeight);
+                            else
+                                CustomLabelHandlingOverride(pair, currentX, currentY, controlWidths.Item1, new Size());
+                            if (pair.Edit != null)
+                            {
+                                if (controlWidths.Item1 > 0) // If there is a label in the entire column that is wider than 0, we always allow spacing for it
+                                    editRect = GeometryHelper.NewRect(currentX + _editControlLeftSpacingUsed + controlWidths.Item1, currentY, pair.DesiredEditWidth, pair.DesiredEditHeight);
+                                else
+                                    editRect = GeometryHelper.NewRect(currentX + controlWidths.Item1, currentY, pair.DesiredEditWidth, pair.DesiredEditHeight);
+                            }
                         }
                         else
                         {
-                            var newWidth = controlWidths.Item1;
-                            if (customLabelOffset.Width > 0d) newWidth = customLabelOffset.Width;
-                            var newHeight = pair.DesiredLabelHeight;
-                            if (customLabelOffset.Height > 0d) newHeight = customLabelOffset.Height;
-                            labelRect = new Rect(currentX, currentY, newWidth, newHeight);
-                            currentY += newHeight + columnRenderInfo.EditControlTopSpacingUsed;
-                            lastBorderHeight += newHeight + columnRenderInfo.EditControlTopSpacingUsed;
+                            var customLabelOffset = new Size();
+                            if (!CustomLabelHandlingOverride(pair, currentX, currentY, controlWidths.Item1, customLabelOffset) || pair.Label != null)
+                            {
+                                labelRect = GeometryHelper.NewRect(currentX, currentY, controlWidths.Item1, pair.DesiredLabelHeight);
+                                currentY += pair.DesiredLabelHeight + columnRenderInfo.EditControlTopSpacingUsed;
+                                lastBorderHeight += pair.DesiredLabelHeight + columnRenderInfo.EditControlTopSpacingUsed;
+                            }
+                            else
+                            {
+                                var newWidth = controlWidths.Item1;
+                                if (customLabelOffset.Width > 0d) newWidth = customLabelOffset.Width;
+                                var newHeight = pair.DesiredLabelHeight;
+                                if (customLabelOffset.Height > 0d) newHeight = customLabelOffset.Height;
+                                labelRect = GeometryHelper.NewRect(currentX, currentY, newWidth, newHeight);
+                                currentY += newHeight + columnRenderInfo.EditControlTopSpacingUsed;
+                                lastBorderHeight += newHeight + columnRenderInfo.EditControlTopSpacingUsed;
+                            }
+                            if (pair.Edit != null)
+                                editRect = GeometryHelper.NewRect(currentX, currentY, pair.DesiredEditWidth, pair.DesiredEditHeight);
                         }
-                        if (pair.Edit != null)
-                            editRect = new Rect(currentX, currentY, pair.DesiredEditWidth, pair.DesiredEditHeight);
                     }
 
-                    if (pair.Label != null && LabelPosition == EditFormLabelPositions.Left && VerticalLabelControlOffset > 0d)
+                    if (pair.Label != null && pair.Edit != null && LabelPosition == EditFormLabelPositions.Left && VerticalLabelControlOffset > 0d && pair.Label.GetType() != pair.Edit.GetType())
                         labelRect.Y += VerticalLabelControlOffset;
 
                     if (_mustScale)
@@ -974,16 +1030,18 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         if (pair.Label != null) labelRect.X += (_scrollHorizontal.Value * _scale.ScaleX) * -1;
                         if (pair.Edit != null) editRect.X += (_scrollHorizontal.Value * _scale.ScaleX) * -1;
+                        if (pair.Span != null) spanRect.X += (_scrollHorizontal.Value * _scale.ScaleX) * -1;
                     }
                     if (_scrollVertical.Visibility == Visibility.Visible)
                     {
                         if (pair.Label != null) labelRect.Y += (_scrollVertical.Value * _scale.ScaleY) * -1;
                         if (pair.Edit != null) editRect.Y += (_scrollVertical.Value * _scale.ScaleY) * -1;
+                        if (pair.Span != null) spanRect.Y += (_scrollVertical.Value * _scale.ScaleY) * -1;
                     }
 
                     if (pair.Label != null) pair.Label.Arrange(labelRect);
                     if (pair.Edit != null) pair.Edit.Arrange(editRect);
-                    // TODO: if (spanRect != null) paid.
+                    if (pair.Span != null) pair.Span.Arrange(spanRect);
 
                     var secondaryX = editRect.Right + (FlowWithPreviousSpacing * _scale.ScaleX);
                     var secondaryY = editRect.Y;
@@ -991,30 +1049,35 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         var secondaryWidth = secondaryControl.DesiredSize.Width*_scale.ScaleX;
                         var secondaryHeight = secondaryControl.DesiredSize.Height*_scale.ScaleY;
-                        var secondaryRect = new Rect(secondaryX, secondaryY, secondaryWidth, secondaryHeight);
+                        var secondaryRect = GeometryHelper.NewRect(secondaryX, secondaryY, secondaryWidth, secondaryHeight);
                         secondaryControl.Arrange(secondaryRect);
                         secondaryX = secondaryRect.Right + (FlowWithPreviousSpacing * _scale.ScaleX);
                     }
 
-                    var resultingTop = Math.Min(labelRect.Top, editRect.Top);
-                    var resultingLeft = Math.Min(labelRect.Left, editRect.Left);
-                    var resultingHeight = Math.Max(labelRect.Bottom, editRect.Bottom) - resultingTop;
-                    var resultingWidth = Math.Max(labelRect.Right, editRect.Right) - resultingLeft;
+                    var resultingTop = Math.Min(Math.Min(labelRect.Top, editRect.Top), spanRect.Top);
+                    var resultingLeft = Math.Min(Math.Min(labelRect.Left, editRect.Left), spanRect.Left);
+                    var resultingHeight = Math.Max(Math.Max(labelRect.Bottom, editRect.Bottom), spanRect.Bottom) - resultingTop;
+                    var resultingWidth = Math.Max(Math.Max(labelRect.Right, editRect.Right), spanRect.Right) - resultingLeft;
                     // TODO: Should this be supported with secondary flow controls as well?
-                    _controlPairPositionedRectangles[_controlPairPositionedRectangles.Count - 1].Add(new Rect(resultingLeft, resultingTop, resultingWidth, resultingHeight));
+                    _controlPairPositionedRectangles[_controlPairPositionedRectangles.Count - 1].Add(GeometryHelper.NewRect(resultingLeft, resultingTop, resultingWidth, resultingHeight));
 
                     double currentItemWidth;
                     if (LabelPosition == EditFormLabelPositions.Top)
-                        currentItemWidth = Math.Max(editRect.Width, labelRect.Width);
+                        currentItemWidth = Math.Max(Math.Max(editRect.Width, labelRect.Width), spanRect.Width);
                     else
-                        currentItemWidth = editRect.Width + labelRect.Width + _editControlLeftSpacingUsed;
+                    {
+                        if (pair.Span == null)
+                            currentItemWidth = controlWidths.Item1 + _editControlLeftSpacingUsed + editRect.Width;
+                        else
+                            currentItemWidth = spanRect.Width;
+                    }
 
                     foreach (var secondaryControl in pair.SecondaryControls)
                         currentItemWidth += FlowWithPreviousSpacing + secondaryControl.DesiredSize.Width;
 
                     currentColumnWidth = Math.Max(currentColumnWidth, currentItemWidth);
 
-                    var heightAdded = Math.Max(pair.DesiredLabelHeight, pair.DesiredEditHeight) + columnRenderInfo.VerticalSpacingUsed;
+                    var heightAdded = Math.Max(Math.Max(pair.DesiredLabelHeight, pair.DesiredEditHeight), spanRect.Height) + columnRenderInfo.VerticalSpacingUsed;
                     currentY += heightAdded;
                     lastBorderHeight += heightAdded;
                     columnHeight = currentY;
@@ -1024,12 +1087,13 @@ namespace CODE.Framework.Wpf.Layout
                 {
                     AddBackgroundRenderInformation(lastBorderX - GroupBorderMargin.Left, lastBorderY, lastBorderHeight, currentColumnWidth);
                     hasOpenBorder = false;
+                    columnHeight += GroupBorderMargin.Bottom;
                 }
 
                 if (LabelPosition == EditFormLabelPositions.Left)
-                    totalWidth += controlWidths.Item1 + _editControlLeftSpacingUsed + controlWidths.Item2 + (columnCount == 1 ? 0 : _columnSpacingUsed);
+                    totalWidth += currentColumnWidth + (columnCount == 1 ? 0 : _columnSpacingUsed);
                 else
-                    totalWidth += Math.Max(controlWidths.Item1, controlWidths.Item2) + (columnCount == 1 ? 0 : _columnSpacingUsed);
+                    totalWidth += currentColumnWidth + (columnCount == 1 ? 0 : _columnSpacingUsed);
 
                 totalHeight = Math.Max(columnHeight, totalHeight);
 
@@ -1042,11 +1106,16 @@ namespace CODE.Framework.Wpf.Layout
                 currentY = 0;
             }
 
+            var arrangedSize = GeometryHelper.NewSize(totalWidth, totalHeight);
+
+            // We also handle optional scrollbars
+            HandleScrollBars(arrangedSize, finalSize);
+
             base.ArrangeOverride(finalSize);
 
             if (finalSize.Height > 0 && finalSize.Width > 0 && !double.IsInfinity(finalSize.Height) && !double.IsInfinity(finalSize.Width))
                 return finalSize;
-            return new Size(totalWidth, totalHeight);
+            return arrangedSize;
         }
 
         /// <summary>
@@ -1080,18 +1149,21 @@ namespace CODE.Framework.Wpf.Layout
         private void AddBackgroundRenderInformation(double left, double top, double height, double width)
         {
             _groupBackgrounds.Add(new GroupBackgroundRenderInfo
-                                      {
-                                          Background = GroupBackgroundBrush,
-                                          Border = GroupBorderBrush,
-                                          BorderWidth = GroupBorderWidth,
-                                          RenderRect = new Rect(left, top,
-                                                                (width / _scale.ScaleX) + GroupBorderMargin.Left + GroupBorderMargin.Right,
-                                                                height + GroupBorderMargin.Top + GroupBorderMargin.Bottom)
-                                      });
+            {
+                Background = GroupBackgroundBrush,
+                Border = GroupBorderBrush,
+                BorderWidth = GroupBorderWidth,
+                RenderRect = GeometryHelper.NewRect(
+                    left, 
+                    top,
+                    width/_scale.ScaleX + GroupBorderMargin.Left + GroupBorderMargin.Right,
+                    height + GroupBorderMargin.Top + GroupBorderMargin.Bottom)
+            });
         }
 
         private readonly List<AutoHeaderTextRenderInfo> _headers = new List<AutoHeaderTextRenderInfo>();
-        private readonly List<GroupBackgroundRenderInfo> _groupBackgrounds = new List<GroupBackgroundRenderInfo>(); 
+        private readonly List<GroupBackgroundRenderInfo> _groupBackgrounds = new List<GroupBackgroundRenderInfo>();
+        private Size _measuredSize;
 
         /// <summary>Iterates over all the controls and returns them in columns and tuples</summary>
         /// <returns>Columns of control pairs</returns>
@@ -1102,6 +1174,9 @@ namespace CODE.Framework.Wpf.Layout
             for (var controlCounter = 0; controlCounter < Children.Count; controlCounter++)
             {
                 var child = Children[controlCounter];
+
+                if (child.Visibility == Visibility.Collapsed) continue;
+
                 if (SimpleView.GetColumnBreak(child))
                 {
                     columns.Add(new List<ControlPair>());
@@ -1110,7 +1185,7 @@ namespace CODE.Framework.Wpf.Layout
 
                 var controlPair = new ControlPair(FlowWithPreviousSpacing);
 
-                if (child is HeaderedContentControl || child is TabControl)
+                if (child is HeaderedContentControl || child is TabControl || SimpleView.GetSpanFullWidth(child))
                     controlPair.Span = child;
                 else
                 {
@@ -1120,10 +1195,13 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         controlPair.Label = child;
 
-                        var editControlIndex = controlCounter + 1;
-                        if (Children.Count > editControlIndex)
-                            controlPair.Edit = Children[editControlIndex];
-                        controlCounter++; // We are skipping the next control since we already accounted for it
+                        if (!SimpleView.GetIsStandAloneLabel(child))
+                        {
+                            var editControlIndex = controlCounter + 1;
+                            if (Children.Count > editControlIndex)
+                                controlPair.Edit = Children[editControlIndex];
+                            controlCounter++; // We are skipping the next control since we already accounted for it
+                        }
                     }
 
                     while (true) // We check whether the next control(s) flow(s) with the previous as secondary controls
@@ -1499,12 +1577,14 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
+            if (AdornedElement == null) return finalSize; // Not much we can do here
+
             var surfaceSize = AdornedElement.RenderSize;
 
             if (_horizontal.Visibility == Visibility.Visible)
-                _horizontal.Arrange(new Rect(0, surfaceSize.Height - SystemParameters.HorizontalScrollBarHeight, _vertical.Visibility == Visibility.Visible ?  surfaceSize.Width - SystemParameters.VerticalScrollBarWidth : surfaceSize.Width, SystemParameters.HorizontalScrollBarHeight));
+                _horizontal.Arrange(GeometryHelper.NewRect(0, surfaceSize.Height - SystemParameters.HorizontalScrollBarHeight, _vertical.Visibility == Visibility.Visible ?  surfaceSize.Width - SystemParameters.VerticalScrollBarWidth : surfaceSize.Width, SystemParameters.HorizontalScrollBarHeight));
             if (_vertical.Visibility == Visibility.Visible)
-                _vertical.Arrange(new Rect(surfaceSize.Width - SystemParameters.VerticalScrollBarWidth, 0, SystemParameters.VerticalScrollBarWidth, _horizontal.Visibility == Visibility.Visible ? surfaceSize.Height - SystemParameters.HorizontalScrollBarHeight : surfaceSize.Height));
+                _vertical.Arrange(GeometryHelper.NewRect(surfaceSize.Width - SystemParameters.VerticalScrollBarWidth, 0, SystemParameters.VerticalScrollBarWidth, _horizontal.Visibility == Visibility.Visible ? surfaceSize.Height - SystemParameters.HorizontalScrollBarHeight : surfaceSize.Height));
 
             return finalSize;
         }

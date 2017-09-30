@@ -10,7 +10,7 @@ using CODE.Framework.Wpf.Mvvm;
 
 namespace CODE.Framework.Wpf.Theme.Workplace.Controls
 {
-    /// <summary>Simple rendering mechanism to render a standard Metro loading animatin (circular)</summary>
+    /// <summary>Simple rendering mechanism to render a standard Metro loading animation (circular)</summary>
     public class LinearProgressAnimation : Grid
     {
         /// <summary>Constructor</summary>
@@ -20,7 +20,7 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
 
             IsVisibleChanged += (o, args) =>
             {
-                if ((bool)args.NewValue && IsActive) StartAnimation();
+                if ((bool) args.NewValue && IsActive) StartAnimation();
                 else StopAnimation();
             };
 
@@ -30,7 +30,7 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         /// <summary>Defines the number of actual dots in the animation</summary>
         public int DotCount
         {
-            get { return (int)GetValue(DotCountProperty); }
+            get { return (int) GetValue(DotCountProperty); }
             set { SetValue(DotCountProperty, value); }
         }
 
@@ -40,7 +40,7 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         /// <summary>Defines the diameter of each dot within the animation</summary>
         public double DotDiameter
         {
-            get { return (double)GetValue(DotDiameterProperty); }
+            get { return (double) GetValue(DotDiameterProperty); }
             set { SetValue(DotDiameterProperty, value); }
         }
 
@@ -50,27 +50,27 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         /// <summary>Brush used to draw each dot</summary>
         public Brush DotBrush
         {
-            get { return (Brush)GetValue(DotBrushProperty); }
+            get { return (Brush) GetValue(DotBrushProperty); }
             set { SetValue(DotBrushProperty, value); }
         }
 
         /// <summary>Brush used to draw each dot</summary>
         public static readonly DependencyProperty DotBrushProperty = DependencyProperty.Register("DotBrush", typeof(Brush), typeof(LinearProgressAnimation), new UIPropertyMetadata(Brushes.Black, TriggerVisualRefresh));
 
-        /// <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+        /// <summary>determines the spacing of the individual dots (1 = neutral)</summary>
         public double DotSpaceFactor
         {
-            get { return (double)GetValue(DotSpaceFactorProperty); }
+            get { return (double) GetValue(DotSpaceFactorProperty); }
             set { SetValue(DotSpaceFactorProperty, value); }
         }
 
-        /// <summary>Detirmines the spacing of the individual dots (1 = neutral)</summary>
+        /// <summary>determines the spacing of the individual dots (1 = neutral)</summary>
         public static readonly DependencyProperty DotSpaceFactorProperty = DependencyProperty.Register("DotSpaceFactor", typeof(double), typeof(LinearProgressAnimation), new UIPropertyMetadata(1d, TriggerVisualRefresh));
 
         /// <summary>Sets the speed of the animation (factor 1 = neutral speed, lower factors are faster, larger factors slower, as it increases the time the animation has to perform)(</summary>
         public double DotAnimationSpeedFactor
         {
-            get { return (double)GetValue(DotAnimationSpeedFactorProperty); }
+            get { return (double) GetValue(DotAnimationSpeedFactorProperty); }
             set { SetValue(DotAnimationSpeedFactorProperty, value); }
         }
 
@@ -82,7 +82,7 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         /// <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         public bool IsActive
         {
-            get { return (bool)GetValue(IsActiveProperty); }
+            get { return (bool) GetValue(IsActiveProperty); }
             set { SetValue(IsActiveProperty, value); }
         }
 
@@ -90,12 +90,12 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         /// <value>True if active</value>
         /// <remarks>For the progress animation to be displayed, the IsActive must be true, and the control must have its visibility set to visible.</remarks>
         public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(LinearProgressAnimation),
-                                                                                                 new UIPropertyMetadata(false, (s, e) =>
-                                                                                                 {
-                                                                                                     var progress = s as LinearProgressAnimation;
-                                                                                                     if (progress != null && (bool)e.NewValue && progress.Visibility == Visibility.Visible) progress.StartAnimation();
-                                                                                                     else if (progress != null) progress.StopAnimation();
-                                                                                                 }));
+            new UIPropertyMetadata(false, (s, e) =>
+            {
+                var progress = s as LinearProgressAnimation;
+                if (progress != null && (bool) e.NewValue && progress.Visibility == Visibility.Visible) progress.StartAnimation();
+                else if (progress != null) progress.StopAnimation();
+            }));
 
         /// <summary>Triggers a re-creation of all the child elements that make up the animation</summary>
         /// <param name="o">Dependency Object</param>
@@ -154,25 +154,25 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
                     KeyTime = KeyTime.FromTimeSpan(new TimeSpan(0, 0, 0, 0, 0)),
                     Value = new Thickness(DotDiameter * -1, 0, 0, 0)
                 });
-                var keytime = (long)(15000000 * DotAnimationSpeedFactor * widthSpeedFactor);
+                var keytime = (long) (15000000 * DotAnimationSpeedFactor * widthSpeedFactor);
                 a1.KeyFrames.Add(new SplineThicknessKeyFrame
                 {
                     KeyTime = KeyTime.FromTimeSpan(new TimeSpan(keytime)),
                     Value = new Thickness(fastDistance, 0, 0, 0)
                 });
-                keytime += (long)(10000000 * DotAnimationSpeedFactor); // No speec factor here!!!
+                keytime += (long) (10000000 * DotAnimationSpeedFactor); // No speec factor here!!!
                 a1.KeyFrames.Add(new SplineThicknessKeyFrame
                 {
                     KeyTime = KeyTime.FromTimeSpan(new TimeSpan(keytime)),
                     Value = new Thickness(fastDistance + slowDistance, 0, 0, 0)
                 });
-                keytime += (long)(10000000 * DotAnimationSpeedFactor * widthSpeedFactor);
+                keytime += (long) (10000000 * DotAnimationSpeedFactor * widthSpeedFactor);
                 a1.KeyFrames.Add(new SplineThicknessKeyFrame
                 {
                     KeyTime = KeyTime.FromTimeSpan(new TimeSpan(keytime)),
                     Value = new Thickness(fastDistance + slowDistance + fastDistance, 0, 0, 0)
                 });
-                keytime += (long)(10000000 * DotAnimationSpeedFactor * widthSpeedFactor);
+                keytime += (long) (10000000 * DotAnimationSpeedFactor * widthSpeedFactor);
                 a1.KeyFrames.Add(new SplineThicknessKeyFrame
                 {
                     KeyTime = KeyTime.FromTimeSpan(new TimeSpan(keytime)),
@@ -229,7 +229,7 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
         /// </summary>
         public IModelStatus Model
         {
-            get { return (IModelStatus)GetValue(ModelProperty); }
+            get { return (IModelStatus) GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
 
@@ -258,13 +258,11 @@ namespace CODE.Framework.Wpf.Theme.Workplace.Controls
 
             var inpc = status as INotifyPropertyChanged;
             if (inpc != null)
-            {
                 inpc.PropertyChanged += (s, e2) =>
                 {
                     if (e2.PropertyName == "ModelStatus")
                         progress.Visibility = status.ModelStatus == ModelStatus.Loading || status.ModelStatus == ModelStatus.Saving ? Visibility.Visible : Visibility.Collapsed;
                 };
-            }
         }
     }
 }

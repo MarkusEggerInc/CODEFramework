@@ -32,6 +32,7 @@
         <ResourceDictionary Source="Newsroom-Control-Textbox.xaml"/>
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Newsroom-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Newsroom-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Newsroom-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Newsroom-Layout-MultiPanel.xaml"/>
@@ -39,6 +40,7 @@
         <ResourceDictionary Source="Newsroom-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Newsroom-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Newsroom-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Newsroom-Layout-Tabs.xaml"/>
 
         <!-- Standard Icons -->
         <ResourceDictionary Source="Newsroom-Icon-Arrow.xaml"/>

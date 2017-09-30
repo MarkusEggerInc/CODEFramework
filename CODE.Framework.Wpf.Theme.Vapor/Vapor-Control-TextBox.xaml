@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:bindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
-                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf"
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf">
 
     <Style x:Key="Vapor-Control-TextBox" TargetType="TextBox">
         <Setter Property="BorderBrush" Value="{DynamicResource CODE.Framework-Application-ControlBorderBrush}"/>
@@ -13,7 +14,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
     </Style>
 
-    <ControlTemplate x:Key="Vapor-TextBox-Template" TargetType="TextBoxBase">
+    <ControlTemplate x:Key="Vapor-TextBox-Template" TargetType="TextBox">
         <ControlTemplate.Resources>
             <bindingConverters:LitBrushConverter x:Key="LitBrushConverter" />
             <bindingConverters:TransparentBrushConverter x:Key="TransparentBrushConverter" />
@@ -26,6 +27,9 @@
                 CornerRadius="3">
             <Grid>
                 <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4"/>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="4"
+                           Foreground="{DynamicResource CODE.Framework-Application-ThemeBrush2}"
+                           Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
                 <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
             </Grid>
         </Border>
@@ -34,9 +38,23 @@
                 <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
             </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                    <Condition Property="Text" Value=""/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+            </MultiTrigger>
             <Trigger Property="IsFocused" Value="True">
                 <Setter Property="BorderBrush" TargetName="Bd" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=1.1}" />
             </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                    <Condition Property="Text" Value=""/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+            </MultiTrigger>
             <Trigger Property="val:InputValidation.IsValid" Value="False">
                 <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
                 <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
@@ -45,5 +63,86 @@
     </ControlTemplate>
 
     <Style TargetType="TextBox" BasedOn="{StaticResource Vapor-Control-TextBox}" />
+    
+    <Style TargetType="controls:FilterHeaderTextBox" BasedOn="{StaticResource Vapor-Control-TextBox}">
+        <Setter Property="Margin" Value="0,2,0,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <ControlTemplate.Resources>
+                        <bindingConverters:LitBrushConverter x:Key="LitBrushConverter" />
+                        <bindingConverters:TransparentBrushConverter x:Key="TransparentBrushConverter" />
+                    </ControlTemplate.Resources>
+                    <Border x:Name="Bd" 
+                            BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=.66}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
+                            SnapsToDevicePixels="True" CornerRadius="3">
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4"/>
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="4"
+                                       Foreground="{DynamicResource CODE.Framework-Application-ThemeBrush2}"
+                                       Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                            <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
+                            <controls:ClearTextButton VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2" x:Name="clearButton">
+                                <controls:ClearTextButton.Template>
+                                    <ControlTemplate TargetType="controls:ClearTextButton">
+                                        <Grid>
+                                            <Rectangle Height="12" Width="12" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                <Rectangle.Fill>
+                                                    <DrawingBrush Stretch="Uniform">
+                                                        <DrawingBrush.Drawing>
+                                                            <DrawingGroup>
+                                                                <DrawingGroup.Children>
+                                                                    <GeometryDrawing Brush="{DynamicResource CODE.Framework-Application-ThemeBrush2}" Geometry="F1 M 6,0C 9.31371,0 12,2.68629 12,6C 12,9.31371 9.31371,12 6,12C 2.68629,12 -6.35783e-007,9.31371 -6.35783e-007,6C -6.35783e-007,2.68629 2.68629,0 6,0 Z "/>
+                                                                    <GeometryDrawing Geometry="F1 M 3,2.99219L 9,8.99219">
+                                                                        <GeometryDrawing.Pen>
+                                                                            <Pen LineJoin="Round" Brush="#FFFFFFFF"/>
+                                                                        </GeometryDrawing.Pen>
+                                                                    </GeometryDrawing>
+                                                                    <GeometryDrawing Geometry="F1 M 9,2.99219L 3,8.99219">
+                                                                        <GeometryDrawing.Pen>
+                                                                            <Pen LineJoin="Round" Brush="#FFFFFFFF"/>
+                                                                        </GeometryDrawing.Pen>
+                                                                    </GeometryDrawing>
+                                                                </DrawingGroup.Children>
+                                                            </DrawingGroup>
+                                                        </DrawingBrush.Drawing>
+                                                    </DrawingBrush>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </controls:ClearTextButton.Template>
+                            </controls:ClearTextButton>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="">
+                            <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="clearButton"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LitBrushConverter}, ConverterParameter=1.1}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                <Condition Property="Text" Value=""/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                        </MultiTrigger>
+                        <Trigger Property="val:InputValidation.IsValid" Value="False">
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                            <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

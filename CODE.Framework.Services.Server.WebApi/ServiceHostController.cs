@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Reflection;
-using System.ServiceModel.Configuration;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using CODE.Framework.Core.Configuration;
 using CODE.Framework.Core.Utilities;
 using CODE.Framework.Core.Utilities.Extensions;
 
@@ -30,13 +30,24 @@ namespace CODE.Framework.Services.Server.WebApi
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceHostController{TServiceImplementation}"/> class.
         /// </summary>
-        /// <exception cref="System.NotSupportedException">The hosted service contract must implement a service interface</exception>
         public ServiceHostController()
         {
             _host = new TServiceImplementation();
             AllowableCorsMethods = "GET, PUT, DELETE, POST, HEAD, OPTIONS";
             AllowableCorsOrigin = "*";
             AllowableCorsHeaders = "Content-Type, Accept";
+
+            if (JsonPropertyCaseMode == JsonPropertyCaseMode.Default)
+            {
+                if (ConfigurationSettings.Settings.IsSettingSupported("JsonPropertyCaseMode"))
+                {
+                    var jsonPropertyCaseMode = ConfigurationSettings.Settings["JsonPropertyCaseMode"].ToLower();
+                    if (jsonPropertyCaseMode == "forcecamelcase" || jsonPropertyCaseMode == "camelcase")
+                        JsonPropertyCaseMode = JsonPropertyCaseMode.ForceCamelCase;
+                    else
+                        JsonPropertyCaseMode = JsonPropertyCaseMode.UseOriginalPropertyNames;
+                }
+            }
         }
 
         /// <summary>
@@ -84,6 +95,22 @@ namespace CODE.Framework.Services.Server.WebApi
         public string AllowableCorsHeaders { get; set; }
 
         /// <summary>
+        /// Defines whether HTTPS is required
+        /// </summary>
+        /// <value>
+        /// The HTTPS mode.
+        /// </value>
+        public ControllerHttpsMode HttpsMode { get; set; }
+
+        /// <summary>
+        /// Defines the case used for JSON property names
+        /// </summary>
+        /// <value>
+        /// The JSON property case mode.
+        /// </value>
+        public JsonPropertyCaseMode JsonPropertyCaseMode { get; set; }
+
+        /// <summary>
         /// execute as an asynchronous operation.
         /// </summary>
         /// <param name="controllerContext">The controller context for a single HTTP operation.</param>
@@ -91,6 +118,10 @@ namespace CODE.Framework.Services.Server.WebApi
         /// <returns>The newly started task.</returns>
         public override async Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
         {
+            var lowerFullCalledUri = controllerContext.Request.RequestUri.AbsoluteUri.ToLower();
+            if (HttpsMode == ControllerHttpsMode.RequireHttps && !lowerFullCalledUri.StartsWith("https://")) throw new AccessViolationException("Service must be called over a secure connection (HTTPS)");
+            if (HttpsMode == ControllerHttpsMode.RequireHttpsExceptLocalhost && !lowerFullCalledUri.StartsWith("https://") && controllerContext.Request.RequestUri.Host.ToLower() != "localhost") throw new AccessViolationException("Service must be called over a secure connection (HTTPS)");
+
             var fullUrl = controllerContext.Request.RequestUri.PathAndQuery;
             var applicationPath = controllerContext.Request.GetRequestContext().VirtualPathRoot;
             fullUrl = fullUrl.Substring(applicationPath.Length);
@@ -110,7 +141,7 @@ namespace CODE.Framework.Services.Server.WebApi
             var firstCharAfterController = routeTemplate.Substring(controllerEnd, 1);
 
             // We get the URL Fragment with everything before the controller removed
-            var urlFragmentUpToController = string.Empty;
+            string urlFragmentUpToController;
             if (slashCountUpToController > 0)
             {
                 var currentFragment = fullUrl;
@@ -129,7 +160,7 @@ namespace CODE.Framework.Services.Server.WebApi
 
             // We find the first special character after the controller, which is the start of the parameters
             var firstCharAfterControllerIndex = urlFragmentUpToController.IndexOf(firstCharAfterController, StringComparison.Ordinal);
-            var urlFragment = urlFragmentUpToController.Substring(firstCharAfterControllerIndex);
+            var urlFragment = firstCharAfterControllerIndex < 0 ? string.Empty : urlFragmentUpToController.Substring(firstCharAfterControllerIndex);
 
             var httpMethod = controllerContext.Request.Method.Method.ToUpper();
 
@@ -143,10 +174,11 @@ namespace CODE.Framework.Services.Server.WebApi
             }
 
             var method = RestHelper.GetMethodNameFromUrlFragmentAndContract(urlFragment, httpMethod, _contractType);
-            if (method == null) throw new NotSupportedException("Refusing request");
+            if (method == null) throw new NotSupportedException("Refusing request: " + fullUrl);
 
-            if (httpMethod == "GET")
+            if (httpMethod == "GET" || httpMethod == "HEAD" || httpMethod == "TRACE" || httpMethod == "DELETE" || httpMethod == "CONNECT" || httpMethod == "MKCOL" || httpMethod == "COPY" || httpMethod == "MOVE" || httpMethod == "UNLOCK")
             {
+                // These verbs/http-methods do NOT have a body that is posted
                 var urlParameters = RestHelper.GetUrlParametersFromUrlFragmentAndContract(urlFragment, httpMethod, _contractType);
                 var parameters = method.GetParameters();
                 if (parameters.Length != 1) throw new NotSupportedException("Only service methods/operations with a single input parameter can be mapped to REST-GET operations. Method " + method.Name + " has " + parameters.Length + " parameters. Consider changing the method to have a single object with multiple properties instead.");
@@ -164,12 +196,14 @@ namespace CODE.Framework.Services.Server.WebApi
                 {
                     result = method.Invoke(_host, new[] {parameterObject});
                 }
-                catch (TargetException ex)
+                catch
                 {
-                    throw new TargetException("Service " + _host.GetType() + " does not implement interface " + _contractType + ".", ex);
+                    var errorResponse = new HttpResponseMessage(HttpStatusCode.NotAcceptable) {ReasonPhrase = "Error invoking service operation."};
+                    HandleCors(controllerContext, errorResponse);
+                    return errorResponse;
                 }
                 BeforeCreatingResponse(result, controllerContext, method.Name, httpMethod, method);
-                var json = JsonHelper.SerializeToRestJson(result);
+                var json = JsonHelper.SerializeToRestJson(result, JsonPropertyCaseMode == JsonPropertyCaseMode.ForceCamelCase);
                 var response = new HttpResponseMessage {Content = new StringContent(json, Encoding.UTF8, "application/json")};
                 BeforeReturningResponse(response, json, controllerContext, method.Name, httpMethod, method, result);
 
@@ -184,19 +218,31 @@ namespace CODE.Framework.Services.Server.WebApi
                 var parameterType = parameters[0].ParameterType;
                 var formatter = new JsonMediaTypeFormatter();
                 var stream = await controllerContext.Request.Content.ReadAsStreamAsync();
-                var parameterObject = await formatter.ReadFromStreamAsync(parameterType, stream, controllerContext.Request.Content, null);
+                object parameterObject;
+                try
+                {
+                    parameterObject = await formatter.ReadFromStreamAsync(parameterType, stream, controllerContext.Request.Content, null);
+                }
+                catch
+                {
+                    var errorResponse = new HttpResponseMessage(HttpStatusCode.NotAcceptable) {ReasonPhrase = "Error invoking service operation: Invalid input parameter."};
+                    HandleCors(controllerContext, errorResponse);
+                    return errorResponse;
+                }
                 BeforeInvokeMethod(controllerContext, method.Name, httpMethod, method, parameterObject);
                 object result;
                 try
                 {
                     result = method.Invoke(_host, new[] {parameterObject});
                 }
-                catch (TargetException ex)
+                catch
                 {
-                    throw new TargetException("Service " + _host.GetType() + " does not implement interface " + _contractType + ".", ex);
+                    var errorResponse = new HttpResponseMessage(HttpStatusCode.NotAcceptable) {ReasonPhrase = "Error invoking service operation."};
+                    HandleCors(controllerContext, errorResponse);
+                    return errorResponse;
                 }
                 BeforeCreatingResponse(result, controllerContext, method.Name, httpMethod, method);
-                var json = JsonHelper.SerializeToRestJson(result);
+                var json = JsonHelper.SerializeToRestJson(result, JsonPropertyCaseMode == JsonPropertyCaseMode.ForceCamelCase);
                 var response = new HttpResponseMessage {Content = new StringContent(json, Encoding.UTF8, "application/json")};
                 BeforeReturningResponse(response, json, controllerContext, method.Name, httpMethod, method, result);
 
@@ -300,6 +346,16 @@ namespace CODE.Framework.Services.Server.WebApi
                     }
                 }
             }
+            else if (AllowableCorsOrigin == "*")
+            {
+                response.Headers.Add("Access-Control-Allow-Origin", "*");
+                response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                if (controllerContext.Request.Method == HttpMethod.Options)
+                {
+                    response.Headers.Add("Access-Control-Allow-Methods", AllowableCorsMethods);
+                    response.Headers.Add("Access-Control-Allow-Headers", AllowableCorsHeaders);
+                }
+            }
         }
 
         /// <summary>
@@ -371,5 +427,37 @@ namespace CODE.Framework.Services.Server.WebApi
         {
             get { return HttpContext.Current.Request.UserHostName; }
         }
+    }
+
+    /// <summary>
+    /// HTTPS mode of the controller (can be used to define whether the controller requires HTTPS)
+    /// </summary>
+    public enum ControllerHttpsMode
+    {
+        /// <summary>Controller can be called over HTTP or HTTPS without restriction</summary>
+        Undefined,
+        /// <summary>Always requires HTTPS</summary>
+        RequireHttps,
+        /// <summary>Requires HTTPS, but not if hosted on Localhost</summary>
+        RequireHttpsExceptLocalhost
+    }
+
+    /// <summary>
+    /// Defines which casing is to be used for JSON property names
+    /// </summary>
+    public enum JsonPropertyCaseMode
+    {
+        /// <summary>
+        /// Default setting (respects settings in configuration)
+        /// </summary>
+        Default,
+        /// <summary>
+        /// Always uses the exact property names as defined by the objects
+        /// </summary>
+        UseOriginalPropertyNames,
+        /// <summary>
+        /// Forces camelCase for all property names
+        /// </summary>
+        ForceCamelCase
     }
 }

@@ -44,6 +44,7 @@
         <ResourceDictionary Source="Universe-Layout-PrimarySecondaryForm.xaml"/>
         <ResourceDictionary Source="Universe-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Universe-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Universe-Layout-Tabs.xaml"/>
 
         <!-- Standard Icons -->
         <ResourceDictionary Source="Universe-Icon-Arrow.xaml"/>

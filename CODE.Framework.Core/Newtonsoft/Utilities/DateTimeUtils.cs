@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -33,6 +35,7 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
     internal static class DateTimeUtils
     {
         internal static readonly long InitialJavaScriptDateTicks = 621355968000000000;
+        private const string IsoDateFormat = "yyyy-MM-ddTHH:mm:ss.FFFFFFFK";
 
         private const int DaysPer100Years = 36524;
         private const int DaysPer400Years = 146097;
@@ -50,7 +53,7 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         public static TimeSpan GetUtcOffset(this DateTime d)
         {
-            return TimeZoneInfo.Local.GetUtcOffset(d);
+            return TimeZone.CurrentTimeZone.GetUtcOffset(d);
         }
 
         public static XmlDateTimeSerializationMode ToSerializationMode(DateTimeKind kind)
@@ -64,7 +67,22 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 case DateTimeKind.Utc:
                     return XmlDateTimeSerializationMode.Utc;
                 default:
-                    throw MiscellaneousUtils.CreateArgumentOutOfRangeException("kind", kind, "Unexpected DateTimeKind value.");
+                    throw MiscellaneousUtils.CreateArgumentOutOfRangeException(nameof(kind), kind, "Unexpected DateTimeKind value.");
+            }
+        }
+
+        public static string ToDateTimeFormat(DateTimeKind kind)
+        {
+            switch (kind)
+            {
+                case DateTimeKind.Local:
+                    return IsoDateFormat;
+                case DateTimeKind.Unspecified:
+                    return "yyyy-MM-ddTHH:mm:ss.FFFFFFF";
+                case DateTimeKind.Utc:
+                    return "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ";
+                default:
+                    throw MiscellaneousUtils.CreateArgumentOutOfRangeException(nameof(kind), kind, "Unexpected DateTimeKind value.");
             }
         }
 
@@ -124,22 +142,33 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         private static long ToUniversalTicks(DateTime dateTime)
         {
-            return dateTime.Kind == DateTimeKind.Utc ? dateTime.Ticks : ToUniversalTicks(dateTime, dateTime.GetUtcOffset());
+            if (dateTime.Kind == DateTimeKind.Utc)
+                return dateTime.Ticks;
+
+            return ToUniversalTicks(dateTime, dateTime.GetUtcOffset());
         }
 
         private static long ToUniversalTicks(DateTime dateTime, TimeSpan offset)
         {
             // special case min and max value
             // they never have a timezone appended to avoid issues
-            if (dateTime.Kind == DateTimeKind.Utc || dateTime == DateTime.MaxValue || dateTime == DateTime.MinValue) return dateTime.Ticks;
+            if (dateTime.Kind == DateTimeKind.Utc || dateTime == DateTime.MaxValue || dateTime == DateTime.MinValue)
+                return dateTime.Ticks;
+
             var ticks = dateTime.Ticks - offset.Ticks;
-            if (ticks > 3155378975999999999L) return 3155378975999999999L;
-            return ticks < 0L ? 0L : ticks;
+            if (ticks > 3155378975999999999L)
+                return 3155378975999999999L;
+
+            if (ticks < 0L)
+                return 0L;
+
+            return ticks;
         }
 
         internal static long ConvertDateTimeToJavaScriptTicks(DateTime dateTime, TimeSpan offset)
         {
             var universialTicks = ToUniversalTicks(dateTime, offset);
+
             return UniversialTicksToJavaScriptTicks(universialTicks);
         }
 
@@ -150,225 +179,410 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
 
         internal static long ConvertDateTimeToJavaScriptTicks(DateTime dateTime, bool convertToUtc)
         {
-            var ticks = (convertToUtc) ? ToUniversalTicks(dateTime) : dateTime.Ticks;
+            var ticks = convertToUtc ? ToUniversalTicks(dateTime) : dateTime.Ticks;
+
             return UniversialTicksToJavaScriptTicks(ticks);
         }
 
         private static long UniversialTicksToJavaScriptTicks(long universialTicks)
         {
-            var javaScriptTicks = (universialTicks - InitialJavaScriptDateTicks)/10000;
+            var javaScriptTicks = (universialTicks - InitialJavaScriptDateTicks) / 10000;
+
             return javaScriptTicks;
         }
 
         internal static DateTime ConvertJavaScriptTicksToDateTime(long javaScriptTicks)
         {
-            var dateTime = new DateTime((javaScriptTicks*10000) + InitialJavaScriptDateTicks, DateTimeKind.Utc);
+            var dateTime = new DateTime(javaScriptTicks * 10000 + InitialJavaScriptDateTicks, DateTimeKind.Utc);
+
             return dateTime;
         }
 
-        internal static bool TryParseDateIso(string text, DateParseHandling dateParseHandling, DateTimeZoneHandling dateTimeZoneHandling, out object dt)
+        #region Parse
+
+        internal static bool TryParseDateTimeIso(StringReference text, DateTimeZoneHandling dateTimeZoneHandling, out DateTime dt)
         {
             var dateTimeParser = new DateTimeParser();
-            if (!dateTimeParser.Parse(text))
+            if (!dateTimeParser.Parse(text.Chars, text.StartIndex, text.Length))
             {
-                dt = null;
+                dt = default(DateTime);
                 return false;
+            }
+
+            var d = CreateDateTime(dateTimeParser);
+
+            long ticks;
+
+            switch (dateTimeParser.Zone)
+            {
+                case ParserTimeZone.Utc:
+                    d = new DateTime(d.Ticks, DateTimeKind.Utc);
+                    break;
+
+                case ParserTimeZone.LocalWestOfUtc:
+                {
+                    var offset = new TimeSpan(dateTimeParser.ZoneHour, dateTimeParser.ZoneMinute, 0);
+                    ticks = d.Ticks + offset.Ticks;
+                    if (ticks <= DateTime.MaxValue.Ticks)
+                    {
+                        d = new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
+                    }
+                    else
+                    {
+                        ticks += d.GetUtcOffset().Ticks;
+                        if (ticks > DateTime.MaxValue.Ticks)
+                            ticks = DateTime.MaxValue.Ticks;
+
+                        d = new DateTime(ticks, DateTimeKind.Local);
+                    }
+                    break;
+                }
+                case ParserTimeZone.LocalEastOfUtc:
+                {
+                    var offset = new TimeSpan(dateTimeParser.ZoneHour, dateTimeParser.ZoneMinute, 0);
+                    ticks = d.Ticks - offset.Ticks;
+                    if (ticks >= DateTime.MinValue.Ticks)
+                    {
+                        d = new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
+                    }
+                    else
+                    {
+                        ticks += d.GetUtcOffset().Ticks;
+                        if (ticks < DateTime.MinValue.Ticks)
+                            ticks = DateTime.MinValue.Ticks;
+
+                        d = new DateTime(ticks, DateTimeKind.Local);
+                    }
+                    break;
+                }
+            }
+
+            dt = EnsureDateTime(d, dateTimeZoneHandling);
+            return true;
+        }
+
+        internal static bool TryParseDateTimeOffsetIso(StringReference text, out DateTimeOffset dt)
+        {
+            DateTimeParser dateTimeParser = new DateTimeParser();
+            if (!dateTimeParser.Parse(text.Chars, text.StartIndex, text.Length))
+            {
+                dt = default(DateTimeOffset);
+                return false;
+            }
+
+            DateTime d = CreateDateTime(dateTimeParser);
+
+            TimeSpan offset;
+
+            switch (dateTimeParser.Zone)
+            {
+                case ParserTimeZone.Utc:
+                    offset = new TimeSpan(0L);
+                    break;
+                case ParserTimeZone.LocalWestOfUtc:
+                    offset = new TimeSpan(-dateTimeParser.ZoneHour, -dateTimeParser.ZoneMinute, 0);
+                    break;
+                case ParserTimeZone.LocalEastOfUtc:
+                    offset = new TimeSpan(dateTimeParser.ZoneHour, dateTimeParser.ZoneMinute, 0);
+                    break;
+                default:
+                    offset = TimeZoneInfo.Local.GetUtcOffset(d);
+                    break;
+            }
+
+            long ticks = d.Ticks - offset.Ticks;
+            if (ticks < 0 || ticks > 3155378975999999999)
+            {
+                dt = default(DateTimeOffset);
+                return false;
+            }
+
+            dt = new DateTimeOffset(d, offset);
+            return true;
+        }
+
+        private static DateTime CreateDateTime(DateTimeParser dateTimeParser)
+        {
+            bool is24Hour;
+            if (dateTimeParser.Hour == 24)
+            {
+                is24Hour = true;
+                dateTimeParser.Hour = 0;
+            }
+            else
+            {
+                is24Hour = false;
             }
 
             var d = new DateTime(dateTimeParser.Year, dateTimeParser.Month, dateTimeParser.Day, dateTimeParser.Hour, dateTimeParser.Minute, dateTimeParser.Second);
             d = d.AddTicks(dateTimeParser.Fraction);
 
-            if (dateParseHandling == DateParseHandling.DateTimeOffset)
-            {
-                TimeSpan offset;
-
-                switch (dateTimeParser.Zone)
-                {
-                    case ParserTimeZone.Utc:
-                        offset = new TimeSpan(0L);
-                        break;
-                    case ParserTimeZone.LocalWestOfUtc:
-                        offset = new TimeSpan(-dateTimeParser.ZoneHour, -dateTimeParser.ZoneMinute, 0);
-                        break;
-                    case ParserTimeZone.LocalEastOfUtc:
-                        offset = new TimeSpan(dateTimeParser.ZoneHour, dateTimeParser.ZoneMinute, 0);
-                        break;
-                    default:
-                        offset = TimeZoneInfo.Local.GetUtcOffset(d);
-                        break;
-                }
-
-                var ticks = d.Ticks - offset.Ticks;
-                if (ticks < 0 || ticks > 3155378975999999999)
-                {
-                    dt = null;
-                    return false;
-                }
-
-                dt = new DateTimeOffset(d, offset);
-                return true;
-            }
-            else
-            {
-                long ticks;
-
-                switch (dateTimeParser.Zone)
-                {
-                    case ParserTimeZone.Utc:
-                        d = new DateTime(d.Ticks, DateTimeKind.Utc);
-                        break;
-
-                    case ParserTimeZone.LocalWestOfUtc:
-                    {
-                        var offset = new TimeSpan(dateTimeParser.ZoneHour, dateTimeParser.ZoneMinute, 0);
-                        ticks = d.Ticks + offset.Ticks;
-                        if (ticks <= DateTime.MaxValue.Ticks)
-                            d = new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
-                        else
-                        {
-                            ticks += d.GetUtcOffset().Ticks;
-                            if (ticks > DateTime.MaxValue.Ticks)
-                                ticks = DateTime.MaxValue.Ticks;
-                            d = new DateTime(ticks, DateTimeKind.Local);
-                        }
-                        break;
-                    }
-                    case ParserTimeZone.LocalEastOfUtc:
-                    {
-                        var offset = new TimeSpan(dateTimeParser.ZoneHour, dateTimeParser.ZoneMinute, 0);
-                        ticks = d.Ticks - offset.Ticks;
-                        if (ticks >= DateTime.MinValue.Ticks)
-                            d = new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
-                        else
-                        {
-                            ticks += d.GetUtcOffset().Ticks;
-                            if (ticks < DateTime.MinValue.Ticks)
-                                ticks = DateTime.MinValue.Ticks;
-
-                            d = new DateTime(ticks, DateTimeKind.Local);
-                        }
-                        break;
-                    }
-                }
-
-                dt = EnsureDateTime(d, dateTimeZoneHandling);
-                return true;
-            }
+            if (is24Hour)
+                d = d.AddDays(1);
+            return d;
         }
 
-        internal static bool TryParseDateTime(string s, DateParseHandling dateParseHandling, DateTimeZoneHandling dateTimeZoneHandling, string dateFormatString, CultureInfo culture, out object dt)
+        internal static bool TryParseDateTime(StringReference s, DateTimeZoneHandling dateTimeZoneHandling, string dateFormatString, CultureInfo culture, out DateTime dt)
+        {
+            if (s.Length > 0)
+            {
+                var i = s.StartIndex;
+                if (s[i] == '/')
+                {
+                    if (s.Length >= 9 && s.StartsWith("/Date(") && s.EndsWith(")/"))
+                        if (TryParseDateTimeMicrosoft(s, dateTimeZoneHandling, out dt))
+                            return true;
+                }
+                else if (s.Length >= 19 && s.Length <= 40 && char.IsDigit(s[i]) && s[i + 10] == 'T')
+                {
+                    if (TryParseDateTimeIso(s, dateTimeZoneHandling, out dt))
+                        return true;
+                }
+
+                if (!string.IsNullOrEmpty(dateFormatString))
+                    if (TryParseDateTimeExact(s.ToString(), dateTimeZoneHandling, dateFormatString, culture, out dt))
+                        return true;
+            }
+
+            dt = default(DateTime);
+            return false;
+        }
+
+        internal static bool TryParseDateTime(string s, DateTimeZoneHandling dateTimeZoneHandling, string dateFormatString, CultureInfo culture, out DateTime dt)
         {
             if (s.Length > 0)
             {
                 if (s[0] == '/')
                 {
-                    if (s.StartsWith("/Date(", StringComparison.Ordinal) && s.EndsWith(")/", StringComparison.Ordinal))
-                        if (TryParseDateMicrosoft(s, dateParseHandling, dateTimeZoneHandling, out dt))
+                    if (s.Length >= 9 && s.StartsWith("/Date(", StringComparison.Ordinal) && s.EndsWith(")/", StringComparison.Ordinal))
+                        if (TryParseDateTimeMicrosoft(new StringReference(s.ToCharArray(), 0, s.Length), dateTimeZoneHandling, out dt))
                             return true;
                 }
                 else if (s.Length >= 19 && s.Length <= 40 && char.IsDigit(s[0]) && s[10] == 'T')
-                    if (TryParseDateIso(s, dateParseHandling, dateTimeZoneHandling, out dt))
+                {
+                    if (DateTime.TryParseExact(s, IsoDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dt))
+                    {
+                        dt = EnsureDateTime(dt, dateTimeZoneHandling);
                         return true;
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(dateFormatString))
-                    if (TryParseDateExact(s, dateParseHandling, dateTimeZoneHandling, dateFormatString, culture, out dt))
+                    if (TryParseDateTimeExact(s, dateTimeZoneHandling, dateFormatString, culture, out dt))
                         return true;
             }
 
-            dt = null;
+            dt = default(DateTime);
             return false;
         }
 
-        private static bool TryParseDateMicrosoft(string text, DateParseHandling dateParseHandling, DateTimeZoneHandling dateTimeZoneHandling, out object dt)
+        internal static bool TryParseDateTimeOffset(StringReference s, string dateFormatString, CultureInfo culture, out DateTimeOffset dt)
         {
-            var value = text.Substring(6, text.Length - 8);
-            var kind = DateTimeKind.Utc;
-            var index = value.IndexOf('+', 1);
+            if (s.Length > 0)
+            {
+                int i = s.StartIndex;
+                if (s[i] == '/')
+                {
+                    if (s.Length >= 9 && s.StartsWith("/Date(") && s.EndsWith(")/"))
+                    {
+                        if (TryParseDateTimeOffsetMicrosoft(s, out dt))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else if (s.Length >= 19 && s.Length <= 40 && char.IsDigit(s[i]) && s[i + 10] == 'T')
+                {
+                    if (TryParseDateTimeOffsetIso(s, out dt))
+                    {
+                        return true;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(dateFormatString))
+                {
+                    if (TryParseDateTimeOffsetExact(s.ToString(), dateFormatString, culture, out dt))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            dt = default(DateTimeOffset);
+            return false;
+        }
+
+        internal static bool TryParseDateTimeOffset(string s, string dateFormatString, CultureInfo culture, out DateTimeOffset dt)
+        {
+            if (s.Length > 0)
+            {
+                if (s[0] == '/')
+                {
+                    if (s.Length >= 9 && s.StartsWith("/Date(", StringComparison.Ordinal) && s.EndsWith(")/", StringComparison.Ordinal))
+                    {
+                        if (TryParseDateTimeOffsetMicrosoft(new StringReference(s.ToCharArray(), 0, s.Length), out dt))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else if (s.Length >= 19 && s.Length <= 40 && char.IsDigit(s[0]) && s[10] == 'T')
+                {
+                    if (DateTimeOffset.TryParseExact(s, IsoDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dt))
+                    {
+                        if (TryParseDateTimeOffsetIso(new StringReference(s.ToCharArray(), 0, s.Length), out dt))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(dateFormatString))
+                {
+                    if (TryParseDateTimeOffsetExact(s, dateFormatString, culture, out dt))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            dt = default(DateTimeOffset);
+            return false;
+        }
+
+        private static bool TryParseMicrosoftDate(StringReference text, out long ticks, out TimeSpan offset, out DateTimeKind kind)
+        {
+            kind = DateTimeKind.Utc;
+
+            var index = text.IndexOf('+', 7, text.Length - 8);
 
             if (index == -1)
-                index = value.IndexOf('-', 1);
-
-            var offset = TimeSpan.Zero;
+                index = text.IndexOf('-', 7, text.Length - 8);
 
             if (index != -1)
             {
                 kind = DateTimeKind.Local;
-                offset = ReadOffset(value.Substring(index));
-                value = value.Substring(0, index);
-            }
 
-            long javaScriptTicks;
-            if (!long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out javaScriptTicks))
-            {
-                dt = null;
-                return false;
-            }
-
-            var utcDateTime = ConvertJavaScriptTicksToDateTime(javaScriptTicks);
-
-            if (dateParseHandling == DateParseHandling.DateTimeOffset)
-            {
-                dt = new DateTimeOffset(utcDateTime.Add(offset).Ticks, offset);
-                return true;
-            }
-
-            DateTime dateTime;
-            switch (kind)
-            {
-                case DateTimeKind.Unspecified:
-                    dateTime = DateTime.SpecifyKind(utcDateTime.ToLocalTime(), DateTimeKind.Unspecified);
-                    break;
-                case DateTimeKind.Local:
-                    dateTime = utcDateTime.ToLocalTime();
-                    break;
-                default:
-                    dateTime = utcDateTime;
-                    break;
-            }
-
-            dt = EnsureDateTime(dateTime, dateTimeZoneHandling);
-            return true;
-        }
-
-        private static bool TryParseDateExact(string text, DateParseHandling dateParseHandling, DateTimeZoneHandling dateTimeZoneHandling, string dateFormatString, CultureInfo culture, out object dt)
-        {
-            if (dateParseHandling == DateParseHandling.DateTimeOffset)
-            {
-                DateTimeOffset temp;
-                if (DateTimeOffset.TryParseExact(text, dateFormatString, culture, DateTimeStyles.RoundtripKind, out temp))
+                if (!TryReadOffset(text, index + text.StartIndex, out offset))
                 {
-                    dt = temp;
-                    return true;
+                    ticks = 0;
+                    return false;
                 }
             }
             else
             {
-                DateTime temp;
-                if (DateTime.TryParseExact(text, dateFormatString, culture, DateTimeStyles.RoundtripKind, out temp))
-                {
-                    temp = EnsureDateTime(temp, dateTimeZoneHandling);
-                    dt = temp;
-                    return true;
-                }
+                offset = TimeSpan.Zero;
+                index = text.Length - 2;
             }
 
-            dt = null;
+            return ConvertUtils.Int64TryParse(text.Chars, 6 + text.StartIndex, index - 6, out ticks) == ParseResult.Success;
+        }
+
+        private static bool TryParseDateTimeMicrosoft(StringReference text, DateTimeZoneHandling dateTimeZoneHandling, out DateTime dt)
+        {
+            long ticks;
+            TimeSpan offset;
+            DateTimeKind kind;
+
+            if (!TryParseMicrosoftDate(text, out ticks, out offset, out kind))
+            {
+                dt = default(DateTime);
+                return false;
+            }
+
+            var utcDateTime = ConvertJavaScriptTicksToDateTime(ticks);
+
+            switch (kind)
+            {
+                case DateTimeKind.Unspecified:
+                    dt = DateTime.SpecifyKind(utcDateTime.ToLocalTime(), DateTimeKind.Unspecified);
+                    break;
+                case DateTimeKind.Local:
+                    dt = utcDateTime.ToLocalTime();
+                    break;
+                default:
+                    dt = utcDateTime;
+                    break;
+            }
+
+            dt = EnsureDateTime(dt, dateTimeZoneHandling);
+            return true;
+        }
+
+        private static bool TryParseDateTimeExact(string text, DateTimeZoneHandling dateTimeZoneHandling, string dateFormatString, CultureInfo culture, out DateTime dt)
+        {
+            DateTime temp;
+            if (DateTime.TryParseExact(text, dateFormatString, culture, DateTimeStyles.RoundtripKind, out temp))
+            {
+                temp = EnsureDateTime(temp, dateTimeZoneHandling);
+                dt = temp;
+                return true;
+            }
+
+            dt = default(DateTime);
             return false;
         }
 
-        private static TimeSpan ReadOffset(string offsetText)
+        private static bool TryParseDateTimeOffsetMicrosoft(StringReference text, out DateTimeOffset dt)
         {
-            var negative = (offsetText[0] == '-');
-            var hours = int.Parse(offsetText.Substring(1, 2), NumberStyles.Integer, CultureInfo.InvariantCulture);
-            var minutes = 0;
-            if (offsetText.Length >= 5)
-                minutes = int.Parse(offsetText.Substring(3, 2), NumberStyles.Integer, CultureInfo.InvariantCulture);
+            long ticks;
+            TimeSpan offset;
+            DateTimeKind kind;
 
-            var offset = TimeSpan.FromHours(hours) + TimeSpan.FromMinutes(minutes);
+            if (!TryParseMicrosoftDate(text, out ticks, out offset, out kind))
+            {
+                dt = default(DateTime);
+                return false;
+            }
+
+            DateTime utcDateTime = ConvertJavaScriptTicksToDateTime(ticks);
+
+            dt = new DateTimeOffset(utcDateTime.Add(offset).Ticks, offset);
+            return true;
+        }
+
+        private static bool TryParseDateTimeOffsetExact(string text, string dateFormatString, CultureInfo culture, out DateTimeOffset dt)
+        {
+            DateTimeOffset temp;
+            if (DateTimeOffset.TryParseExact(text, dateFormatString, culture, DateTimeStyles.RoundtripKind, out temp))
+            {
+                dt = temp;
+                return true;
+            }
+
+            dt = default(DateTimeOffset);
+            return false;
+        }
+
+        private static bool TryReadOffset(StringReference offsetText, int startIndex, out TimeSpan offset)
+        {
+            var negative = offsetText[startIndex] == '-';
+
+            int hours;
+            if (ConvertUtils.Int32TryParse(offsetText.Chars, startIndex + 1, 2, out hours) != ParseResult.Success)
+            {
+                offset = default(TimeSpan);
+                return false;
+            }
+
+            var minutes = 0;
+            if (offsetText.Length - startIndex > 5)
+                if (ConvertUtils.Int32TryParse(offsetText.Chars, startIndex + 3, 2, out minutes) != ParseResult.Success)
+                {
+                    offset = default(TimeSpan);
+                    return false;
+                }
+
+            offset = TimeSpan.FromHours(hours) + TimeSpan.FromMinutes(minutes);
             if (negative)
                 offset = offset.Negate();
 
-            return offset;
+            return true;
         }
+
+        #endregion
+
+        #region Write
 
         internal static void WriteDateTimeString(TextWriter writer, DateTime value, DateFormatHandling format, string formatString, CultureInfo culture)
         {
@@ -379,7 +593,9 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
                 writer.Write(chars, 0, pos);
             }
             else
+            {
                 writer.Write(value.ToString(formatString, culture));
+            }
         }
 
         internal static int WriteDateTimeString(char[] chars, int start, DateTime value, TimeSpan? offset, DateTimeKind kind, DateFormatHandling format)
@@ -389,6 +605,7 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             if (format == DateFormatHandling.MicrosoftDateFormat)
             {
                 var o = offset ?? value.GetUtcOffset();
+
                 var javaScriptTicks = ConvertDateTimeToJavaScriptTicks(value, o);
 
                 @"\/Date(".CopyTo(0, chars, pos, 7);
@@ -451,20 +668,22 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             chars[start + 16] = ':';
             CopyIntToCharArray(chars, start + 17, dt.Second, 2);
 
-            var fraction = (int) (dt.Ticks%10000000L);
+            var fraction = (int) (dt.Ticks % 10000000L);
 
-            if (fraction == 0) return start + length;
-            var digits = 7;
-            while ((fraction%10) == 0)
+            if (fraction != 0)
             {
-                digits--;
-                fraction /= 10;
+                var digits = 7;
+                while (fraction % 10 == 0)
+                {
+                    digits--;
+                    fraction /= 10;
+                }
+
+                chars[start + 19] = '.';
+                CopyIntToCharArray(chars, start + 20, fraction, digits);
+
+                length += digits + 1;
             }
-
-            chars[start + 19] = '.';
-            CopyIntToCharArray(chars, start + 20, fraction, digits);
-
-            length += digits + 1;
 
             return start + length;
         }
@@ -473,14 +692,14 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
         {
             while (digits-- != 0)
             {
-                chars[start + digits] = (char) ((value%10) + 48);
+                chars[start + digits] = (char) (value % 10 + 48);
                 value /= 10;
             }
         }
 
         internal static int WriteDateTimeOffset(char[] chars, int start, TimeSpan offset, DateFormatHandling format)
         {
-            chars[start++] = (offset.Ticks >= 0L) ? '+' : '-';
+            chars[start++] = offset.Ticks >= 0L ? '+' : '-';
 
             var absHours = Math.Abs(offset.Hours);
             CopyIntToCharArray(chars, start, absHours, 2);
@@ -501,44 +720,48 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             if (string.IsNullOrEmpty(formatString))
             {
                 var chars = new char[64];
-                var pos = WriteDateTimeString(chars, 0, (format == DateFormatHandling.IsoDateFormat) ? value.DateTime : value.UtcDateTime, value.Offset, DateTimeKind.Local, format);
+                var pos = WriteDateTimeString(chars, 0, format == DateFormatHandling.IsoDateFormat ? value.DateTime : value.UtcDateTime, value.Offset, DateTimeKind.Local, format);
 
                 writer.Write(chars, 0, pos);
             }
             else
+            {
                 writer.Write(value.ToString(formatString, culture));
+            }
         }
+
+        #endregion
 
         private static void GetDateValues(DateTime td, out int year, out int month, out int day)
         {
             var ticks = td.Ticks;
             // n = number of days since 1/1/0001
-            var n = (int) (ticks/TicksPerDay);
+            var n = (int) (ticks / TicksPerDay);
             // y400 = number of whole 400-year periods since 1/1/0001
-            var y400 = n/DaysPer400Years;
+            var y400 = n / DaysPer400Years;
             // n = day number within 400-year period
-            n -= y400*DaysPer400Years;
+            n -= y400 * DaysPer400Years;
             // y100 = number of whole 100-year periods within 400-year period
-            var y100 = n/DaysPer100Years;
+            var y100 = n / DaysPer100Years;
             // Last 100-year period has an extra day, so decrement result if 4
             if (y100 == 4)
                 y100 = 3;
             // n = day number within 100-year period
-            n -= y100*DaysPer100Years;
+            n -= y100 * DaysPer100Years;
             // y4 = number of whole 4-year periods within 100-year period
-            var y4 = n/DaysPer4Years;
+            var y4 = n / DaysPer4Years;
             // n = day number within 4-year period
-            n -= y4*DaysPer4Years;
+            n -= y4 * DaysPer4Years;
             // y1 = number of whole years within 4-year period
-            var y1 = n/DaysPerYear;
+            var y1 = n / DaysPerYear;
             // Last year has an extra day, so decrement result if 4
             if (y1 == 4)
                 y1 = 3;
 
-            year = y400*400 + y100*100 + y4*4 + y1 + 1;
+            year = y400 * 400 + y100 * 100 + y4 * 4 + y1 + 1;
 
             // n = day number within year
-            n -= y1*DaysPerYear;
+            n -= y1 * DaysPerYear;
 
             // Leap year calculation looks different from IsLeapYear since y1, y4,
             // and y100 are relative to year 1, not year 0
@@ -546,9 +769,10 @@ namespace CODE.Framework.Core.Newtonsoft.Utilities
             var days = leapYear ? DaysToMonth366 : DaysToMonth365;
             // All months have less than 32 days, so n >> 5 is a good conservative
             // estimate for the month
-            var m = n >> 5 + 1;
+            var m = n >> (5 + 1);
             // m = 1-based month number
-            while (n >= days[m]) m++;
+            while (n >= days[m])
+                m++;
 
             month = m;
 

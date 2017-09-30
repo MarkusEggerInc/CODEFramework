@@ -41,27 +41,32 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
 
         public JPath(string expression)
         {
-            ValidationUtils.ArgumentNotNull(expression, "expression");
+            ValidationUtils.ArgumentNotNull(expression, nameof(expression));
             _expression = expression;
             Filters = new List<PathFilter>();
+
             ParseMain();
         }
 
-        public List<PathFilter> Filters { get; private set; }
+        public List<PathFilter> Filters { get; }
 
         private void ParseMain()
         {
-            int currentPartStartIndex = _currentIndex;
+            var currentPartStartIndex = _currentIndex;
+
             EatWhitespace();
-            if (_expression.Length == _currentIndex) return;
+
+            if (_expression.Length == _currentIndex)
+                return;
 
             if (_expression[_currentIndex] == '$')
             {
-                if (_expression.Length == 1) return;
+                if (_expression.Length == 1)
+                    return;
 
                 // only increment position for "$." or "$["
                 // otherwise assume property that starts with $
-                char c = _expression[_currentIndex + 1];
+                var c = _expression[_currentIndex + 1];
                 if (c == '.' || c == '[')
                 {
                     _currentIndex++;
@@ -69,21 +74,27 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                 }
             }
 
-            if (ParsePath(Filters, currentPartStartIndex, false)) return;
-            int lastCharacterIndex = _currentIndex;
-            EatWhitespace();
-            if (_currentIndex < _expression.Length) throw new JsonException("Unexpected character while parsing path: " + _expression[lastCharacterIndex]);
+            if (!ParsePath(Filters, currentPartStartIndex, false))
+            {
+                var lastCharacterIndex = _currentIndex;
+
+                EatWhitespace();
+
+                if (_currentIndex < _expression.Length)
+                    throw new JsonException("Unexpected character while parsing path: " + _expression[lastCharacterIndex]);
+            }
         }
 
         private bool ParsePath(List<PathFilter> filters, int currentPartStartIndex, bool query)
         {
-            bool scan = false;
-            bool followingIndexer = false;
-            bool followingDot = false;
-            bool ended = false;
+            var scan = false;
+            var followingIndexer = false;
+            var followingDot = false;
+
+            var ended = false;
             while (_currentIndex < _expression.Length && !ended)
             {
-                char currentChar = _expression[_currentIndex];
+                var currentChar = _expression[_currentIndex];
 
                 switch (currentChar)
                 {
@@ -91,13 +102,15 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                     case '(':
                         if (_currentIndex > currentPartStartIndex)
                         {
-                            string member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex);
-                            PathFilter filter = (scan) ? (PathFilter) new ScanFilter {Name = member} : new FieldFilter {Name = member};
-                            filters.Add(filter);
+                            var member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex);
+                            if (member == "*")
+                                member = null;
+
+                            filters.Add(CreatePathFilter(member, scan));
                             scan = false;
                         }
 
-                        filters.Add(ParseIndexer(currentChar));
+                        filters.Add(ParseIndexer(currentChar, scan));
                         _currentIndex++;
                         currentPartStartIndex = _currentIndex;
                         followingIndexer = true;
@@ -108,18 +121,17 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                         ended = true;
                         break;
                     case ' ':
-                        //EatWhitespace();
                         if (_currentIndex < _expression.Length)
                             ended = true;
                         break;
                     case '.':
                         if (_currentIndex > currentPartStartIndex)
                         {
-                            string member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex);
+                            var member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex);
                             if (member == "*")
                                 member = null;
-                            PathFilter filter = (scan) ? (PathFilter) new ScanFilter {Name = member} : new FieldFilter {Name = member};
-                            filters.Add(filter);
+
+                            filters.Add(CreatePathFilter(member, scan));
                             scan = false;
                         }
                         if (_currentIndex + 1 < _expression.Length && _expression[_currentIndex + 1] == '.')
@@ -134,66 +146,75 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                         break;
                     default:
                         if (query && (currentChar == '=' || currentChar == '<' || currentChar == '!' || currentChar == '>' || currentChar == '|' || currentChar == '&'))
+                        {
                             ended = true;
+                        }
                         else
                         {
-                            if (followingIndexer) throw new JsonException("Unexpected character following indexer: " + currentChar);
+                            if (followingIndexer)
+                                throw new JsonException("Unexpected character following indexer: " + currentChar);
+
                             _currentIndex++;
                         }
                         break;
                 }
             }
 
-            bool atPathEnd = (_currentIndex == _expression.Length);
+            var atPathEnd = _currentIndex == _expression.Length;
 
             if (_currentIndex > currentPartStartIndex)
             {
-                string member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex).TrimEnd();
+                var member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex).TrimEnd();
                 if (member == "*")
                     member = null;
-                PathFilter filter = (scan) ? (PathFilter) new ScanFilter {Name = member} : new FieldFilter {Name = member};
-                filters.Add(filter);
+                filters.Add(CreatePathFilter(member, scan));
             }
             else
             {
                 // no field name following dot in path and at end of base path/query
-                if (followingDot && (atPathEnd || query)) throw new JsonException("Unexpected end while parsing path.");
+                if (followingDot && (atPathEnd || query))
+                    throw new JsonException("Unexpected end while parsing path.");
             }
 
             return atPathEnd;
         }
 
-        private PathFilter ParseIndexer(char indexerOpenChar)
+        private static PathFilter CreatePathFilter(string member, bool scan)
+        {
+            var filter = scan ? (PathFilter) new ScanFilter {Name = member} : new FieldFilter {Name = member};
+            return filter;
+        }
+
+        private PathFilter ParseIndexer(char indexerOpenChar, bool scan)
         {
             _currentIndex++;
-            char indexerCloseChar = (indexerOpenChar == '[') ? ']' : ')';
+
+            var indexerCloseChar = indexerOpenChar == '[' ? ']' : ')';
+
             EnsureLength("Path ended with open indexer.");
+
             EatWhitespace();
 
-            switch (_expression[_currentIndex])
-            {
-                case '\'':
-                    return ParseQuotedField(indexerCloseChar);
-                case '?':
-                    return ParseQuery(indexerCloseChar);
-                default:
-                    return ParseArrayIndexer(indexerCloseChar);
-            }
+            if (_expression[_currentIndex] == '\'')
+                return ParseQuotedField(indexerCloseChar, scan);
+            if (_expression[_currentIndex] == '?')
+                return ParseQuery(indexerCloseChar, scan);
+            return ParseArrayIndexer(indexerCloseChar);
         }
 
         private PathFilter ParseArrayIndexer(char indexerCloseChar)
         {
-            int start = _currentIndex;
+            var start = _currentIndex;
             int? end = null;
             List<int> indexes = null;
-            int colonCount = 0;
+            var colonCount = 0;
             int? startIndex = null;
             int? endIndex = null;
             int? step = null;
 
             while (_currentIndex < _expression.Length)
             {
-                char currentCharacter = _expression[_currentIndex];
+                var currentCharacter = _expression[_currentIndex];
 
                 if (currentCharacter == ' ')
                 {
@@ -204,45 +225,59 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
 
                 if (currentCharacter == indexerCloseChar)
                 {
-                    int length = (end ?? _currentIndex) - start;
+                    var length = (end ?? _currentIndex) - start;
 
                     if (indexes != null)
                     {
-                        if (length == 0) throw new JsonException("Array index expected.");
-                        string indexer = _expression.Substring(start, length);
-                        int index = Convert.ToInt32(indexer, CultureInfo.InvariantCulture);
-                        indexes.Add(index);
+                        if (length == 0)
+                            throw new JsonException("Array index expected.");
+
+                        var indexer2 = _expression.Substring(start, length);
+                        var index2 = Convert.ToInt32(indexer2, CultureInfo.InvariantCulture);
+
+                        indexes.Add(index2);
                         return new ArrayMultipleIndexFilter {Indexes = indexes};
                     }
                     if (colonCount > 0)
                     {
-                        if (length <= 0) return new ArraySliceFilter {Start = startIndex, End = endIndex, Step = step};
-                        string indexer = _expression.Substring(start, length);
-                        int index = Convert.ToInt32(indexer, CultureInfo.InvariantCulture);
-                        if (colonCount == 1)
-                            endIndex = index;
-                        else
-                            step = index;
+                        if (length > 0)
+                        {
+                            var indexer3 = _expression.Substring(start, length);
+                            var index3 = Convert.ToInt32(indexer3, CultureInfo.InvariantCulture);
+
+                            if (colonCount == 1)
+                                endIndex = index3;
+                            else
+                                step = index3;
+                        }
+
                         return new ArraySliceFilter {Start = startIndex, End = endIndex, Step = step};
                     }
-                    else
-                    {
-                        if (length == 0) throw new JsonException("Array index expected.");
-                        string indexer = _expression.Substring(start, length);
-                        int index = Convert.ToInt32(indexer, CultureInfo.InvariantCulture);
-                        return new ArrayIndexFilter {Index = index};
-                    }
+                    if (length == 0)
+                        throw new JsonException("Array index expected.");
+
+                    var indexer = _expression.Substring(start, length);
+                    var index = Convert.ToInt32(indexer, CultureInfo.InvariantCulture);
+
+                    return new ArrayIndexFilter {Index = index};
                 }
                 if (currentCharacter == ',')
                 {
-                    int length = (end ?? _currentIndex) - start;
-                    if (length == 0) throw new JsonException("Array index expected.");
+                    var length = (end ?? _currentIndex) - start;
+
+                    if (length == 0)
+                        throw new JsonException("Array index expected.");
+
                     if (indexes == null)
                         indexes = new List<int>();
-                    string indexer = _expression.Substring(start, length);
+
+                    var indexer = _expression.Substring(start, length);
                     indexes.Add(Convert.ToInt32(indexer, CultureInfo.InvariantCulture));
+
                     _currentIndex++;
+
                     EatWhitespace();
+
                     start = _currentIndex;
                     end = null;
                 }
@@ -251,30 +286,27 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                     _currentIndex++;
                     EnsureLength("Path ended with open indexer.");
                     EatWhitespace();
-                    if (_expression[_currentIndex] != indexerCloseChar) throw new JsonException("Unexpected character while parsing path indexer: " + currentCharacter);
+
+                    if (_expression[_currentIndex] != indexerCloseChar)
+                        throw new JsonException("Unexpected character while parsing path indexer: " + currentCharacter);
+
                     return new ArrayIndexFilter();
                 }
                 else if (currentCharacter == ':')
                 {
-                    int length = (end ?? _currentIndex) - start;
+                    var length = (end ?? _currentIndex) - start;
 
                     if (length > 0)
                     {
-                        string indexer = _expression.Substring(start, length);
-                        int index = Convert.ToInt32(indexer, CultureInfo.InvariantCulture);
+                        var indexer = _expression.Substring(start, length);
+                        var index = Convert.ToInt32(indexer, CultureInfo.InvariantCulture);
 
-                        switch (colonCount)
-                        {
-                            case 0:
-                                startIndex = index;
-                                break;
-                            case 1:
-                                endIndex = index;
-                                break;
-                            default:
-                                step = index;
-                                break;
-                        }
+                        if (colonCount == 0)
+                            startIndex = index;
+                        else if (colonCount == 1)
+                            endIndex = index;
+                        else
+                            step = index;
                     }
 
                     colonCount++;
@@ -287,10 +319,14 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                     end = null;
                 }
                 else if (!char.IsDigit(currentCharacter) && currentCharacter != '-')
+                {
                     throw new JsonException("Unexpected character while parsing path indexer: " + currentCharacter);
+                }
                 else
                 {
-                    if (end != null) throw new JsonException("Unexpected character while parsing path indexer: " + currentCharacter);
+                    if (end != null)
+                        throw new JsonException("Unexpected character while parsing path indexer: " + currentCharacter);
+
                     _currentIndex++;
                 }
             }
@@ -302,70 +338,149 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
         {
             while (_currentIndex < _expression.Length)
             {
-                if (_expression[_currentIndex] != ' ') break;
+                if (_expression[_currentIndex] != ' ')
+                    break;
+
                 _currentIndex++;
             }
         }
 
-        private PathFilter ParseQuery(char indexerCloseChar)
+        private PathFilter ParseQuery(char indexerCloseChar, bool scan)
         {
             _currentIndex++;
             EnsureLength("Path ended with open indexer.");
-            if (_expression[_currentIndex] != '(') throw new JsonException("Unexpected character while parsing path indexer: " + _expression[_currentIndex]);
+
+            if (_expression[_currentIndex] != '(')
+                throw new JsonException("Unexpected character while parsing path indexer: " + _expression[_currentIndex]);
+
             _currentIndex++;
-            QueryExpression expression = ParseExpression();
+
+            var expression = ParseExpression(scan);
+
             _currentIndex++;
             EnsureLength("Path ended with open indexer.");
             EatWhitespace();
-            if (_expression[_currentIndex] != indexerCloseChar) throw new JsonException("Unexpected character while parsing path indexer: " + _expression[_currentIndex]);
-            return new QueryFilter {Expression = expression};
+
+            if (_expression[_currentIndex] != indexerCloseChar)
+                throw new JsonException("Unexpected character while parsing path indexer: " + _expression[_currentIndex]);
+
+            if (!scan)
+                return new QueryFilter
+                {
+                    Expression = expression
+                };
+            return new QueryScanFilter
+            {
+                Expression = expression
+            };
         }
 
-        private QueryExpression ParseExpression()
+        private bool TryParseExpression(bool scan, out List<PathFilter> expressionPath)
+        {
+            if (_expression[_currentIndex] == '$')
+            {
+                expressionPath = new List<PathFilter>();
+                expressionPath.Add(RootFilter.Instance);
+            }
+            else if (_expression[_currentIndex] == '@')
+            {
+                expressionPath = new List<PathFilter>();
+            }
+            else
+            {
+                expressionPath = null;
+                return false;
+            }
+
+            _currentIndex++;
+
+            if (ParsePath(expressionPath, _currentIndex, true))
+                throw new JsonException("Path ended with open query.");
+
+            return true;
+        }
+
+        private JsonException CreateUnexpectedCharacterException()
+        {
+            return new JsonException("Unexpected character while parsing path query: " + _expression[_currentIndex]);
+        }
+
+        private object ParseSide(bool scan)
+        {
+            EatWhitespace();
+
+            List<PathFilter> expressionPath;
+            if (TryParseExpression(scan, out expressionPath))
+            {
+                EatWhitespace();
+                EnsureLength("Path ended with open query.");
+
+                return expressionPath;
+            }
+
+            object value;
+            if (TryParseValue(out value))
+            {
+                EatWhitespace();
+                EnsureLength("Path ended with open query.");
+
+                return new JValue(value);
+            }
+
+            throw CreateUnexpectedCharacterException();
+        }
+
+        private QueryExpression ParseExpression(bool scan)
         {
             QueryExpression rootExpression = null;
             CompositeExpression parentExpression = null;
 
             while (_currentIndex < _expression.Length)
             {
-                EatWhitespace();
-                if (_expression[_currentIndex] != '@') throw new JsonException("Unexpected character while parsing path query: " + _expression[_currentIndex]);
-                _currentIndex++;
-                var expressionPath = new List<PathFilter>();
-                if (ParsePath(expressionPath, _currentIndex, true)) throw new JsonException("Path ended with open query.");
-                EatWhitespace();
-                EnsureLength("Path ended with open query.");
+                var left = ParseSide(scan);
+                object right = null;
 
                 QueryOperator op;
-                object value = null;
-                if (_expression[_currentIndex] == ')' || _expression[_currentIndex] == '|' || _expression[_currentIndex] == '&')
+                if (_expression[_currentIndex] == ')'
+                    || _expression[_currentIndex] == '|'
+                    || _expression[_currentIndex] == '&')
+                {
                     op = QueryOperator.Exists;
+                }
                 else
                 {
                     op = ParseOperator();
-                    EatWhitespace();
-                    EnsureLength("Path ended with open query.");
-                    value = ParseValue();
-                    EatWhitespace();
-                    EnsureLength("Path ended with open query.");
+
+                    right = ParseSide(scan);
                 }
 
-                var booleanExpression = new BooleanQueryExpression {Path = expressionPath, Operator = op, Value = (op != QueryOperator.Exists) ? new JValue(value) : null};
+                var booleanExpression = new BooleanQueryExpression
+                {
+                    Left = left,
+                    Operator = op,
+                    Right = right
+                };
 
                 if (_expression[_currentIndex] == ')')
                 {
-                    if (parentExpression == null) return booleanExpression;
-                    parentExpression.Expressions.Add(booleanExpression);
-                    return rootExpression;
+                    if (parentExpression != null)
+                    {
+                        parentExpression.Expressions.Add(booleanExpression);
+                        return rootExpression;
+                    }
+
+                    return booleanExpression;
                 }
-                if (_expression[_currentIndex] == '&' && Match("&&"))
+                if (_expression[_currentIndex] == '&')
                 {
+                    if (!Match("&&"))
+                        throw CreateUnexpectedCharacterException();
+
                     if (parentExpression == null || parentExpression.Operator != QueryOperator.And)
                     {
                         var andExpression = new CompositeExpression {Operator = QueryOperator.And};
 
-                        if (parentExpression != null)
-                            parentExpression.Expressions.Add(andExpression);
+                        parentExpression?.Expressions.Add(andExpression);
 
                         parentExpression = andExpression;
 
@@ -375,31 +490,38 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
 
                     parentExpression.Expressions.Add(booleanExpression);
                 }
-                if (_expression[_currentIndex] != '|' || !Match("||")) continue;
-                if (parentExpression == null || parentExpression.Operator != QueryOperator.Or)
+                if (_expression[_currentIndex] == '|')
                 {
-                    var orExpression = new CompositeExpression {Operator = QueryOperator.Or};
+                    if (!Match("||"))
+                        throw CreateUnexpectedCharacterException();
 
-                    if (parentExpression != null)
-                        parentExpression.Expressions.Add(orExpression);
+                    if (parentExpression == null || parentExpression.Operator != QueryOperator.Or)
+                    {
+                        var orExpression = new CompositeExpression {Operator = QueryOperator.Or};
 
-                    parentExpression = orExpression;
+                        parentExpression?.Expressions.Add(orExpression);
 
-                    if (rootExpression == null)
-                        rootExpression = parentExpression;
+                        parentExpression = orExpression;
+
+                        if (rootExpression == null)
+                            rootExpression = parentExpression;
+                    }
+
+                    parentExpression.Expressions.Add(booleanExpression);
                 }
-
-                parentExpression.Expressions.Add(booleanExpression);
             }
 
             throw new JsonException("Path ended with open query.");
         }
 
-        private object ParseValue()
+        private bool TryParseValue(out object value)
         {
-            char currentChar = _expression[_currentIndex];
+            var currentChar = _expression[_currentIndex];
             if (currentChar == '\'')
-                return ReadQuotedString();
+            {
+                value = ReadQuotedString();
+                return true;
+            }
             if (char.IsDigit(currentChar) || currentChar == '-')
             {
                 var sb = new StringBuilder();
@@ -411,17 +533,22 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                     currentChar = _expression[_currentIndex];
                     if (currentChar == ' ' || currentChar == ')')
                     {
-                        string numberText = sb.ToString();
+                        var numberText = sb.ToString();
 
                         if (numberText.IndexOfAny(new[] {'.', 'E', 'e'}) != -1)
                         {
                             double d;
-                            if (double.TryParse(numberText, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out d)) return d;
-                            throw new JsonException("Could not read query value.");
+                            var result = double.TryParse(numberText, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out d);
+                            value = d;
+                            return result;
                         }
-                        long l;
-                        if (long.TryParse(numberText, NumberStyles.Integer, CultureInfo.InvariantCulture, out l)) return l;
-                        throw new JsonException("Could not read query value.");
+                        else
+                        {
+                            long l;
+                            var result = long.TryParse(numberText, NumberStyles.Integer, CultureInfo.InvariantCulture, out l);
+                            value = l;
+                            return result;
+                        }
                     }
                     sb.Append(currentChar);
                     _currentIndex++;
@@ -429,18 +556,31 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
             }
             else if (currentChar == 't')
             {
-                if (Match("true")) return true;
+                if (Match("true"))
+                {
+                    value = true;
+                    return true;
+                }
             }
             else if (currentChar == 'f')
             {
-                if (Match("false")) return false;
+                if (Match("false"))
+                {
+                    value = false;
+                    return true;
+                }
             }
             else if (currentChar == 'n')
             {
-                if (Match("null")) return null;
+                if (Match("null"))
+                {
+                    value = null;
+                    return true;
+                }
             }
 
-            throw new JsonException("Could not read query value.");
+            value = null;
+            return false;
         }
 
         private string ReadQuotedString()
@@ -450,7 +590,7 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
             _currentIndex++;
             while (_currentIndex < _expression.Length)
             {
-                char currentChar = _expression[_currentIndex];
+                var currentChar = _expression[_currentIndex];
                 if (currentChar == '\\' && _currentIndex + 1 < _expression.Length)
                 {
                     _currentIndex++;
@@ -459,14 +599,17 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                         sb.Append('\'');
                     else if (_expression[_currentIndex] == '\\')
                         sb.Append('\\');
-                    else throw new JsonException(@"Unknown escape chracter: \" + _expression[_currentIndex]);
+                    else
+                        throw new JsonException(@"Unknown escape character: \" + _expression[_currentIndex]);
 
                     _currentIndex++;
                 }
                 else if (currentChar == '\'')
                 {
                     _currentIndex++;
-                    return sb.ToString();
+                    {
+                        return sb.ToString();
+                    }
                 }
                 else
                 {
@@ -480,14 +623,12 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
 
         private bool Match(string s)
         {
-            int currentPosition = _currentIndex;
-            foreach (char c in s)
-            {
+            var currentPosition = _currentIndex;
+            foreach (var c in s)
                 if (currentPosition < _expression.Length && _expression[currentPosition] == c)
                     currentPosition++;
                 else
                     return false;
-            }
 
             _currentIndex = currentPosition;
             return true;
@@ -495,36 +636,48 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
 
         private QueryOperator ParseOperator()
         {
-            if (_currentIndex + 1 >= _expression.Length) throw new JsonException("Path ended with open query.");
-            if (Match("==")) return QueryOperator.Equals;
-            if (Match("!=") || Match("<>")) return QueryOperator.NotEquals;
-            if (Match("<=")) return QueryOperator.LessThanOrEquals;
-            if (Match("<")) return QueryOperator.LessThan;
-            if (Match(">=")) return QueryOperator.GreaterThanOrEquals;
-            if (Match(">")) return QueryOperator.GreaterThan;
+            if (_currentIndex + 1 >= _expression.Length)
+                throw new JsonException("Path ended with open query.");
+
+            if (Match("=="))
+                return QueryOperator.Equals;
+            if (Match("!=") || Match("<>"))
+                return QueryOperator.NotEquals;
+            if (Match("<="))
+                return QueryOperator.LessThanOrEquals;
+            if (Match("<"))
+                return QueryOperator.LessThan;
+            if (Match(">="))
+                return QueryOperator.GreaterThanOrEquals;
+            if (Match(">"))
+                return QueryOperator.GreaterThan;
+
             throw new JsonException("Could not read query operator.");
         }
 
-        private PathFilter ParseQuotedField(char indexerCloseChar)
+        private PathFilter ParseQuotedField(char indexerCloseChar, bool scan)
         {
             List<string> fields = null;
 
             while (_currentIndex < _expression.Length)
             {
-                string field = ReadQuotedString();
+                var field = ReadQuotedString();
 
                 EatWhitespace();
                 EnsureLength("Path ended with open indexer.");
 
                 if (_expression[_currentIndex] == indexerCloseChar)
-                {
                     if (fields != null)
                     {
                         fields.Add(field);
-                        return new FieldMultipleFilter {Names = fields};
+                        return scan
+                            ? new ScanMultipleFilter {Names = fields}
+                            : (PathFilter) new FieldMultipleFilter {Names = fields};
                     }
-                    return new FieldFilter {Name = field};
-                }
+                    else
+                    {
+                        return CreatePathFilter(field, scan);
+                    }
                 if (_expression[_currentIndex] == ',')
                 {
                     _currentIndex++;
@@ -536,7 +689,9 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
                     fields.Add(field);
                 }
                 else
+                {
                     throw new JsonException("Unexpected character while parsing path indexer: " + _expression[_currentIndex]);
+                }
             }
 
             throw new JsonException("Path ended with open indexer.");
@@ -544,19 +699,20 @@ namespace CODE.Framework.Core.Newtonsoft.Linq.JsonPath
 
         private void EnsureLength(string message)
         {
-            if (_currentIndex >= _expression.Length) throw new JsonException(message);
+            if (_currentIndex >= _expression.Length)
+                throw new JsonException(message);
         }
 
-        internal IEnumerable<JToken> Evaluate(JToken t, bool errorWhenNoMatch)
+        internal IEnumerable<JToken> Evaluate(JToken root, JToken t, bool errorWhenNoMatch)
         {
-            return Evaluate(Filters, t, errorWhenNoMatch);
+            return Evaluate(Filters, root, t, errorWhenNoMatch);
         }
 
-        internal static IEnumerable<JToken> Evaluate(List<PathFilter> filters, JToken t, bool errorWhenNoMatch)
+        internal static IEnumerable<JToken> Evaluate(List<PathFilter> filters, JToken root, JToken t, bool errorWhenNoMatch)
         {
             IEnumerable<JToken> current = new[] {t};
-            foreach (PathFilter filter in filters)
-                current = filter.ExecuteFilter(current, errorWhenNoMatch);
+            foreach (var filter in filters)
+                current = filter.ExecuteFilter(root, current, errorWhenNoMatch);
 
             return current;
         }

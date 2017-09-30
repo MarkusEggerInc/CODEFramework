@@ -40,7 +40,7 @@ namespace CODE.Framework.Wpf.Mvvm
         }
 
         /// <summary>
-        /// Model the view actions collectoin is a member of
+        /// Model the view actions collection is a member of
         /// </summary>
         /// <value>The model.</value>
         /// <remarks>Used in combination with the ModelActionsBindingPath property.</remarks>
@@ -50,7 +50,7 @@ namespace CODE.Framework.Wpf.Mvvm
             set { SetValue(ModelProperty, value); }
         }
         /// <summary>
-        /// Model the view actions collectoin is a member of
+        /// Model the view actions collection is a member of
         /// </summary>
         /// <remarks>Used in combination with the ModelActionsBindingPath property.</remarks>
         public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(object), typeof(ViewActionMenuButton), new PropertyMetadata(null, InvalidateActions));
@@ -124,9 +124,18 @@ namespace CODE.Framework.Wpf.Mvvm
             var isFirst = true;
             foreach (var action in actions.Where(a => a.Availability == ViewActionAvailabilities.Available && a.Visibility == Visibility.Visible))
             {
+                var realAction = action as ViewAction;
                 var menuItem = new ViewActionMenuItem {DataContext = action, Command = action};
                 if (action.ActionView == null)
+                {
                     menuItem.Header = GetMenuTitle(action);
+                    if (realAction != null)
+                        realAction.PropertyChanged += (s, e) =>
+                        {
+                            if (e.PropertyName == "Caption")
+                                menuItem.Header = GetMenuTitle(action);
+                        };
+                }
                 else
                 {
                     ElementHelper.DetachElementFromParent(action.ActionView);
@@ -142,7 +151,6 @@ namespace CODE.Framework.Wpf.Mvvm
                     menuItem.IsChecked = action.IsChecked;
                     //menuItem.SetBinding(MenuItem.IsCheckedProperty, new Binding("IsChecked") {Source = action});
                 }
-                var realAction = action as ViewAction;
                 if (realAction != null && realAction.HasBrush)
                 {
                     var icon = new ThemeIcon {FallbackIconResourceKey = string.Empty};

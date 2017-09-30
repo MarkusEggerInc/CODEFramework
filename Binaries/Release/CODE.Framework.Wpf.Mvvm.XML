@@ -363,6 +363,17 @@
             <exception cref="T:System.ArgumentException">
               <paramref name="obj"/> is not the same type as this instance. </exception>
         </member>
+        <member name="E:CODE.Framework.Wpf.Mvvm.ViewActionCategory.PropertyChanged">
+            <summary>
+            Occurs when a property value changes.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewActionCategory.NotifyChanged(System.String)">
+            <summary>
+            Can be used to indicate a property changed
+            </summary>
+            <param name="propertyName">Name of the changed property (or empty string to indicate a refresh of all properties)</param>
+        </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionSignificance">
             <summary>
             Significance of a view action
@@ -532,6 +543,11 @@
             Indicates that previous CanExecute() results have become invalid and need to be re-evaluated.
             </summary>
             <remarks>This method should simply fire the CanExecuteChanged event.</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewAction.CanExecuteVisibility">
+            <summary>
+            Returns Visible if the action can execute, otherwise Collapsed.
+            </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewAction.SetExecutionDelegate(System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object})">
             <summary>
@@ -1337,17 +1353,55 @@
         <member name="T:CODE.Framework.Wpf.Mvvm.IClosable">
             <summary>Interface that can be implemented by objects that support explicit close events</summary>
         </member>
+        <member name="E:CODE.Framework.Wpf.Mvvm.IClosable.BeforeClosing">
+            <summary>Occurs when the system is getting ready to close (has not started closing yet)</summary>
+        </member>
         <member name="E:CODE.Framework.Wpf.Mvvm.IClosable.Closing">
             <summary>Occurs when the object is closing (has not closed yet)</summary>
         </member>
         <member name="E:CODE.Framework.Wpf.Mvvm.IClosable.Closed">
             <summary>Occurs when the object has closed (has finished closing)</summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IClosable.RaiseBeforeClosingEvent">
+            <summary>This method can be used to raise the before closing event</summary>
+            <returns>True, if closing has been canceled</returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.IClosable.RaiseClosingEvent">
             <summary>This method can be used to raise the closing event</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.IClosable.RaiseClosedEvent">
             <summary>This method can be used to raise the closed event</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.Closable">
+            <summary>
+            This class provides attached property related to the IClosable interface
+            </summary>
+            <seealso cref="T:System.Windows.DependencyObject" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Closable.GetRaiseClosingEvents(System.Windows.DependencyObject)">
+            <summary>
+            If set to true on a window object, and the data context implements IClosable, then closing events will automatically be forwarded to the data context object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Closable.SetRaiseClosingEvents(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            If set to true on a window object, and the data context implements IClosable, then closing events will automatically be forwarded to the data context object
+            </summary>
+            <param name="d">The d.</param>
+            <param name="value">if set to <c>true</c> [value].</param>
+            <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.Closable.RaiseClosingEventsProperty">
+            <summary>
+            If set to true on a window object, and the data context implements IClosable, then closing events will automatically be forwarded to the data context object
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Closable.OnRaiseClosingEventsChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the property changes
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.IOpenable">
             <summary>Interface that can be implemented by objects that support explicit open events</summary>
@@ -1367,7 +1421,7 @@
         <member name="T:CODE.Framework.Wpf.Mvvm.MessageBoxViewAction">
             <summary>Special view action used by message boxes</summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.MessageBoxViewAction.#ctor(System.String,System.Boolean,System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object},System.Func{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object,System.Boolean},System.String,System.String,System.String,System.Int32,System.Boolean,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionSignificance,System.String[])">
+        <member name="M:CODE.Framework.Wpf.Mvvm.MessageBoxViewAction.#ctor(System.String,System.Boolean,System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object},System.Func{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object,System.Boolean},System.String,System.String,System.String,System.Int32,System.Boolean,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionSignificance,System.String[],System.String,System.String,System.String,System.Int32,System.Char,System.Windows.Input.Key,System.Windows.Input.ModifierKeys,System.Char,System.Boolean,System.Boolean,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons)">
             <summary>Constructor</summary>
             <param name="caption">Caption</param>
             <param name="beginGroup">Group indicator</param>
@@ -1381,6 +1435,18 @@
             <param name="isCancel">Indicates if this is the action triggered if the user hits ESC</param>
             <param name="significance">General significance of the action.</param>
             <param name="userRoles">User roles with access to this action</param>
+            <param name="brushResourceKey">Resource key for a visual derived from a brush.</param>
+            <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derived from a brush.</param>
+            <param name="groupTitle">The group title.</param>
+            <param name="order">The order of the view action (within a group)</param>
+            <param name="accessKey">The access key for this action (such as the underlined character in a menu if the action is linked to a menu).</param>
+            <param name="shortcutKey">The shortcut key for the action (usually a hot key that can be pressed without a menu being opened or anything along those lines).</param>
+            <param name="shortcutKeyModifiers">Modifier for the shortcut key (typically CTRL).</param>
+            <param name="categoryAccessKey">Access key for the category (only used if a category is assigned).</param>
+            <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
+            <param name="isPinned">Indicates whether this action is considered to be pinned</param>
+            <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.MessageBoxViewAction.Model">
             <summary>
@@ -1698,6 +1764,176 @@
             <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
             <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``11(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Func{``9},System.Func{``10},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult11">The result produced by the eleventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="worker10">The tenth method used to perform the operation</param>
+            <param name="worker11">The eleventh method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``12(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Func{``9},System.Func{``10},System.Func{``11},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10,``11},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult11">The result produced by the eleventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult12">The result produced by the twelfth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="worker10">The tenth method used to perform the operation</param>
+            <param name="worker11">The eleventh method used to perform the operation</param>
+            <param name="worker12">The twelfth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``13(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Func{``9},System.Func{``10},System.Func{``11},System.Func{``12},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10,``11,``12},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult11">The result produced by the eleventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult12">The result produced by the twelfth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult13">The result produced by the thirteenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="worker10">The tenth method used to perform the operation</param>
+            <param name="worker11">The eleventh method used to perform the operation</param>
+            <param name="worker12">The twelfth method used to perform the operation</param>
+            <param name="worker13">The thirteenth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``14(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Func{``9},System.Func{``10},System.Func{``11},System.Func{``12},System.Func{``13},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10,``11,``12,``13},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult11">The result produced by the eleventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult12">The result produced by the twelfth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult13">The result produced by the thirteenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult14">The result produced by the fourteenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="worker10">The tenth method used to perform the operation</param>
+            <param name="worker11">The eleventh method used to perform the operation</param>
+            <param name="worker12">The twelfth method used to perform the operation</param>
+            <param name="worker13">The thirteenth method used to perform the operation</param>
+            <param name="worker14">The fourteenth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.Execute``15(System.Func{``0},System.Func{``1},System.Func{``2},System.Func{``3},System.Func{``4},System.Func{``5},System.Func{``6},System.Func{``7},System.Func{``8},System.Func{``9},System.Func{``10},System.Func{``11},System.Func{``12},System.Func{``13},System.Func{``14},System.Action{``0,``1,``2,``3,``4,``5,``6,``7,``8,``9,``10,``11,``12,``13,``14},CODE.Framework.Wpf.Mvvm.IModelStatus,CODE.Framework.Wpf.Mvvm.ModelStatus)">
+            <summary>
+            Executes all the worker delegates on a background thread, waits for them all to complete, and then  passes the result to the complete method (on the original foreground thread)
+            </summary>
+            <typeparam name="TResult">The result produced by the first worker method, which is to be passed to the complete method as the first parameter</typeparam>
+            <typeparam name="TResult2">The result produced by the second worker method, which is to be passed to the complete method as the second parameter</typeparam>
+            <typeparam name="TResult3">The result produced by the third worker method, which is to be passed to the complete method as the third parameter</typeparam>
+            <typeparam name="TResult4">The result produced by the fourth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult5">The result produced by the fifth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult6">The result produced by the sixth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult7">The result produced by the seventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult8">The result produced by the eighth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult9">The result produced by the ninth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult10">The result produced by the tenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult11">The result produced by the eleventh worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult12">The result produced by the twelfth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult13">The result produced by the thirteenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult14">The result produced by the fourteenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <typeparam name="TResult15">The result produced by the fifteenth worker method, which is to be passed to the complete method as the fourth parameter</typeparam>
+            <param name="worker">The first method used to perform the operation</param>
+            <param name="worker2">The second method used to perform the operation</param>
+            <param name="worker3">The third method used to perform the operation</param>
+            <param name="worker4">The fourth method used to perform the operation</param>
+            <param name="worker5">The fifth method used to perform the operation</param>
+            <param name="worker6">The sixth method used to perform the operation</param>
+            <param name="worker7">The seventh method used to perform the operation</param>
+            <param name="worker8">The eighth method used to perform the operation</param>
+            <param name="worker9">The ninth method used to perform the operation</param>
+            <param name="worker10">The tenth method used to perform the operation</param>
+            <param name="worker11">The eleventh method used to perform the operation</param>
+            <param name="worker12">The twelfth method used to perform the operation</param>
+            <param name="worker13">The thirteenth method used to perform the operation</param>
+            <param name="worker14">The fourteenth method used to perform the operation</param>
+            <param name="worker15">The fifteenth method used to perform the operation</param>
+            <param name="completeMethod">Method to fire when all workers have completed.</param>
+            <param name="statusObject">(Optional) status object that can have its status automatically updated (on the foreground thread)</param>
+            <param name="operationStatus">The status the optional loader is set to while the operation is in progress</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.AsyncWorker.ExecuteDispatch``1(System.Action{``0},``0,CODE.Framework.Wpf.Mvvm.IModelStatus)">
             <summary>Performs execution of the loaded method back on the main thread and resets the status if need be</summary>
             <typeparam name="TResult">The type of the result.</typeparam>
@@ -1866,6 +2102,25 @@
             <param name="model">Model associated with the view that is to be closed</param>
             <remarks>This only works if the model is only used with a single view. This will not work (or work unpredictably) for models that are shared across views.</remarks>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Controller.ActivateViewForModel(System.Object)">
+            <summary>Activates (shows) the view associated with the provided model.</summary>
+            <param name="model">Model associated with the view that is to be activate</param>
+            <remarks>This only works if the model is only used with a single view. This will not work (or work unpredictably) for models that are shared across views.</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Controller.GetOpenModel``1">
+            <summary>
+            Returns the first instance of a model instance of the specified type (or null, if none is instantiated)
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <returns>Model, or null</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Controller.GetOpenModel``1(System.Func{``0,System.Boolean})">
+            <summary>
+            Returns the first instance of a model instance of the specified type (or null, if none is instantiated)
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <returns>Model, or null</returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Controller.CloseAllViews">
             <summary>
             Closes all currently open views.
@@ -2017,6 +2272,13 @@
                 return Document(StandardViews.Block, model, ViewLevel.Popup);
             }
             </example>        
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Controller.ActivateView(System.Object)">
+            <summary>
+            Activates (shows) an existing view
+            </summary>
+            <param name="model">The model that is associated with the view that is to be activated.</param>
+            <returns></returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Controller.Document(System.String,System.Object)">
             <summary>Returns a named document (view) associated with the current action and assigns the model</summary>
@@ -2342,6 +2604,12 @@
             Occurs when the view has been closed
             </summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewResult.RaiseBeforeViewClosed">
+            <summary>
+            Method used to raise the BeforeViewClosed event
+            </summary>
+            <returns>True, if closing has been canceled</returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewResult.RaiseViewClosed">
             <summary>
             Method used to raise the ViewClosed event
@@ -2390,6 +2658,12 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.DocumentResult.ViewSource">
             <summary>Source the view originated with</summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.ExistingViewResult">
+            <summary>Action result used to indicate the desire to activate an existing view/model</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ExistingViewResult.Model">
+            <summary>Model object</summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewResultEventSinks">
             <summary>This class can be used to provide event handlers/sinks that are later attached to view results</summary>
@@ -2528,6 +2802,11 @@
             <param name="model">Model</param>
             <returns>True if successful</returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewHandler.ActivateViewForModel(System.Object)">
+            <summary>This method is invoked when a view that is associated with a certain model should be activated/shown</summary>
+            <param name="model">Model</param>
+            <returns>True if successful</returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.IViewHandler.CloseAllViews">
             <summary>
             This method closes all currently open views
@@ -2538,6 +2817,23 @@
             <summary>This method is used to retrieve a view associated with the specified model</summary>
             <param name="model">Model</param>
             <returns>Document if found (null otherwise)</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewHandler.GetOpenModel``1">
+            <summary>
+            Returns true, if a model instance of the specified type is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <returns>A reference to the open model instance</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.IViewHandler.GetOpenModel``1(System.Func{``0,System.Boolean})">
+            <summary>
+            Returns true, if a model instance of the specified type and selector criteria is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <param name="selector">Selector used to pick an appropriate model instance</param>
+            <returns>
+            A reference to the open model instance
+            </returns>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.MessageBoxButtons">
             <summary>MessageBox button options</summary>
@@ -3221,6 +3517,38 @@
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
             <exception cref="T:System.NotImplementedException"></exception>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.Shell.ViewIndexToActivate">
+            <summary>
+            For internal use only
+            </summary>
+            <value>
+            The view index to activate.
+            </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.Shell.ViewIndexToActivateProperty">
+            <summary>
+            For internal use only
+            </summary>
+            <value>
+            The view index to activate.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.Shell.TopViewIndexToActivate">
+            <summary>
+            For internal use only
+            </summary>
+            <value>
+            The view index to activate.
+            </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.Shell.TopViewIndexToActivateProperty">
+            <summary>
+            For internal use only
+            </summary>
+            <value>
+            The view index to activate.
+            </value>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.Shell.SelectedTopLevelViewResult">
             <summary>Complete view result for the currently selected top-level view (null if no view is selected)</summary>
             <remarks>Can be used to bind the current view into a content control using {Binding SelectedTopLevelViewResult.Document}</remarks>
@@ -3357,8 +3685,36 @@
             <summary>
             This method is invoked when a view that is associated with a certain model should be closed
             </summary>
-            <param name="model"></param>
-            <returns></returns>
+            <param name="model">The model associated with the view that is to be closed</param>
+            <returns>True, if the view was found and successfully closed</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Shell.ActivateViewForModel(System.Object)">
+            <summary>
+            This method is invoked when a view that is associated with a certain model should be activated/shown
+            </summary>
+            <param name="model">Model</param>
+            <returns>
+            True if successful
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Shell.GetOpenModel``1(System.Func{``0,System.Boolean})">
+            <summary>
+            Returns true, if a model instance of the specified type and selector criteria is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <param name="selector">Selector used to pick an appropriate model instance</param>
+            <returns>
+            A reference to the open model instance
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Shell.GetOpenModel``1">
+            <summary>
+            Returns true, if a model instance of the specified type is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <returns>
+            A reference to the open model instance
+            </returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Shell.CloseAllViews">
             <summary>
@@ -3537,6 +3893,15 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.WindowShellLauncher`1.ActivateViewForModel(System.Object)">
+            <summary>
+            This method is invoked when a view that is associated with a certain model should be activated/shown
+            </summary>
+            <param name="model">Model</param>
+            <returns>
+            True if successful
+            </returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.WindowShellLauncher`1.CloseAllViews">
             <summary>
             This method closes all currently open views
@@ -3550,6 +3915,25 @@
             <param name="model">Model</param>
             <returns>
             Document if found (null otherwise)
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.WindowShellLauncher`1.GetOpenModel``1(System.Func{``0,System.Boolean})">
+            <summary>
+            Returns true, if a model instance of the specified type and selector criteria is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <param name="selector">Selector used to pick an appropriate model instance</param>
+            <returns>
+            A reference to the open model instance
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.WindowShellLauncher`1.GetOpenModel``1">
+            <summary>
+            Returns true, if a model instance of the specified type is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <returns>
+            A reference to the open model instance
             </returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.WindowShellLauncher`1.OpenAnotherShellInstance">
@@ -3571,15 +3955,18 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction"/> class.
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction.#ctor(System.String,System.Boolean)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction.#ctor(System.String,System.Boolean,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons,CODE.Framework.Wpf.Mvvm.ViewActionSignificance)">
             <summary>Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction"/> class.</summary>
             <param name="caption">The caption.</param>
             <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
+            <param name="category">The category.</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+            <param name="significance">General significance of the action.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.CloseCurrentViewAction">
             <summary>This action performs a shutdown of the current application</summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.CloseCurrentViewAction.#ctor(System.Object,System.String,System.Boolean,System.String)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.CloseCurrentViewAction.#ctor(System.Object,System.String,System.Boolean,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons,CODE.Framework.Wpf.Mvvm.ViewActionSignificance)">
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction"/> class.
             </summary>
@@ -3587,11 +3974,13 @@
             <param name="caption">The caption.</param>
             <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
             <param name="category">The category.</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+            <param name="significance">General significance of the action.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.MoveFocusViewAction">
             <summary>This action moves the keyboard focus to an associated element in the view</summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.MoveFocusViewAction.#ctor(CODE.Framework.Wpf.Mvvm.IHaveViewInformation,System.String,System.String,System.Boolean,System.String)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.MoveFocusViewAction.#ctor(CODE.Framework.Wpf.Mvvm.IHaveViewInformation,System.String,System.String,System.Boolean,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons,CODE.Framework.Wpf.Mvvm.ViewActionSignificance)">
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction"/> class.
             </summary>
@@ -3600,13 +3989,15 @@
             <param name="caption">The caption.</param>
             <param name="beginGroup">If represented visually, should this action be placed in a new group?</param>
             <param name="category">The category.</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+            <param name="significance">General significance of the action.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.SwitchThemeViewAction">
             <summary>
             Standard view action to switch themes
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.SwitchThemeViewAction.#ctor(System.String,System.String,System.Boolean,System.String,System.Char,System.Char)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.SwitchThemeViewAction.#ctor(System.String,System.String,System.Boolean,System.String,System.Char,System.Char,CODE.Framework.Wpf.Mvvm.StandardIcons,CODE.Framework.Wpf.Mvvm.ViewActionSignificance)">
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ApplicationShutdownViewAction" /> class.
             </summary>
@@ -3616,16 +4007,42 @@
             <param name="category">The category.</param>
             <param name="categoryAccessKey">The category access key.</param>
             <param name="accessKey">The access key.</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+            <param name="significance">General significance of the action.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ToggleViewAction">
             <summary>
             This view action automatically toggles its IsChecked state every time it executes.
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.ToggleViewAction.#ctor(System.String,System.Boolean,System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object},System.Func{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object,System.Boolean},System.String,System.String,System.String,System.Int32,System.Boolean,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionSignificance,System.String[],System.String,System.String,System.String,System.Int32,System.Char,System.Windows.Input.Key,System.Windows.Input.ModifierKeys,System.Char,System.Boolean,System.Boolean,System.String)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.ToggleViewAction.#ctor(System.String,System.Boolean,System.Action{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object},System.Func{CODE.Framework.Wpf.Mvvm.IViewAction,System.Object,System.Boolean},System.String,System.String,System.String,System.Int32,System.Boolean,System.Boolean,CODE.Framework.Wpf.Mvvm.ViewActionSignificance,System.String[],System.String,System.String,System.String,System.Int32,System.Char,System.Windows.Input.Key,System.Windows.Input.ModifierKeys,System.Char,System.Boolean,System.Boolean,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons)">
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Mvvm.ToggleViewAction"/> class.
             </summary>
+            <param name="caption">Caption</param>
+            <param name="beginGroup">Group indicator</param>
+            <param name="execute">Execution method (delegate)</param>
+            <param name="canExecute">Can-Execute delegate</param>
+            <param name="visualResourceKey">Key for XAML resource used for visual representation</param>
+            <param name="category">Top level category (ID) assigned to this item</param>
+            <param name="categoryCaption">Display text assigned to the top level category</param>
+            <param name="categoryOrder">The display order of the category (used for sorting)</param>
+            <param name="isDefault">Indicates if this is the default action</param>
+            <param name="isCancel">Indicates if this is the action triggered if the user hits ESC</param>
+            <param name="significance">General significance of the action.</param>
+            <param name="userRoles">User roles with access to this action</param>
+            <param name="brushResourceKey">Resource key for a visual derived from a brush.</param>
+            <param name="logoBrushResourceKey">Resource key for a visual (used for Logo1) derived from a brush.</param>
+            <param name="groupTitle">The group title.</param>
+            <param name="order">The order of the view action (within a group)</param>
+            <param name="accessKey">The access key for this action (such as the underlined character in a menu if the action is linked to a menu).</param>
+            <param name="shortcutKey">The shortcut key for the action (usually a hot key that can be pressed without a menu being opened or anything along those lines).</param>
+            <param name="shortcutKeyModifiers">Modifier for the shortcut key (typically CTRL).</param>
+            <param name="categoryAccessKey">Access key for the category (only used if a category is assigned).</param>
+            <param name="isDefaultSelection">Indicates whether this action shall be selected by default</param>
+            <param name="isPinned">Indicates whether this action is considered to be pinned</param>
+            <param name="id">Optional unique identifier for the view action (caption is assumed as the ID if no ID is provided)</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction">
             <summary>
@@ -3633,7 +4050,7 @@
             The custom view is typically loaded the first time the action is invoked.
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.#ctor(System.String,System.String,System.String,System.Object)">
+        <member name="M:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.#ctor(System.String,System.String,System.String,System.Object,System.String,CODE.Framework.Wpf.Mvvm.StandardIcons,CODE.Framework.Wpf.Mvvm.ViewActionSignificance)">
             <summary>
             Constructor
             </summary>
@@ -3641,6 +4058,9 @@
             <param name="controller">Controller name</param>
             <param name="action">Action name (method on the controller)</param>
             <param name="routeValues">Optional route values (parameters) to be passed to the controller</param>
+            <param name="standardIcon">The standard icon to be used as a brush resource.</param>
+            <param name="category">Top level category (ID) assigned to this item</param>
+            <param name="significance">General significance of the action.</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.OnDemandLoadCustomViewViewAction.Execute(System.Object)">
             <summary>
@@ -3783,6 +4203,11 @@
         <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.StandardForm">
             <summary>
             Standard form layouts use WPF standards (typically a Grid) and leave layout details up to the developer.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.StandardLayouts.Tabs">
+            <summary>
+            Creates a tab-control type of layout
             </summary>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.StandardLayoutHelper">
@@ -3992,23 +4417,65 @@
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Image1">
             <summary>Image Element 1</summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignImage1Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Image2">
             <summary>Image Element 2</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignImage2Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Image3">
             <summary>Image Element 3</summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignImage3Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Image4">
             <summary>Image Element 4</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignImage4Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Image5">
             <summary>Image Element 5</summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignImage5Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Logo1">
             <summary>Logo Element 1</summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignLogo1Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
+        </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.Logo2">
             <summary>Logo Element 2</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.AssignLogo2Icon(CODE.Framework.Wpf.Mvvm.StandardIcons)">
+            <summary>
+            Assigns a standard icon as a brush
+            </summary>
+            <param name="icon">The icon.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.StandardViewModel.IsChecked">
             <summary>
@@ -4038,9 +4505,19 @@
             <param name="resourceName">Name of the resource (brush).</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage1FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image1</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage2FromBrushResource(System.String,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
             <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image2</summary>
             <param name="resourceName">Name of the resource (brush).</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage2FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image2</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage3FromBrushResource(System.String,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
@@ -4048,9 +4525,19 @@
             <param name="resourceName">Name of the resource (brush).</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage3FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image3</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage4FromBrushResource(System.String,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
             <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image4</summary>
             <param name="resourceName">Name of the resource (brush).</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage4FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image4</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage5FromBrushResource(System.String,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
@@ -4058,14 +4545,29 @@
             <param name="resourceName">Name of the resource (brush).</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedImage5FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Image5</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedLogo1FromBrushResource(System.String,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
             <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
             <param name="resourceName">Name of the resource (brush).</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedLogo1FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedLogo2FromBrushResource(System.String,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
             <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo1</summary>
             <param name="resourceName">Name of the resource (brush).</param>
+            <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.StandardViewModel.LoadSharedLogo2FromBrushResource(CODE.Framework.Wpf.Mvvm.StandardIcons,System.Collections.Generic.Dictionary{System.String,System.Windows.Media.Brush})">
+            <summary>Loads a resource brush to be shared across all instances of this view model and assigns it to Logo2</summary>
+            <param name="standardIcon">Standard icon to be used as the brush.</param>
             <param name="sharingContextCollection">Sharing context collection (can be used to differentiate brush context between different subclasses of standard view models).</param>
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.StandardViewModel.DefaultBrushSharingContextCollection">
@@ -4819,6 +5321,15 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Tools.ViewVisualizer.ActivateViewForModel(System.Object)">
+            <summary>
+            This method is invoked when a view that is associated with a certain model should be activated/shown
+            </summary>
+            <param name="model">Model</param>
+            <returns>
+            True if successful
+            </returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.Tools.ViewVisualizer.CloseAllViews">
             <summary>
             This method closes all currently open views
@@ -4833,6 +5344,25 @@
             <param name="model">Model</param>
             <returns>
             Document if found (null otherwise)
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Tools.ViewVisualizer.GetOpenModel``1(System.Func{``0,System.Boolean})">
+            <summary>
+            Returns true, if a model instance of the specified type and selector criteria is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <param name="selector">Selector used to pick an appropriate model instance</param>
+            <returns>
+            A reference to the open model instance
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.Tools.ViewVisualizer.GetOpenModel``1">
+            <summary>
+            Returns true, if a model instance of the specified type is already open
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <returns>
+            A reference to the open model instance
             </returns>
         </member>
         <member name="E:CODE.Framework.Wpf.Mvvm.Tools.ViewVisualizer.PropertyChanged">
@@ -5989,14 +6519,14 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionMenuButton.Model">
             <summary>
-            Model the view actions collectoin is a member of
+            Model the view actions collection is a member of
             </summary>
             <value>The model.</value>
             <remarks>Used in combination with the ModelActionsBindingPath property.</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionMenuButton.ModelProperty">
             <summary>
-            Model the view actions collectoin is a member of
+            Model the view actions collection is a member of
             </summary>
             <remarks>Used in combination with the ModelActionsBindingPath property.</remarks>
         </member>
@@ -6687,6 +7217,14 @@
             For internal use only
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.LastSelectedButton">
+            <summary>
+            Reference to a special button that has most recently been activated
+            </summary>
+            <value>
+            The last selected button.
+            </value>
+        </member>
         <member name="F:CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList.IsActivatingProperty">
             <summary>
             For internal use only
@@ -6879,10 +7417,11 @@
             Called when the button is clicked
             </summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.ActivateButton">
+        <member name="M:CODE.Framework.Wpf.Mvvm.SpecialFirstPageRibbonButton.ActivateButton(CODE.Framework.Wpf.Mvvm.SpecialFirstPageActionList)">
             <summary>
             Activates the button
             </summary>
+            <param name="list">Parent action list</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionStackPanel">
             <summary>
@@ -7177,6 +7716,42 @@
             <summary>
             Indicates whether the associated action has its IsChecked property set
             </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton.Significance">
+            <summary>
+            Significance of the associated view-action
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.ViewActionToolbarButton.SignificanceProperty">
+            <summary>
+            Significance of the associated view-action
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Mvvm.EmptyStringToBooleanConverter">
+            <summary>
+            For internal use only
+            </summary>
+            <seealso cref="T:System.Windows.Data.IValueConverter" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.EmptyStringToBooleanConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value produced by the binding source.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.EmptyStringToBooleanConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value that is produced by the binding target.</param>
+            <param name="targetType">The type to convert to.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         </member>
         <member name="T:CODE.Framework.Wpf.Mvvm.ViewActionToolbarSeparator">
             <summary>
@@ -7572,6 +8147,26 @@
             </summary>
             <seealso cref="T:CODE.Framework.Wpf.Mvvm.ViewHostTabControl" />
         </member>
+        <member name="P:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.ActivateViewIndex">
+            <summary>
+            For internal use only (activates the view of a certain index within the hierarchy)
+            </summary>
+            <value>
+            The index of the activate view.
+            </value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.ActivateViewIndexProperty">
+            <summary>
+            For internal use only (activates the view of a certain index within the hierarchy)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.OnActivateViewIndexChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the ActivateViewIndex property changed
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.HierarchicalViewHostTabControl.HandleSelectionChanged">
             <summary>
             Updates all properties related to changing view selection
@@ -7910,6 +8505,11 @@
         <member name="P:CODE.Framework.Wpf.Mvvm.ViewModel.AssociatedView">
             <summary>Reference to the associated view object</summary>
         </member>
+        <member name="E:CODE.Framework.Wpf.Mvvm.ViewModel.BeforeClosing">
+            <summary>
+            Occurs when the system is getting ready to close (has not started closing yet)
+            </summary>
+        </member>
         <member name="E:CODE.Framework.Wpf.Mvvm.ViewModel.Closing">
             <summary>Occurs when the object is closing (has not closed yet)</summary>
             <remarks>The Closing event occurs when the view is closed using the controller or when themes support implicit view closing (which may or may not work for some views)</remarks>
@@ -7917,6 +8517,12 @@
         <member name="E:CODE.Framework.Wpf.Mvvm.ViewModel.Closed">
             <summary>Occurs when the object has closed (has finished closing)</summary>
             <remarks>The Close event occurs when the view is closed using the controller or when themes support implicit view closing (which may or may not work for some views)</remarks>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Mvvm.ViewModel.RaiseBeforeClosingEvent">
+            <summary>
+            This method can be used to raise the before closing event
+            </summary>
+            <returns>True, if the closing operation has been canceled</returns>
         </member>
         <member name="M:CODE.Framework.Wpf.Mvvm.ViewModel.RaiseClosingEvent">
             <summary>This method can be used to raise the closing event</summary>

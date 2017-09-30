@@ -157,6 +157,62 @@ namespace CODE.Framework.Wpf.Mvvm
     public class HierarchicalViewHostTabControl : ViewHostTabControl
     {
         /// <summary>
+        /// For internal use only (activates the view of a certain index within the hierarchy)
+        /// </summary>
+        /// <value>
+        /// The index of the activate view.
+        /// </value>
+        public int ActivateViewIndex
+        {
+            get { return (int) GetValue(ActivateViewIndexProperty); }
+            set { SetValue(ActivateViewIndexProperty, value); }
+        }
+
+        /// <summary>
+        /// For internal use only (activates the view of a certain index within the hierarchy)
+        /// </summary>
+        public static readonly DependencyProperty ActivateViewIndexProperty = DependencyProperty.Register("ActivateViewIndex", typeof(int), typeof(HierarchicalViewHostTabControl), new PropertyMetadata(-1, OnActivateViewIndexChanged));
+
+        /// <summary>
+        /// Fires when the ActivateViewIndex property changed
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnActivateViewIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var tabs = d as HierarchicalViewHostTabControl;
+            if (tabs == null) return;
+            if (tabs.ActivateViewIndex == -1) return; // -1 means "don't do anything"
+            if (tabs.ActivateViewIndex >= tabs.HierarchicalViews.Count)
+            {
+                // Nothing we can do here
+                tabs.ActivateViewIndex = -1; // resetting to -1, so the next time this fires for real, we are guaranteed to get a changed event
+                return;
+            }
+
+            var groups = tabs.GetGroupedViews(tabs.HierarchicalViews);
+            var viewToSelect = tabs.HierarchicalViews[tabs.ActivateViewIndex];
+            foreach (var groupName in groups.Keys)
+            {
+                var group = groups[groupName];
+
+                var groupCounter = -1;
+                foreach (var view in group)
+                {
+                    groupCounter++;
+                    if (view == viewToSelect)
+                    {
+                        var groupTab = tabs.GetNewOrExistingGroupTab(group, groupName);
+                        if (groupTab.Content == null) break;
+                        var subTabs = groupTab.Content as TabControl;
+                        if (subTabs == null) break;
+                        subTabs.SelectedItem = subTabs.Items[groupCounter];
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Updates all properties related to changing view selection
         /// </summary>
         protected override void HandleSelectionChanged()

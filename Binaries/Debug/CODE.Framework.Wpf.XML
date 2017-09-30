@@ -242,6 +242,37 @@
             <returns>System.Object.</returns>
             <exception cref="T:System.NotImplementedException"></exception>
         </member>
+        <member name="T:CODE.Framework.Wpf.BindingConverters.IsNullConverter">
+            <summary>
+            Returns true if the value is null
+            </summary>
+            <seealso cref="T:System.Windows.Data.IValueConverter" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.BindingConverters.IsNullConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value produced by the binding source.</param>
+            <param name="targetType">The type of the binding target property.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>
+            A converted value. If the method returns null, the valid null value is used.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.BindingConverters.IsNullConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts a value.
+            </summary>
+            <param name="value">The value that is produced by the binding target.</param>
+            <param name="targetType">The type to convert to.</param>
+            <param name="parameter">The converter parameter to use.</param>
+            <param name="culture">The culture to use in the converter.</param>
+            <returns>
+            A converted value. If the method returns null, the valid null value is used.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">IsNullConverter can only be used OneWay.</exception>
+        </member>
         <member name="T:CODE.Framework.Wpf.BindingConverters.LitBrushConverter">
             <summary>
             Converts solid color brushes to a lighter or darker version
@@ -662,6 +693,16 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.CapsLockWarning"/> class.
             </summary>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.ClearTextButton">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ClearTextButton.OnClick">
+            <summary>
+            Constructor
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.ContentTextDisplay">
             <summary>
             This control can pick up any content and attempts to turn it into text and displays it
@@ -1025,6 +1066,14 @@
             <param name="d">Source object</param>
             <param name="e">Event arguments</param>
         </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.MouseClickCommandTrigger(System.Object,System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Triggers a potential attached command after a click (which is essentially a select)
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.MouseDoubleClickCommandTrigger(System.Object,System.Windows.Input.MouseButtonEventArgs)">
             <summary>
             Triggers a potentially attached command after double-click
@@ -1098,7 +1147,7 @@
             <remarks>This attached property can be attached to any UI Element to define the command parameter</remarks>
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.SetCommandParameter(System.Windows.DependencyObject,System.Object)">
-            <summary>Cmmand parameter</summary>
+            <summary>Command parameter</summary>
             <param name="obj">Object to set the command parameter on</param>
             <param name="value">Value to set</param>
         </member>
@@ -1113,7 +1162,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.OnTriggerCommandOnEnterChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>
-            Fires when TroggerCommandOnEnter changes
+            Fires when TriggerCommandOnEnter changes
             </summary>
             <param name="d">The object the parameter is set on</param>
             <param name="e">Event arguments</param>
@@ -1141,7 +1190,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxEx.AutoScrollToSelectedItemChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>
-            Autoes the scroll to selected item changed.
+            If true, the listbox automatically scrolls to the selected item.
             </summary>
             <param name="o">The object the value has been set on.</param>
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
@@ -1367,7 +1416,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxFastSmartDataTemplate.InvalidateAll">
             <summary>
-            Triggers invaliation of everything
+            Triggers invalidation of everything
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxFastSmartDataTemplate.OnRender(System.Windows.Media.DrawingContext)">
@@ -1547,6 +1596,109 @@
             </summary>
             <param name="availableSize"></param>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.ListBoxGridFooter">
+            <summary>Generic footer control usable with Lists to create a data grid-style footer</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridFooter.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.ListBoxGridFooter"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListBoxGridFooter.Columns">
+            <summary>Generic column definition</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListBoxGridFooter.ColumnsProperty">
+            <summary>Generic column definition</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridFooter.OnColumnsChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>Called when columns change.</summary>
+            <param name="o">The object the columns changed on.</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListBoxGridFooter.ParentListBox">
+            <summary>Reference to the parent listbox this footer belongs to</summary>
+            <value>The parent ListBox.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListBoxGridFooter.ParentListBoxProperty">
+            <summary>Reference to the parent listbox this footer belongs to</summary>
+            <value>The parent ListBox.</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridFooter.ParentListBoxChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>Fires when the parent list box changes</summary>
+            <param name="d">The d.</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListBoxGridFooter.HorizontalFooterOffset">
+            <summary>Horizontal offset of the footer</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListBoxGridFooter.HorizontalFooterOffsetProperty">
+            <summary>Horizontal offset of the footer</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridFooter.HorizontalFooterOffsetChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>Horizontals the footer offset changed.</summary>
+            <param name="o">The object the property was changed on.</param>
+            <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridFooter.InvalidateHorizontalFooterOffset">
+            <summary>
+            Forces re-applying of the horizontal footer offset
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridFooter.RepopulateFooters">
+            <summary>
+            Repopulates the footers.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.ComboBoxGridFooter">
+            <summary>
+            Special footer control for comboboxes (similar to the list footer, but measures itself differently)
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.Controls.ListBoxGridFooter" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ComboBoxGridFooter.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.FooterContentControl">
+            <summary>For internal use only</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.FooterContentControl.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.FooterContentControl"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.FooterContentControl.Column">
+            <summary>List column associated with this footer click content control</summary>
+            <value>The column.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.FooterContentControl.FooterClickCommand">
+            <summary>Footer click command</summary>
+            <value>The footer click command.</value>
+            <remarks>This is usually populated by means of a binding</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FooterContentControl.FooterClickCommandProperty">
+            <summary>Footer click command</summary>
+            <remarks>This is usually populated by means of a binding</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.FooterContentControl.ColumnIsFiltered">
+            <summary>
+            Indicates whether the column is currently filtered
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.FooterContentControl.ColumnIsFilteredProperty">
+            <summary>
+            Indicates whether the column is currently filtered
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.FooterClickCommandParameters">
+            <summary>Parameters passed to the footer click command</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.FooterClickCommandParameters.Column">
+            <summary>Reference to the clicked column</summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.ListBoxGridHeader">
             <summary>Generic header control usable with Lists to create a data grid-style header</summary>
         </member>
@@ -1606,7 +1758,6 @@
             </summary>
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> instance containing the event data.</param>
-            <exception cref="T:System.NotImplementedException"></exception>
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListBoxGridHeader.OnMouseMove(System.Windows.Input.MouseEventArgs)">
             <summary>
@@ -1640,6 +1791,19 @@
             </summary>
             <param name="columnIndex">The column index.</param>
             <returns>System.Double.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.ComboBoxGridHeader">
+            <summary>
+            Header class very similar to the listbox one, but it measures itself slightly different.
+            </summary>
+            <seealso cref="T:CODE.Framework.Wpf.Controls.ListBoxGridHeader" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ComboBoxGridHeader.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.FilterHeaderTextBox">
             <summary>For internal use only (implements header filtering in listboxes)</summary>
@@ -1877,12 +2041,6 @@
         <member name="E:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.EditModeChanged">
             <summary>Occurs when the row edit mode changes</summary>
         </member>
-        <member name="M:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.FindAncestor``1(System.Windows.DependencyObject)">
-            <summary>Walks the visual tree to find the parent of a certain type</summary>
-            <typeparam name="T">Type to search</typeparam>
-            <param name="d">Object for which to find the ancestor</param>
-            <returns>Object or null</returns>
-        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.Columns">
             <summary>Generic column definition</summary>
         </member>
@@ -1926,6 +2084,28 @@
             <param name="d">The source.</param>
             <param name="args">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.ImageStyle">
+            <summary>
+            Style applied to image controls in image columns
+            </summary>
+            <value>The image style.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.ImageStyleProperty">
+            <summary>
+            Style applied to image controls in image columns
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.LogoStyle">
+            <summary>
+            Style applied to image controls in logo columns
+            </summary>
+            <value>The image style.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListBoxSmartDataTemplate.LogoStyleProperty">
+            <summary>
+            Style applied to logo controls in image columns
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.LengthToGridLengthConverter">
             <summary>
             Converts double-lengths to grid lengths
@@ -1951,6 +2131,47 @@
             <param name="culture">The culture to use in the converter.</param>
             <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         </member>
+        <member name="T:CODE.Framework.Wpf.Controls.ComboBoxSmartTemplateSelector">
+            <summary>
+            Template selector used to create a different display value for a drop-down item in a combobox, vs. the text that is displayed in the box itself.
+            </summary>
+            <seealso cref="T:System.Windows.Controls.DataTemplateSelector" />
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ComboBoxSmartTemplateSelector.DropDownItemTemplate">
+            <summary>
+            Item template used for items in the drop-down part of the combobox.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ComboBoxSmartTemplateSelector.DisplayItemTemplate">
+            <summary>
+            Item template used inline in the combobox.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ComboBoxSmartTemplateSelector.SelectTemplate(System.Object,System.Windows.DependencyObject)">
+            <summary>
+            When overridden in a derived class, returns a <see cref="T:System.Windows.DataTemplate" /> based on custom logic.
+            </summary>
+            <param name="item">The data object for which to select the template.</param>
+            <param name="container">The data-bound object.</param>
+            <returns>
+            Returns a <see cref="T:System.Windows.DataTemplate" /> or null. The default value is null.
+            </returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ComboBoxInlineTextBlock.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.ComboBoxInlineTextBlock"/> class.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ComboBoxInlineTextBlock.ContentBindingPath">
+            <summary>
+            Binding path for the text.
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ComboBoxInlineTextBlock.ContentBindingPathProperty">
+            <summary>
+            Binding path for the text.
+            </summary>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.ListEx">
             <summary>Special features that can be attached to listboxes</summary>
         </member>
@@ -1974,6 +2195,32 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.ListEx.GetShowHeaderEditControls(System.Windows.DependencyObject)">
             <summary>Defines whether header edit controls are to be displayed (if there are any defined)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListEx.ShowFooterEditControlsProperty">
+            <summary>Defines whether footer edit controls are to be displayed (if there are any defined)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.SetShowFooterEditControls(System.Windows.DependencyObject,System.Boolean)">
+            <summary>Defines whether footer edit controls are to be displayed (if there are any defined)</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.GetShowFooterEditControls(System.Windows.DependencyObject)">
+            <summary>Defines whether footer edit controls are to be displayed (if there are any defined)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListEx.PreserveSelectionAfterResortProperty">
+            <summary>Defines whether row selection is to be preserved after a re-sort operation</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.SetPreserveSelectionAfterResort(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            Defines whether row selection is to be preserved after a re-sort operation
+            </summary>
+            <param name="o">The o.</param>
+            <param name="value">if set to <c>true</c> [value].</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListEx.GetPreserveSelectionAfterResort(System.Windows.DependencyObject)">
+            <summary>
+            Defines whether row selection is to be preserved after a re-sort operation
+            </summary>
+            <param name="o">The o.</param>
+            <returns></returns>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListEx.AutoEnableListColumnsProperty">
             <summary>
@@ -2104,6 +2351,12 @@
             Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.ListColumnsCollection"/> class.
             </summary>
         </member>
+        <member name="E:CODE.Framework.Wpf.Controls.ListColumnsCollection.CollectionChangedDelayed">
+            <summary>
+            Acts very similar to CollectionChanged, but fires 25ms delayed, and only fires once
+            when a lot of CollectionChanged events fire within a tight loop.
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.EditModeBindingPath">
             <summary>
             Path to a boolean source that defines whether a row is editable or not
@@ -2119,6 +2372,47 @@
             Defines whether columns can be moved/dragged to change positions
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.ShowHeaders">
+            <summary>
+            Indicates whether or not column headers are desired
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.ShowFooters">
+            <summary>
+            Indicates whether or not column headers are desired
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.DetailTemplate">
+            <summary>Template used for a potential detail area</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.DetailSpansFullWidth">
+            <summary>
+            Defines whether the detail area is auto-assigned the full width available in the list (true),
+            or whether the controls in the detail template define their own width (false).
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.DetailExpandedPath">
+            <summary>
+            Path to a boolean property that indicates whether the detail area is expanded or not
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumnsCollection.DefaultDisplayBindingPath">
+            <summary>
+            Binding path to a field that represents the entire row. Typically the same binding path as the first column in the list.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListColumnsCollection.NotifyChanged(System.String)">
+            <summary>
+            Can be used to indicate a property changed
+            </summary>
+            <param name="propertyName">Name of the changed property (or empty string to indicate a refresh of all properties)</param>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Controls.ListColumnsCollection.PropertyChangedPublic">
+            <summary>
+            Public version of property changed, which only happens for the properties defined in this class directly.
+            </summary>
+            <remarks>Requires since the default implementation is protected</remarks>
+        </member>
         <member name="T:CODE.Framework.Wpf.Controls.ListColumn">
             <summary>
             An abstract definition of a column
@@ -2130,12 +2424,32 @@
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.HeaderProperty">
             <summary>Column Header</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.Footer">
+            <summary>Column Footer</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterProperty">
+            <summary>Column Footer</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FooterBindingPath">
+            <summary>Column Footer</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterBindingPathProperty">
+            <summary>Column Footer</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnHeaderText">
             <summary>Defines whether a header label (text) shall be displayed</summary>
             <value>True (default) or false</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnHeaderTextProperty">
             <summary>Defines whether a header label (text) shall be displayed</summary>
+            <value>True (default) or false</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnFooterText">
+            <summary>Defines whether a footer label (text) shall be displayed</summary>
+            <value>True (default) or false</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnFooterTextProperty">
+            <summary>Defines whether a footer label (text) shall be displayed</summary>
             <value>True (default) or false</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnHeaderEditControl">
@@ -2146,6 +2460,14 @@
             <summary>Defines whether a header edit control (textbox) shall be displayed</summary>
             <value>True or false (default)</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnFooterEditControl">
+            <summary>Defines whether a footer edit control (textbox) shall be displayed</summary>
+            <value>True or false (default)</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ShowColumnFooterEditControlProperty">
+            <summary>Defines whether a footer edit control (textbox) shall be displayed</summary>
+            <value>True or false (default)</value>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlBindingPath">
             <summary>Binding path for a column header edit control</summary>
             <value>The column header edit control binding path.</value>
@@ -2153,6 +2475,14 @@
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlBindingPathProperty">
             <summary>Binding path for a column header edit control</summary>
             <value>The column header edit control binding path.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlBindingPath">
+            <summary>Binding path for a column footer edit control</summary>
+            <value>The column footer edit control binding path.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlBindingPathProperty">
+            <summary>Binding path for a column footer edit control</summary>
+            <value>The column footer edit control binding path.</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlUpdateTrigger">
             <summary>Binding update trigger for a column header edit control</summary>
@@ -2162,6 +2492,14 @@
             <summary>Binding update trigger for a column header edit control</summary>
             <value>The column header edit control update trigger.</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlUpdateTrigger">
+            <summary>Binding update trigger for a column footer edit control</summary>
+            <value>The column footer edit control update trigger.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlUpdateTriggerProperty">
+            <summary>Binding update trigger for a column footer edit control</summary>
+            <value>The column footer edit control update trigger.</value>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlWatermarkText">
             <summary>Watermark text for a potential header control</summary>
             <value>The column header edit control watermark text.</value>
@@ -2169,6 +2507,14 @@
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlWatermarkTextProperty">
             <summary>Watermark text for a potential header control</summary>
             <value>The column header edit control watermark text.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlWatermarkText">
+            <summary>Watermark text for a potential footer control</summary>
+            <value>The column footer edit control watermark text.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlWatermarkTextProperty">
+            <summary>Watermark text for a potential footer control</summary>
+            <value>The column footer edit control watermark text.</value>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.Width">
             <summary>Column Width</summary>
@@ -2236,6 +2582,12 @@
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.HeaderTemplateProperty">
             <summary>Template used for column headers</summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FooterTemplate">
+            <summary>Template used for column footers</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterTemplateProperty">
+            <summary>Template used for column footers</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.IsResizable">
             <summary>Defines whether the column is resizable</summary>
         </member>
@@ -2266,6 +2618,14 @@
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.HeaderClickCommandBindingPathProperty">
             <summary>Binding path to bind a header click command</summary>
+            <remarks>Note that standard binding would not be applicable int his case, since column headers do not exist within the visual tree structure that would provide the standard data context</remarks>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FooterClickCommandBindingPath">
+            <summary>Binding path to bind a footer click command</summary>
+            <remarks>Note that standard binding would not be applicable int his case, since column footers do not exist within the visual tree structure that would provide the standard data context</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterClickCommandBindingPathProperty">
+            <summary>Binding path to bind a footer click command</summary>
             <remarks>Note that standard binding would not be applicable int his case, since column headers do not exist within the visual tree structure that would provide the standard data context</remarks>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.CellBackground">
@@ -2328,6 +2688,28 @@
             <value>The column controls.</value>
             <remarks>Only applies for columns without item templates</remarks>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnControlIsEnabledBindingPath">
+            <summary>
+            Binding path for the IsEnabled property of a contained control
+            </summary>
+            <value>The column control is enabled binding path.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnControlIsEnabledBindingPathProperty">
+            <summary>
+            Binding path for the IsEnabled property of a contained control
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.DoubleClickCommandBindingPath">
+            <summary>
+            Binding path for a double-click command/view-action associated with a contained control
+            </summary>
+            <value>The double click command binding path.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.DoubleClickCommandBindingPathProperty">
+            <summary>
+            Binding path for a double-click command/view-action associated with a contained control
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.CellContentAlignment">
             <summary>Content alignment for cell content</summary>
             <value>The cell content alignment.</value>
@@ -2339,6 +2721,12 @@
             <summary>Text alignment for simple text headers</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.HeaderTextAlignmentProperty">
+            <summary>Text alignment for simple text headers</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FooterTextAlignment">
+            <summary>Text alignment for simple text footers</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterTextAlignmentProperty">
             <summary>Text alignment for simple text headers</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.HeaderForeground">
@@ -2353,6 +2741,18 @@
             Gets or sets the header foreground color/brush.
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FooterForeground">
+            <summary>
+            Gets or sets the footer foreground color/brush.
+            </summary>
+            <value>The footer foreground.</value>
+            <remarks>Ignored when initially null</remarks>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterForegroundProperty">
+            <summary>
+            Gets or sets the footer foreground color/brush.
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.TextListItemsSourceBindingPath">
             <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
             <value>The text list item source binding path.</value>
@@ -2360,6 +2760,12 @@
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.TextListItemsSourceBindingPathProperty">
             <summary>Binding path expression used for the list (such as a combobox) of a text list hosted control</summary>
             <value>The text list item source binding path.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.TextListColumns">
+            <summary>Columns for text lists (drop-downs)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.TextListColumnsProperty">
+            <summary>Columns for text lists (drop-downs)</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.TextListDisplayMemberPath">
             <summary>Display member binding path path expression used for the list (such as a combobox) of a text list hosted control</summary>
@@ -2475,6 +2881,14 @@
             <summary>Collection of event commands associated with the header control</summary>
             <value>The header event commands.</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.FooterEventCommands">
+            <summary>Collection of event commands associated with the footer control</summary>
+            <value>The footer event commands.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.FooterEventCommandsProperty">
+            <summary>Collection of event commands associated with the footer control</summary>
+            <value>The footer event commands.</value>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.SortOrder">
             <summary>Column sort order indicator</summary>
             <value>The sort order indicator.</value>
@@ -2546,6 +2960,24 @@
             <summary>Binding path for a dynamically set tooltip of the control inside a column</summary>
             <value>The tooltip binding path.</value>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ToolTipInitialShowDelay">
+            <summary>Initial delay (in milliseconds) before tooltips show up</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ToolTipInitialShowDelayProperty">
+            <summary>Initial delay (in milliseconds) before tooltips show up</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ToolTipShowDuration">
+            <summary>Tooltip display duration (in milliseconds)</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ToolTipShowDurationProperty">
+            <summary>Tooltip display duration (in milliseconds)</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ToolTipPlacement">
+            <summary>Tooltip placement</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ToolTipPlacementProperty">
+            <summary>Tooltip placement</summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.IsFrozen">
             <summary>Indicates whether the column is considered to be "frozen"</summary>
             <remarks>Frozen status usually indicates that all frozen columns are kept visible on the left side of the listbox. Note that different controls and styles may interpret this property differently.</remarks>
@@ -2570,7 +3002,20 @@
             Template for control header edit controls
             </summary>
         </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlTemplate">
+            <summary>
+            Template for control footer edit controls
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlTemplateProperty">
+            <summary>
+            Template for control footer edit controls
+            </summary>
+        </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.UtilizedHeaderEditControl">
+            <summary>For internal use only</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.UtilizedFooterEditControl">
             <summary>For internal use only</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnHeaderEditControlDataContext">
@@ -2578,6 +3023,12 @@
             Gets or sets the column header edit control data context.
             </summary>
             <value>The column header edit control data context.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.ListColumn.ColumnFooterEditControlDataContext">
+            <summary>
+            Gets or sets the column footer edit control data context.
+            </summary>
+            <value>The column footer edit control data context.</value>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.ListColumn.VisibilityProperty">
             <summary>
@@ -2601,6 +3052,36 @@
             Sets the actual width if the new value is indeed significantly different from the original color (more than 1/10th of a pixel difference).
             </summary>
             <param name="actualWidth">The actual width.</param>
+        </member>
+        <member name="E:CODE.Framework.Wpf.Controls.ListColumn.CellControlCreated">
+            <summary>
+            Occurs when a control is added to a smart data template for a specific cell
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.ListColumn.RaiseCellControlCreated(System.Windows.FrameworkElement)">
+            <summary>
+            Raises the cell control created event.
+            </summary>
+            <param name="control">The created control.</param>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Controls.CellControlCreatedEventArgs">
+            <summary>
+            Event arguments for the CellControlCreated event
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.CellControlCreatedEventArgs.#ctor(System.Windows.FrameworkElement)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CODE.Framework.Wpf.Controls.CellControlCreatedEventArgs"/> class.
+            </summary>
+            <param name="control">The control.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Controls.CellControlCreatedEventArgs.Control">
+            <summary>
+            Reference to the added control
+            </summary>
+            <value>
+            The control.
+            </value>
         </member>
         <member name="T:CODE.Framework.Wpf.Controls.ListColumnControls">
             <summary>
@@ -3507,6 +3988,53 @@
             <param name="value">The value.</param>
             <remarks>This value should never be set manually.</remarks>
         </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TextBoxEx.InputMaskDecimalCharacteristicMaskProperty">
+            <summary>
+            Defines the input mask for the characteristic part (the part to the left of the .) of decimal (d, %) formatting.
+            The default is '###,###,###,##0', which allows entering up to 12 digits
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.GetInputMaskDecimalCharacteristicMask(System.Windows.DependencyObject)">
+            <summary>
+            Defines the input mask for the characteristic part (the part to the left of the .) of decimal (d, %) formatting.
+            The default is '###,###,###,##0', which allows entering up to 12 digits
+            </summary>
+            <param name="d">The element the value is set on</param>
+            <returns>Mask for the characteristic part of a decimal input mask (default is '###,###,###,##0')</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.SetInputMaskDecimalCharacteristicMask(System.Windows.DependencyObject,System.String)">
+            <summary>
+            Defines the input mask for the characteristic part (the part to the left of the .) of decimal (d, %) formatting.
+            The default is '###,###,###,##0', which allows entering up to 12 digits
+            </summary>
+            <param name="d">The element the value is retrieved from</param>
+            <param name="value">Mask for the characteristic, such as '###,###,###,##0'</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TextBoxEx.InputMaskDecimalFractionalMaskProperty">
+            <summary>
+            Defines the input mask for the fractional part (the 'mantissa') of decimal (d, %) formatting.
+            The default is '00', which means that there can be two digits in the fraction. If you wanted 
+            4 digits, set this to '0000'
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.GetInputMaskDecimalFractionalMask(System.Windows.DependencyObject)">
+            <summary>
+            Defines the input mask for the fractional part (the 'mantissa') of decimal (d, %) formatting.
+            The default is '00', which means that there can be two digits in the fraction. If you wanted 
+            4 digits, set this to '0000'
+            </summary>
+            <param name="d">The element the value is set on</param>
+            <returns>Mask for the mantissa part of a decimal input mask</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.SetInputMaskDecimalFractionalMask(System.Windows.DependencyObject,System.String)">
+            <summary>
+            Defines the input mask for the fractional part (the 'mantissa') of decimal (d, %) formatting.
+            The default is '00', which means that there can be two digits in the fraction. If you wanted 
+            4 digits, set this to '0000'
+            </summary>
+            <param name="d">The element the value is retrieved from</param>
+            <param name="value">Mask for the mantissa, such as '00' or '0000'</param>
+        </member>
         <member name="F:CODE.Framework.Wpf.Controls.TextBoxEx.InputMaskCurrencySymbolProperty">
             <summary>
             Currency symbol (such as $, €, or £ - can be multiple characters)
@@ -3526,6 +4054,25 @@
             <param name="d">The object the symbol is set on</param>
             <param name="value">Currency symbol to set.</param>
         </member>
+        <member name="F:CODE.Framework.Wpf.Controls.TextBoxEx.InputMaskSupportsNegativeProperty">
+            <summary>
+            If set to true, the decimal or currency input mask supports negative values as well as positive ones
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.GetInputMaskSupportsNegative(System.Windows.DependencyObject)">
+            <summary>
+            If set to true, the decimal or currency input mask supports negative values as well as positive ones
+            </summary>
+            <param name="d">The element to get the value on</param>
+            <returns>True (default) if negative values are supported</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.SetInputMaskSupportsNegative(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            If set to true, the decimal or currency input mask supports negative values as well as positive ones
+            </summary>
+            <param name="d">The element to set the value on</param>
+            <param name="value">True (default) if negative values are supported</param>
+        </member>
         <member name="F:CODE.Framework.Wpf.Controls.TextBoxEx.InputMaskProperty">
             <summary>
             Provides the ability to define input masks on textboxes
@@ -3543,7 +4090,7 @@
             Provides the ability to define input masks on textboxes
             </summary>
             <param name="d">The object the mask is to be set on</param>
-            <param name="value">The inpout mask.</param>
+            <param name="value">The input mask.</param>
         </member>
         <member name="M:CODE.Framework.Wpf.Controls.TextBoxEx.OnInputMaskChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
             <summary>
@@ -3815,6 +4362,28 @@
         <member name="T:CODE.Framework.Wpf.Controls.WindowEx">
             <summary>
             Special window class with various (attached) properties that provide special capabilities
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Controls.WindowEx.WindowStartupLocationStylableProperty">
+            <summary>
+            Creates a stylable version of the window startup position (the default property on the Window class is not a dependency property)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.WindowEx.OnWindowStartupLocationStylableChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when the WindowStartupPosition attached property changes
+            </summary>
+            <param name="d">The d.</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.WindowEx.GetWindowStartupLocationStylable(System.Windows.DependencyObject)">
+            <summary>
+            Creates a stylable version of the window startup position (the default property on the Window class is not a dependency property)
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Controls.WindowEx.SetWindowStartupLocationStylable(System.Windows.DependencyObject,System.Windows.WindowStartupLocation)">
+            <summary>
+            Creates a stylable version of the window startup position (the default property on the Window class is not a dependency property)
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Controls.WindowEx.AutoSaveWindowPositionProperty">
@@ -4621,8 +5190,20 @@
             <param name="d">Dependency object</param>
             <param name="args">Arguments</param>
         </member>
+        <member name="P:CODE.Framework.Wpf.Layout.BidirectionalStackPanel.GroupSpacing">
+            <summary>Vertical additional spacing before new groups</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.BidirectionalStackPanel.GroupSpacingProperty">
+            <summary>Vertical additional spacing before new groups</summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.BidirectionalStackPanel.#ctor">
             <summary>Constructor</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BidirectionalStackPanel.OnPreviewMouseWheel(System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.PreviewMouseWheel" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseWheelEventArgs" /> that contains the event data.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.BidirectionalStackPanel.ChildItemMargin">
             <summary>Additional margin added to each child item in this stack</summary>
@@ -4855,6 +5436,13 @@
             and the overall space for the child shrinks accordingly. The value returned by this method indicates
             the remaining space for the child element.</remarks>
         </member>
+        <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.GetClientAreaMargins(System.Boolean)">
+            <summary>
+            Returns the margin around the client area (the area available for the child control) based on the total area available for the child
+            </summary>
+            <param name="isOtherOrientation">if set to <c>true</c> [is other orientation].</param>
+            <returns>Thickness (margins)</returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.IBladePanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Size,System.Windows.UIElement)">
             <summary>Renders the header element for a single child.</summary>
             <param name="dc">The drawing context.</param>
@@ -5062,6 +5650,13 @@
             and the overall space for the child shrinks accordingly. The value returned by this method indicates
             the remaining space for the child element.</remarks>
         </member>
+        <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.GetClientAreaMargins(System.Boolean)">
+            <summary>
+            Returns the margin around the client area (the area available for the child control) based on the total area available for the child
+            </summary>
+            <param name="isOtherOrientation">if set to <c>true</c> [is other orientation].</param>
+            <returns>Thickness (margins)</returns>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.BladePanelHeaderRenderer.Render(System.Windows.Media.DrawingContext,System.Windows.Size,System.Windows.UIElement)">
             <summary>
             Renders the header element for a single child
@@ -5166,6 +5761,116 @@
         <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.ColumnProperty">
             <summary>Column assignment</summary>
         </member>
+        <member name="M:CODE.Framework.Wpf.Layout.ColumnPanel.GetIsDetail(System.Windows.DependencyObject)">
+            <summary>Indicates elements for the detail area</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.ColumnPanel.SetIsDetail(System.Windows.DependencyObject,System.Boolean)">
+            <summary>Indicates elements for the detail area</summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.IsDetailProperty">
+            <summary>Indicates elements for the detail area</summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.DetailAreaIndent">
+            <summary>
+            Indentation of the detail area
+            </summary>
+            <value>The detail area indent.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.DetailAreaIndentProperty">
+            <summary>
+            Indentation of the detail area
+            </summary>
+            <value>The detail area indent.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.ExpandIconWidth">
+            <summary>
+            Width of the expand/collapse icon
+            </summary>
+            <value>The width of the expand icon.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.ExpandIconWidthProperty">
+            <summary>
+            Width of the expand/collapse icon
+            </summary>
+            <value>The width of the expand icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.DetailIsExpanded">
+            <summary>
+            Indicates whether the detail area is expanded
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.DetailIsExpandedProperty">
+            <summary>
+            Indicates whether the detail area is expanded
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.ExpandIconBrushResourceKey">
+            <summary>
+            Brush resource key used for the expand-icon (shown in collapsed state)
+            </summary>
+            <value>The expand icon brush resource key.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.ExpandIconBrushResourceKeyProperty">
+            <summary>
+            Brush resource key used for the expand-icon (shown in collapsed state)
+            </summary>
+            <value>The expand icon brush resource key.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.CollapseIconBrushResourceKey">
+            <summary>
+            Brush resource key used for the collapse-icon (shown in expanded state)
+            </summary>
+            <value>The collapse icon brush resource key.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.CollapseIconBrushResourceKeyProperty">
+            <summary>
+            Brush resource key used for the collapse-icon (shown in expanded state)
+            </summary>
+            <value>The collapse icon brush resource key.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.ExpandIcon">
+            <summary>
+            Brush used for the expand-icon (shown in collapsed state)
+            </summary>
+            <value>The expand icon.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.ExpandIconProperty">
+            <summary>
+            Brush used for the expand-icon (shown in collapsed state)
+            </summary>
+            <value>The expand icon.</value>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.CollapseIcon">
+            <summary>
+            Brush used for the collapse-icon (shown in collapsed state)
+            </summary>
+            <value>The collapse icon.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.CollapseIconProperty">
+            <summary>
+            Brush used for the collapse-icon (shown in collapsed state)
+            </summary>
+            <value>The collapse icon.</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.ColumnPanel.OnDetailIsExpandedChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when DetailIsExpanded changes
+            </summary>
+            <param name="d">The object the event is raised on</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.ColumnPanel.DetailSpansFullWidth">
+            <summary>
+            Defines whether the detail area is auto-assigned the full width available in the list (true),
+            or whether the controls in the detail template define their own width (false).
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.ColumnPanel.DetailSpansFullWidthProperty">
+            <summary>
+            Defines whether the detail area is auto-assigned the full width available in the list (true),
+            or whether the controls in the detail template define their own width (false).
+            </summary>
+        </member>
         <member name="M:CODE.Framework.Wpf.Layout.ColumnPanel.MeasureOverride(System.Windows.Size)">
             <summary>
             When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
@@ -5179,6 +5884,18 @@
             </summary>
             <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
             <returns>The actual size used.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.ColumnPanel.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+            </summary>
+            <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.ColumnPanel.OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.UIElement.MouseLeftButtonDown" /> routed event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was pressed.</param>
         </member>
         <member name="T:CODE.Framework.Wpf.Layout.ColumnPanelColumnDefinition">
             <summary>
@@ -5242,12 +5959,12 @@
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.ColumnPanelColumnDefinition.ReadOnlyTextAlignment">
             <summary>
-            Desired text alignment for read-only column content (note: this is only supported by some rederers)
+            Desired text alignment for read-only column content (note: this is only supported by some renderers)
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.ColumnPanelColumnDefinition.ReadOnlyTextAlignmentProperty">
             <summary>
-            Desired text alignment for read-only column content (note: this is only supported by some rederers)
+            Desired text alignment for read-only column content (note: this is only supported by some renderers)
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.ColumnPanelColumnDefinition.OnReadOnlyTextAlignmentChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
@@ -6105,6 +6822,12 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.EditForm.#ctor">
             <summary>Constructor</summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.EditForm.OnPreviewMouseWheel(System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.PreviewMouseWheel" /> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseWheelEventArgs" /> that contains the event data.</param>
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.EditForm.LayoutElasticity">
             <summary>Defines whether the layout is elastic (smartly resizes automatically) or not</summary>
@@ -6979,11 +7702,11 @@
             <summary>Defines the size at which the layout automatically switches from primary (usually top/bottom) orientation to secondary (usually left/right) orientation</summary>
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.GridPrimarySecondary.UIElementOrder">
-            <summary>Defines the logical orientaiton of primary and secondary UI elements</summary>
+            <summary>Defines the logical orientation of primary and secondary UI elements</summary>
             <remarks>Each style/skin/theme can choose to interpret this setting differently</remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.GridPrimarySecondary.UIElementOrderProperty">
-            <summary>Defines the logical orientaiton of primary and secondary UI elements</summary>
+            <summary>Defines the logical orientation of primary and secondary UI elements</summary>
             <remarks>Each style/skin/theme can choose to interpret this setting differently</remarks>
         </member>
         <member name="P:CODE.Framework.Wpf.Layout.GridPrimarySecondary.SecondaryAreaBackgroundBrush">
@@ -8311,7 +9034,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.GetPrimaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
             <summary>
-            Detirmines the size of the client area for the primary element, based on the overall area allocated to it
+            determines the size of the client area for the primary element, based on the overall area allocated to it
             </summary>
             <param name="totalPrimaryArea">The total primary area.</param>
             <param name="parentPanel">The parent panel.</param>
@@ -8319,7 +9042,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.IPrimarySecondaryHorizontalPanelHeaderRenderer.GetSecondaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
             <summary>
-            Detirmines the size of the client area for the secondary element, based on the overall area allocated to it
+            determines the size of the client area for the secondary element, based on the overall area allocated to it
             </summary>
             <param name="totalSecondaryArea">The total secondary area.</param>
             <param name="parentPanel">The parent panel.</param>
@@ -8415,7 +9138,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.GetPrimaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
             <summary>
-            Detirmines the size of the client area for the primary element, based on the overall area allocated to it
+            determines the size of the client area for the primary element, based on the overall area allocated to it
             </summary>
             <param name="totalPrimaryArea">The total primary area.</param>
             <param name="parentPanel">The parent panel.</param>
@@ -8423,7 +9146,7 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.StandardPrimarySecondaryHorizontalPanelHeaderRenderer.GetSecondaryClientArea(System.Windows.Rect,CODE.Framework.Wpf.Layout.PrimarySecondaryHorizontalPanel)">
             <summary>
-            Detirmines the size of the client area for the secondary element, based on the overall area allocated to it
+            determines the size of the client area for the secondary element, based on the overall area allocated to it
             </summary>
             <param name="totalSecondaryArea">The total secondary area.</param>
             <param name="parentPanel">The parent panel.</param>
@@ -8817,6 +9540,137 @@
             </summary>
             <value>The scroll owner.</value>
         </member>
+        <member name="T:CODE.Framework.Wpf.Layout.TabItemsPanel">
+            <summary>
+            This panel arranges all child elements as tab items, and uses SimpleView.Title (or View.Title) as the header
+            </summary>
+            <seealso cref="T:System.Windows.Controls.Panel" />
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.OnVisualChildrenChanged(System.Windows.DependencyObject,System.Windows.DependencyObject)">
+            <summary>
+            Invoked when the <see cref="T:System.Windows.Media.VisualCollection" /> of a visual object is modified.
+            </summary>
+            <param name="visualAdded">The <see cref="T:System.Windows.Media.Visual" /> that was added to the collection.</param>
+            <param name="visualRemoved">The <see cref="T:System.Windows.Media.Visual" /> that was removed from the collection.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.TabItemsPanel.SelectedPage">
+            <summary>
+            Gets or sets the selected page.
+            </summary>
+            <value>The selected page.</value>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.MeasureOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, measures the size in layout required for child elements and determines a size for the <see cref="T:System.Windows.FrameworkElement" />-derived class.
+            </summary>
+            <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+            <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.ArrangeOverride(System.Windows.Size)">
+            <summary>
+            When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class.
+            </summary>
+            <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+            <returns>The actual size used.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
+            </summary>
+            <param name="dc">The <see cref="T:System.Windows.Media.DrawingContext" /> object to draw.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Invoked when an unhandled <see cref="E:System.Windows.UIElement.MouseLeftButtonDown" /> routed event is raised on this element. Implement this method to add class handling for this event.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was pressed.</param>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.TabItemsPanel.TabVisibilityProperty">
+            <summary>
+            Sets the visibility of the tabs
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.OnTabVisibilityChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Fires when tab visibility changes
+            </summary>
+            <param name="d">The object the visibility changed on</param>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.GetTabVisibility(System.Windows.DependencyObject)">
+            <summary>
+            Sets the visibility of the tabs
+            </summary>
+            <param name="d">The item to get tab visibility for.</param>
+            <returns>Visibility.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsPanel.SetTabVisibility(System.Windows.DependencyObject,System.Windows.Visibility)">
+            <summary>
+            Sets the visibility of the tabs
+            </summary>
+            <param name="d">The item to set tab visibility on.</param>
+            <param name="value">Visibility.</param>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.TabItemsPanel.HeaderRenderer">
+            <summary>
+            Header renderer used to create the visuals for the tab headers and borders.
+            </summary>
+            <value>The header renderer.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.TabItemsPanel.HeaderRendererProperty">
+            <summary>
+            Header renderer used to create the visuals for the tab headers and borders.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer">
+            <summary>
+            Base class used to render tab items.
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.HeaderHeight">
+            <summary>
+            Header height
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.HeaderHeightProperty">
+            <summary>
+            Header height
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.FontFamily">
+            <summary>
+            Font Family.
+            </summary>
+            <value>The font family.</value>
+        </member>
+        <member name="F:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.FontFamilyProperty">
+            <summary>
+            Font Family.
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.GetClientRect(CODE.Framework.Wpf.Layout.TabItemsPanel,System.Windows.Size)">
+            <summary>
+            Returns the size and position of the client area for child elements
+            </summary>
+            <param name="panel">The tab items panel.</param>
+            <param name="finalSize">The size of the tab items panel.</param>
+            <returns>Rect.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.Render(System.Windows.Media.DrawingContext,CODE.Framework.Wpf.Layout.TabItemsPanel)">
+            <summary>
+            Renders the actual tabs
+            </summary>
+            <param name="dc">The dc.</param>
+            <param name="tabItemsPanel">The tab items panel.</param>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Layout.TabItemsHeaderRenderer.MouseClick(System.Windows.Point,System.Windows.Input.MouseButtonEventArgs,CODE.Framework.Wpf.Layout.TabItemsPanel)">
+            <summary>
+            Handles a mouse click
+            </summary>
+            <param name="position">The position.</param>
+            <param name="mouseButtonEventArgs">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
+            <param name="tabItemsPanel">The tab items panel.</param>
+        </member>
         <member name="T:CODE.Framework.Wpf.Layout.SimpleView">
             <summary>
                 Base class for views (can be used instead of UserControl)
@@ -8841,7 +9695,7 @@
             <remarks>
                 This attached property can be attached to any UI Element to define an element's logical minimum width. The
                 width is typically calculated on the current font's width based on the letter 'N'. So a width of 10 can typically
-                accomodate 10 'N' letters. Note that this may vary with different skins.
+                accommodate 10 'N' letters. Note that this may vary with different skins.
             </remarks>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.MaxWidthExProperty">
@@ -8945,25 +9799,25 @@
             <summary>Attached property used to define column breaks</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.GroupBreakProperty">
-            <summary>Property used to detirmine group break (adds a space between elements)</summary>
+            <summary>Property used to determine group break (adds a space between elements)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.GroupTitleProperty">
             <summary>Group caption/title</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.FlowsWithPreviousProperty">
             <summary>
-                Property used to detirmine whether the control is to be seen as a standard flow element, or whether it is to
+                Property used to determine whether the control is to be seen as a standard flow element, or whether it is to
                 be put together with the previous element
             </summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.LineBreakProperty">
-            <summary>Property used to detirmine whether a line break shall be forced before the control</summary>
+            <summary>Property used to determine whether a line break shall be forced before the control</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.SpanFullWidthProperty">
-            <summary>Property used to detirmine whether the control shall span the complete available width</summary>
+            <summary>Property used to determine whether the control shall span the complete available width</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.UIElementTypeProperty">
-            <summary>Property used to detirmine group break (adds a space between elements)</summary>
+            <summary>Property used to determine group break (adds a space between elements)</summary>
         </member>
         <member name="F:CODE.Framework.Wpf.Layout.SimpleView.UIElementTitleProperty">
             <summary>Defines the title of the UI element</summary>
@@ -9397,27 +10251,27 @@
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetFlowsWithPrevious(System.Windows.DependencyObject)">
             <summary>
-                Property used to detirmine whether the control is to be seen as a standard flow element, or whether it is to
+                Property used to determine whether the control is to be seen as a standard flow element, or whether it is to
                 be put together with the previous element
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetFlowsWithPrevious(System.Windows.DependencyObject,System.Boolean)">
             <summary>
-                Property used to detirmine whether the control is to be seen as a standard flow element, or whether it is to
+                Property used to determine whether the control is to be seen as a standard flow element, or whether it is to
                 be put together with the previous element
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetLineBreak(System.Windows.DependencyObject)">
-            <summary>Property used to detirmine whether a line break shall be forced before the control</summary>
+            <summary>Property used to determine whether a line break shall be forced before the control</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetLineBreak(System.Windows.DependencyObject,System.Boolean)">
-            <summary>Property used to detirmine whether a line break shall be forced before the control</summary>
+            <summary>Property used to determine whether a line break shall be forced before the control</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetSpanFullWidth(System.Windows.DependencyObject)">
-            <summary>Property used to detirmine whether the control shall span the complete available width</summary>
+            <summary>Property used to determine whether the control shall span the complete available width</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.SetSpanFullWidth(System.Windows.DependencyObject,System.Boolean)">
-            <summary>Property used to detirmine whether the control shall span the complete available width</summary>
+            <summary>Property used to determine whether the control shall span the complete available width</summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Layout.SimpleView.GetUIElementType(System.Windows.DependencyObject)">
             <summary>Group break indicator</summary>
@@ -9944,7 +10798,7 @@
         </member>
         <member name="P:CODE.Framework.Wpf.MarkupExtensions.Bind.FallbackValue">
             <summary>
-            Fallback value to apply when no binding value can be detirmined
+            Fallback value to apply when no binding value can be determined
             </summary>
             <value>The fallback value.</value>
         </member>
@@ -10293,6 +11147,48 @@
             <param name="focusElement4">An (optional) next element to set the focus to (typically a parent of the prior element).</param>
             <param name="delay">The delay in milliseconds before the focus is moved (100ms is the default).</param>
         </member>
+        <member name="T:CODE.Framework.Wpf.Utilities.GeometryHelper">
+            <summary>
+            Provides helper features for geometry-related issues
+            </summary>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.GeometryHelper.NewRect(System.Double,System.Double,System.Double,System.Double,System.Boolean)">
+            <summary>
+            Returns a rectangle structure with guaranteed valid height and width (non-negative)
+            </summary>
+            <param name="x">The x.</param>
+            <param name="y">The y.</param>
+            <param name="width">The width.</param>
+            <param name="height">The height.</param>
+            <param name="forceToPixelInteger">If set to true, values are always rounded down to the next pixel.</param>
+            <returns>Rect.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.GeometryHelper.NewRect(System.Windows.Point,System.Windows.Size,System.Boolean)">
+            <summary>
+            Returns a rectangle structure with guaranteed valid height and width (non-negative)
+            </summary>
+            <param name="topLeft">The top left position of the rectangle.</param>
+            <param name="size">The size of the rectangle.</param>
+            <param name="forceToPixelInteger">If set to true, values are always rounded down to the next pixel.</param>
+            <returns>Rect.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.GeometryHelper.NewRect(System.Windows.Rect,System.Windows.Thickness)">
+            <summary>
+            Returns a new rectangle structure with potential padding applied
+            </summary>
+            <param name="original">The original rectangle.</param>
+            <param name="padding">The padding.</param>
+            <returns>System.Windows.Rect.</returns>
+        </member>
+        <member name="M:CODE.Framework.Wpf.Utilities.GeometryHelper.NewSize(System.Double,System.Double,System.Boolean)">
+            <summary>
+            Returns a size structure with guaranteed valid height and width (non-negative)
+            </summary>
+            <param name="width">The width.</param>
+            <param name="height">The height.</param>
+            <param name="forceToPixelInteger">If set to true, values are always rounded down to the next pixel.</param>
+            <returns>Size.</returns>
+        </member>
         <member name="T:CODE.Framework.Wpf.Utilities.GlobalKeyboardHookHelper">
             <summary>
             Helper class used for handling global keyboard hooks
@@ -10317,6 +11213,11 @@
         <member name="M:CODE.Framework.Wpf.Utilities.GlobalKeyboardHookHelper.Dispose">
             <summary>
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Utilities.KeyboardHelper">
+            <summary>
+            This class provides functionality related to keyboard features
             </summary>
         </member>
         <member name="M:CODE.Framework.Wpf.Utilities.KeyboardHelper.GetCharFromKey(System.Windows.Input.Key)">
@@ -11267,8 +12168,24 @@
             Performs data validation on all properties of the provided object.
             </summary>
             <param name="objectToValidate">The object to validate.</param>
-            <param name="results">An existing results object (can be useful if you want to add up multiple valdations for multiple objects)</param>
+            <param name="results">An existing results object (can be useful if you want to add up multiple validations for multiple objects)</param>
             <returns>ValidationResults.</returns>
+        </member>
+        <member name="T:CODE.Framework.Wpf.Validation.IValidationWithContextObject">
+            <summary>
+            This interface can be implemented by a custom validation attribute. 
+            If this interface is implemented, then the current main object will be set before validation is executed.
+            Example: A CustomerEditViewModel class has a property called ValueMayBeRequired with a custom validation attribute.
+            Let's say the custom attribute wants to check other properties within the view-model before deciding whether the value is
+            indeed required. For this, the attribute needs access to the view-model. The ContextObject is the view-model (it's always the object
+            that defines the property that has the attribute).
+            </summary>
+        </member>
+        <member name="P:CODE.Framework.Wpf.Validation.IValidationWithContextObject.ContextObject">
+            <summary>
+            Gets or sets the context object.
+            </summary>
+            <value>The context object.</value>
         </member>
         <member name="T:CODE.Framework.Wpf.Validation.ValidationResults">
             <summary>

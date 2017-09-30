@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
-using CODE.Framework.Core.Utilities;
 
 namespace CODE.Framework.Wpf.Mvvm
 {
@@ -45,8 +44,9 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <param name="propertyName">Name of the changed property (or empty string to indicate a refresh of all properties)</param>
         protected virtual void NotifyChanged(string propertyName = "")
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private bool _actionsChangedSinceLatNotification;
@@ -116,6 +116,11 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <summary>Reference to the associated view object</summary>
         public UIElement AssociatedView { get; set; }
 
+        /// <summary>
+        /// Occurs when the system is getting ready to close (has not started closing yet)
+        /// </summary>
+        public event EventHandler<CancelEventArgs> BeforeClosing;
+
         /// <summary>Occurs when the object is closing (has not closed yet)</summary>
         /// <remarks>The Closing event occurs when the view is closed using the controller or when themes support implicit view closing (which may or may not work for some views)</remarks>
         public event EventHandler Closing;
@@ -124,16 +129,37 @@ namespace CODE.Framework.Wpf.Mvvm
         /// <remarks>The Close event occurs when the view is closed using the controller or when themes support implicit view closing (which may or may not work for some views)</remarks>
         public event EventHandler Closed;
 
+        /// <summary>
+        /// This method can be used to raise the before closing event
+        /// </summary>
+        /// <returns>True, if the closing operation has been canceled</returns>
+        public bool RaiseBeforeClosingEvent()
+        {
+            var handler = BeforeClosing;
+            if (handler != null)
+            {
+                var args = new CancelEventArgs();
+                handler(this, args);
+                return args.Cancel;
+            }
+
+            return false;
+        }
+
         /// <summary>This method can be used to raise the closing event</summary>
         public void RaiseClosingEvent()
         {
-            if (Closing != null) Closing(this, new EventArgs());
+            var handler = Closing;
+            if (handler != null)
+                handler(this, new EventArgs());
         }
 
         /// <summary>This method can be used to raise the closed event</summary>
         public void RaiseClosedEvent()
         {
-            if (Closed != null) Closed(this, new EventArgs());
+            var handler = Closed;
+            if (handler != null)
+                handler(this, new EventArgs());
         }
 
         /// <summary>Occurs when the object is opening (has not opened yet)</summary>

@@ -1,9 +1,20 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:bc="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf"
-                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf">
+                    xmlns:val="clr-namespace:CODE.Framework.Wpf.Validation;assembly=CODE.Framework.Wpf"
+                    xmlns:controls="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf"
+                    xmlns:bindingConverters="clr-namespace:CODE.Framework.Wpf.BindingConverters;assembly=CODE.Framework.Wpf">
 
-    <Style x:Key="Universe-Control-ComboBox" TargetType="ComboBox">
+    <DataTemplate x:Key="MultiColumnComboBoxItemTemplate">
+        <controls:ListBoxSmartDataTemplate Style="{DynamicResource Workplace-ListBoxSmartDataTemplate-Style}"/>
+    </DataTemplate>
+    <DataTemplate x:Key="DisplayValueComboBoxItemTemplate">
+        <controls:ComboBoxInlineTextBlock/>
+    </DataTemplate>
+
+    <Style x:Key="Universe-Control-ComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Style.Resources>
+            <bindingConverters:IsNullConverter x:Key="IsNullConverter"/>
+        </Style.Resources>
         <Setter Property="Padding" Value="8,0"/>
         <Setter Property="BorderBrush">
             <Setter.Value>
@@ -27,7 +38,7 @@
         <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ComboBox}">
+                <ControlTemplate TargetType="ComboBox">
                     <Border x:Name="MainBorder"
                             BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" 
                             Background="{TemplateBinding Background}" >
@@ -127,11 +138,295 @@
                 <Setter Property="IsTabStop" Value="false"/>
                 <Setter Property="Padding" Value="3"/>
             </Trigger>
+            <DataTrigger Binding="{Binding (controls:ListEx.Columns), RelativeSource={RelativeSource Self}, Converter={StaticResource IsNullConverter}}" Value="False">
+                <Setter Property="Template" Value="{DynamicResource MultiColumnComboBoxTemplate}" />
+                <Setter Property="ItemTemplateSelector">
+                    <Setter.Value>
+                        <controls:ComboBoxSmartTemplateSelector DropDownItemTemplate="{StaticResource MultiColumnComboBoxItemTemplate}" DisplayItemTemplate="{StaticResource DisplayValueComboBoxItemTemplate}" />
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="ComboBox" BasedOn="{StaticResource Universe-Control-ComboBox}" />
+    <Style TargetType="ComboBox" BasedOn="{StaticResource Universe-Control-ComboBox}"/>
 
+    <ControlTemplate x:Key="MultiColumnComboBoxTemplate" TargetType="ComboBox">
+        <Border x:Name="MainBorder"
+                BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" 
+                Background="{TemplateBinding Background}" >
+            <Grid x:Name="MainGrid" SnapsToDevicePixels="true">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
+                </Grid.ColumnDefinitions>
+                <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" 
+                        IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" 
+                        Margin="0,1,0,0" 
+                        MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=MainBorder}"
+                        PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" 
+                        Placement="Bottom">
+                    <Border x:Name="DropDownBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{DynamicResource CODE.Framework-Application-BackgroundBrush3}">
+                        <controls:GridEx RowHeights="Auto,*,Auto" ClipToBounds="True" SnapsToDevicePixels="True" x:Name="grid" MaxWidth="{Binding DesiredMeasuredWidth, ElementName=header}">
+                            <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                <Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=DropDownBorder}" Height="{Binding ActualHeight, ElementName=DropDownBorder}" Width="{Binding ActualWidth, ElementName=DropDownBorder}"/>
+                            </Canvas>
+                            <controls:ComboBoxGridHeader Columns="{Binding Path=(controls:ListEx.Columns), RelativeSource={RelativeSource TemplatedParent}}" 
+                                                 ParentListBox="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                 HorizontalHeaderOffset="{Binding ElementName=scroll, Path=ContentHorizontalOffset, Mode=OneWay}"
+                                                 HorizontalAlignment="Left"
+                                                 SnapsToDevicePixels="True">
+                                <controls:ComboBoxGridHeader.Template>
+                                    <ControlTemplate TargetType="controls:ComboBoxGridHeader">
+                                        <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SnapsToDevicePixels="True"
+                                                BorderBrush="#A4ABB4" Background="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"  BorderThickness="0,0,0,1" Margin="-1,-1,-1,-0">
+                                            <ContentPresenter />
+                                        </Border>
+                                    </ControlTemplate>
+                                </controls:ComboBoxGridHeader.Template>
+                                <controls:ComboBoxGridHeader.Resources>
+                                    <Style TargetType="ContentControl" BasedOn="{StaticResource {x:Type ContentControl}}">
+                                        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+                                        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ContentControl">
+                                                    <Grid SnapsToDevicePixels="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                        <Border VerticalAlignment="Stretch" HorizontalAlignment="Right" BorderBrush="#A4ABB4" BorderThickness="0,0,1,0" Margin="0,2,-1,2" Panel.ZIndex="25000" SnapsToDevicePixels="True" />
+                                                        <ContentPresenter Margin="4,0,5,2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="content"/>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="controls:HeaderContentControl" BasedOn="{StaticResource {x:Type ContentControl}}">
+                                        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+                                        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="controls:HeaderContentControl">
+                                                    <Grid SnapsToDevicePixels="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="root">
+                                                        <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="filterBackground" IsHitTestVisible="False"/>
+                                                        <ContentPresenter Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="content"/>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="ColumnIsFiltered" Value="True">
+                                                            <Setter Property="ToolTip" Value="Filtered" />
+                                                            <Setter Property="Fill" TargetName="filterBackground">
+                                                                <Setter.Value>
+                                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                        <GradientStop Color="Transparent" Offset=".4"/>
+                                                                        <GradientStop Color="{DynamicResource CODE.Framework-Application-ThemeColor1}" Offset="1.2"/>
+                                                                    </LinearGradientBrush>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="GridSplitter" BasedOn="{StaticResource {x:Type GridSplitter}}">
+                                        <Setter Property="Width" Value="3" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Margin" Value="0,2,-1,2" />
+                                    </Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Margin" Value="0,2"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                    </Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                        <Setter Property="Margin" Value="0,2,-2,1"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                                                            Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                                                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="2"/>
+                                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="2"
+                                                                       Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                                                        </Grid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <MultiTrigger>
+                                                            <MultiTrigger.Conditions>
+                                                                <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                                                <Condition Property="Text" Value=""/>
+                                                            </MultiTrigger.Conditions>
+                                                            <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                                                        </MultiTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="controls:SortOrderIndicator">
+                                        <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                        <Setter Property="Height" Value="10"/>
+                                        <Setter Property="Width" Value="10"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="Margin" Value="5,0"/>
+                                        <Setter Property="AscendingBrush" Value="{DynamicResource CODE.Framework-Icon-SortAscending}" />
+                                        <Setter Property="DescendingBrush" Value="{DynamicResource CODE.Framework-Icon-SortDescending}" />
+                                    </Style>
+                                </controls:ComboBoxGridHeader.Resources>
+                            </controls:ComboBoxGridHeader>
+                            <ScrollViewer Focusable="false" Grid.Row="1" x:Name="scroll" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Disabled">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                            <controls:ComboBoxGridFooter Columns="{Binding Path=(controls:ListEx.Columns), RelativeSource={RelativeSource TemplatedParent}}" 
+                                                 ParentListBox="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                 HorizontalFooterOffset="{Binding ElementName=scroll, Path=ContentHorizontalOffset, Mode=OneWay}"
+                                                 HorizontalAlignment="Left" x:Name="header"
+                                                 SnapsToDevicePixels="True" Grid.Row="2">
+                                <controls:ComboBoxGridFooter.Template>
+                                    <ControlTemplate TargetType="controls:ListBoxGridFooter">
+                                        <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SnapsToDevicePixels="True"
+                                                BorderBrush="#A4ABB4" Background="{DynamicResource CODE.Framework-Application-BackgroundBrush1}"  BorderThickness="0,1,0,0" Margin="-1,-0,-1,-1">
+                                            <ContentPresenter />
+                                        </Border>
+                                    </ControlTemplate>
+                                </controls:ComboBoxGridFooter.Template>
+                                <controls:ComboBoxGridFooter.Resources>
+                                    <Style TargetType="ContentControl" BasedOn="{StaticResource {x:Type ContentControl}}">
+                                        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+                                        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ContentControl">
+                                                    <Grid SnapsToDevicePixels="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                        <Border VerticalAlignment="Stretch" HorizontalAlignment="Right" BorderBrush="#A4ABB4" BorderThickness="0,0,1,0" Margin="0,2,-1,2" Panel.ZIndex="25000" SnapsToDevicePixels="True" />
+                                                        <ContentPresenter Margin="4,0,5,2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="content"/>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="controls:FooterContentControl" BasedOn="{StaticResource {x:Type ContentControl}}">
+                                        <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}" />
+                                        <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="controls:FooterContentControl">
+                                                    <Grid SnapsToDevicePixels="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="root">
+                                                        <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="filterBackground" IsHitTestVisible="False"/>
+                                                        <ContentPresenter Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="content"/>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Margin" Value="0,2"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                    </Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                        <Setter Property="Margin" Value="0,2,-2,1"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                                                            Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                                                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="2"/>
+                                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="Watermark" Opacity=".6" Margin="2"
+                                                                       Text="{TemplateBinding controls:TextBoxEx.WatermarkText}" Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                                                        </Grid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <MultiTrigger>
+                                                            <MultiTrigger.Conditions>
+                                                                <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                                                <Condition Property="Text" Value=""/>
+                                                            </MultiTrigger.Conditions>
+                                                            <Setter Property="Visibility" Value="Visible" TargetName="Watermark"/>
+                                                        </MultiTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </controls:ComboBoxGridFooter.Resources>
+                            </controls:ComboBoxGridFooter>
+                        </controls:GridEx>
+                    </Border>
+                </Popup>
+                <ToggleButton BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" 
+                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                ClickMode="Press" IsTabStop="False" Focusable="False">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border BorderThickness="0" Background="Transparent">
+                                <Grid HorizontalAlignment="Right" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                                    <Path Data="M0,0 L5,5 10,0" HorizontalAlignment="Center" StrokeThickness="2" Stroke="{TemplateBinding Foreground}" VerticalAlignment="Center" Margin="4,0"  />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" 
+                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                    ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" 
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    IsHitTestVisible="false" 
+                                    Margin="{TemplateBinding Padding}" 
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    x:Name="MainContentPresenter"
+                                    />
+                <TextBox x:Name="PART_EditableTextBox" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                            IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}" 
+                            Margin="{TemplateBinding Padding}"
+                            FocusVisualStyle="{x:Null}"
+                            Visibility="Collapsed"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                    <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox">
+                            <ScrollViewer x:Name="PART_ContentHost" Background="Transparent" Focusable="false" 
+                                            HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </ControlTemplate>
+                    </TextBox.Template>
+                </TextBox>
+                <Path Height="12" Width="12" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M 0,0 L12,0 12,12 z" Fill="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}" x:Name="errorIndicator" Visibility="Collapsed" ToolTip="{TemplateBinding val:InputValidation.ErrorMessage}"/>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="HasItems" Value="false">
+                <Setter Property="Height" TargetName="DropDownBorder" Value="95"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                <Setter Property="Background" Value="#FFF4F4F4"/>
+            </Trigger>
+            <Trigger Property="IsGrouping" Value="true">
+                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+            </Trigger>
+            <Trigger Property="ScrollViewer.CanContentScroll" SourceName="DropDownScrollViewer" Value="false">
+                <Setter Property="Canvas.Top" TargetName="OpaqueRect" Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}"/>
+                <Setter Property="Canvas.Left" TargetName="OpaqueRect" Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}"/>
+            </Trigger>
+            <Trigger Property="IsEditable" Value="True">
+                <Setter Property="Visibility" Value="Visible" TargetName="PART_EditableTextBox"/>
+                <Setter Property="Visibility" Value="Collapsed" TargetName="MainContentPresenter"/>
+            </Trigger>
+            <Trigger Property="val:InputValidation.IsValid" Value="False">
+                <Setter Property="BorderBrush" TargetName="MainBorder" Value="{DynamicResource CODE.Framework-Application-ValidationErrorBrush}"/>
+                <Setter Property="Visibility" TargetName="errorIndicator" Value="Visible"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    
     <Style TargetType="ComboBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource CODE.Framework-Application-ForegroundBrush1}"/>
         <Setter Property="Background" Value="{DynamicResource CODE.Framework-Application-BackgroundBrush3}"/>

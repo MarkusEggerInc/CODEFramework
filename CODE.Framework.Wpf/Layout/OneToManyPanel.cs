@@ -155,8 +155,9 @@ namespace CODE.Framework.Wpf.Layout
                 var height = Math.Max(availableSize.Height - top, 0);
                 var width = Math.Max((availableSize.Width - Spacing) / 2, 0);
 
-                Children[0].Measure(new Size(width, height));
-                Children[1].Measure(new Size(width, height));
+                var measureSize = GeometryHelper.NewSize(width, height);
+                Children[0].Measure(measureSize);
+                Children[1].Measure(measureSize);
             }
             else
             {
@@ -169,23 +170,23 @@ namespace CODE.Framework.Wpf.Layout
                 {
                     var text1 = new AutoHeaderTextRenderInfo { Text = header1, FormattedText = new FormattedText(header1, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(CaptionFontFamily, CaptionFontStyle, CaptionFontWeight, FontStretches.Normal), CaptionFontSize, CaptionForegroundBrush) };
                     _headers.Add(text1);
-                    text1.RenderRect = new Rect(0d, 0d, availableSize.Width, text1.FormattedText.Height);
+                    text1.RenderRect = GeometryHelper.NewRect(0d, 0d, availableSize.Width, text1.FormattedText.Height);
                     top += text1.FormattedText.Height + CaptionSpacing;
                     height1 -= (text1.FormattedText.Height + CaptionSpacing);
                 }
 
-                Children[0].Measure(new Size(availableSize.Width, height1));
+                Children[0].Measure(GeometryHelper.NewSize(availableSize.Width, height1));
 
                 if (!string.IsNullOrEmpty(header2))
                 {
                     var text2 = new AutoHeaderTextRenderInfo { Text = header2, FormattedText = new FormattedText(header2, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(CaptionFontFamily, CaptionFontStyle, CaptionFontWeight, FontStretches.Normal), CaptionFontSize, CaptionForegroundBrush) };
                     _headers.Add(text2);
-                    text2.RenderRect = new Rect(0d, 0d, availableSize.Width, text2.FormattedText.Height);
+                    text2.RenderRect = GeometryHelper.NewRect(0d, 0d, availableSize.Width, text2.FormattedText.Height);
                     top += text2.FormattedText.Height + CaptionSpacing;
                     height2 -= (text2.FormattedText.Height + CaptionSpacing);
                 }
 
-                Children[1].Measure(new Size(availableSize.Width, height2));
+                Children[1].Measure(GeometryHelper.NewSize(availableSize.Width, height2));
             }
 
             return base.MeasureOverride(availableSize);
@@ -221,13 +222,13 @@ namespace CODE.Framework.Wpf.Layout
                 var height = Math.Max(finalSize.Height - top, 0);
                 var width = Math.Max((finalSize.Width - Spacing) / 2, 0);
 
-                Children[0].Arrange(new Rect(0d, top, width, height));
-                Children[1].Arrange(new Rect(width + Spacing, top, width, height));
+                Children[0].Arrange(GeometryHelper.NewRect(0d, top, width, height));
+                Children[1].Arrange(GeometryHelper.NewRect(width + Spacing, top, width, height));
 
                 if (maxHeaderHeight > 0d)
                 {
-                    _headers[0].RenderRect = new Rect(0d, 0d, width, maxHeaderHeight);
-                    _headers[1].RenderRect = new Rect(width + Spacing, 0d, width, maxHeaderHeight);
+                    _headers[0].RenderRect = GeometryHelper.NewRect(0d, 0d, width, maxHeaderHeight);
+                    _headers[1].RenderRect = GeometryHelper.NewRect(width + Spacing, 0d, width, maxHeaderHeight);
                 }
             }
             else
@@ -241,23 +242,23 @@ namespace CODE.Framework.Wpf.Layout
                 {
                     var text1 = new AutoHeaderTextRenderInfo { Text = header1, FormattedText = new FormattedText(header1, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(CaptionFontFamily, CaptionFontStyle, CaptionFontWeight, FontStretches.Normal), CaptionFontSize, CaptionForegroundBrush) };
                     _headers.Add(text1);
-                    text1.RenderRect = new Rect(0d, 0d, finalSize.Width, text1.FormattedText.Height);
+                    text1.RenderRect = GeometryHelper.NewRect(0d, 0d, finalSize.Width, text1.FormattedText.Height);
                     top += text1.FormattedText.Height + CaptionSpacing;
                     height1 -= (text1.FormattedText.Height + CaptionSpacing);
                 }
 
-                Children[0].Arrange(new Rect(0d, top, finalSize.Width, height1));
+                Children[0].Arrange(GeometryHelper.NewRect(0d, top, finalSize.Width, height1));
 
                 if (!string.IsNullOrEmpty(header2))
                 {
                     var text2 = new AutoHeaderTextRenderInfo { Text = header2, FormattedText = new FormattedText(header2, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(CaptionFontFamily, CaptionFontStyle, CaptionFontWeight, FontStretches.Normal), CaptionFontSize, CaptionForegroundBrush) };
                     _headers.Add(text2);
-                    text2.RenderRect = new Rect(0d, 0d, finalSize.Width, text2.FormattedText.Height);
+                    text2.RenderRect = GeometryHelper.NewRect(0d, 0d, finalSize.Width, text2.FormattedText.Height);
                     top += text2.FormattedText.Height + CaptionSpacing;
                     height2 -= (text2.FormattedText.Height + CaptionSpacing);
                 }
 
-                Children[1].Arrange(new Rect(0d, top, finalSize.Width, height2));
+                Children[1].Arrange(GeometryHelper.NewRect(0d, top, finalSize.Width, height2));
             }
 
             return finalSize;

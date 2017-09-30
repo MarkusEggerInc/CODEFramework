@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using CODE.Framework.Wpf.Controls;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -224,12 +225,12 @@ namespace CODE.Framework.Wpf.Layout
 
         private static Rect ReducedClientRect(Rect original)
         {
-            return new Rect(original.X + 1, original.Y + 1, Math.Max(original.Width - 2, 0), Math.Max(original.Height - 2, 0));
+            return GeometryHelper.NewRect(original.X + 1, original.Y + 1, original.Width - 2, original.Height - 2);
         }
 
         private static Size ReducedClientSize(Size original)
         {
-            return new Size(Math.Max(original.Width - 2, 0), Math.Max(original.Height - 2, 0));
+            return GeometryHelper.NewSize(original.Width - 2, original.Height - 2);
         }
 
         /// <summary>
@@ -327,13 +328,13 @@ namespace CODE.Framework.Wpf.Layout
 
             // Looking for resize 'hot' areas
             if (_leftDockWellRect.Width > .1d)
-                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeWE, 0) {AreaRectangle = new Rect(_leftDockWellRect.Width + 1d, 0d, SplitterWidth, _leftDockWellRect.Height)});
+                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeWE, 0) {AreaRectangle = GeometryHelper.NewRect(_leftDockWellRect.Width + 1d, 0d, SplitterWidth, _leftDockWellRect.Height)});
             if (_rightDockWellRect.Width > .1d)
-                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeWE, 2) {AreaRectangle = new Rect(_rightDockWellRect.Left - 1d - SplitterWidth, 0d, SplitterWidth, _rightDockWellRect.Height)});
+                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeWE, 2) {AreaRectangle = GeometryHelper.NewRect(_rightDockWellRect.Left - 1d - SplitterWidth, 0d, SplitterWidth, _rightDockWellRect.Height)});
             if (_topDockWellRect.Height > .1d)
-                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeNS, 1) {AreaRectangle = new Rect(_topDockWellRect.Left, _topDockWellRect.Bottom + 1d, _topDockWellRect.Width, SplitterHeight)});
+                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeNS, 1) {AreaRectangle = GeometryHelper.NewRect(_topDockWellRect.Left, _topDockWellRect.Bottom + 1d, _topDockWellRect.Width, SplitterHeight)});
             if (_bottomDockWellRect.Height > .1d)
-                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeNS, 3) {AreaRectangle = new Rect(_bottomDockWellRect.Left, _bottomDockWellRect.Top - 1d - SplitterHeight, _bottomDockWellRect.Width, SplitterHeight)});
+                _hotAreas.Add(new SplitterHotArea(this, Cursors.SizeNS, 3) {AreaRectangle = GeometryHelper.NewRect(_bottomDockWellRect.Left, _bottomDockWellRect.Top - 1d - SplitterHeight, _bottomDockWellRect.Width, SplitterHeight)});
 
             return base.ArrangeOverride(finalSize);
         }
@@ -915,7 +916,7 @@ namespace CODE.Framework.Wpf.Layout
             switch (position)
             {
                 case DockPosition.Left:
-                    return LeftDockWidth > 0d ? NewRect(0d, 0d, LeftDockWidth, height) : new Rect();
+                    return LeftDockWidth > 0d ? NewRect(0d, 0d, LeftDockWidth, height) : Rect.Empty;
                 case DockPosition.Top:
                     if (LeftDockWidth > 0d)
                     {
@@ -926,10 +927,10 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         width -= (RightDockWidth + SplitterWidth);
                     }
-                    return TopDockHeight > 0d ? NewRect(left, 0d, width, TopDockHeight) : new Rect();
+                    return TopDockHeight > 0d ? NewRect(left, 0d, width, TopDockHeight) : Rect.Empty;
                 case DockPosition.Right:
                     left = width - RightDockWidth;
-                    return RightDockWidth > 0d ? NewRect(left, 0d, RightDockWidth, height) : new Rect();
+                    return RightDockWidth > 0d ? NewRect(left, 0d, RightDockWidth, height) : Rect.Empty;
                 case DockPosition.Bottom:
                     if (LeftDockWidth > 0d)
                     {
@@ -941,11 +942,11 @@ namespace CODE.Framework.Wpf.Layout
                         width -= (RightDockWidth + SplitterWidth);
                     }
                     var top = height - BottomDockHeight;
-                    return BottomDockHeight > 0d ? NewRect(left, top, width, BottomDockHeight) : new Rect();
+                    return BottomDockHeight > 0d ? NewRect(left, top, width, BottomDockHeight) : Rect.Empty;
                 case DockPosition.Main:
                     return GetMainWellRect();
             }
-            return new Rect();
+            return Rect.Empty;
         }
 
         /// <summary>Returns a new Rect and makes sure the values used for it are not invalid</summary>
@@ -960,7 +961,7 @@ namespace CODE.Framework.Wpf.Layout
             if (y < 0d) y = 0d;
             if (width < 0d) width = 0d;
             if (height < 0d) height = 0d;
-            return new Rect(x, y, width, height);
+            return GeometryHelper.NewRect(x, y, width, height);
         }
 
         /// <summary>
@@ -1235,8 +1236,8 @@ namespace CODE.Framework.Wpf.Layout
             var font = new Typeface(MainWellHeaderFontFamily, MainWellHeaderFontStyle, MainWellHeaderFontWeight, FontStretches.Normal);
 
             // Drawing a nice stylistic border and a line across the bottom of the header area
-            dc.DrawRectangle(MainWellBorderBrush, null, new Rect(areaRect.X, areaRect.Y + MainWellHeaderHeight, areaRect.Width, Math.Max(areaRect.Height - MainWellHeaderHeight, 0)));
-            dc.DrawRectangle(headerBackgroundBrush, null, new Rect(areaRect.X, areaRect.Y + MainWellHeaderHeight - 2d, areaRect.Width, 2d));
+            dc.DrawRectangle(MainWellBorderBrush, null, GeometryHelper.NewRect(areaRect.X, areaRect.Y + MainWellHeaderHeight, areaRect.Width, areaRect.Height - MainWellHeaderHeight));
+            dc.DrawRectangle(headerBackgroundBrush, null, GeometryHelper.NewRect(areaRect.X, areaRect.Y + MainWellHeaderHeight - 2d, areaRect.Width, 2d));
 
             var counter = 0;
             var currentLeft = areaRect.X;
@@ -1269,7 +1270,7 @@ namespace CODE.Framework.Wpf.Layout
                     {
                         Position = DockPosition.Main,
                         NewIndex = counter,
-                        AreaRectangle = new Rect(currentLeft, areaRect.Y, ft.Width + 15, MainWellHeaderHeight)
+                        AreaRectangle = GeometryHelper.NewRect(currentLeft, areaRect.Y, ft.Width + 15, MainWellHeaderHeight)
                     });
                     currentLeft += ft.Width + 15;
                 }
@@ -1782,7 +1783,7 @@ namespace CODE.Framework.Wpf.Layout
 
             if (_dockedElement == null) return;
             var elements = new List<DockedUIElement> {_dockedElement};
-            _renderer.DrawDockWindowChrome(drawingContext, elements, 0, new Rect(0d, 0d, ActualWidth, ActualHeight), _tabsVisible, new Point());
+            _renderer.DrawDockWindowChrome(drawingContext, elements, 0, GeometryHelper.NewRect(0d, 0d, ActualWidth, ActualHeight), _tabsVisible, new Point());
         }
 
         /// <summary>
@@ -1834,9 +1835,9 @@ namespace CODE.Framework.Wpf.Layout
             var element = Content as UIElement;
             if (element != null && ActualHeight > 0d && ActualWidth > 0d)
             {
-                var areaSize = new Size(Math.Max(ActualWidth - 2d, 0d), Math.Max(ActualHeight - _headerHeight - (_tabsVisible ? _footerHeight : 0d) - 1d, 0d));
+                var areaSize = GeometryHelper.NewSize(ActualWidth - 2d, ActualHeight - _headerHeight - (_tabsVisible ? _footerHeight : 0d) - 1d);
                 element.Measure(areaSize);
-                return new Size(ActualWidth, ActualHeight);
+                return GeometryHelper.NewSize(ActualWidth, ActualHeight);
             }
             return base.MeasureOverride(availableSize);
         }
@@ -1851,7 +1852,7 @@ namespace CODE.Framework.Wpf.Layout
             var element = Content as UIElement;
             if (element != null && ActualHeight > 0d && ActualWidth > 0d)
             {
-                var areaRect = new Rect(1d, _headerHeight, ActualWidth - 2d, ActualHeight - _headerHeight - (_tabsVisible ? _footerHeight : 0d) - 1d);
+                var areaRect = GeometryHelper.NewRect(1d, _headerHeight, ActualWidth - 2d, ActualHeight - _headerHeight - (_tabsVisible ? _footerHeight : 0d) - 1d);
                 element.Arrange(areaRect);
             }
 

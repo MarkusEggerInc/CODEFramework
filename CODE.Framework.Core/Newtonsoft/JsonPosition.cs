@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -41,7 +43,7 @@ namespace CODE.Framework.Core.Newtonsoft
 
     internal struct JsonPosition
     {
-        private static readonly char[] SpecialCharacters = { '.', ' ', '[', ']', '(', ')' };
+        private static readonly char[] SpecialCharacters = {'.', ' ', '[', ']', '(', ')'};
 
         internal JsonContainerType Type;
         internal int Position;
@@ -56,14 +58,25 @@ namespace CODE.Framework.Core.Newtonsoft
             PropertyName = null;
         }
 
+        internal int CalculateLength()
+        {
+            switch (Type)
+            {
+                case JsonContainerType.Object:
+                    return PropertyName.Length + 5;
+                case JsonContainerType.Array:
+                case JsonContainerType.Constructor:
+                    return MathUtils.IntLength((ulong) Position) + 2;
+                default:
+                    throw new ArgumentOutOfRangeException("Type");
+            }
+        }
+
         internal void WriteTo(StringBuilder sb)
         {
             switch (Type)
             {
                 case JsonContainerType.Object:
-                    if (sb.Length > 0)
-                        sb.Append('.');
-
                     var propertyName = PropertyName;
                     if (propertyName.IndexOfAny(SpecialCharacters) != -1)
                     {
@@ -72,7 +85,12 @@ namespace CODE.Framework.Core.Newtonsoft
                         sb.Append(@"']");
                     }
                     else
+                    {
+                        if (sb.Length > 0)
+                            sb.Append('.');
+
                         sb.Append(propertyName);
+                    }
                     break;
                 case JsonContainerType.Array:
                 case JsonContainerType.Constructor:
@@ -85,14 +103,25 @@ namespace CODE.Framework.Core.Newtonsoft
 
         internal static bool TypeHasIndex(JsonContainerType type)
         {
-            return (type == JsonContainerType.Array || type == JsonContainerType.Constructor);
+            return type == JsonContainerType.Array || type == JsonContainerType.Constructor;
         }
 
-        internal static string BuildPath(IEnumerable<JsonPosition> positions)
+        internal static string BuildPath(List<JsonPosition> positions, JsonPosition? currentPosition)
         {
-            var sb = new StringBuilder();
-            foreach (var state in positions)
-                state.WriteTo(sb);
+            var capacity = 0;
+            if (positions != null)
+                for (var i = 0; i < positions.Count; i++)
+                    capacity += positions[i].CalculateLength();
+            if (currentPosition != null)
+                capacity += currentPosition.GetValueOrDefault().CalculateLength();
+
+            var sb = new StringBuilder(capacity);
+            if (positions != null)
+                foreach (var state in positions)
+                    state.WriteTo(sb);
+            if (currentPosition != null)
+                currentPosition.GetValueOrDefault().WriteTo(sb);
+
             return sb.ToString();
         }
 
@@ -102,8 +131,10 @@ namespace CODE.Framework.Core.Newtonsoft
             if (!message.EndsWith(Environment.NewLine, StringComparison.Ordinal))
             {
                 message = message.Trim();
+
                 if (!message.EndsWith('.'))
                     message += ".";
+
                 message += " ";
             }
 
@@ -113,6 +144,7 @@ namespace CODE.Framework.Core.Newtonsoft
                 message += ", line {0}, position {1}".FormatWith(CultureInfo.InvariantCulture, lineInfo.LineNumber, lineInfo.LinePosition);
 
             message += ".";
+
             return message;
         }
     }

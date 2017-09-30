@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -219,7 +220,7 @@ namespace CODE.Framework.Wpf.Layout
                 if (index == 0)
                 {
                     var headerHeight = GetHeaderHeight() + 5;
-                    child.Arrange(new Rect(0d, headerHeight, finalSize.Width, finalSize.Height - headerHeight));
+                    child.Arrange(GeometryHelper.NewRect(0d, headerHeight, finalSize.Width, finalSize.Height - headerHeight));
                     TranslateTransform currentTranslate = null;
                     if (child.RenderTransform != null)
                         if (!(child.RenderTransform is TranslateTransform) && !(child.RenderTransform is TransformGroup))
@@ -252,7 +253,7 @@ namespace CODE.Framework.Wpf.Layout
                             currentTranslate.X = 0d;
                 }
                 else
-                    child.Arrange(new Rect(-100000d, -100000d, finalSize.Width, finalSize.Height));
+                    child.Arrange(GeometryHelper.NewRect(-100000d, -100000d, finalSize.Width, finalSize.Height));
             }
 
             return base.ArrangeOverride(finalSize);
@@ -319,7 +320,7 @@ namespace CODE.Framework.Wpf.Layout
                 dc.DrawText(ft, new Point(currentLeft, 0d));
 
                 if (index > Children.Count - 1) index = 0; // We wrap back to item 0 when we shoot out the back
-                _hitZones.Add(new PanoramaHeaderHitZone {Index = child.ActualChildIndex, Rect = new Rect(currentLeft - 10, 0d, ft.Width + 15, headerHeight)});
+                _hitZones.Add(new PanoramaHeaderHitZone {Index = child.ActualChildIndex, Rect = GeometryHelper.NewRect(currentLeft - 10, 0d, ft.Width + 15, headerHeight)});
 
                 currentLeft += ft.Width + 25;
                 index++;

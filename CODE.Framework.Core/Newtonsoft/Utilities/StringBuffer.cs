@@ -1,4 +1,5 @@
 ﻿#region License
+
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -21,6 +22,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -28,119 +30,81 @@ using System;
 namespace CODE.Framework.Core.Newtonsoft.Utilities
 {
     /// <summary>
-    /// Builds a string. Unlike StringBuilder this class lets you reuse it's internal buffer.
+    ///     Builds a string. Unlike <see cref="System.Text.StringBuilder" /> this class lets you reuse its internal buffer.
     /// </summary>
-    internal class StringBuffer
+    internal struct StringBuffer
     {
-        private char[] _buffer;
-        private int _position;
+        public int Position { get; set; }
 
-        private static readonly char[] EmptyBuffer = new char[0];
-
-        /// <summary>
-        /// Gets or sets the position.
-        /// </summary>
-        /// <value>The position.</value>
-        public int Position
+        public bool IsEmpty
         {
-            get { return _position; }
-            set { _position = value; }
+            get { return InternalBuffer == null; }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StringBuffer"/> class.
-        /// </summary>
-        public StringBuffer()
+        public StringBuffer(IArrayPool<char> bufferPool, int initalSize) : this(BufferUtils.RentBuffer(bufferPool, initalSize))
         {
-            _buffer = EmptyBuffer;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StringBuffer"/> class.
-        /// </summary>
-        /// <param name="initalSize">Size of the inital.</param>
-        public StringBuffer(int initalSize)
+        private StringBuffer(char[] buffer)
         {
-            _buffer = new char[initalSize];
+            InternalBuffer = buffer;
+            Position = 0;
         }
 
-        /// <summary>
-        /// Appends the specified value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        public void Append(char value)
+        public void Append(IArrayPool<char> bufferPool, char value)
         {
             // test if the buffer array is large enough to take the value
-            if (_position == _buffer.Length)
-                EnsureSize(1);
+            if (Position == InternalBuffer.Length)
+                EnsureSize(bufferPool, 1);
 
             // set value and increment poisition
-            _buffer[_position++] = value;
+            InternalBuffer[Position++] = value;
         }
 
-        /// <summary>
-        /// Appends the specified buffer.
-        /// </summary>
-        /// <param name="buffer">The buffer.</param>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="count">The count.</param>
-        public void Append(char[] buffer, int startIndex, int count)
+        public void Append(IArrayPool<char> bufferPool, char[] buffer, int startIndex, int count)
         {
-            if (_position + count >= _buffer.Length)
-                EnsureSize(count);
+            if (Position + count >= InternalBuffer.Length)
+                EnsureSize(bufferPool, count);
 
-            Array.Copy(buffer, startIndex, _buffer, _position, count);
+            Array.Copy(buffer, startIndex, InternalBuffer, Position, count);
 
-            _position += count;
+            Position += count;
         }
 
-        /// <summary>
-        /// Clears this instance.
-        /// </summary>
-        public void Clear()
+        public void Clear(IArrayPool<char> bufferPool)
         {
-            _buffer = EmptyBuffer;
-            _position = 0;
+            if (InternalBuffer != null)
+            {
+                BufferUtils.ReturnBuffer(bufferPool, InternalBuffer);
+                InternalBuffer = null;
+            }
+            Position = 0;
         }
 
-        /// <summary>
-        /// Ensures the size.
-        /// </summary>
-        /// <param name="appendLength">Length of the append.</param>
-        private void EnsureSize(int appendLength)
+        private void EnsureSize(IArrayPool<char> bufferPool, int appendLength)
         {
-            var newBuffer = new char[(_position + appendLength) * 2];
-            Array.Copy(_buffer, newBuffer, _position);
-            _buffer = newBuffer;
+            var newBuffer = BufferUtils.RentBuffer(bufferPool, (Position + appendLength) * 2);
+
+            if (InternalBuffer != null)
+            {
+                Array.Copy(InternalBuffer, newBuffer, Position);
+                BufferUtils.ReturnBuffer(bufferPool, InternalBuffer);
+            }
+
+            InternalBuffer = newBuffer;
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return ToString(0, _position);
+            return ToString(0, Position);
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <param name="start">The start.</param>
-        /// <param name="length">The length.</param>
-        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public string ToString(int start, int length)
         {
-            return new string(_buffer, start, length);
+            // TODO: validation
+            return new string(InternalBuffer, start, length);
         }
 
-        /// <summary>
-        /// Gets the internal buffer.
-        /// </summary>
-        /// <returns>System.Char[].</returns>
-        public char[] GetInternalBuffer()
-        {
-            return _buffer;
-        }
+        public char[] InternalBuffer { get; private set; }
     }
 }

@@ -60,6 +60,9 @@ namespace CODE.Framework.Wpf.Utilities
         }
     }
 
+    /// <summary>
+    /// This class provides functionality related to keyboard features
+    /// </summary>
     public static class KeyboardHelper
     {
         [DllImport("user32.dll")]

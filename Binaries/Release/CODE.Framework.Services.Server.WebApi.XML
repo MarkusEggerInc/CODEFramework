@@ -14,7 +14,6 @@
             <summary>
             Initializes a new instance of the <see cref="T:CODE.Framework.Services.Server.WebApi.ServiceHostController`1"/> class.
             </summary>
-            <exception cref="T:System.NotSupportedException">The hosted service contract must implement a service interface</exception>
         </member>
         <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.GetContractInterface">
             <summary>
@@ -48,6 +47,22 @@
             Headers supported by CORS
             </summary>
             <value>The allowable CORS headers.</value>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.HttpsMode">
+            <summary>
+            Defines whether HTTPS is required
+            </summary>
+            <value>
+            The HTTPS mode.
+            </value>
+        </member>
+        <member name="P:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.JsonPropertyCaseMode">
+            <summary>
+            Defines the case used for JSON property names
+            </summary>
+            <value>
+            The JSON property case mode.
+            </value>
         </member>
         <member name="M:CODE.Framework.Services.Server.WebApi.ServiceHostController`1.ExecuteAsync(System.Web.Http.Controllers.HttpControllerContext,System.Threading.CancellationToken)">
             <summary>
@@ -100,6 +115,40 @@
             Provides the caller's DNS name
             </summary>
             <value>The name of the user host.</value>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.WebApi.ControllerHttpsMode">
+            <summary>
+            HTTPS mode of the controller (can be used to define whether the controller requires HTTPS)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.WebApi.ControllerHttpsMode.Undefined">
+            <summary>Controller can be called over HTTP or HTTPS without restriction</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.WebApi.ControllerHttpsMode.RequireHttps">
+            <summary>Always requires HTTPS</summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.WebApi.ControllerHttpsMode.RequireHttpsExceptLocalhost">
+            <summary>Requires HTTPS, but not if hosted on Localhost</summary>
+        </member>
+        <member name="T:CODE.Framework.Services.Server.WebApi.JsonPropertyCaseMode">
+            <summary>
+            Defines which casing is to be used for JSON property names
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.WebApi.JsonPropertyCaseMode.Default">
+            <summary>
+            Default setting (respects settings in configuration)
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.WebApi.JsonPropertyCaseMode.UseOriginalPropertyNames">
+            <summary>
+            Always uses the exact property names as defined by the objects
+            </summary>
+        </member>
+        <member name="F:CODE.Framework.Services.Server.WebApi.JsonPropertyCaseMode.ForceCamelCase">
+            <summary>
+            Forces camelCase for all property names
+            </summary>
         </member>
     </members>
 </doc>

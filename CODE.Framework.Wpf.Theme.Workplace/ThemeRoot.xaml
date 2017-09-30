@@ -14,6 +14,7 @@
         <ResourceDictionary Source="Workplace-Control-Button.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Calendar.xaml"/>
         <ResourceDictionary Source="Workplace-Control-CapsLockWarning.xaml"/>
+        <ResourceDictionary Source="Workplace-Control-ComboBox.xaml"/>
         <ResourceDictionary Source="Workplace-Control-DatePicker.xaml"/>
         <ResourceDictionary Source="Workplace-Control-DockHost.xaml"/>
         <ResourceDictionary Source="Workplace-Control-Expander.xaml"/>
@@ -29,6 +30,7 @@
         <ResourceDictionary Source="Workplace-Control-Window.xaml" />
 
         <!-- Layout elements (should always be merged in after other styles so static resource can use simpler style components) -->
+        <ResourceDictionary Source="Workplace-Layout-BladePanel.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-EditForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-FlowForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-MultiPanel.xaml"/>
@@ -37,6 +39,7 @@
         <ResourceDictionary Source="Workplace-Layout-PropertySheet.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-SimpleForm.xaml"/>
         <ResourceDictionary Source="Workplace-Layout-StandardForm.xaml"/>
+        <ResourceDictionary Source="Workplace-Layout-Tabs.xaml"/>
 
         <!-- Standard Icons -->
         <ResourceDictionary Source="Workplace-Icon-Standard.xaml"/>

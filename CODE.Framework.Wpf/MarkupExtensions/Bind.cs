@@ -137,7 +137,7 @@ namespace CODE.Framework.Wpf.MarkupExtensions
         }
 
         /// <summary>
-        /// Fallback value to apply when no binding value can be detirmined
+        /// Fallback value to apply when no binding value can be determined
         /// </summary>
         /// <value>The fallback value.</value>
         [DefaultValue(null)]

@@ -9,7 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using CODE.Framework.Core.Utilities;
+using CODE.Framework.Wpf.Utilities;
 
 namespace CODE.Framework.Wpf.Layout
 {
@@ -214,7 +214,7 @@ namespace CODE.Framework.Wpf.Layout
         /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            var visibleChildren = Children.OfType<FrameworkElement>().Where(child => child.Visibility == Visibility.Visible).ToList();
+            var visibleChildren = Children.OfType<FrameworkElement>().Where(child => child.Visibility != Visibility.Collapsed).ToList();
 
             foreach (var child in visibleChildren)
             {
@@ -235,13 +235,13 @@ namespace CODE.Framework.Wpf.Layout
             var availableHeight = availableSize.Height;
             if (HeaderRenderer != null)
             {
-                var headerInfo = HeaderRenderer.GetClientArea(new Rect(0, 0, 10000, availableSize.Height));
+                var headerInfo = HeaderRenderer.GetClientArea(GeometryHelper.NewRect(0, 0, 10000, availableSize.Height));
                 availableHeight = headerInfo.Height;
             }
             if (_scrollHorizontal.Visibility == Visibility.Visible)
                 availableHeight -= _scrollHorizontal.ActualHeight;
             availableHeight -= (ChildItemPadding.Top + ChildItemPadding.Bottom);
-            var childMaxSize = new Size(10000000, availableHeight);
+            var childMaxSize = GeometryHelper.NewSize(10000000, availableHeight);
 
             var availableWidth = double.IsNaN(availableSize.Width) || double.IsInfinity(availableSize.Width) ? 1000d : availableSize.Width;
             var currentRight = availableWidth;
@@ -252,7 +252,7 @@ namespace CODE.Framework.Wpf.Layout
                     currentRight -= (child.DesiredSize.Width - Spacing - ChildItemPadding.Left - ChildItemPadding.Right);
                 else
                 {
-                    var calculatedChildArea = HeaderRenderer.GetClientArea(NewRect(currentRight - child.DesiredSize.Width, 0d, child.DesiredSize.Width, 1d));
+                    var calculatedChildArea = HeaderRenderer.GetClientArea(GeometryHelper.NewRect(currentRight - child.DesiredSize.Width, 0d, child.DesiredSize.Width, 1d));
                     currentRight -= calculatedChildArea.Width - Spacing;
                 }
             }
@@ -266,14 +266,14 @@ namespace CODE.Framework.Wpf.Layout
                     totalWidth += child.DesiredSize.Width;
                 else
                 {
-                    var calculatedChildArea = HeaderRenderer.GetClientArea(NewRect(totalWidth, 0d, child.DesiredSize.Width, 1d));
-                    totalWidth += calculatedChildArea.Width;
+                    var calculatedChildArea = HeaderRenderer.GetClientArea(GeometryHelper.NewRect(totalWidth, 0d, child.DesiredSize.Width, 1d));
+                    totalWidth += calculatedChildArea.Width + calculatedChildArea.Left;
                 }
             }
 
             var baseSize = base.MeasureOverride(availableSize);
             var measuredHeight = !double.IsNaN(availableSize.Height) && !double.IsInfinity(availableSize.Height) ? availableSize.Height : baseSize.Height;
-            return new Size(availableSize.Width, measuredHeight);
+            return GeometryHelper.NewSize(availableSize.Width, measuredHeight);
         }
 
         private void ChildVisibilityUpdated(object sender, DependencyPropertyChangedEventArgs e)
@@ -304,7 +304,7 @@ namespace CODE.Framework.Wpf.Layout
         {
             _inArrange = true;
 
-            var visibleChildren = Children.Cast<UIElement>().Where(child => child.Visibility == Visibility.Visible).ToList();
+            var visibleChildren = Children.Cast<UIElement>().Where(child => child.Visibility != Visibility.Collapsed).ToList();
 
             var topElements = new List<FrameworkElement>();
             var bottomElements = new List<FrameworkElement>();
@@ -322,19 +322,24 @@ namespace CODE.Framework.Wpf.Layout
             var currentRight = finalSize.Width;
             foreach (var child in bottomElements)
             {
-                var childArea = NewRect(currentRight - child.DesiredSize.Width, 0d, child.DesiredSize.Width, finalSize.Height);
-                currentRight = childArea.Left - Spacing;
+                var childArea = GeometryHelper.NewRect(currentRight - child.DesiredSize.Width, 0d, child.DesiredSize.Width, finalSize.Height);
                 if (headerRenderer != null)
                 {
-                    _headerRenderAreas.Add(new HeaderRenderInformation {Child = child, TotalArea = childArea, IsTop = false});
-                    childArea = headerRenderer.GetClientArea(childArea);
+                    var clientAreaMargins = headerRenderer.GetClientAreaMargins();
+                    _headerRenderAreas.Add(new HeaderRenderInformation { Child = child, TotalArea = GeometryHelper.NewRect(childArea.X - clientAreaMargins.Left, childArea.Y - clientAreaMargins.Top, childArea.Width + clientAreaMargins.Left + clientAreaMargins.Right, childArea.Height + clientAreaMargins.Top + clientAreaMargins.Bottom), IsTop = false });
+                    if (clientAreaMargins.Right > 0)
+                        childArea = GeometryHelper.NewRect(childArea.X - clientAreaMargins.Right, childArea.Y, childArea.Width, childArea.Height);
+                    currentRight = childArea.Left - Spacing - clientAreaMargins.Left;
                 }
-                child.Arrange(NewRect(childArea, ChildItemPadding));
+                else
+                    currentRight = childArea.Left - Spacing;
+                child.Arrange(GeometryHelper.NewRect(childArea, ChildItemPadding));
             }
             BottomContentSize = finalSize.Width - currentRight;
             var topContentVisibleWidth = finalSize.Width - BottomContentSize;
 
             var currentLeft = 0d;
+            var currentLeftWidth = 0d;
             var availableHeight = finalSize.Height;
             if (_scrollHorizontal.Visibility == Visibility.Visible)
             {
@@ -347,37 +352,58 @@ namespace CODE.Framework.Wpf.Layout
                 leftChildCount++;
                 Rect childArea;
                 if (LastTopItemFillsSpace && leftChildCount == topElements.Count)
-                    childArea = NewRect(currentLeft, 0d, currentRight - currentLeft, availableHeight);
+                {
+                    var autoWidth = finalSize.Width - BottomContentSize - currentLeft - Spacing;
+                    if (headerRenderer != null)
+                    {
+                        var margins = headerRenderer.GetClientAreaMargins();
+                        autoWidth -= margins.Left + margins.Right;
+                        autoWidth = Math.Max(autoWidth, child.DesiredSize.Width + margins.Left + margins.Right + Spacing);
+                    }
+                    else
+                        autoWidth = Math.Max(autoWidth, child.DesiredSize.Width);
+                    childArea = GeometryHelper.NewRect(currentLeft, 0d, (int)autoWidth, availableHeight);
+                }
                 else
-                    childArea = NewRect(currentLeft, 0d, child.DesiredSize.Width + ChildItemPadding.Left + ChildItemPadding.Right, availableHeight);
+                    childArea = GeometryHelper.NewRect(currentLeft, 0d, child.DesiredSize.Width + ChildItemPadding.Left + ChildItemPadding.Right, availableHeight);
                 if (headerRenderer != null)
                 {
                     _headerRenderAreas.Add(new HeaderRenderInformation {Child = child, TotalArea = childArea, IsTop = true});
                     childArea = headerRenderer.GetClientArea(childArea);
                 }
-                var childRect = NewRect(childArea, ChildItemPadding);
+                var childRect = GeometryHelper.NewRect(childArea, ChildItemPadding);
                 child.Arrange(childRect);
                 if (bottomElements.Count > 0 && childRect.Right > topContentVisibleWidth)
                 {
                     var overlap = childRect.Right - topContentVisibleWidth;
-                    var clipRect = NewRect(0, 0, childRect.Width - overlap, finalSize.Height);
+                    var clipRect = GeometryHelper.NewRect(0, 0, childRect.Width - overlap, finalSize.Height);
                     child.Clip = new RectangleGeometry(clipRect);
                 }
                 else
                     child.Clip = null;
-                currentLeft = childArea.Right + Spacing;
+                if (headerRenderer != null)
+                {
+                    var clientAreaMargins = headerRenderer.GetClientAreaMargins();
+                    currentLeft = childArea.Right + clientAreaMargins.Right + Spacing;
+                    currentLeftWidth += childArea.Width + Spacing + clientAreaMargins.Left + clientAreaMargins.Right;
+                }
+                else
+                {
+                    currentLeft = childArea.Right + Spacing;
+                    currentLeftWidth += childArea.Width + Spacing;
+                }
             }
 
-            if (currentLeft + _scrollHorizontal.Value > currentRight)
+            if (currentLeftWidth > topContentVisibleWidth + .1)
             {
                 if (_scrollHorizontal.Visibility != Visibility.Visible)
                 {
                     _scrollHorizontal.Visibility = Visibility.Visible;
                     InvalidateVisual();
                 }
-                _scrollHorizontal.Maximum = currentLeft + _scrollHorizontal.Value - currentRight;
-                _scrollHorizontal.LargeChange = currentRight;
-                _scrollHorizontal.ViewportSize = currentRight;
+                _scrollHorizontal.Maximum = currentLeftWidth - topContentVisibleWidth + Spacing;
+                _scrollHorizontal.LargeChange = topContentVisibleWidth;
+                _scrollHorizontal.ViewportSize = topContentVisibleWidth;
             }
             else
             {
@@ -399,19 +425,6 @@ namespace CODE.Framework.Wpf.Layout
         /// <value>The size of the bottom content.</value>
         public double BottomContentSize { get; set; }
 
-        private static Rect NewRect(Rect original, Thickness padding)
-        {
-            if (Math.Abs(padding.Right) < .1d && Math.Abs(padding.Left) < .1d && Math.Abs(padding.Top) < .1d && Math.Abs(padding.Bottom) < .1d)
-                return original;
-
-            return NewRect(original.X + padding.Left, original.Y + padding.Top, original.Width - padding.Left - padding.Right, original.Height - padding.Top - padding.Right);
-        }
-
-        private static Rect NewRect(double x, double y, double width, double height)
-        {
-            return new Rect(x, y, Math.Max(width, 0), Math.Max(height, 0));
-        }
-
         /// <summary>
         /// Draws the content of a <see cref="T:System.Windows.Media.DrawingContext" /> object during the render pass of a <see cref="T:System.Windows.Controls.Panel" /> element.
         /// </summary>
@@ -420,7 +433,7 @@ namespace CODE.Framework.Wpf.Layout
         {
             base.OnRender(dc);
 
-            dc.DrawRectangle(Brushes.Transparent, null, NewRect(0, 0, ActualWidth, ActualHeight)); // Do NOT remove this line, otherwise, hit-testing will not work anymore
+            dc.DrawRectangle(Brushes.Transparent, null, GeometryHelper.NewRect(0, 0, ActualWidth, ActualHeight)); // Do NOT remove this line, otherwise, hit-testing will not work anymore
 
             var headerRenderer = HeaderRenderer;
             if (headerRenderer == null) return;
@@ -429,7 +442,7 @@ namespace CODE.Framework.Wpf.Layout
             {
                 if (area.IsTop)
                 {
-                    var topClip = new RectangleGeometry(NewRect(0, 0, ActualWidth - BottomContentSize, ActualHeight));
+                    var topClip = new RectangleGeometry(GeometryHelper.NewRect(0, 0, ActualWidth - BottomContentSize, ActualHeight));
                     dc.PushClip(topClip);
                 }
 
@@ -488,6 +501,13 @@ namespace CODE.Framework.Wpf.Layout
         /// and the overall space for the child shrinks accordingly. The value returned by this method indicates
         /// the remaining space for the child element.</remarks>
         Rect GetClientArea(Rect totalArea, bool isOtherOrientation = false);
+
+        /// <summary>
+        /// Returns the margin around the client area (the area available for the child control) based on the total area available for the child
+        /// </summary>
+        /// <param name="isOtherOrientation">if set to <c>true</c> [is other orientation].</param>
+        /// <returns>Thickness (margins)</returns>
+        Thickness GetClientAreaMargins(bool isOtherOrientation = false);
 
         /// <summary>Renders the header element for a single child.</summary>
         /// <param name="dc">The drawing context.</param>
@@ -746,11 +766,26 @@ namespace CODE.Framework.Wpf.Layout
         {
             var ft = GetFormattedText();
             if (Orientation == Orientation.Horizontal)
-                return NewRect(totalArea.X, totalArea.Y + ft.Height, totalArea.Width, totalArea.Height - ft.Height);
+                return GeometryHelper.NewRect(totalArea.X, totalArea.Y + ft.Height, totalArea.Width, totalArea.Height - ft.Height);
 
             if (!isOtherOrientation)
-                return NewRect(totalArea.X + ft.Height + 5, totalArea.Y, totalArea.Width, totalArea.Height);
-            return NewRect(totalArea.X - ft.Height - 5, totalArea.Y, totalArea.Width + ft.Height + 5, totalArea.Height);
+                return GeometryHelper.NewRect(totalArea.X + ft.Height + 5, totalArea.Y, totalArea.Width, totalArea.Height);
+            return GeometryHelper.NewRect(totalArea.X - ft.Height - 5, totalArea.Y, totalArea.Width + ft.Height + 5, totalArea.Height);
+        }
+
+        /// <summary>
+        /// Returns the margin around the client area (the area available for the child control) based on the total area available for the child
+        /// </summary>
+        /// <param name="isOtherOrientation">if set to <c>true</c> [is other orientation].</param>
+        /// <returns>Thickness (margins)</returns>
+        public Thickness GetClientAreaMargins(bool isOtherOrientation = false)
+        {
+            var ft = GetFormattedText();
+            if (Orientation == Orientation.Horizontal)
+                return new Thickness(0, ft.Height, 0, 0);
+            if (!isOtherOrientation)
+                return new Thickness(ft.Height, 0, 0, 0);
+            return new Thickness(0, 0, ft.Height, 0);
         }
 
         private FormattedText _standardHeight;
@@ -765,11 +800,6 @@ namespace CODE.Framework.Wpf.Layout
                 return _standardHeight;
             }
             return new FormattedText(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(FontFamily, FontStyle, FontWeight, FontStretches.Normal), FontSize, foreground) { MaxLineCount = 1 };
-        }
-
-        private static Rect NewRect(double x, double y, double width, double height)
-        {
-            return new Rect(x, y, Math.Max(width, 0), Math.Max(height, 0));
         }
 
         /// <summary>
@@ -830,7 +860,7 @@ namespace CODE.Framework.Wpf.Layout
                 var iconSize = Math.Min(headerRect.Height - 7, MaxCloseIconSize);
                 if (closable) ft.MaxTextWidth -= (iconSize - 3); // Making room for the close button
                 dc.DrawText(ft, new Point(2d, 0d));
-                if (closable) dc.DrawRectangle(CloseIcon, null, NewRect(headerRect.Width - iconSize - 4, (int)((headerRect.Height - iconSize) / 2), iconSize, iconSize));
+                if (closable) dc.DrawRectangle(CloseIcon, null, GeometryHelper.NewRect(headerRect.Width - iconSize - 4, (int)((headerRect.Height - iconSize) / 2), iconSize, iconSize));
             }
             else
             {
@@ -844,7 +874,7 @@ namespace CODE.Framework.Wpf.Layout
                 dc.DrawText(ft, new Point(0d, 0d));
                 dc.Pop();
                 dc.Pop();
-                if (closable) dc.DrawRectangle(CloseIcon, null, NewRect((int)((headerRect.Width + 1 - iconSize) / 2), 5, iconSize, iconSize));
+                if (closable) dc.DrawRectangle(CloseIcon, null, GeometryHelper.NewRect((int)((headerRect.Width + 1 - iconSize) / 2), 5, iconSize, iconSize));
             }
 
             dc.Pop(); // Remove the clip

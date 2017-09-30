@@ -168,5 +168,8 @@
         <member name="F:CODE.Framework.Services.Contracts.RestMethods.Options">
             <summary>HTTP OPTIONS</summary>
         </member>
+        <member name="F:CODE.Framework.Services.Contracts.RestMethods.PostOrPut">
+            <summary>HTTP POST or PUT (both are valid for this setting)</summary>
+        </member>
     </members>
 </doc>
