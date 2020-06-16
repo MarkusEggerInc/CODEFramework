@@ -39,14 +39,14 @@ namespace CODE.Framework.Wpf.Controls
                 {
                     string starWidth = width.Replace("*", string.Empty);
                     if (string.IsNullOrEmpty(starWidth)) starWidth = "1";
-                    var stars = double.Parse(starWidth);
+                    var stars = double.Parse(starWidth, CultureInfo.InvariantCulture);
                     grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(stars, GridUnitType.Star) });
                 }
                 else if (width == "auto")
                     grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
                 else
                 {
-                    var pixels = double.Parse(width);
+                    var pixels = double.Parse(width, CultureInfo.InvariantCulture);
                     grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(pixels, GridUnitType.Pixel) });
                 }
             }
@@ -93,14 +93,14 @@ namespace CODE.Framework.Wpf.Controls
                 {
                     string starHeight = height.Replace("*", string.Empty);
                     if (string.IsNullOrEmpty(starHeight)) starHeight = "1";
-                    var stars = double.Parse(starHeight);
+                    var stars = double.Parse(starHeight, CultureInfo.InvariantCulture);
                     grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(stars, GridUnitType.Star) });
                 }
                 else if (height == "auto")
                     grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                 else
                 {
-                    var pixels = double.Parse(height);
+                    var pixels = double.Parse(height, CultureInfo.InvariantCulture);
                     grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(pixels, GridUnitType.Pixel) });
                 }
             }
